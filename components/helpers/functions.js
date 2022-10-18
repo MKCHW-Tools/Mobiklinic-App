@@ -1,7 +1,9 @@
 import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import axios from "axios";
 import { URLS } from "../constants/API";
+import uniqWith from "lodash/uniqWith";
+import isEqual from "lodash/isEqual";
 
 export const _removeStorageItem = async (key) => {
 	return await AsyncStorage.removeItem(key);
@@ -61,32 +63,43 @@ export const tokensRefresh = async () => {
 	}
 };
 
-export const RETRIEVE_LOCAL_USERS = async () => {
+export const RETRIEVE_LOCAL_USER = async () => {
 	try {
-		let users = await AsyncStorage.getItem("@theUsers");
-		let theUsers = users !== null ? users : null;
-		return theUsers;
+		let user = await AsyncStorage.getItem("@user");
+		let theUser = user !== null ? user : null;
+		return theUser;
 	} catch (err) {
 		new Error(err);
 	}
 };
-export const SAVE_LOCAL_USERS = async (username, password) => {
+export const SAVE_LOCAL_USER = async (user = {}) => {
 	try {
-		let users = await RETRIEVE_LOCAL_USERS();
+		// let storedUser = await RETRIEVE_LOCAL_USER();
 
-		const HASH = cyrb53(password);
+		const HASH = cyrb53(user.password);
 
-		if (HASH && users !== null) {
+		/*if (HASH && users !== null) {
 			console.log(users);
 			users = JSON.parse(users);
-			users.push({ username, hash: HASH });
-			await AsyncStorage.setItem("@theUsers", JSON.stringify(users));
-		} else {
+			users.push({
+				username: user.username,
+				hash: HASH,
+				tokens: user.tokens,
+			});
 			await AsyncStorage.setItem(
-				"@theUsers",
-				JSON.stringify([{ username, hash: HASH }])
+				"@mobiklinicUsers",
+				JSON.stringify(users)
 			);
-		}
+		} else {*/
+		await AsyncStorage.setItem(
+			"@user",
+			JSON.stringify({
+				username: user.username,
+				hash: HASH,
+				tokens: user.tokens,
+			})
+		);
+		//}
 	} catch (err) {
 		new Error(err);
 	}
@@ -112,37 +125,39 @@ export const cyrb53 = function (str, seed = 0) {
 };
 
 export const DOWNLOAD = async (data) => {
-	const items = ["doctors", "ambulances", "diagnosis", "messages"];
+	// await AsyncStorage.removeItem("@doctors");
+	// await AsyncStorage.removeItem("@ambulances");
+	const { accessToken, items, userId, per_page } = data;
+	axios.defaults.baseURL = URLS.BASE;
+	axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+	axios.defaults.headers.post["Content-Type"] =
+		"application/json; charset=UTF-8";
+	axios.defaults.headers.post["Accept"] = "application/json";
+	const DATA_CATEGORY = ["diagnosis", "chats"];
+	for (let i = 0; i < items.length; i++) {
+		try {
+			const {
+				data: { total },
+			} = await axios.get(`/${items[i]}`);
 
-	if (items?.length > 0) {
-		items.forEach((item) => {
-			switch (item) {
-				case "doctors":
-					DOWNLOAD("ambulances");
-					break;
-				case "ambulances":
-					DOWNLOAD("diagnosis");
-					break;
-				case "diagnosis":
-					DOWNLOAD("messages");
-					break;
-				case "messages":
-					DOWNLOAD("doctors");
-					break;
-				default:
-					DOWNLOAD("doctors");
-					break;
+			let pages = Math.round(total / per_page);
+			pages = pages < 1 ? 1 : pages;
+			let _downloaded = 0;
+			for (let page = 1; page <= pages; page++) {
+				const response = await axios.get(`/${items[i]}?page=${page}`);
+				const _items = response.data[items[i]];
+
+				let itemsOnDevice = await AsyncStorage.getItem(`@${items[i]}`);
+				itemsOnDevice = JSON.parse(itemsOnDevice) || [];
+				const all = uniqWith([..._items, ...itemsOnDevice], isEqual);
+				AsyncStorage.setItem(`@${items[i]}`, JSON.stringify(all));
 			}
-		});
-	} else {
-		return false;
-	}
-};
+		} catch (error) {
+			console.log("Downlod", error);
+		}
 
-let downloader = async (URL) => {
-	try {
-		await fetch();
-	} catch (error) {
-		console.log(error);
+		if (i >= items.length) {
+			return true;
+		}
 	}
 };

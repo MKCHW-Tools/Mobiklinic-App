@@ -1,4 +1,7 @@
 import * as React from "react";
+import axios from "axios";
+import { URLS } from "../constants/API";
+
 import {
 	Text,
 	FlatList,
@@ -13,117 +16,78 @@ import IconFont from "react-native-vector-icons/FontAwesome";
 import { COLORS, DIMENS } from "../constants/styles";
 import { colors, ListItem } from "react-native-elements";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import CustomHeader from "../parts/custom-header";
+import { CustomStatusBar } from "../ui/custom.status.bar";
+import Loader from "../ui/loader";
 
-export const MESSAGES = [
-	{
-		threadID: "some-id-01-3443",
-		date: "date-started",
-		to: {
-			name: "David",
-			id: "userID",
-		},
-		thread: [
-			{
-				id: "msgid001",
-				msg: "Blurbs",
-				date: "Aug 25, 2021",
-				time: "10:13",
-				from: "you",
-			},
-			{
-				id: "msgid002",
-				msg: "Blurbs",
-				date: "Aug 25, 2021",
-				time: "10:15",
-				from: "David",
-			},
-			{
-				id: "msgid003",
-				msg: "Blurbs",
-				date: "Aug 25, 2021",
-				time: "10:20",
-				from: "you",
-			},
-		],
-	},
-	{
-		threadID: "some-id-01-3444",
-		date: "date-started",
-		to: {
-			name: "Aaron",
-			id: "userID",
-		},
-		thread: [
-			{
-				id: "msgid001",
-				msg: "Blurbs",
-				date: "Aug 25, 2021",
-				time: "10:20",
-				from: "you",
-			},
-			{
-				id: "msgid002",
-				msg: "Blurbs",
-				date: "Aug 25, 2021",
-				time: "10:56",
-				from: "Aaron",
-			},
-			{
-				id: "msgid003",
-				msg: "Blurbs",
-				date: "Aug 25, 2021",
-				time: "11:06",
-				from: "you",
-			},
-		],
-	},
-	{
-		threadID: "some-id-01-3445",
-		date: "date-started",
-		to: {
-			name: "Ibrahim",
-			id: "userID",
-		},
-		thread: [
-			{
-				id: "msgid001",
-				msg: "Blurbs",
-				date: "Aug 25, 2021",
-				time: "09:20",
-				from: "you",
-			},
-			{
-				id: "msgid002",
-				msg: "Blurbs",
-				date: "Aug 25, 2021",
-				time: "10:20",
-				from: "Ibrahim",
-			},
-			{
-				id: "msgid003",
-				msg: "Blurbs",
-				date: "Aug 25, 2021",
-				time: "11:20",
-				from: "you",
-			},
-		],
-	},
-];
+export default function Chats({ route, navigation }) {
+	const [isLoading, setLoading] = React.useState(true);
+	const [error, setError] = React.useState("");
+	const [chats, setChats] = React.useState([]);
 
-export default function Chats() {
-	const [showChat, setShowChat] = React.useState(0);
-	const [theThread, setTheThread] = React.useState([]);
-
-	const whoseChat = (chat) => {
-		// console.log(chat)
-		setTheThread(chat);
-		setShowChat(1);
-	};
-
+	const _header = () => (
+		<CustomHeader
+			left={
+				<TouchableOpacity
+					style={{ paddingLeft: 10 }}
+					onPress={() => navigation.openDrawer()}>
+					<Icon name="menu" size={25} color={COLORS.SECONDARY} />
+				</TouchableOpacity>
+			}
+			title={
+				<Text style={[STYLES.centerHeader, STYLES.title]}>
+					Messages
+				</Text>
+			}
+		/>
+	);
 	const _keyExtractor = (item) => item.threadID;
+	React.useEffect(() => {
+		const fetchChats = async () => {
+			const user = JSON.parse(await AsyncStorage.getItem("@user"));
+			// console.log(user);
+			const {
+				tokens: { accessToken },
+			} = user;
+			axios.defaults.baseURL = URLS.BASE;
+			axios.defaults.headers.common[
+				"Authorization"
+			] = `Bearer ${accessToken}`;
+			axios.defaults.headers.post["Content-Type"] =
+				"application/json; charset=UTF-8";
+			axios.defaults.headers.post["Accept"] = "application/json";
+
+			const response = await axios.get(`/chats?page=1`);
+			const {
+				data: { chats: serverChats },
+			} = response;
+			// console.log(serverChats);
+			if (serverChats?.length <= 0) {
+				setLoading(false);
+				setError(`You do not have messages yet!`);
+				return;
+			}
+
+			serverChats?.forEach((serverChat) => {
+				serverChat.users.forEach(async (user) => {
+					const response = await axios.get(`/users/${user}`);
+					console.log(response.data);
+				});
+			});
+
+			// const _chats = response?.data;
+			// console.log(_chats);
+			/*let itemsOnDevice = await AsyncStorage.getItem(`@${items[i]}`);
+			itemsOnDevice = JSON.parse(itemsOnDevice) || [];
+			const all = uniqWith([..._items, ...itemsOnDevice], isEqual);
+			AsyncStorage.setItem(`@${items[i]}`, JSON.stringify(all)); */
+		};
+
+		fetchChats();
+	}, []);
 
 	const _renderItem = ({ item }) => (
-		<TouchableOpacity onPress={() => whoseChat(item)}>
+		<TouchableOpacity onPress={() => navigation.navigate("Chat", item)}>
 			<ListItem bottomDivider>
 				<Icon name="circle" color={COLORS.GREY} SIZE={25} />
 				<ListItem.Content>
@@ -136,161 +100,31 @@ export default function Chats() {
 		</TouchableOpacity>
 	);
 
-	const Chat = ({ showChat }) => {
-		let currentTime = new Date();
-		let [msg, setMsg] = React.useState("");
-		let [keyboardStatus, setKeyboardStatus] = React.useState(false);
-		const AMessage = ({ thread, style }) => {
-			let statusIcon = <Icon name="clock" />;
-			switch (thread?.status) {
-				case 0:
-					statusIcon = <Icon name="clock" />;
-					break;
-				case 1:
-					statusIcon = <Icon name="check" />;
-					break;
-				case 2:
-					statusIcon = <IconFont name="check-double" />;
-					break;
-				case 3:
-					statusIcon = <IconFont name="check-double" />;
-					break;
-				default:
-					statusIcon = <Icon name="clock" />;
-					break;
-			}
+	if (isLoading) {
+		return <Loader />;
+	}
 
-			return (
-				<View style={style}>
-					<Text>{thread.msg}</Text>
-					<View>
-						<Text style={STYLES.messageTime}>{thread.time}</Text>
-						{statusIcon}
-					</View>
-				</View>
-			);
-		};
-
+	if (error !== "") {
 		return (
-			<>
-				<View style={STYLES.messageHeader}>
-					<TouchableOpacity onPress={() => showChat(0)}>
-						<Icon
-							name="arrow-left"
-							size={30}
-							strokeSize={4}
-							color={COLORS.BLACK}
-						/>
+			<View style={STYLES.darkWrapper}>
+				{_header()}
+				<View style={STYLES.body}>
+					<Text style={STYLES.error}>{error}</Text>
+					<TouchableOpacity
+						style={STYLES.button}
+						onPress={() => navigation.navigate("Doctors")}>
+						<Text style={STYLES.buttonTextWhite}>
+							Choose a doctor to send your first message.
+						</Text>
 					</TouchableOpacity>
-					<IconFont
-						name="user"
-						size={30}
-						strokeSize={4}
-						style={STYLES.icon}
-						color={COLORS.BLACK}
-					/>
-					<View style={STYLES.messageHeaderInner}>
-						<Text style={STYLES.messageReceiver}>
-							{theThread.to.name}
-						</Text>
-						<Text style={STYLES.lastSeen}>
-							Last seen {currentTime.toLocaleDateString()} at{" "}
-							{currentTime.toLocaleTimeString()}
-						</Text>
-					</View>
 				</View>
-				<ScrollView
-					contentContainerStyle={STYLES.contentContainerStyle}
-					style={STYLES.threadBody}
-					keyboardDismissMode="on-drag">
-					{theThread.thread.map((threadItem, index) => (
-						<AMessage
-							style={[
-								STYLES.message,
-								threadItem.from == "you"
-									? STYLES.you
-									: STYLES.other,
-							]}
-							key={threadItem.id}
-							thread={threadItem}
-						/>
-					))}
-				</ScrollView>
-				<View style={STYLES.messageFooter}>
-					<View style={STYLES.messageInput}>
-						<TouchableOpacity>
-							<Icon
-								name="smile"
-								size={30}
-								strokeSize={5}
-								color="rgba(0,0,0,.5)"
-							/>
-						</TouchableOpacity>
-						<TextInput
-							value={msg}
-							multiline={true}
-							numberOfLines={3}
-							style={STYLES.messageInputControl}
-							onChangeText={(text) => setMsg(text)}
-							placeholder={"Type a message"}
-							onFocus={() => setKeyboardStatus(true)}
-						/>
-					</View>
-					{keyboardStatus ? (
-						<TouchableOpacity
-							style={STYLES.messageInputBtn}
-							onPress={async () => {
-								setMsg("");
-								try {
-									// Find out if message is new or not
-
-									let date = new Date();
-									let time = `${date.getHours()}:${date.getMinutes()}`;
-									let id = `msgid${date.getHours()}${date.getMinutes()}${date.getSeconds()}`;
-									let newThread = { ...theThread };
-									newThread.thread.push({
-										id,
-										msg: msg,
-										from: "you",
-										time,
-										date: date.toDateString(),
-										status: 2,
-									});
-									setTheThread(newThread);
-								} catch (error) {
-									console.log(error);
-								}
-							}}>
-							<IconFont
-								name="paper-plane"
-								size={25}
-								strokeSize={5}
-								color={COLORS.WHITE}
-								backgroundColor={COLORS.ACCENT_1}
-							/>
-						</TouchableOpacity>
-					) : (
-						<TouchableOpacity style={STYLES.messageInputBtn}>
-							<IconFont
-								name="microphone"
-								size={25}
-								strokeSize={5}
-								color={COLORS.WHITE}
-								backgroundColor={COLORS.ACCENT_1}
-							/>
-						</TouchableOpacity>
-					)}
-				</View>
-			</>
+			</View>
 		);
-	};
-
-	if (showChat) return <Chat showChat={setShowChat} />;
-
+	}
 	return (
 		<>
 			<FlatList
-				data={MESSAGES}
+				data={chats}
 				renderItem={_renderItem}
 				keyExtractor={_keyExtractor}
 			/>
@@ -302,6 +136,10 @@ const STYLES = StyleSheet.create({
 	wrapper: {
 		flex: 1,
 		backgroundColor: COLORS.SECONDARY,
+	},
+	darkWrapper: {
+		flex: 1,
+		backgroundColor: COLORS.BLACK,
 	},
 	header: {
 		flex: 1,
@@ -425,10 +263,17 @@ const STYLES = StyleSheet.create({
 	icon: {
 		marginLeft: 10,
 	},
-	you: {
-		backgroundColor: COLORS.WHITE,
+	button: {
+		backgroundColor: COLORS.ERRORS,
+		marginTop: 20,
+		padding: 10,
 	},
-	other: {
-		backgroundColor: "#C5E3FC",
+	buttonTextWhite: {
+		color: COLORS.WHITE,
+		fontSize: 20,
+	},
+	error: {
+		color: COLORS.ERRORS,
+		fontSize: 30,
 	},
 });

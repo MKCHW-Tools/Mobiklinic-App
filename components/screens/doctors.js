@@ -1,13 +1,13 @@
 import * as React from "react";
 import {
-  Alert,
-  View,
-  Linking,
-  FlatList,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  StatusBar,
+	Alert,
+	View,
+	Linking,
+	FlatList,
+	TouchableOpacity,
+	Text,
+	StyleSheet,
+	StatusBar,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -26,224 +26,249 @@ import Loader from "../ui/loader";
 import { URLS } from "../constants/API";
 
 const Doctors = ({ navigation }) => {
-  const [state, setState] = React.useState({ isLoading: true, login: false });
+	const [state, setState] = React.useState({
+		isLoading: true,
+		doctors: [],
+		login: false,
+	});
 
-  const { signOut } = React.useContext(AuthContext);
+	const { signOut } = React.useContext(AuthContext);
 
-  const doctorsContext = React.useContext(DoctorsContext);
+	const doctorsContext = React.useContext(DoctorsContext);
 
-  const userContext = React.useContext(UserContext);
+	const userContext = React.useContext(UserContext);
 
-  React.useEffect(() => {
-    _getDoctors();
-  }, [state.doctors]);
+	React.useEffect(() => {
+		_getDoctors();
+	}, []);
 
-  const _getDoctors = async () => {
-    try {
-      const tokenString = await AsyncStorage.getItem("tokens");
-      const tokens = tokenString && (await JSON.parse(tokenString));
-      const { accessToken } = tokens;
+	const _getDoctors = async () => {
+		let doctorsOnDevice = await AsyncStorage.getItem("@doctors");
+		doctorsOnDevice = JSON.parse(doctorsOnDevice);
+		setState({ doctors: doctorsOnDevice });
 
-      if (accessToken) {
-        const response = await fetch(`${URLS.BASE}/doctors`, {
-          method: "GET",
-          headers: {
-            Authorization: "Bearer " + accessToken,
-            "Content-type": "application/json; charset=UTF-8",
-            Accept: "application/json",
-          },
-        });
+		// Pick local doctors first.
+		//Then retrieve remote doctors if there isn't any local
+		//Save each remote doctor to local storage.
+		//Show no doctors if returned doctors are 0
 
-        const JSON_RESPONSE = await response.json();
+		/*try {
+			const tokenString = await AsyncStorage.getItem("@tokens");
+			console.log(tokenString);
+			const tokens = tokenString && (await JSON.parse(tokenString));
 
-        const { result, msg, doctors } = await JSON_RESPONSE;
+			console.log(tokens);
+			const { accessToken } = tokens;
 
-        if (result == "Success") {
-          doctorsContext.setDoctors({ ...state, doctors });
-          setState({ ...state, doctors, isLoading: false });
-          return;
-        }
+			if (accessToken) {
+				const response = await fetch(`${URLS.BASE}/doctors`, {
+					method: "GET",
+					headers: {
+						Authorization: `Bearer ${accessToken}`,
+						"Content-type": "application/json; charset=UTF-8",
+						Accept: "application/json",
+					},
+				});
 
-        if (result == "Failure") {
-          if (msg == "Token expired") {
-            const result = tokensRefresh();
-            if (result.accessToken) {
-              // userContext.setAccessToken(result.accessToken)
-              await AsyncStorage.setItem(
-                "tokens",
-                JSON.stringify({
-                  accessToken: result.accessToken,
-                  refreshToken: result.refreshToken,
-                })
-              );
-              _getDoctors();
-            }
-            return;
-          }
+				const JSON_RESPONSE = await response.json();
 
-          if (msg == "Invalid Access Token") {
-            signOut();
-            setState({ ...state, login: true });
-            return;
-          }
+				const { result, msg, doctors } = await JSON_RESPONSE;
 
-          console.log("Some errors");
-          console.log(JSON_RESPONSE);
-        }
-      }
-    } catch (e) {
-      Alert.alert(`Ooops!`, `Something went wrong. Try again!`, [
-        { text: "OK" },
-      ]);
+				if (result == "Success") {
+					doctorsContext.setDoctors({ ...state, doctors });
+					setState({ ...state, doctors, isLoading: false });
+					return;
+				}
 
-      console.log(e);
-    }
-  };
+				if (result == "Failure") {
+					if (msg == "Token expired") {
+						const result = tokensRefresh();
+						if (result.accessToken) {
+							// userContext.setAccessToken(result.accessToken)
+							await AsyncStorage.setItem(
+								"tokens",
+								JSON.stringify({
+									accessToken: result.accessToken,
+									refreshToken: result.refreshToken,
+								})
+							);
+							_getDoctors();
+						}
+						return;
+					}
 
-  const _keyExtractor = (item) => item._id;
+					if (msg == "Invalid Access Token") {
+						signOut();
+						setState({ ...state, login: true });
+						return;
+					}
 
-  const _renderItem = ({ item }) => {
-    return (
-      <TouchableOpacity onPress={() => Linking.openURL(`tel:${item.phone}`)}>
-        <ListItem bottomDivider>
-          <Icon
-            name="circle"
-            size={25}
-            color={
-              item.status == 1
-                ? "green"
-                : item.status == 2
-                ? COLORS.PRIMARY
-                : "#f00"
-            }
-          />
-          <ListItem.Content>
-            <ListItem.Title style={STYLES.listTitle}>
-              {item.name}
-            </ListItem.Title>
-            <ListItem.Subtitle style={STYLES.subtitle}>
-              <View style={STYLES.wrapper}>
-                <View style={STYLES.subtitle}>
-                  <Text style={STYLES.label}>Specilisation</Text>
-                  <Text>{item.specialisation}</Text>
-                </View>
-                <View style={STYLES.subtitle}>
-                  <Text style={STYLES.label}>Hospital</Text>
-                  <Text>{item.hospital}</Text>
-                </View>
-                <View style={STYLES.subtitle}>
-                  <Text style={STYLES.label}>District</Text>
-                  <Text>{item.district}</Text>
-                </View>
-                <View style={STYLES.subtitle}>
-                  <Text style={STYLES.label}>Languages</Text>
-                  <Text>{item.languages}</Text>
-                </View>
-              </View>
-            </ListItem.Subtitle>
-          </ListItem.Content>
-          <Icon name="phone" size={25} color="rgba(0,0,0,.3)" />
-        </ListItem>
-      </TouchableOpacity>
-    );
-  };
-  const _header = () => (
-    <CustomHeader
-      left={
-        <TouchableOpacity
-          style={{ paddingLeft: 10 }}
-          onPress={() => navigation.openDrawer()}
-        >
-          <Icon name="menu" size={25} color={COLORS.SECONDARY} />
-        </TouchableOpacity>
-      }
-      title={
-        <Text style={[STYLES.centerHeader, STYLES.title]}>Medical Experts</Text>
-      }
-    />
-  );
+					console.log("Some errors");
+					console.log(JSON_RESPONSE);
+				}
+			}
+		} catch (e) {
+			Alert.alert(`Ooops!`, `Something went wrong. Try again!`, [
+				{ text: "OK" },
+			]);
 
-  let { doctors, isLoading, login } = state;
+			console.log(e);
+		}
+		*/
+	};
 
-  if (login) return <Login />;
+	const _keyExtractor = (item) => item._id;
 
-  if (isLoading) return <Loader />;
+	const _renderItem = ({ item }) => {
+		return (
+			<TouchableOpacity onPress={() => navigation.navigate("Chat", item)}>
+				<ListItem bottomDivider>
+					<Icon
+						name="circle"
+						size={25}
+						color={
+							item.status == 1
+								? "green"
+								: item.status == 2
+								? COLORS.PRIMARY
+								: "#f00"
+						}
+					/>
+					<ListItem.Content>
+						<ListItem.Title style={STYLES.listTitle}>
+							{item.name}
+						</ListItem.Title>
+						<ListItem.Subtitle style={STYLES.subtitle}>
+							<View style={STYLES.wrapper}>
+								<View style={STYLES.subtitle}>
+									<Text style={STYLES.label}>
+										Specilisation
+									</Text>
+									<Text>{item.specialisation}</Text>
+								</View>
+								<View style={STYLES.subtitle}>
+									<Text style={STYLES.label}>Hospital</Text>
+									<Text>{item.hospital}</Text>
+								</View>
+								<View style={STYLES.subtitle}>
+									<Text style={STYLES.label}>District</Text>
+									<Text>{item.district}</Text>
+								</View>
+								<View style={STYLES.subtitle}>
+									<Text style={STYLES.label}>Languages</Text>
+									<Text>{item.languages}</Text>
+								</View>
+							</View>
+						</ListItem.Subtitle>
+					</ListItem.Content>
+					<Icon
+						onPress={() => Linking.openURL(`tel:${item.phone}`)}
+						name="phone"
+						size={25}
+						color="rgba(0,0,0,.3)"
+					/>
+				</ListItem>
+			</TouchableOpacity>
+		);
+	};
+	const _header = () => (
+		<CustomHeader
+			left={
+				<TouchableOpacity
+					style={{ paddingLeft: 10 }}
+					onPress={() => navigation.openDrawer()}>
+					<Icon name="menu" size={25} color={COLORS.SECONDARY} />
+				</TouchableOpacity>
+			}
+			title={
+				<Text style={[STYLES.centerHeader, STYLES.title]}>
+					Medical Experts
+				</Text>
+			}
+		/>
+	);
 
-  if (typeof doctors === "object" && doctors.length == 0)
-    return (
-      <View style={STYLES.container}>
-        <CustomHeader navigation={navigation} title={"Doctors"} />
-        <View>
-          <CustomStatusBar />
-          <Text style={STYLES.textColor}>Can't find Doctors to show.</Text>
-        </View>
-      </View>
-    );
+	let { doctors, isLoading, login } = state;
 
-  return (
-    <View style={STYLES.wrapper}>
-      <CustomStatusBar />
+	if (login) return <Login />;
 
-      {_header()}
+	if (isLoading) return <Loader />;
 
-      <FlatList
-        data={doctors}
-        renderItem={_renderItem}
-        keyExtractor={_keyExtractor}
-      />
-    </View>
-  );
+	if (doctors?.length == 0)
+		return (
+			<View style={STYLES.container}>
+				<CustomHeader navigation={navigation} title={"Doctors"} />
+				<View>
+					<CustomStatusBar />
+					<Text style={STYLES.textColor}>No Doctors available</Text>
+				</View>
+			</View>
+		);
+
+	return (
+		<View style={STYLES.wrapper}>
+			<CustomStatusBar />
+
+			{_header()}
+
+			<FlatList
+				data={doctors}
+				renderItem={_renderItem}
+				keyExtractor={_keyExtractor}
+			/>
+		</View>
+	);
 };
 
 const STYLES = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    backgroundColor: COLORS.SECONDARY,
-  },
-  header: {
-    flex: 1,
-  },
-  body: {
-    flex: 2,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  title: {
-    fontWeight: "bold",
-    color: COLORS.SECONDARY,
-    textAlign: "center",
-  },
-  alert: {
-    color: COLORS.GREY,
-    textAlign: "center",
-    marginTop: 15,
-  },
-  listTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  subtitle: {
-    flexDirection: "row",
-    fontSize: 10,
-    opacity: 0.5,
-  },
-  label: {
-    fontWeight: "bold",
-    marginRight: 5,
-  },
-  leftHeader: {
-    flex: 1,
-    paddingLeft: 10,
-  },
-  centerHeader: {
-    flex: 2,
-    flexDirection: "row",
-  },
-  rightHeader: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-  },
+	wrapper: {
+		flex: 1,
+		backgroundColor: COLORS.SECONDARY,
+	},
+	header: {
+		flex: 1,
+	},
+	body: {
+		flex: 2,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	title: {
+		fontWeight: "bold",
+		color: COLORS.SECONDARY,
+		textAlign: "center",
+	},
+	alert: {
+		color: COLORS.GREY,
+		textAlign: "center",
+		marginTop: 15,
+	},
+	listTitle: {
+		fontSize: 16,
+		fontWeight: "bold",
+	},
+	subtitle: {
+		flexDirection: "row",
+		fontSize: 10,
+		opacity: 0.5,
+	},
+	label: {
+		fontWeight: "bold",
+		marginRight: 5,
+	},
+	leftHeader: {
+		flex: 1,
+		paddingLeft: 10,
+	},
+	centerHeader: {
+		flex: 2,
+		flexDirection: "row",
+	},
+	rightHeader: {
+		flex: 1,
+		flexDirection: "row",
+		justifyContent: "flex-end",
+	},
 });
 
 export default Doctors;

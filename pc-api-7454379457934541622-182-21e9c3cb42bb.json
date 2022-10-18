@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "pc-api-7454379457934541622-182",
+  "private_key_id": "21e9c3cb42bb744b101c576989b0a9db222aada3",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCx3kAkJ5szl6/6\nvKmsbKiNryALXPCQ06iOuNyI4quRk2FNvCTDcDRo/bz1VXXos/DyjddlJ2fvseA2\nwGp0nXfDo54Hql4HgiKweGsSKMEoc8O7Si0dxXzsCddbV7lgmgf93qZxxjSUI3Id\nnViVSVFKWSDvcV3YGK57nlwq3w1XAiDxeGRwRdQoEPDnJlAbK8MEidGWeqgqiseX\n1oYIEVvmTeVrEO5AJOiE/nrK88PePG+2Jjlg4TVAI+zQuvqSyCM9YMMBA1Hg7XNO\n+neNIGxsZqez/uKRx+4aUiJoRK/Ey/5qF2fqx490nlK3dbHAJ7dgvWhpGa09NRwO\nu9xL8oOXAgMBAAECggEAHU5PJyXXboK5nghjtGMaym1mTDj98f7NsOZIf81JE21D\nBPnQ3Nqp5/qWnZ19FeA//Nbd/G6ns1iNZrgBUkF3sCZPLVgmsfoBGS5eBdntKWsZ\nfsxT7qnRUVq1vvkPNBls46lBp1FO7HGCpdp88+vmludkg88b9TTr2rZW3UFvAzyx\nyEaD6jaKuBhwTrsD4NvfLdEnWmEDmqK+OiDjSDxgzV+u2lCVZAU/pUNscp2yGtPs\n6sWTkseoe8akc2iP0HRWyC72ME7tjslOL9tqbbSgIBJwz1pTUPImAdEuXFbjIH3N\nzeOCWxks/5JCDmF6e9GRfE8e2NMZ+4EB05K+zDuXQQKBgQDu8pKP7vY0CyKXZzcO\nzRRT27GhQMSSaqy7mP/e5hpDH1VVPP81RKShkvZabgATW3agqI4qd57t83AuLllL\nHPn+xcstKvqvyY86h2IgSF+nfpsTE2sat9BpWk4Sg8IRJWUHCte9fbWMEZLUnAHB\nKQVZ3hRmeeGS1NodpHNInjLckQKBgQC+j8tqLkZDKYQs2nfYwV3AZA82FU+2vFmw\nFQzdEM8BaCyrEKMbi95DkRZz9Pb91Y+F992cD4q/dzUve87nPrQ5UV95f51tp99D\n/V/ch2UqScTr4MB6cCWJfhRGMg20NjYGmZY97GTY1jyHn2xVLUCuQ1hfZJ9ziSTc\nQwJkYa8RpwKBgFM1ecBRsL7y2brroIqw89E4AiVrTojGSRyS7ReL/b0+HhMuyJie\nLM5vRQa8o54aDbdouwki2t92FKygS0wS7SPBcT1raBzrDcuN9afUTCshtZLxAi0t\nsY/eeK2N4HjkEshfCD3elugN/pm3Mg034bsn0ObWrqzZHpOP/u1c2c1hAoGAEi9K\nrBFKZzJZCKa4dRjOx4NE6FZUSw3iSSlZFud5uZqlWJW32vMX/L6ls98WitaMYa5r\nmW7qQKcxjhx0fCDBtg6L295PuZ0hcy2ErljFUKnFfvTtqUF2c45yhNhV8nKR6UNS\n0Qnz/bVEBXUzM1WkLH0Eu+WwSag2ukYyvj2MJVUCgYEAu0EC0VPOhPLnU0yzkAls\nsziP9cknUbJjft4MJQTxwFyjWz86CvlDtC0bfjLNvnQ/jCO7U4zrAlS6RsQkxbih\nP4ez1MfBwWgiJbdhKvUa0HYZg9FAIbPkKZy84nkvSXuunpfrZpncd9knJ7sKsp5T\nEcZFXXThujJ3hPopAx7epHY=\n-----END PRIVATE KEY-----\n",
+  "client_email": "mobiklinic-expo-app@pc-api-7454379457934541622-182.iam.gserviceaccount.com",
+  "client_id": "111459429853255251705",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/mobiklinic-expo-app%40pc-api-7454379457934541622-182.iam.gserviceaccount.com"
+}

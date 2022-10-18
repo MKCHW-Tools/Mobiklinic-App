@@ -8,14 +8,15 @@ import { UserContext } from "./providers/User";
 import forgotPassword from "./screens/password.forgot";
 import PasswordReset from "./screens/password.reset";
 import Login from "./screens/login";
+import { DOWNLOAD } from "./helpers/functions";
 import {
 	DrawerNavigation,
 	DrawerNavigationLogged,
 } from "./helpers/navigations";
 import {
 	cyrb53,
-	RETRIEVE_LOCAL_USERS,
-	SAVE_LOCAL_USERS,
+	RETRIEVE_LOCAL_USER,
+	SAVE_LOCAL_USER,
 } from "./helpers/functions";
 import Loader from "./ui/loader";
 import { URLS } from "./constants/API";
@@ -25,6 +26,9 @@ import Doctors from "./screens/doctors";
 import ViewDiagnosis from "./screens/diagnosis.view";
 import NewDiagnosis from "./screens/diagnosis.new";
 import FollowUp from "./screens/diagnosis.follow.up";
+import Chat from "./screens/Chat";
+import Chats from "./screens/Chats";
+
 import { initialStateAuth, reducerAuth } from "./reducers/Auth";
 
 const Stack = createStackNavigator();
@@ -33,8 +37,8 @@ const Entry = () => {
 	const userContext = React.useContext(UserContext);
 	const [state, dispatch] = React.useReducer(reducerAuth, initialStateAuth);
 
-	React.useEffect(() => {
-		// Fetch the token from storage then navigate to our appropriate place
+	React.useEffect(async () => {
+		//await AsyncStorage.clear(); // Fetch the token from storage then navigate to our appropriate place
 		const autoLogin = async () => {
 			// AsyncStorage.clear()
 
@@ -62,18 +66,23 @@ const Entry = () => {
 			// screen will be unmounted and thrown away.
 		};
 
-		autoLogin()
+		autoLogin();
 	}, []);
+
+	// Check if the user is logged in,
+	// if yes, navigate to the app
+	// if no, navigate to the login screen
+	// To login the user, we need to send the user's credentials to the server
+	// and get a token back
+	//If network error, retrieve users from local storage
+	// Compare users to the logged in user
+	// If the user is found, login the user and navigate to the app.
+	// If the user is not found, show an error message
 
 	const memo = React.useMemo(
 		() => ({
 			signIn: async (data) => {
 				let { user, setLoading } = data;
-
-				// In a production app, we need to send some data (usually username, password) to server and get a token
-				// We will also need to handle errors if sign in failed
-				// After getting token, we need to persist the token using `AsyncStorage`
-				// In the example, we'll use a dummy token
 
 				if (typeof user === undefined) {
 					Alert.alert(
@@ -85,7 +94,7 @@ const Entry = () => {
 
 				const { username, password } = user;
 
-				if (username == "" && password == "") {
+				if (username === "" && password === "") {
 					Alert.alert(
 						"Error",
 						"Provide your phone number and password"
@@ -93,25 +102,36 @@ const Entry = () => {
 					return;
 				}
 
-				let theUsers = null;
+				let theUser = null;
 
 				try {
-					theUsers = await RETRIEVE_LOCAL_USERS();
-					theUsers = JSON.parse(theUsers);
+					theUser = await RETRIEVE_LOCAL_USER();
+					theUser = JSON.parse(theUser);
 				} catch (err) {
 					console.log(err);
 				}
 
-				if (theUsers !== null && theUsers.length > 0) {
+				if (theUser !== null) {
 					let hash = cyrb53(password);
-					let aUser = theUsers.filter(
+					let myUser =
+						theUser.username === username && theUser.hash === hash
+							? theUser
+							: null;
+
+					/* 					let aUser = theUser.filter(
 						(theUser) =>
 							theUser.username === username &&
 							theUser.hash === hash
-					)[0];
+					)[0]; */
 
-					if (aUser !== undefined && aUser.username === username) {
-						dispatch({ type: "SIGN_IN", accessToken: password });
+					console.log(myUser);
+
+					if (myUser !== undefined && myUser.username === username) {
+						dispatch({
+							type: "SIGN_IN",
+							accessToken: password,
+							offline: false,
+						});
 						return;
 					} else {
 						Alert.alert("Failed to login", "Try again, please!");
@@ -137,26 +157,72 @@ const Entry = () => {
 						const { result, accessToken, refreshToken } = json_data;
 
 						if (result == "Success") {
-							await SAVE_LOCAL_USERS(username, password);
+							await SAVE_LOCAL_USER({
+								username,
+								password,
+								tokens: { accessToken, refreshToken },
+							});
 
 							userContext.setAccessToken(accessToken);
 
-							await AsyncStorage.setItem(
+							/* await AsyncStorage.setItem(
 								"tokens",
 								JSON.stringify({ accessToken, refreshToken })
-							);
+							); */
+							const resources = [
+								"ambulances",
+								"doctors",
+								"diagnosis",
+							];
 
-							dispatch({ type: "SIGN_IN", accessToken });
+							if (
+								DOWNLOAD({
+									accessToken,
+									items: resources,
+									per_page: 10,
+								})
+							) {
+								dispatch({
+									type: "SIGN_IN",
+									accessToken,
+									offline: false,
+								});
+							}
 						} else
 							Alert.alert(
 								"Failed to login",
-								"Check your login details"
+								"Check your login details",
+								[
+									{
+										text: "Cancel",
+										onPress: () => setLoading(false),
+									},
+								],
+
+								{
+									cancelable: true,
+									onDissmiss: () => {
+										setLoading(false);
+									},
+								}
 							);
 					} catch (err) {
 						err?.message == "Network request failed" &&
 							Alert.alert(
 								"Oops!",
-								"Check your internet connection"
+								"Check your internet connection",
+								[
+									{
+										text: "Cancel",
+										onPress: () => setLoading(false),
+									},
+								],
+								{
+									cancelable: true,
+									onDissmiss: () => {
+										setLoading(false);
+									},
+								}
 							);
 						setLoading(false);
 						console.log(err);
@@ -164,7 +230,7 @@ const Entry = () => {
 				}
 			},
 			signOut: () => {
-				AsyncStorage.removeItem("tokens");
+				// AsyncStorage.removeItem("tokens");
 				dispatch({ type: "SIGN_OUT" });
 			},
 			signUp: async (data) => {
@@ -294,36 +360,90 @@ const Entry = () => {
 			<NavigationContainer>
 				<Stack.Navigator>
 					{isLoading ? (
-                // We haven't finished checking for the token yet
-                <Stack.Screen name="loader" component={Loader} options={{headerShown: false}} />
-                )
-                :
-                accessToken == null
-                ?
-                (
-                    <>
-                    <Stack.Screen name="DrawerNavigation" component={DrawerNavigation} options={{headerShown: false}} />
-                    <Stack.Screen name="Login" component={Login} options={{
-                        headerShown: false,
-                        animationTypeForReplace: state.isSignout ? 'pop' : 'push',
-                        }} />
-                    <Stack.Screen name="forgotPassword" options={{ headerShown: false }} component={forgotPassword} />
-                    <Stack.Screen name="resetPassword" options={{ headerShown: false }} component={PasswordReset} />
-                    </>
-                )
-                :
-                (
-                    <>
-                    <Stack.Screen name="Dashboard" options={{ headerShown: false }} component={DrawerNavigationLogged} />
-                    <Stack.Screen name="Doctors" options={{ headerShown: false }} component={Doctors} />
-                    <Stack.Screen name="Ambulances" options={{ headerShown: false }} component={Ambulances} />
-                    <Stack.Screen name="Diagnose" options={{ headerShown: false }} component={Diagnose} />
-                    <Stack.Screen name="ViewDiagnosis" options={{ headerShown: false }} component={ViewDiagnosis} />
-                    <Stack.Screen name="NewDiagnosis" options={{ headerShown: false }} component={NewDiagnosis} />
-                    <Stack.Screen name="FollowUp" options={{ headerShown: false }} component={FollowUp} />
-                    </>
-                )
-                }
+						// We haven't finished checking for the token yet
+						<Stack.Screen
+							name="loader"
+							component={Loader}
+							options={{ headerShown: false }}
+						/>
+					) : accessToken == null ? (
+						<>
+							<Stack.Screen
+								name="DrawerNavigation"
+								component={DrawerNavigation}
+								options={{ headerShown: false }}
+							/>
+							<Stack.Screen
+								name="Login"
+								component={Login}
+								options={{
+									headerShown: false,
+									animationTypeForReplace: state.isSignout
+										? "pop"
+										: "push",
+								}}
+							/>
+							<Stack.Screen
+								name="forgotPassword"
+								options={{ headerShown: false }}
+								component={forgotPassword}
+							/>
+							<Stack.Screen
+								name="resetPassword"
+								options={{ headerShown: false }}
+								component={PasswordReset}
+							/>
+						</>
+					) : (
+						<>
+							<Stack.Screen
+								name="Dashboard"
+								options={{ headerShown: false }}
+								component={DrawerNavigationLogged}
+							/>
+							<Stack.Screen
+								name="Doctors"
+								options={{ headerShown: false }}
+								component={Doctors}
+							/>
+							<Stack.Screen
+								name="Ambulances"
+								options={{ headerShown: false }}
+								component={Ambulances}
+							/>
+							<Stack.Screen
+								name="Diagnose"
+								options={{ headerShown: false }}
+								component={Diagnose}
+							/>
+							<Stack.Screen
+								name="ViewDiagnosis"
+								options={{ headerShown: false }}
+								component={ViewDiagnosis}
+							/>
+							<Stack.Screen
+								name="NewDiagnosis"
+								options={{ headerShown: false }}
+								component={NewDiagnosis}
+							/>
+							<Stack.Screen
+								name="FollowUp"
+								options={{ headerShown: false }}
+								component={FollowUp}
+							/>
+
+							<Stack.Screen
+								name="Chats"
+								options={{ headerShown: false }}
+								component={Chats}
+							/>
+							<Stack.Screen
+								name="Chat"
+								options={{ headerShown: false }}
+								component={Chat}
+							/>
+						</>
+					)}
 				</Stack.Navigator>
 			</NavigationContainer>
 		</AuthContext.Provider>

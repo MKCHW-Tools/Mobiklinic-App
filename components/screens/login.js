@@ -1,4 +1,4 @@
-import * as React from 'react'
+import * as React from "react";
 
 import {
 	View,
@@ -7,152 +7,145 @@ import {
 	Text,
 	TextInput,
 	StyleSheet,
-	TouchableOpacity
-} from 'react-native'
+	TouchableOpacity,
+} from "react-native";
 
-import Icon from 'react-native-vector-icons/Feather'
-import {
-	COLORS,
-	DIMENS
-} from '../constants/styles'
-import SignUp from './signup'
+import Icon from "react-native-vector-icons/Feather";
+import { COLORS, DIMENS } from "../constants/styles";
+import SignUp from "./signup";
 
-import AuthContext from '../contexts/auth'
-import { CustomStatusBar } from '../ui/custom.status.bar'
-import Loader from '../ui/loader'
+import AuthContext from "../contexts/auth";
+import { CustomStatusBar } from "../ui/custom.status.bar";
+import Loader from "../ui/loader";
 
 const Login = () => {
-
-	const {signIn} = React.useContext(AuthContext)
-	const [loading, setLoading] = React.useState(false)
+	const { signIn } = React.useContext(AuthContext);
+	const [loading, setLoading] = React.useState(false);
 	const [user, setUser] = React.useState({
-		username: '',
-		password: '',
-	})
+		username: "",
+		password: "",
+	});
 
-	if (loading)
-		return <Loader />
-	
-	return(
+	if (loading) return <Loader />;
+
+	return (
 		<View style={styles.container}>
-			<CustomStatusBar/>
+			<CustomStatusBar />
 
 			<View style={styles.logoContainer}>
-				<Image 
-					style={{width: 80, height: 80}}
-					source={require('../imgs/logo.png')}
+				<Image
+					style={{ width: 80, height: 80 }}
+					source={require("../imgs/logo.png")}
 				/>
 				<Text style={styles.title}>Sign in</Text>
 			</View>
-				<View style={styles.formContainer}>
-					
-					<TextInput style={styles.input}
-						autoCorrect={false}
-						placeholderTextColor='grey'
-						// keyboardType={'phone-pad'}
-						selectionColor={COLORS.SECONDARY}
-						onChangeText={ text => setUser({...user, username: text} )}
-						value={user.username}
-						placeholder='Phone number e.g: 256778xxxxxx'
-					/>
-
-					<TextInput style={styles.input}
-						password={true}
-						secureTextEntry={true}
-						autoCorrect={false}
-						placeholderTextColor='grey'
-						selectionColor={COLORS.SECONDARY}
-						onChangeText={ text => setUser({...user, password: text} )}
-						value={user.password}
-						placeholder='Password'
-					/>
-
-					{
-						user.username != '' && user.password != ''
-						?
-						<TouchableOpacity
-							style={[styles.btn, styles.btnPrimary]}
-							onPress={() => {
-								setLoading(true)
-								signIn({ user,setLoading })
-							}}
-						>
-							<Text style={styles.whiteText}>Sign in</Text>
-							<Icon
-								name="arrow-right"
-								size={20}
-								strokeSize={3}
-								color={COLORS.WHITE}
-							/>
-
-						</TouchableOpacity>
-						:
-						<TouchableOpacity style={[styles.btn, styles.btnInfo]}>
-							<Text style={styles.muteText}>Sign in</Text>
-							<Icon
-								name="arrow-right"
-								size={20}
-								strokeSize={5}
-								color={COLORS.WHITE_LOW}
-							/>
-						</TouchableOpacity>
+			<View style={styles.formContainer}>
+				<TextInput
+					style={styles.input}
+					autoCorrect={false}
+					placeholderTextColor="grey"
+					// keyboardType={'phone-pad'}
+					selectionColor={COLORS.SECONDARY}
+					onChangeText={(text) =>
+						setUser({ ...user, username: text })
 					}
+					value={user.username}
+					placeholder="Phone number e.g: 256778xxxxxx"
+				/>
 
-					{/*<TouchableOpacity
+				<TextInput
+					style={styles.input}
+					password={true}
+					secureTextEntry={true}
+					autoCorrect={false}
+					placeholderTextColor="grey"
+					selectionColor={COLORS.SECONDARY}
+					onChangeText={(text) =>
+						setUser({ ...user, password: text })
+					}
+					value={user.password}
+					placeholder="Password"
+				/>
+
+				{user.username != "" && user.password != "" ? (
+					<TouchableOpacity
+						style={[styles.btn, styles.btnPrimary]}
+						onPress={() => {
+							setLoading(true);
+							signIn({ user, setLoading });
+						}}>
+						<Text style={styles.whiteText}>Sign in</Text>
+						<Icon
+							name="arrow-right"
+							size={20}
+							strokeSize={3}
+							color={COLORS.WHITE}
+						/>
+					</TouchableOpacity>
+				) : (
+					<TouchableOpacity style={[styles.btn, styles.btnInfo]}>
+						<Text style={styles.muteText}>Sign in</Text>
+						<Icon
+							name="arrow-right"
+							size={20}
+							strokeSize={5}
+							color={COLORS.WHITE_LOW}
+						/>
+					</TouchableOpacity>
+				)}
+
+				{/*<TouchableOpacity
 						onPress={ () => this.setState({toSignUp:true})}
 					>
 						<Text style={[styles.textColor,styles.linkItem]}>or, sign up</Text>
 					</TouchableOpacity> */}
-
-				</View>
 			</View>
-			
-		)
+		</View>
+	);
+};
 
-}
-
-export default Login
+export default Login;
 
 const styles = StyleSheet.create({
 	container: {
-		flex:1,
-		backgroundColor:COLORS.WHITE,
+		flex: 1,
+		backgroundColor: COLORS.WHITE,
 	},
 	logoContainer: {
-		flexGrow:2,
-		alignItems:'center',
-		justifyContent:'center',
-		padding: DIMENS.FORM.PADDING
+		flexGrow: 2,
+		alignItems: "center",
+		justifyContent: "center",
+		padding: DIMENS.FORM.PADDING,
 	},
-	title:{
+	title: {
 		color: COLORS.ACCENT_1,
 		fontSize: 14,
-		fontWeight: 'bold',
-		textTransform: 'uppercase',
-		padding: DIMENS.PADDING
+		fontWeight: "bold",
+		textTransform: "uppercase",
+		padding: DIMENS.PADDING,
 	},
-	subTitle:{
+	subTitle: {
 		color: COLORS.SECONDARY,
-		fontWeight:'bold',
-		paddingVertical:20
+		fontWeight: "bold",
+		paddingVertical: 20,
 	},
-	textColor:{
-		color: COLORS.WHITE_LOW
+	textColor: {
+		color: COLORS.WHITE_LOW,
 	},
-	linkItem:{
+	linkItem: {
 		paddingTop: DIMENS.PADDING,
-		textAlign:'center'
+		textAlign: "center",
 	},
-	formContainer:{
+	formContainer: {
 		flexGrow: 1,
 		padding: DIMENS.FORM.PADDING,
-		justifyContent:'center',
+		justifyContent: "center",
 		borderTopLeftRadius: 30,
 		borderTopRightRadius: 30,
-		backgroundColor: COLORS.PRIMARY
+		backgroundColor: COLORS.PRIMARY,
 	},
 	input: {
-		backgroundColor:COLORS.WHITE_LOW,
+		backgroundColor: COLORS.WHITE_LOW,
 		// borderStyle: 'solid',
 		// borderWidth: 2,
 		borderColor: COLORS.WHITE_LOW,
@@ -160,36 +153,36 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 15,
 		paddingVertical: 5,
 		marginBottom: 10,
-		fontFamily:'Roboto',
+		fontFamily: "Roboto",
 	},
-	btn:{
+	btn: {
 		padding: DIMENS.PADDING,
 	},
-	errorMsg:{
-		color: COLORS.ERRORS
+	errorMsg: {
+		color: COLORS.ERRORS,
 	},
-	btn :{
+	btn: {
 		padding: DIMENS.PADDING,
-		flexDirection:'row',
-		justifyContent:'space-between',
-		alignItems:'center',
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
 		borderRadius: 50,
-		paddingHorizontal:15
+		paddingHorizontal: 15,
 	},
 	btnInfo: {
 		backgroundColor: COLORS.WHITE_LOW,
 	},
-	btnPrimary:{
+	btnPrimary: {
 		backgroundColor: COLORS.ACCENT_1,
 	},
-	submitText:{
+	submitText: {
 		color: COLORS.ACCENT_1,
-		fontWeight:'bold'
+		fontWeight: "bold",
 	},
 	muteText: {
-		color: COLORS.WHITE_LOW
+		color: COLORS.WHITE_LOW,
 	},
 	whiteText: {
-		color: COLORS.WHITE
-	}
-})
+		color: COLORS.WHITE,
+	},
+});
