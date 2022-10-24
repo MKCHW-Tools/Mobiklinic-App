@@ -11,7 +11,8 @@
 			"backgroundColor": "#ffffff"
 		},
 		"updates": {
-			"fallbackToCacheTimeout": 0
+			"fallbackToCacheTimeout": 0,
+			"url": "https://u.expo.dev/5c5316b5-3b79-45cf-8241-278a144cf851"
 		},
 		"assetBundlePatterns": ["**/*"],
 		"ios": {
@@ -22,7 +23,10 @@
 				"foregroundImage": "./assets/adaptive-icon.png",
 				"backgroundColor": "#FFFFFF"
 			},
-			"package": "com.mobiklinic.app"
+			"package": "com.mobiklinic.app",
+			"compileSdkVersion": 31,
+			"targetSdkVersion": 31,
+			"buildToolsVersion": "31.0.0"
 		},
 		"web": {
 			"favicon": "./assets/favicon.png"
@@ -31,6 +35,9 @@
 			"eas": {
 				"projectId": "5c5316b5-3b79-45cf-8241-278a144cf851"
 			}
+		},
+		"runtimeVersion": {
+			"policy": "sdkVersion"
 		}
 	}
 }
