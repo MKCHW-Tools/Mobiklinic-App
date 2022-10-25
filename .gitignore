@@ -2,6 +2,5 @@ node_modules/
 mobiklinic-upload-key.keystore
 keystore.jks
 upload_certificate.pem
-credentials.json
 .DS_Store
 pc-api-7454379457934541622-182-21e9c3cb42bb.json
