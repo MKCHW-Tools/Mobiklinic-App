@@ -11,8 +11,9 @@ import {
 	View,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
-import Icon from "react-native-vector-icons/Feather";
-import IconFont from "react-native-vector-icons/FontAwesome";
+import { Ionicons } from "@expo/vector-icons/Feather";
+import Icon from "@expo/vector-icons/Feather";
+import IconFont from "@expo/vector-icons/FontAwesome";
 import { COLORS, DIMENS } from "../constants/styles";
 import { colors, ListItem } from "react-native-elements";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -83,7 +84,7 @@ export default function Chats({ route, navigation }) {
 			AsyncStorage.setItem(`@${items[i]}`, JSON.stringify(all)); */
 		};
 
-		fetchChats();
+		/* fetchChats(); */
 	}, []);
 
 	const _renderItem = ({ item }) => (

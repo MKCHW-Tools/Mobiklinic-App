@@ -17,7 +17,7 @@ import Icon from "react-native-vector-icons/Feather";
 import { COLORS, DIMENS } from "../constants/styles";
 
 import Login from "./login";
-import AuthContext from "../contexts/auth";
+import { AuthContext } from "../contexts/auth";
 import { DoctorsContext } from "../providers/Doctors";
 import { UserContext } from "../providers/User";
 import { tokensRefresh } from "../helpers/functions";
@@ -40,8 +40,21 @@ const Doctors = ({ navigation }) => {
 
 	React.useEffect(() => {
 		_getDoctors();
+		/* 		const returnUser = async () => {
+			return await _getUser();
+		}; */
+
+		//console.log(returnUser());
+		return () => {};
 	}, []);
 
+	const _getUser = async () => {
+		try {
+			return await AsyncStorage.getItem("@user");
+		} catch (e) {
+			console.log(e);
+		}
+	};
 	const _getDoctors = async () => {
 		let doctorsOnDevice = await AsyncStorage.getItem("@doctors");
 		doctorsOnDevice = JSON.parse(doctorsOnDevice);

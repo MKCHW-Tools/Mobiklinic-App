@@ -1,5 +1,7 @@
 import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert } from "react-native";
+
 import axios from "axios";
 import { URLS } from "../constants/API";
 import uniqWith from "lodash/uniqWith";
@@ -94,6 +96,7 @@ export const SAVE_LOCAL_USER = async (user = {}) => {
 		await AsyncStorage.setItem(
 			"@user",
 			JSON.stringify({
+				id: user.id,
 				username: user.username,
 				hash: HASH,
 				tokens: user.tokens,
@@ -160,4 +163,128 @@ export const DOWNLOAD = async (data) => {
 			return true;
 		}
 	}
+};
+
+export const signIn = async (data) => {
+	let { user, setIsLoading, setTokens, setMyUser: setUser } = data;
+
+	if (typeof user === undefined) {
+		Alert.alert("Error", "Provide your phone number and password");
+		return;
+	}
+
+	const { username, password } = user;
+
+	if (username === "" && password === "") {
+		Alert.alert("Error", "Provide your phone number and password");
+		return;
+	}
+
+	let theUser = null;
+
+	try {
+		theUser = await RETRIEVE_LOCAL_USER();
+		theUser = JSON.parse(theUser);
+	} catch (err) {
+		console.log(err);
+	}
+
+	if (theUser !== null) {
+		let hash = cyrb53(password);
+		let myUser =
+			theUser.username === username && theUser.hash === hash
+				? theUser
+				: null;
+
+		if (myUser !== undefined && myUser.username === username) {
+			setUser({ ...myUser, offline: true });
+			setIsLoading(false);
+			setTokens({ access: password });
+			return;
+		} else {
+			Alert.alert("Failed to login", "Try again, please!");
+			return;
+		}
+	} else {
+		try {
+			console.log("Starting network request");
+			let response = await fetch(`${URLS.BASE}/users/login`, {
+				method: "POST",
+				body: JSON.stringify({
+					username: username,
+					password: password,
+				}),
+				headers: {
+					"Content-type": "application/json; charset=UTF-8",
+					Accept: "application/json",
+				},
+			});
+
+			let json_data = await response.json();
+			const { result, id, accessToken, refreshToken } = json_data;
+
+			if (result == "Success") {
+				await SAVE_LOCAL_USER({
+					id,
+					username,
+					password,
+					tokens: { access: accessToken, refresh: refreshToken },
+				});
+
+				const resources = ["ambulances", "doctors", "diagnosis"];
+
+				if (
+					DOWNLOAD({
+						accessToken,
+						items: resources,
+						per_page: 10,
+					})
+				) {
+					setUser({ id, username, offline: false });
+					setIsLoading(false);
+					setTokens({ access: accessToken });
+				}
+			} else
+				Alert.alert(
+					"Failed to login",
+					"Check your login details",
+					[
+						{
+							text: "Cancel",
+							onPress: () => setIsLoading(false),
+						},
+					],
+
+					{
+						cancelable: true,
+						onDissmiss: () => {
+							setIsLoading(false);
+						},
+					}
+				);
+		} catch (err) {
+			err?.message == "Network request failed" &&
+				Alert.alert(
+					"Oops!",
+					"Check your internet connection",
+					[
+						{
+							text: "Cancel",
+							onPress: () => setIsLoading(false),
+						},
+					],
+					{
+						cancelable: true,
+						onDissmiss: () => {
+							setIsLoading(false);
+						},
+					}
+				);
+			setIsLoading(false);
+			console.log(err);
+		}
+	}
+};
+export const signOut = () => {
+	AsyncStorage.removeItem("tokens");
 };

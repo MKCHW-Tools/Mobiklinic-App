@@ -7,38 +7,122 @@ import {
 	View,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
-import Icon from "react-native-vector-icons/Feather";
-import IconFont from "react-native-vector-icons/FontAwesome";
+import { Ionicons, Octicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import Feather from "@expo/vector-icons/Feather";
+import IconFont from "@expo/vector-icons/FontAwesome";
 import { COLORS, DIMENS } from "../constants/styles";
 import { colors, ListItem } from "react-native-elements";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { URLS } from "../constants/API";
+import { AuthContext } from "../contexts/auth";
 
 export default function Chat({ route, navigation }) {
-	const [chat, setChat] = React.useState([]);
+	const [chats, setChats] = React.useState([]);
 	let [msg, setMsg] = React.useState("");
-
+	let [chatId, setChatId] = React.useState(null);
 	const doctor = route?.params?._id;
 	const name = route?.params?.name;
 
 	let currentTime = new Date();
 	let [keyboardStatus, setKeyboardStatus] = React.useState(false);
+	const { user, tokens } = React.useContext(AuthContext);
+	// console.log(user);
+	const getChats = async (chatId) => {
+		try {
+			const conversation = await AsyncStorage.getItem(chatId);
+			const messages = JSON.parse(conversation) || [];
+			// console.log(messages.length);
+			// console.log(JSON.stringify(messages, null, 2));
+			setChats([...messages]);
+		} catch (e) {
+			console.log("Get chats", e);
+		}
+	};
+	const getUser = async () => {
+		try {
+			const user = await AsyncStorage.getItem("@user");
+			return JSON.parse(user);
+		} catch (e) {
+			console.log(e);
+		}
+	};
+	const getChat = async (chatUsers) => {
+		try {
+			return await AsyncStorage.getItem(chatUsers);
+		} catch (e) {
+			console.log(e);
+		}
+	};
+	const makeChatId = async () => {
+		const { id, tokens } = await getUser();
+		const myChat = await getChat(`${id}${doctor}`);
+		if (typeof myChat !== "string") {
+			let response = await fetch(`${URLS.BASE}/chats`, {
+				method: "POST",
+				body: JSON.stringify({
+					userId: [id, doctor],
+				}),
+				headers: {
+					"Content-type": "application/json; charset=UTF-8",
+					Accept: "application/json",
+					Authorization: tokens.accessToken,
+				},
+			});
+
+			let json_data = await response.json();
+			const chatUsers = `${id}${doctor}`;
+			const chatId = json_data._id;
+			await AsyncStorage.setItem(chatUsers, chatId);
+			setChatId(chatId);
+		} else {
+			setChatId(myChat);
+			getChats(myChat);
+		}
+	};
+	const sendMessasge = async () => {
+		let response = await fetch(`${URLS.BASE}/chats`, {
+			method: "POST",
+			body: JSON.stringify({
+				sender: id,
+				content: msg,
+				chatId: chatId,
+			}),
+			headers: {
+				"Content-type": "application/json; charset=UTF-8",
+				Accept: "application/json",
+				Authorization: tokens.accessToken,
+			},
+		});
+
+		let json_data = await response.json();
+		console.log(json_data);
+	};
+	React.useEffect(() => {
+		// console.log(JSON.stringify(userContext.accessToken, null, 2));
+		const getKeys = async () => {
+			const keys = await AsyncStorage.getAllKeys();
+			console.log(keys);
+		};
+		// getKeys();
+		makeChatId();
+	}, []);
 	const AMessage = ({ chat, style }) => {
-		let statusIcon = <Icon name="clock" />;
+		let statusIcon = <Feather name="clock" />;
 		switch (chat?.status) {
 			case 0:
-				statusIcon = <Icon name="clock" />;
+				statusIcon = <Feather name="clock" />;
 				break;
 			case 1:
-				statusIcon = <Icon name="check" />;
+				statusIcon = <Feather name="check" />;
 				break;
 			case 2:
-				statusIcon = <IconFont name="check-double" />;
+				statusIcon = <Ionicons name="checkmark-done" />;
 				break;
 			case 3:
-				statusIcon = <IconFont name="check-double" />;
+				statusIcon = <Ionicons name="checkmark-done" />;
 				break;
 			default:
-				statusIcon = <Icon name="clock" />;
+				statusIcon = <Feather name="clock" />;
 				break;
 		}
 
@@ -56,8 +140,9 @@ export default function Chat({ route, navigation }) {
 	return (
 		<>
 			<View style={STYLES.messageHeader}>
-				<TouchableOpacity onPress={() => navigation.navigate("Chats")}>
-					<Icon
+				<TouchableOpacity
+					onPress={() => navigation.navigate("Doctors")}>
+					<Feather
 						name="arrow-left"
 						size={30}
 						strokeSize={4}
@@ -83,13 +168,13 @@ export default function Chat({ route, navigation }) {
 				contentContainerStyle={STYLES.contentContainerStyle}
 				style={STYLES.threadBody}
 				keyboardDismissMode="on-drag">
-				{chat?.map((chatItem, index) => (
+				{chats?.map((chatItem, index) => (
 					<AMessage
 						style={[
 							STYLES.message,
 							chatItem?.from == "you" ? STYLES.you : STYLES.other,
 						]}
-						key={chatItem?.id}
+						key={index.toString()}
 						chat={chatItem}
 					/>
 				))}
@@ -97,7 +182,7 @@ export default function Chat({ route, navigation }) {
 			<View style={STYLES.messageFooter}>
 				<View style={STYLES.messageInput}>
 					<TouchableOpacity>
-						<Icon
+						<Feather
 							name="smile"
 							size={30}
 							strokeSize={5}
@@ -113,37 +198,61 @@ export default function Chat({ route, navigation }) {
 						placeholder={"Type a message"}
 						onFocus={() => setKeyboardStatus(true)}
 					/>
+					<TouchableOpacity>
+						<MaterialCommunityIcons
+							name="paperclip"
+							size={24}
+							color="black"
+						/>
+					</TouchableOpacity>
+					<TouchableOpacity>
+						<Ionicons name="camera" size={24} color="black" />
+					</TouchableOpacity>
 				</View>
-				{keyboardStatus ? (
+				{msg?.length > 0 ? (
 					<TouchableOpacity
 						style={STYLES.messageInputBtn}
 						onPress={async () => {
 							try {
 								let date = new Date();
 								let time = `${date.getHours()}:${date.getMinutes()}`;
-								let id = `msgid${date.getHours()}${date.getMinutes()}${date.getSeconds()}`;
-								if (msg?.length > 0) {
-									setChat([
-										...chat,
+								// let id = `msgid${date.getHours()}${date.getMinutes()}${date.getSeconds()}`;
+								const { id } = await getUser();
+								await AsyncStorage.setItem(
+									String(chatId),
+									JSON.stringify([
+										...chats,
 										{
-											id,
 											msg,
-											from: "you",
+											sender: id,
 											time,
 											date: date.toDateString(),
 											status: 2,
+											backend_id: null,
 										},
-									]);
-									setMsg("");
-								}
+									])
+								);
+								await sendMessasge();
+								await getChats(chatId);
+								/* setChats([
+									...chats,
+									{
+										msg,
+										sender: id,
+										time,
+										date: date.toDateString(),
+										status: 2,
+										backend_id: null,
+									},
+								]); */
+								setMsg("");
 							} catch (error) {
 								console.log(error);
 							}
 						}}>
-						<IconFont
-							name="paper-plane"
-							size={25}
-							strokeSize={5}
+						<Octicons
+							name="paper-airplane"
+							size={24}
 							color={COLORS.WHITE}
 							backgroundColor={COLORS.ACCENT_1}
 						/>
@@ -232,14 +341,14 @@ const STYLES = StyleSheet.create({
 	},
 	messageInputControl: {
 		flex: 2,
-		padding: 0,
+		padding: 7,
 		paddingLeft: 5,
 		paddingRight: 5,
 	},
 	messageInputBtn: {
 		backgroundColor: COLORS.PRIMARY,
-		width: 50,
-		height: 50,
+		width: 45,
+		height: 45,
 		borderRadius: 100,
 		justifyContent: "center",
 		alignItems: "center",

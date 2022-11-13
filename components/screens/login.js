@@ -10,23 +10,30 @@ import {
 	TouchableOpacity,
 } from "react-native";
 
-import Icon from "react-native-vector-icons/Feather";
+import Icon from "@expo/vector-icons/Feather";
 import { COLORS, DIMENS } from "../constants/styles";
 import SignUp from "./signup";
+import { signIn } from "../helpers/functions";
 
-import AuthContext from "../contexts/auth";
+import { AuthContext } from "../contexts/auth";
 import { CustomStatusBar } from "../ui/custom.status.bar";
 import Loader from "../ui/loader";
 
 const Login = () => {
-	const { signIn } = React.useContext(AuthContext);
-	const [loading, setLoading] = React.useState(false);
+	const {
+		setUser: setMyUser,
+		isLoading,
+		setIsLoading,
+		tokens,
+		setTokens,
+	} = React.useContext(AuthContext);
+	// const [loading, setLoading] = React.useState(false);
 	const [user, setUser] = React.useState({
 		username: "",
 		password: "",
 	});
 
-	if (loading) return <Loader />;
+	if (isLoading) return <Loader />;
 
 	return (
 		<View style={styles.container}>
@@ -71,8 +78,18 @@ const Login = () => {
 					<TouchableOpacity
 						style={[styles.btn, styles.btnPrimary]}
 						onPress={() => {
-							setLoading(true);
-							signIn({ user, setLoading });
+							setIsLoading(true);
+							signIn({
+								user,
+								setIsLoading,
+								setTokens,
+								setMyUser,
+							});
+							/* 							setTimeout(() => {
+								setMyUser({ user });
+								setTokens({ tokens: "bbvvjkkhj" });
+								setIsLoading(false);
+							}, 500); */
 						}}>
 						<Text style={styles.whiteText}>Sign in</Text>
 						<Icon

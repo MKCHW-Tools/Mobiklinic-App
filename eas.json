@@ -1,18 +1,22 @@
 {
-  "cli": {
-    "version": ">= 2.4.1"
-  },
-  "build": {
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal"
-    },
-    "preview": {
-      "distribution": "internal"
-    },
-    "production": {}
-  },
-  "submit": {
-    "production": {}
-  }
+	"cli": {
+		"version": ">= 2.4.1"
+	},
+	"build": {
+		"development": {
+			"developmentClient": true,
+			"distribution": "internal"
+		},
+		"preview": {
+			"distribution": "internal"
+		},
+		"production": {
+			"android": {
+				"credentialsSource": "local"
+			}
+		}
+	},
+	"submit": {
+		"production": {}
+	}
 }

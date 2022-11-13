@@ -23,7 +23,8 @@
 				"foregroundImage": "./assets/adaptive-icon.png",
 				"backgroundColor": "#FFFFFF"
 			},
-			"package": "com.mobiklinic"
+			"package": "com.mobiklinic",
+			"versionCode": 7
 		},
 		"web": {
 			"favicon": "./assets/favicon.png"

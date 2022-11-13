@@ -10,6 +10,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@expo/vector-icons": "^13.0.0",
     "@react-native-async-storage/async-storage": "~1.17.3",
     "@react-native-masked-view/masked-view": "0.2.7",
     "@react-native-picker/picker": "2.4.2",
@@ -20,12 +21,12 @@
     "expo": "^46.0.0",
     "expo-build-properties": "~0.3.0",
     "expo-status-bar": "~1.4.0",
-    "expo-updates": "~0.14.6",
+    "expo-updates": "~0.14.7",
     "global": "^4.4.0",
     "lodash": "^4.17.21",
     "react": "18.0.0",
     "react-dom": "18.0.0",
-    "react-native": "0.69.5",
+    "react-native": "0.69.6",
     "react-native-elements": "^2.0.4",
     "react-native-gesture-handler": "~2.5.0",
     "react-native-loading-spinner-overlay": "^1.0.1",

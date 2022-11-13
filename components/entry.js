@@ -1,18 +1,14 @@
 import * as React from "react";
 import { Alert } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import AuthContext from "./contexts/auth";
-import { UserContext } from "./providers/User";
+import { AuthProvider } from "./contexts/auth";
+import { UserProvider, UserContext } from "./providers/User";
 import forgotPassword from "./screens/password.forgot";
 import PasswordReset from "./screens/password.reset";
 import Login from "./screens/login";
 import { DOWNLOAD } from "./helpers/functions";
-import {
-	DrawerNavigation,
-	DrawerNavigationLogged,
-} from "./helpers/navigations";
+import { DrawerNavigation, DrawerNavigationLogged } from "./navigators/drawers";
 import {
 	cyrb53,
 	RETRIEVE_LOCAL_USER,
@@ -30,18 +26,19 @@ import Chat from "./screens/Chat";
 import Chats from "./screens/Chats";
 
 import { initialStateAuth, reducerAuth } from "./reducers/Auth";
+import AppNav from "./navigators/AppNav";
 
 const Stack = createStackNavigator();
 
 const Entry = () => {
-	const userContext = React.useContext(UserContext);
-	const [state, dispatch] = React.useReducer(reducerAuth, initialStateAuth);
+	// const userContext = React.useContext(UserContext);
+	// const [state, dispatch] = React.useReducer(reducerAuth, initialStateAuth);
 
-	React.useEffect(async () => {
-		//await AsyncStorage.clear(); // Fetch the token from storage then navigate to our appropriate place
+	React.useEffect(() => {
+		/*const clearStorage = async () => {
+			await AsyncStorage.clear();
+		};
 		const autoLogin = async () => {
-			// AsyncStorage.clear()
-
 			let accessToken = null;
 
 			try {
@@ -49,8 +46,6 @@ const Entry = () => {
 
 				let tokens = tokenString !== null && JSON.parse(tokenString);
 				accessToken = tokens.accessToken;
-
-				userContext.setAccessToken(accessToken);
 
 				dispatch({ type: "RESTORE_TOKEN", accessToken });
 			} catch (e) {
@@ -65,8 +60,8 @@ const Entry = () => {
 			// This will switch to the App screen or Auth screen and this loading
 			// screen will be unmounted and thrown away.
 		};
-
-		autoLogin();
+		//clearStorage();
+		autoLogin();*/
 	}, []);
 
 	// Check if the user is logged in,
@@ -124,13 +119,14 @@ const Entry = () => {
 							theUser.hash === hash
 					)[0]; */
 
-					console.log(myUser);
+					// console.log(myUser);
 
 					if (myUser !== undefined && myUser.username === username) {
 						dispatch({
 							type: "SIGN_IN",
 							accessToken: password,
-							offline: false,
+							offline: true,
+							user: myUser,
 						});
 						return;
 					} else {
@@ -154,7 +150,8 @@ const Entry = () => {
 						});
 
 						let json_data = await response.json();
-						const { result, accessToken, refreshToken } = json_data;
+						const { result, id, accessToken, refreshToken } =
+							json_data;
 
 						if (result == "Success") {
 							await SAVE_LOCAL_USER({
@@ -163,12 +160,6 @@ const Entry = () => {
 								tokens: { accessToken, refreshToken },
 							});
 
-							userContext.setAccessToken(accessToken);
-
-							/* await AsyncStorage.setItem(
-								"tokens",
-								JSON.stringify({ accessToken, refreshToken })
-							); */
 							const resources = [
 								"ambulances",
 								"doctors",
@@ -182,10 +173,16 @@ const Entry = () => {
 									per_page: 10,
 								})
 							) {
+								// userContext.setAccessToken(accessToken);
+								// userContext.setUser({ id, username });
 								dispatch({
 									type: "SIGN_IN",
 									accessToken,
 									offline: false,
+									user: {
+										id,
+										username,
+									},
 								});
 							}
 						} else
@@ -230,7 +227,6 @@ const Entry = () => {
 				}
 			},
 			signOut: () => {
-				// AsyncStorage.removeItem("tokens");
 				dispatch({ type: "SIGN_OUT" });
 			},
 			signUp: async (data) => {
@@ -354,99 +350,11 @@ const Entry = () => {
 		}),
 		[]
 	);
-	const { isLoading, accessToken } = state;
+	// const { isLoading, accessToken } = state;
 	return (
-		<AuthContext.Provider value={memo}>
-			<NavigationContainer>
-				<Stack.Navigator>
-					{isLoading ? (
-						// We haven't finished checking for the token yet
-						<Stack.Screen
-							name="loader"
-							component={Loader}
-							options={{ headerShown: false }}
-						/>
-					) : accessToken == null ? (
-						<>
-							<Stack.Screen
-								name="DrawerNavigation"
-								component={DrawerNavigation}
-								options={{ headerShown: false }}
-							/>
-							<Stack.Screen
-								name="Login"
-								component={Login}
-								options={{
-									headerShown: false,
-									animationTypeForReplace: state.isSignout
-										? "pop"
-										: "push",
-								}}
-							/>
-							<Stack.Screen
-								name="forgotPassword"
-								options={{ headerShown: false }}
-								component={forgotPassword}
-							/>
-							<Stack.Screen
-								name="resetPassword"
-								options={{ headerShown: false }}
-								component={PasswordReset}
-							/>
-						</>
-					) : (
-						<>
-							<Stack.Screen
-								name="Dashboard"
-								options={{ headerShown: false }}
-								component={DrawerNavigationLogged}
-							/>
-							<Stack.Screen
-								name="Doctors"
-								options={{ headerShown: false }}
-								component={Doctors}
-							/>
-							<Stack.Screen
-								name="Ambulances"
-								options={{ headerShown: false }}
-								component={Ambulances}
-							/>
-							<Stack.Screen
-								name="Diagnose"
-								options={{ headerShown: false }}
-								component={Diagnose}
-							/>
-							<Stack.Screen
-								name="ViewDiagnosis"
-								options={{ headerShown: false }}
-								component={ViewDiagnosis}
-							/>
-							<Stack.Screen
-								name="NewDiagnosis"
-								options={{ headerShown: false }}
-								component={NewDiagnosis}
-							/>
-							<Stack.Screen
-								name="FollowUp"
-								options={{ headerShown: false }}
-								component={FollowUp}
-							/>
-
-							<Stack.Screen
-								name="Chats"
-								options={{ headerShown: false }}
-								component={Chats}
-							/>
-							<Stack.Screen
-								name="Chat"
-								options={{ headerShown: false }}
-								component={Chat}
-							/>
-						</>
-					)}
-				</Stack.Navigator>
-			</NavigationContainer>
-		</AuthContext.Provider>
+		<AuthProvider>
+			<AppNav />
+		</AuthProvider>
 	);
 };
 
