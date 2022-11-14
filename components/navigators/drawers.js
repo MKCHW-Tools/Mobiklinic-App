@@ -47,7 +47,7 @@ export const CustomDrawerContent = (props) => {
 					source={require("../imgs/logo.png")}
 					style={styles.DrawerHeaderIcon}
 				/>
-				<Text style={styles.DrawerHeaderText}></Text>
+				<Text style={styles.DrawerHeaderText}>MobiKlinic</Text>
 			</View>
 			<DrawerItemList {...props} />
 			{props.children}
@@ -134,7 +134,8 @@ export const DrawerNavigationLogged = () => {
 				</CustomDrawerContent>
 			)}>
 			<Drawer.Screen name="Dashboard" component={Dashboard} />
-			<Drawer.Screen name="Messages" component={Chats} />
+			{/* 			<Drawer.Screen name="Messages" component={Chats} />
+			 */}{" "}
 			<Drawer.Screen name="Diagnose" component={Diagnose} />
 			<Drawer.Screen name="Doctors" component={Doctors} />
 			<Drawer.Screen name="Ambulance" component={Ambulance} />
