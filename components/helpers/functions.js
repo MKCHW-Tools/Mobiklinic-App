@@ -285,6 +285,106 @@ export const signIn = async (data) => {
 		}
 	}
 };
+
+export const signUp = async (data) => {
+	// In a production app, we need to send user data to server and get a token
+	// We will also need to handle errors if sign up failed
+	// After getting token, we need to persist the token using `AsyncStorage`
+	// In the example, we'll use a dummy token
+	const {
+		firstname,
+		lastname,
+		theemail,
+		thephone,
+		thepassword,
+		thepassword2,
+	} = data.errors;
+
+	if (
+		firstname ||
+		lastname ||
+		theemail ||
+		thephone ||
+		thepassword ||
+		thepassword2
+	) {
+		Alert.alert("Fail", "Errors, Fix errors in the form, and try again!");
+		return;
+	}
+
+	const { firstName, lastName, phone, password, password2, email } = data;
+
+	if (
+		firstName == "" ||
+		lastName == "" ||
+		phone.length < 12 ||
+		password == "" ||
+		password2 == ""
+	) {
+		Alert.alert("Fail", "Fix errors in the form, and try again!");
+		console.log(firstName, lastName, phone, email, password, password2);
+		return;
+	}
+
+	userContext.setIsRegistering("yes");
+
+	try {
+		await fetch(`${URLS.BASE}/register`, {
+			method: "POST",
+			body: JSON.stringify({
+				phone: phone,
+				fname: firstName,
+				lname: lastName,
+				email: email,
+				role_id: 2,
+				password: password,
+				password_confirmation: password2,
+			}),
+			headers: {
+				"Content-type": "application/json; charset=UTF-8",
+				Accept: "application/json",
+			},
+		})
+			.then((res) => res.json())
+			.then((response) => {
+				if (response.result == "success") {
+					try {
+						userContext.setIsRegistering("complete");
+					} catch (err) {
+						console.error(err);
+					}
+				} else if (response.result == "failure") {
+					const { email, phone } = response.message;
+
+					if (typeof email != "undefined")
+						Alert.alert(
+							"Registration failed!",
+							"The email address you entered was used by another member."
+						);
+					else if (typeof phone != "undefined")
+						Alert.alert(
+							"Registration failed!",
+							"The phone number you entered was used by another member."
+						);
+					else Alert.alert("Ooops!", "Try again!");
+
+					console.log(response);
+				} else {
+					Alert.alert("Ooops!", "Try again!");
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+				Alert.alert(
+					"Failure",
+					"Something wrong happened. Check your internet and try again!"
+				);
+			});
+	} catch (err) {
+		console.error(err);
+	}
+};
+
 export const signOut = () => {
 	AsyncStorage.removeItem("tokens");
 };

@@ -3,12 +3,7 @@ import { Alert } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AuthProvider } from "./contexts/auth";
-import { UserProvider, UserContext } from "./providers/User";
-import forgotPassword from "./screens/password.forgot";
-import PasswordReset from "./screens/password.reset";
-import Login from "./screens/login";
 import { DOWNLOAD } from "./helpers/functions";
-import { DrawerNavigation, DrawerNavigationLogged } from "./navigators/drawers";
 import {
 	cyrb53,
 	RETRIEVE_LOCAL_USER,
@@ -350,7 +345,6 @@ const Entry = () => {
 		}),
 		[]
 	);
-	// const { isLoading, accessToken } = state;
 	return (
 		<AuthProvider>
 			<AppNav />

@@ -12,7 +12,6 @@ import {
 
 import Icon from "@expo/vector-icons/Feather";
 import { COLORS, DIMENS } from "../constants/styles";
-import SignUp from "./signup";
 import { signIn } from "../helpers/functions";
 
 import { AuthContext } from "../contexts/auth";
@@ -27,7 +26,6 @@ const Login = () => {
 		tokens,
 		setTokens,
 	} = React.useContext(AuthContext);
-	// const [loading, setLoading] = React.useState(false);
 	const [user, setUser] = React.useState({
 		username: "",
 		password: "",
@@ -85,11 +83,6 @@ const Login = () => {
 								setTokens,
 								setMyUser,
 							});
-							/* 							setTimeout(() => {
-								setMyUser({ user });
-								setTokens({ tokens: "bbvvjkkhj" });
-								setIsLoading(false);
-							}, 500); */
 						}}>
 						<Text style={styles.whiteText}>Sign in</Text>
 						<Icon
@@ -110,12 +103,12 @@ const Login = () => {
 						/>
 					</TouchableOpacity>
 				)}
-
-				{/*<TouchableOpacity
-						onPress={ () => this.setState({toSignUp:true})}
-					>
-						<Text style={[styles.textColor,styles.linkItem]}>or, sign up</Text>
-					</TouchableOpacity> */}
+				<TouchableOpacity
+					onPress={() => this.setState({ toSignUp: true })}>
+					<Text style={[styles.textColor, styles.linkItem]}>
+						or, sign up
+					</Text>
+				</TouchableOpacity>
 			</View>
 		</View>
 	);
