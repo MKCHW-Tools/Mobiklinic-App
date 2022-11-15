@@ -5,33 +5,8 @@ import AppNav from "./navigators/AppNav";
 
 const Entry = () => {
 	React.useEffect(() => {
-		/*const clearStorage = async () => {
-			await AsyncStorage.clear();
-		};
-		const autoLogin = async () => {
-			let accessToken = null;
-
-			try {
-				let tokenString = await AsyncStorage.getItem("tokens");
-
-				let tokens = tokenString !== null && JSON.parse(tokenString);
-				accessToken = tokens.accessToken;
-
-				dispatch({ type: "RESTORE_TOKEN", accessToken });
-			} catch (e) {
-				// Restoring token failed
-				console.log(e);
-				console.log("Restoring token failed");
-				console.log("acessToken ", accessToken);
-			}
-
-			// After restoring token, we may need to validate it in production apps
-
-			// This will switch to the App screen or Auth screen and this loading
-			// screen will be unmounted and thrown away.
-		};
 		//clearStorage();
-		autoLogin();*/
+		//autoLogin()
 	}, []);
 
 	// Check if the user is logged in,

@@ -388,3 +388,23 @@ export const signUp = async (data) => {
 export const signOut = () => {
 	AsyncStorage.removeItem("tokens");
 };
+
+export const clearStorage = async () => {
+	await AsyncStorage.clear();
+};
+
+export const autoLogin = async () => {
+	let accessToken = null;
+
+	try {
+		let tokenString = await AsyncStorage.getItem("tokens");
+
+		let tokens = tokenString !== null && JSON.parse(tokenString);
+		accessToken = tokens.accessToken;
+	} catch (e) {
+		// Restoring token failed
+		console.log(e);
+		console.log("Restoring token failed");
+		console.log("acessToken ", accessToken);
+	}
+};

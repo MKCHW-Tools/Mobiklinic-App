@@ -28,7 +28,6 @@ const Ambulance = ({ navigation }) => {
 		isLoading: true,
 		ambulances: [],
 	});
-	const { signOut } = React.useContext(AuthContext);
 
 	React.useEffect(() => {
 		_getAmbulances();
@@ -38,69 +37,6 @@ const Ambulance = ({ navigation }) => {
 		let ambulancesOnDevice = await AsyncStorage.getItem("@ambulances");
 		ambulancesOnDevice = JSON.parse(ambulancesOnDevice) || [];
 		setState({ ambulances: ambulancesOnDevice, isLoading: false });
-		// console.log(JSON.stringify(ambulancesOnDevice, null, 2));
-		// console.log(doctorsOnDevice.length);
-		// setState({ ambulances: ambulancesOnDevice });
-		/*     try {
-      const tokenString = await AsyncStorage.getItem("tokens");
-      const tokens = tokenString && (await JSON.parse(tokenString));
-      const { accessToken } = tokens;
-
-      if (accessToken) {
-        const response = await fetch(`${URLS.BASE}/ambulances`, {
-          method: "GET",
-          headers: {
-            Authorization: "Bearer " + accessToken,
-            "Content-type": "application/json; charset=UTF-8",
-            Accept: "application/json",
-          },
-        });
-        const JSON_RESPONSE = await response.json();
-
-        const { result, msg, ambulances } = JSON_RESPONSE;
-
-        if (result == "Success") {
-          setState({ ...state, data: ambulances, isLoading: false });
-          return;
-        }
-
-        if (result == "Failure") {
-          setState({ ...state, isLoading: true });
-
-          if (msg == "Token expired") {
-            const result = tokensRefresh();
-            if (result.accessToken) {
-              // userContext.setAccessToken(result.accessToken)
-              await AsyncStorage.setItem(
-                "tokens",
-                JSON.stringify({
-                  accessToken: result.accessToken,
-                  refreshToken: result.refreshToken,
-                })
-              );
-              _getAmbulances();
-            }
-            return;
-          }
-
-          if (msg == "Invalid Access Token") {
-            signOut();
-            return;
-          }
-        }
-
-        console.log("Some errors");
-        console.log(JSON_RESPONSE);
-
-        Alert.alert(`Ooops!`, `Ambulances not found`, [{ text: "OK" }]);
-      }
-    } catch (e) {
-      Alert.alert(`Ooops!`, `Something went wrong. Try again!`, [
-        { text: "OK" },
-      ]);
-
-      console.log(e);
-    } */
 	};
 
 	const _keyExtractor = (item) => item._id;

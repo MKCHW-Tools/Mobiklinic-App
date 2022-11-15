@@ -2,11 +2,7 @@ import "react-native-gesture-handler";
 import * as React from "react";
 import { View, Image, TouchableOpacity, StyleSheet, Text } from "react-native";
 
-import Icon from "react-native-vector-icons/Feather";
-
 import { COLORS, DIMENS } from "../constants/styles";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
 import {
 	createDrawerNavigator,
 	DrawerContentScrollView,
@@ -135,7 +131,7 @@ export const DrawerNavigationLogged = () => {
 			)}>
 			<Drawer.Screen name="Dashboard" component={Dashboard} />
 			{/* 			<Drawer.Screen name="Messages" component={Chats} />
-			 */}{" "}
+			 */}
 			<Drawer.Screen name="Diagnose" component={Diagnose} />
 			<Drawer.Screen name="Doctors" component={Doctors} />
 			<Drawer.Screen name="Ambulance" component={Ambulance} />
