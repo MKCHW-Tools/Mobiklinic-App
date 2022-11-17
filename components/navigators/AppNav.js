@@ -4,10 +4,10 @@ import AppStack from "./AppStack";
 import AuthStack from "./AuthStack";
 import { AuthContext } from "../contexts/auth";
 function AppNav() {
-	const { tokens } = useContext(AuthContext);
+	const { user } = useContext(AuthContext);
 	return (
 		<NavigationContainer>
-			{tokens ? <AuthStack /> : <AppStack />}
+			{user ? <AuthStack /> : <AppStack />}
 		</NavigationContainer>
 	);
 }

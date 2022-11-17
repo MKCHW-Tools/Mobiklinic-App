@@ -93,7 +93,7 @@ export const DrawerNavigation = () => {
 };
 
 export const DrawerNavigationLogged = () => {
-	const { setTokens } = React.useContext(AuthContext);
+	const { setTokens, setUser } = React.useContext(AuthContext);
 
 	return (
 		<Drawer.Navigator
@@ -123,7 +123,7 @@ export const DrawerNavigationLogged = () => {
 						label="Sign out"
 						onPress={() => {
 							setTokens(null);
-							signOut();
+							signOut(setUser);
 						}}
 						inactiveBackgroundColor={COLORS.WHITE_LOW}
 					/>

@@ -68,31 +68,15 @@ export const tokensRefresh = async () => {
 export const RETRIEVE_LOCAL_USER = async () => {
 	try {
 		let user = await AsyncStorage.getItem("@user");
-		let theUser = user !== null ? user : null;
-		return theUser;
+		return JSON.parse(user) || null;
 	} catch (err) {
 		new Error(err);
 	}
 };
 export const SAVE_LOCAL_USER = async (user = {}) => {
 	try {
-		// let storedUser = await RETRIEVE_LOCAL_USER();
-
 		const HASH = cyrb53(user.password);
 
-		/*if (HASH && users !== null) {
-			console.log(users);
-			users = JSON.parse(users);
-			users.push({
-				username: user.username,
-				hash: HASH,
-				tokens: user.tokens,
-			});
-			await AsyncStorage.setItem(
-				"@mobiklinicUsers",
-				JSON.stringify(users)
-			);
-		} else {*/
 		await AsyncStorage.setItem(
 			"@user",
 			JSON.stringify({
@@ -102,7 +86,6 @@ export const SAVE_LOCAL_USER = async (user = {}) => {
 				tokens: user.tokens,
 			})
 		);
-		//}
 	} catch (err) {
 		new Error(err);
 	}
@@ -166,7 +149,8 @@ export const DOWNLOAD = async (data) => {
 };
 
 export const signIn = async (data) => {
-	let { user, setIsLoading, setTokens, setMyUser: setUser } = data;
+	//clearStorage();
+	let { user, setIsLoading, setMyUser: setUser } = data;
 
 	if (typeof user === undefined) {
 		Alert.alert("Error", "Provide your phone number and password");
@@ -174,6 +158,7 @@ export const signIn = async (data) => {
 	}
 
 	const { username, password } = user;
+	let hash = cyrb53(password);
 
 	if (username === "" && password === "") {
 		Alert.alert("Error", "Provide your phone number and password");
@@ -184,22 +169,27 @@ export const signIn = async (data) => {
 
 	try {
 		theUser = await RETRIEVE_LOCAL_USER();
-		theUser = JSON.parse(theUser);
+		// theUser = JSON.parse(theUser);
 	} catch (err) {
 		console.log(err);
 	}
 
 	if (theUser !== null) {
-		let hash = cyrb53(password);
 		let myUser =
 			theUser.username === username && theUser.hash === hash
 				? theUser
 				: null;
 
-		if (myUser !== undefined && myUser.username === username) {
-			setUser({ ...myUser, offline: true });
+		if (myUser) {
+			setUser({
+				id: myUser.id,
+				username: myUser.username,
+				tokens: myUser.tokens,
+				offline: true,
+			});
 			setIsLoading(false);
-			setTokens({ access: password });
+			// console.log(myUser);
+			// setTokens({ access: hash });
 			return;
 		} else {
 			Alert.alert("Failed to login", "Try again, please!");
@@ -240,9 +230,14 @@ export const signIn = async (data) => {
 						per_page: 10,
 					})
 				) {
-					setUser({ id, username, offline: false });
+					setUser({
+						id,
+						username,
+						tokens: { access: accessToken, refresh: refreshToken },
+						offline: false,
+					});
 					setIsLoading(false);
-					setTokens({ access: accessToken });
+					// setTokens({ access: accessToken });
 				}
 			} else
 				Alert.alert(
@@ -385,8 +380,8 @@ export const signUp = async (data) => {
 	}
 };
 
-export const signOut = () => {
-	AsyncStorage.removeItem("tokens");
+export const signOut = (callback) => {
+	callback();
 };
 
 export const clearStorage = async () => {
@@ -408,3 +403,10 @@ export const autoLogin = async () => {
 		console.log("acessToken ", accessToken);
 	}
 };
+
+export const getKeys = async () => {
+	const keys = await AsyncStorage.getAllKeys();
+	console.log(keys);
+};
+
+const processMessage = async () => {};

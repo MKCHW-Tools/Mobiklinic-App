@@ -80,7 +80,6 @@ const Login = () => {
 							signIn({
 								user,
 								setIsLoading,
-								setTokens,
 								setMyUser,
 							});
 						}}>
@@ -103,8 +102,7 @@ const Login = () => {
 						/>
 					</TouchableOpacity>
 				)}
-				<TouchableOpacity
-					onPress={() => this.setState({ toSignUp: true })}>
+				<TouchableOpacity>
 					<Text style={[styles.textColor, styles.linkItem]}>
 						or, sign up
 					</Text>
@@ -156,8 +154,6 @@ const styles = StyleSheet.create({
 	},
 	input: {
 		backgroundColor: COLORS.WHITE_LOW,
-		// borderStyle: 'solid',
-		// borderWidth: 2,
 		borderColor: COLORS.WHITE_LOW,
 		borderRadius: 50,
 		paddingHorizontal: 15,

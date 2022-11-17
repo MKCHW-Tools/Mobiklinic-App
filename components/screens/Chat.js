@@ -5,9 +5,17 @@ import {
 	StyleSheet,
 	ScrollView,
 	View,
+	Button,
+	Image,
 } from "react-native";
+import { Camera, CameraType } from "expo-camera";
 import { TextInput } from "react-native-gesture-handler";
-import { Ionicons, Octicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+	Ionicons,
+	Octicons,
+	MaterialCommunityIcons,
+	MaterialIcons,
+} from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
 import IconFont from "@expo/vector-icons/FontAwesome";
 import { COLORS, DIMENS } from "../constants/styles";
@@ -17,35 +25,33 @@ import { URLS } from "../constants/API";
 import { AuthContext } from "../contexts/auth";
 
 export default function Chat({ route, navigation }) {
+	const [type, setType] = React.useState(CameraType.back);
+	const [permission, requestPermission] = Camera.useCameraPermissions();
+	const [isCameraReady, setIsCameraReady] = React.useState(false);
+	const [image, setImage] = React.useState();
+	const [viewImage, setViewImage] = React.useState(false);
+	const cameraRef = React.useRef();
+	const scrollViewRef = React.useRef();
 	const [chats, setChats] = React.useState([]);
 	let [msg, setMsg] = React.useState("");
 	let [chatId, setChatId] = React.useState(null);
+	let [cameraOn, setCameraOn] = React.useState(false);
 	const doctor = route?.params?._id;
 	const name = route?.params?.name;
 
 	let currentTime = new Date();
 	let [keyboardStatus, setKeyboardStatus] = React.useState(false);
-	const { user, tokens } = React.useContext(AuthContext);
-	// console.log(user);
+	const { user } = React.useContext(AuthContext);
 	const getChats = async (chatId) => {
 		try {
 			const conversation = await AsyncStorage.getItem(chatId);
 			const messages = JSON.parse(conversation) || [];
-			// console.log(messages.length);
-			// console.log(JSON.stringify(messages, null, 2));
 			setChats([...messages]);
 		} catch (e) {
 			console.log("Get chats", e);
 		}
 	};
-	const getUser = async () => {
-		try {
-			const user = await AsyncStorage.getItem("@user");
-			return JSON.parse(user);
-		} catch (e) {
-			console.log(e);
-		}
-	};
+
 	const getChat = async (chatUsers) => {
 		try {
 			return await AsyncStorage.getItem(chatUsers);
@@ -54,23 +60,22 @@ export default function Chat({ route, navigation }) {
 		}
 	};
 	const makeChatId = async () => {
-		const { id, tokens } = await getUser();
-		const myChat = await getChat(`${id}${doctor}`);
+		const myChat = await getChat(`${user.id}${doctor}`);
 		if (typeof myChat !== "string") {
 			let response = await fetch(`${URLS.BASE}/chats`, {
 				method: "POST",
 				body: JSON.stringify({
-					userId: [id, doctor],
+					userId: [user.id, doctor],
 				}),
 				headers: {
 					"Content-type": "application/json; charset=UTF-8",
 					Accept: "application/json",
-					Authorization: tokens.accessToken,
+					Authorization: user.tokens.access,
 				},
 			});
 
 			let json_data = await response.json();
-			const chatUsers = `${id}${doctor}`;
+			const chatUsers = `${user.id}${doctor}`;
 			const chatId = json_data._id;
 			await AsyncStorage.setItem(chatUsers, chatId);
 			setChatId(chatId);
@@ -79,34 +84,89 @@ export default function Chat({ route, navigation }) {
 			getChats(myChat);
 		}
 	};
-	const sendMessasge = async () => {
-		let response = await fetch(`${URLS.BASE}/chats`, {
+	const sendMessage = async (message) => {
+		let response = await fetch(`${URLS.BASE}/messages`, {
 			method: "POST",
 			body: JSON.stringify({
-				sender: id,
-				content: msg,
+				sender: user.id,
+				content: message,
 				chatId: chatId,
+				image: image ? image : null,
 			}),
 			headers: {
 				"Content-type": "application/json; charset=UTF-8",
 				Accept: "application/json",
-				Authorization: tokens.accessToken,
+				Authorization: user.tokens.accessToken,
 			},
 		});
 
 		let json_data = await response.json();
 		console.log(json_data);
 	};
+	const processMessage = async () => {
+		let date = new Date();
+		let time = `${date.getHours()}:${date.getMinutes()}`;
+		const myMsg = msg;
+		setCameraOn(false);
+
+		setChats([
+			...chats,
+			{
+				msg,
+				image: image,
+				sender: user.id,
+				time,
+				date: date.toDateString(),
+				status: 2,
+				backend_id: null,
+			},
+		]);
+		await AsyncStorage.setItem(
+			String(chatId),
+			JSON.stringify([
+				...chats,
+				{
+					msg: myMsg,
+					sender: user.id,
+					time,
+					image: image,
+					date: date.toDateString(),
+					status: 2,
+					backend_id: null,
+				},
+			])
+		);
+		await sendMessage(myMsg);
+		setImage(undefined);
+	};
+
+	const toggleCameraType = () => {
+		setType((current) =>
+			current === CameraType.back ? CameraType.front : CameraType.back
+		);
+	};
+	const onCameraReady = () => {
+		setIsCameraReady(true);
+	};
+	const takePicture = async () => {
+		if (cameraRef.current) {
+			const options = {
+				quality: 1,
+				base64: true,
+				skipProcessing: true,
+			};
+			const data = await cameraRef.current.takePictureAsync(options);
+			const source = data.uri;
+			if (source) {
+				setImage(data.uri);
+			}
+		}
+	};
+
 	React.useEffect(() => {
-		// console.log(JSON.stringify(userContext.accessToken, null, 2));
-		const getKeys = async () => {
-			const keys = await AsyncStorage.getAllKeys();
-			console.log(keys);
-		};
-		// getKeys();
 		makeChatId();
 	}, []);
-	const AMessage = ({ chat, style }) => {
+	const Amessage = ({ chat, style }) => {
 		let statusIcon = <Feather name="clock" />;
 		switch (chat?.status) {
 			case 0:
@@ -129,6 +189,14 @@ export default function Chat({ route, navigation }) {
 		return (
 			<View style={style}>
 				<Text>{chat?.msg}</Text>
+				{chat?.image && (
+					<TouchableOpacity onPress={() => setViewImage(chat.image)}>
+						<Image
+							source={{ uri: chat.image }}
+							style={STYLES.image}
+						/>
+					</TouchableOpacity>
+				)}
 				<View>
 					<Text style={STYLES.messageTime}>{chat?.time}</Text>
 					{statusIcon}
@@ -136,7 +204,119 @@ export default function Chat({ route, navigation }) {
 			</View>
 		);
 	};
+	const RevealImage = ({ image }) => {
+		return (
+			<View style={STYLES.revealContainer}>
+				<TouchableOpacity style={STYLES.revealImageClose}>
+					<Ionicons
+						name="close"
+						size={34}
+						color="white"
+						onPress={() => setViewImage(undefined)}
+					/>
+				</TouchableOpacity>
+				<Image source={{ uri: image }} style={STYLES.revealedImage} />
+			</View>
+		);
+	};
+	if (cameraOn) {
+		// if (!permission)
+		// 	<View>
+		// 		<Text>You app needs permission to your camera.</Text>
+		// 	</View>;
 
+		if (!permission?.granted)
+			return (
+				<View>
+					<Text>We need permission to Open your Camera</Text>
+					<Button
+						onPress={requestPermission}
+						title="Grant Permission"
+					/>
+				</View>
+			);
+
+		return (
+			<View style={STYLES.container}>
+				<View style={STYLES.buttonContainer}>
+					<TouchableOpacity
+						style={STYLES.button}
+						onPress={() => setCameraOn(false)}>
+						<Ionicons name="close" size={34} color="white" />
+					</TouchableOpacity>
+				</View>
+				{!image ? (
+					<Camera
+						style={STYLES.camera}
+						ratio="16:9"
+						ref={cameraRef}
+						onCameraReady={onCameraReady}
+						useCamera2Api={true}
+						onMountError={(error) =>
+							console.log("Camera error", error)
+						}
+						type={type}>
+						<View style={STYLES.cameraInner}></View>
+					</Camera>
+				) : (
+					<Image source={{ uri: image }} style={STYLES.camera} />
+				)}
+				{!image ? (
+					<View style={STYLES.buttonContainer}>
+						<TouchableOpacity
+							style={STYLES.button}
+							disabled={!isCameraReady}
+							onPress={toggleCameraType}>
+							<MaterialIcons
+								name="flip-camera-android"
+								size={34}
+								color="white"
+							/>
+						</TouchableOpacity>
+						<TouchableOpacity
+							style={STYLES.button}
+							disabled={!isCameraReady}
+							onPress={takePicture}>
+							<MaterialIcons
+								name="check-circle-outline"
+								size={34}
+								color="white"
+							/>
+						</TouchableOpacity>
+					</View>
+				) : (
+					<View style={STYLES.buttonContainer}>
+						<TouchableOpacity
+							style={STYLES.button}
+							disabled={!isCameraReady}
+							onPress={() => setImage(undefined)}>
+							<Ionicons
+								name="md-arrow-back-circle"
+								size={34}
+								color="white"
+							/>
+							<Text>Re-take</Text>
+						</TouchableOpacity>
+						<TouchableOpacity
+							style={STYLES.button}
+							disabled={!isCameraReady}
+							onPress={async () => {
+								await processMessage();
+							}}>
+							<MaterialIcons
+								name="check-circle-outline"
+								size={34}
+								color="white"
+							/>
+						</TouchableOpacity>
+					</View>
+				)}
+			</View>
+		);
+	}
+	if (viewImage) {
+		return <RevealImage image={viewImage} />;
+	}
 	return (
 		<>
 			<View style={STYLES.messageHeader}>
@@ -165,14 +345,18 @@ export default function Chat({ route, navigation }) {
 				</View>
 			</View>
 			<ScrollView
+				ref={scrollViewRef}
+				onContentSizeChange={() => scrollViewRef.current.scrollToEnd()}
 				contentContainerStyle={STYLES.contentContainerStyle}
 				style={STYLES.threadBody}
 				keyboardDismissMode="on-drag">
 				{chats?.map((chatItem, index) => (
-					<AMessage
+					<Amessage
 						style={[
 							STYLES.message,
-							chatItem?.from == "you" ? STYLES.you : STYLES.other,
+							chatItem.sender === user.id
+								? STYLES.you
+								: STYLES.other,
 						]}
 						key={index.toString()}
 						chat={chatItem}
@@ -181,14 +365,14 @@ export default function Chat({ route, navigation }) {
 			</ScrollView>
 			<View style={STYLES.messageFooter}>
 				<View style={STYLES.messageInput}>
-					<TouchableOpacity>
+					{/* 					<TouchableOpacity>
 						<Feather
 							name="smile"
 							size={30}
 							strokeSize={5}
 							color="rgba(0,0,0,.5)"
 						/>
-					</TouchableOpacity>
+					</TouchableOpacity> */}
 					<TextInput
 						value={msg}
 						multiline={true}
@@ -198,66 +382,31 @@ export default function Chat({ route, navigation }) {
 						placeholder={"Type a message"}
 						onFocus={() => setKeyboardStatus(true)}
 					/>
-					<TouchableOpacity>
+					{/* <TouchableOpacity>
 						<MaterialCommunityIcons
 							name="paperclip"
 							size={24}
 							color="black"
 						/>
-					</TouchableOpacity>
-					<TouchableOpacity>
-						<Ionicons name="camera" size={24} color="black" />
+					</TouchableOpacity> */}
+					<TouchableOpacity onPress={() => setCameraOn(true)}>
+						<Ionicons name="camera" size={28} color="black" />
 					</TouchableOpacity>
 				</View>
-				{msg?.length > 0 ? (
-					<TouchableOpacity
-						style={STYLES.messageInputBtn}
-						onPress={async () => {
-							try {
-								let date = new Date();
-								let time = `${date.getHours()}:${date.getMinutes()}`;
-								// let id = `msgid${date.getHours()}${date.getMinutes()}${date.getSeconds()}`;
-								const { id } = await getUser();
-								await AsyncStorage.setItem(
-									String(chatId),
-									JSON.stringify([
-										...chats,
-										{
-											msg,
-											sender: id,
-											time,
-											date: date.toDateString(),
-											status: 2,
-											backend_id: null,
-										},
-									])
-								);
-								await sendMessasge();
-								await getChats(chatId);
-								/* setChats([
-									...chats,
-									{
-										msg,
-										sender: id,
-										time,
-										date: date.toDateString(),
-										status: 2,
-										backend_id: null,
-									},
-								]); */
-								setMsg("");
-							} catch (error) {
-								console.log(error);
-							}
-						}}>
-						<Octicons
-							name="paper-airplane"
-							size={24}
-							color={COLORS.WHITE}
-							backgroundColor={COLORS.ACCENT_1}
-						/>
-					</TouchableOpacity>
-				) : (
+				{/* {msg?.length > 0 ? ( */}
+				<TouchableOpacity
+					style={STYLES.messageInputBtn}
+					onPress={async () => {
+						await processMessage();
+					}}>
+					<Octicons
+						name="paper-airplane"
+						size={24}
+						color={COLORS.WHITE}
+						backgroundColor={COLORS.ACCENT_1}
+					/>
+				</TouchableOpacity>
+				{/* 		) : (
 					<TouchableOpacity style={STYLES.messageInputBtn}>
 						<IconFont
 							name="microphone"
@@ -267,7 +416,7 @@ export default function Chat({ route, navigation }) {
 							backgroundColor={COLORS.ACCENT_1}
 						/>
 					</TouchableOpacity>
-				)}
+				)} */}
 			</View>
 		</>
 	);
@@ -404,5 +553,56 @@ const STYLES = StyleSheet.create({
 	},
 	other: {
 		backgroundColor: "#C5E3FC",
+	},
+	container: {
+		flex: 1,
+		justifyContent: "center",
+		backgroundColor: "black",
+	},
+	camera: {
+		flex: 2,
+	},
+	cameraInner: {
+		flex: 1,
+	},
+	buttonContainer: {
+		flex: 1,
+		flexDirection: "row",
+		backgroundColor: "transparent",
+		// margin: 64,
+	},
+	button: {
+		flex: 1,
+		alignSelf: "center",
+		alignItems: "center",
+	},
+	text: {
+		fontSize: 24,
+		fontWeight: "bold",
+		color: "white",
+	},
+	image: {
+		width: "100%",
+		height: 100,
+		resizeMode: "cover",
+		borderRadius: 5,
+		borderStyle: "solid",
+		borderColor: "#ccc",
+		borderWidth: 1,
+		padding: 5,
+	},
+	revealContainer: {
+		flex: 1,
+		backgroundColor: "black",
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	revealedImage: {
+		width: "100%",
+		height: "50%",
+		resizeMode: "cover",
+	},
+	revealImageClose: {
+		marginBottom: 50,
 	},
 });
