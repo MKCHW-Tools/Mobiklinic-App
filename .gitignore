@@ -7,3 +7,6 @@ upload_cert.der
 credentials.json
 .DS_Store
 pc-api-7454379457934541622-182-21e9c3cb42bb.json
+components/views/
+components/forms/
+dist/
