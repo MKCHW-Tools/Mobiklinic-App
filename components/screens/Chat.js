@@ -272,6 +272,11 @@ export default function Chat({ route, navigation }) {
 								size={34}
 								color="white"
 							/>
+							<Text style={STYLES.textCaption}>
+								{type == "CameraType.front"
+									? "Selfie mode"
+									: "Back Camera"}
+							</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
 							style={STYLES.button}
@@ -282,6 +287,7 @@ export default function Chat({ route, navigation }) {
 								size={34}
 								color="white"
 							/>
+							<Text style={STYLES.textCaption}>Take Photo</Text>
 						</TouchableOpacity>
 					</View>
 				) : (
@@ -295,7 +301,7 @@ export default function Chat({ route, navigation }) {
 								size={34}
 								color="white"
 							/>
-							<Text>Re-take</Text>
+							<Text style={STYLES.textCaption}>Re-take</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
 							style={STYLES.button}
@@ -308,6 +314,7 @@ export default function Chat({ route, navigation }) {
 								size={34}
 								color="white"
 							/>
+							<Text style={STYLES.textCaption}>Send Photo</Text>
 						</TouchableOpacity>
 					</View>
 				)}
@@ -569,7 +576,6 @@ const STYLES = StyleSheet.create({
 		flex: 1,
 		flexDirection: "row",
 		backgroundColor: "transparent",
-		// margin: 64,
 	},
 	button: {
 		flex: 1,
@@ -580,6 +586,9 @@ const STYLES = StyleSheet.create({
 		fontSize: 24,
 		fontWeight: "bold",
 		color: "white",
+	},
+	textCaption: {
+		color: "#fff",
 	},
 	image: {
 		width: "100%",
