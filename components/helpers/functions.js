@@ -33,16 +33,16 @@ export const MyDate = () => {
 };
 
 export const tokensRefresh = async () => {
-	const Tokens = await AsyncStorage.getItem("tokens");
+	const user = await AsyncStorage.getItem("@user");
 	// console.log(Tokens);
 	try {
-		const { refreshToken: rToken } = JSON.parse(Tokens);
-		console.log(refreshToken);
+		const { tokens } = JSON.parse(user);
+		console.log(tokens);
 
 		const response = await fetch(`${URLS.BASE}/tokens/refresh`, {
 			method: "GET",
 			headers: {
-				Authorization: "Bearer " + rToken,
+				Authorization: "Bearer " + tokens.refresh,
 				"Content-type": "application/json; charset=UTF-8",
 				Accept: "application/json",
 			},
