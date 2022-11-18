@@ -23,6 +23,7 @@ import { colors, ListItem } from "react-native-elements";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { URLS } from "../constants/API";
 import { AuthContext } from "../contexts/auth";
+import { tokensRefresh, SAVE_LOCAL_USER } from "../helpers/functions";
 
 export default function Chat({ route, navigation }) {
 	const [type, setType] = React.useState(CameraType.back);
@@ -41,7 +42,7 @@ export default function Chat({ route, navigation }) {
 
 	let currentTime = new Date();
 	let [keyboardStatus, setKeyboardStatus] = React.useState(false);
-	const { user } = React.useContext(AuthContext);
+	const { user, setUser } = React.useContext(AuthContext);
 	const getChats = async (chatId) => {
 		try {
 			const conversation = await AsyncStorage.getItem(chatId);
@@ -96,12 +97,38 @@ export default function Chat({ route, navigation }) {
 			headers: {
 				"Content-type": "application/json; charset=UTF-8",
 				Accept: "application/json",
-				Authorization: user.tokens.accessToken,
+				Authorization: `Bearer ${user.tokens.access}`,
 			},
 		});
 
-		let json_data = await response.json();
-		console.log(json_data);
+		let data = await response.json();
+		console.log(data);
+		// console.log(typeof user.tokens.access);
+		if (data.result === "Failure" && data.msg === "Invalid Access Token") {
+			const newTokens = tokensRefresh();
+			// console.log(newTokens);
+			setUser({
+				id: user.id,
+				username: user.username,
+				tokens: {
+					access: newTokens.access,
+					refresh: newTokens.refresh,
+				},
+				offline: user.offline,
+			});
+			await SAVE_LOCAL_USER({
+				id: user.id,
+				username: user.username,
+				password: user.password,
+				tokens: {
+					access: newTokens.access,
+					refresh: newTokens.refresh,
+				},
+				offline: user.offline,
+			});
+
+			await sendMessage(message);
+		}
 	};
 	const processMessage = async () => {
 		let date = new Date();
@@ -138,6 +165,7 @@ export default function Chat({ route, navigation }) {
 		);
 		await sendMessage(myMsg);
 		setImage(undefined);
+		setMsg("");
 	};
 
 	const toggleCameraType = () => {
@@ -327,8 +355,7 @@ export default function Chat({ route, navigation }) {
 	return (
 		<>
 			<View style={STYLES.messageHeader}>
-				<TouchableOpacity
-					onPress={() => navigation.navigate("Doctors")}>
+				<TouchableOpacity onPress={() => navigation.goBack()}>
 					<Feather
 						name="arrow-left"
 						size={30}

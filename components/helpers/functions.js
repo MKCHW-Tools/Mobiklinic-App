@@ -33,16 +33,13 @@ export const MyDate = () => {
 };
 
 export const tokensRefresh = async () => {
-	const user = await AsyncStorage.getItem("@user");
-	// console.log(Tokens);
+	const user = JSON.parse(await AsyncStorage.getItem("@user"));
+	const refresh = user.tokens.refresh;
 	try {
-		const { tokens } = JSON.parse(user);
-		console.log(tokens);
-
 		const response = await fetch(`${URLS.BASE}/tokens/refresh`, {
 			method: "GET",
 			headers: {
-				Authorization: "Bearer " + tokens.refresh,
+				Authorization: `Bearer ${refresh}`,
 				"Content-type": "application/json; charset=UTF-8",
 				Accept: "application/json",
 			},
@@ -51,7 +48,8 @@ export const tokensRefresh = async () => {
 		const JSON_RESPONSE = await response.json();
 
 		const { accessToken, refreshToken, msg, result } = JSON_RESPONSE;
-
+		// console.log(result);
+		// console.log(msg);
 		if (result === "Failure") return false;
 
 		if (result === "Success") {
