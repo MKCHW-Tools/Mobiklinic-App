@@ -172,6 +172,7 @@ export const signIn = async (data) => {
 		console.log(err);
 	}
 
+    // sign-in if the username and the password match the previous ones
 	if (theUser !== null) {
 		let myUser =
 			theUser.username === username && theUser.hash === hash
@@ -189,7 +190,54 @@ export const signIn = async (data) => {
 			// console.log(myUser);
 			// setTokens({ access: hash });
 			return;
-		} else {
+		}
+	}
+
+    // try online sign-in otherwise
+    try {
+        console.log("Starting network request");
+        let response = await fetch(`${URLS.BASE}/users/login`, {
+            method: "POST",
+            body: JSON.stringify({
+                username: username,
+                password: password,
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8",
+                Accept: "application/json",
+            },
+        });
+
+        let json_data = await response.json();
+        const { result, id, accessToken, refreshToken } = json_data;
+
+        if (result == "Success") {
+            await SAVE_LOCAL_USER({
+                id,
+                username,
+                password,
+                tokens: { access: accessToken, refresh: refreshToken },
+            });
+
+            const resources = ["ambulances", "doctors", "diagnosis"];
+
+            if (
+                DOWNLOAD({
+                    accessToken,
+                    items: resources,
+                    per_page: 10,
+                })
+            ) {
+                setUser({
+                    id,
+                    username,
+                    tokens: { access: accessToken, refresh: refreshToken },
+                    offline: false,
+                });
+                setIsLoading(false);
+                // setTokens({ access: accessToken });
+            }
+        } else
             Alert.alert(
                 "Failed to login",
                 "Check your login details",
@@ -207,92 +255,27 @@ export const signIn = async (data) => {
                     },
                 }
             );
-			return;
-		}
-	} else {
-		try {
-			console.log("Starting network request");
-			let response = await fetch(`${URLS.BASE}/users/login`, {
-				method: "POST",
-				body: JSON.stringify({
-					username: username,
-					password: password,
-				}),
-				headers: {
-					"Content-type": "application/json; charset=UTF-8",
-					Accept: "application/json",
-				},
-			});
-
-			let json_data = await response.json();
-			const { result, id, accessToken, refreshToken } = json_data;
-
-			if (result == "Success") {
-				await SAVE_LOCAL_USER({
-					id,
-					username,
-					password,
-					tokens: { access: accessToken, refresh: refreshToken },
-				});
-
-				const resources = ["ambulances", "doctors", "diagnosis"];
-
-				if (
-					DOWNLOAD({
-						accessToken,
-						items: resources,
-						per_page: 10,
-					})
-				) {
-					setUser({
-						id,
-						username,
-						tokens: { access: accessToken, refresh: refreshToken },
-						offline: false,
-					});
-					setIsLoading(false);
-					// setTokens({ access: accessToken });
-				}
-			} else
-				Alert.alert(
-					"Failed to login",
-					"Check your login details",
-					[
-						{
-							text: "Cancel",
-							onPress: () => setIsLoading(false),
-						},
-					],
-
-					{
-						cancelable: true,
-						onDismiss: () => {
-							setIsLoading(false);
-						},
-					}
-				);
-		} catch (err) {
-			err?.message == "Network request failed" &&
-				Alert.alert(
-					"Oops!",
-					"Check your internet connection",
-					[
-						{
-							text: "Cancel",
-							onPress: () => setIsLoading(false),
-						},
-					],
-					{
-						cancelable: true,
-						onDissmiss: () => {
-							setIsLoading(false);
-						},
-					}
-				);
-			setIsLoading(false);
-			console.log(err);
-		}
-	}
+    } catch (err) {
+        err?.message == "Network request failed" &&
+            Alert.alert(
+                "Oops!",
+                "Check your internet connection",
+                [
+                    {
+                        text: "Cancel",
+                        onPress: () => setIsLoading(false),
+                    },
+                ],
+                {
+                    cancelable: true,
+                    onDissmiss: () => {
+                        setIsLoading(false);
+                    },
+                }
+            );
+        setIsLoading(false);
+        console.log(err);
+    }
 };
 
 export const signUp = async (data) => {
