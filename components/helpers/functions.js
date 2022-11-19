@@ -190,7 +190,23 @@ export const signIn = async (data) => {
 			// setTokens({ access: hash });
 			return;
 		} else {
-			Alert.alert("Failed to login", "Try again, please!");
+            Alert.alert(
+                "Failed to login",
+                "Check your login details",
+                [
+                    {
+                        text: "Cancel",
+                        onPress: () => setIsLoading(false),
+                    },
+                ],
+
+                {
+                    cancelable: true,
+                    onDismiss: () => {
+                        setIsLoading(false);
+                    },
+                }
+            );
 			return;
 		}
 	} else {
@@ -250,7 +266,7 @@ export const signIn = async (data) => {
 
 					{
 						cancelable: true,
-						onDissmiss: () => {
+						onDismiss: () => {
 							setIsLoading(false);
 						},
 					}
