@@ -190,23 +190,23 @@ export const signIn = async (data) => {
 			// setTokens({ access: hash });
 			return;
 		} else {
-            Alert.alert(
-                "Failed to login",
-                "Check your login details",
-                [
-                    {
-                        text: "Cancel",
-                        onPress: () => setIsLoading(false),
-                    },
-                ],
+			Alert.alert(
+				"Failed to login",
+				"Check your login details",
+				[
+					{
+						text: "Cancel",
+						onPress: () => setIsLoading(false),
+					},
+				],
 
-                {
-                    cancelable: true,
-                    onDismiss: () => {
-                        setIsLoading(false);
-                    },
-                }
-            );
+				{
+					cancelable: true,
+					onDismiss: () => {
+						setIsLoading(false);
+					},
+				}
+			);
 			return;
 		}
 	} else {
