@@ -167,7 +167,6 @@ export const signIn = async (data) => {
 
 	try {
 		theUser = await RETRIEVE_LOCAL_USER();
-		// theUser = JSON.parse(theUser);
 	} catch (err) {
 		console.log(err);
 	}
@@ -187,8 +186,6 @@ export const signIn = async (data) => {
 				offline: true,
 			});
 			setIsLoading(false);
-			// console.log(myUser);
-			// setTokens({ access: hash });
 			return;
 		}
 	}
