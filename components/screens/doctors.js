@@ -31,6 +31,7 @@ const Doctors = ({ navigation }) => {
 		doctors: [],
 		login: false,
 	});
+	const { user, setUser } = React.useContext(AuthContext);
 
 	const { signOut } = React.useContext(AuthContext);
 
@@ -40,21 +41,9 @@ const Doctors = ({ navigation }) => {
 
 	React.useEffect(() => {
 		_getDoctors();
-		/* 		const returnUser = async () => {
-			return await _getUser();
-		}; */
-
-		//console.log(returnUser());
 		return () => {};
 	}, []);
 
-	const _getUser = async () => {
-		try {
-			return await AsyncStorage.getItem("@user");
-		} catch (e) {
-			console.log(e);
-		}
-	};
 	const _getDoctors = async () => {
 		let doctorsOnDevice = await AsyncStorage.getItem("@doctors");
 		doctorsOnDevice = JSON.parse(doctorsOnDevice);
@@ -134,7 +123,7 @@ const Doctors = ({ navigation }) => {
 
 	const _renderItem = ({ item }) => {
 		return (
-			<TouchableOpacity onPress={() => navigation.navigate("Chat", item)}>
+			<TouchableOpacity onPress={() => navigation.navigate("Chat", { users: [ { _id: user.id, ...user }, item] })}>
 				<ListItem bottomDivider>
 					<Icon
 						name="circle"
