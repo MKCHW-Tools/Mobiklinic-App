@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
 import * as React from "react";
-import { View, Image, TouchableOpacity, StyleSheet, Text } from "react-native";
+import { View, Image, StyleSheet, Text } from "react-native";
 
 import { COLORS, DIMENS } from "../constants/styles";
 import {
@@ -29,13 +29,6 @@ import Ambulance from "../screens/ambulance";
 const Drawer = createDrawerNavigator();
 
 export const CustomDrawerContent = (props) => {
-	const { tokens } = React.useContext(AuthContext);
-
-	React.useEffect(() => {
-		// console.log('Drawer header')
-		// console.log(userDetail)
-	}, []);
-
 	return (
 		<DrawerContentScrollView {...props}>
 			<View style={styles.DrawerHeader}>
@@ -107,7 +100,6 @@ export const DrawerNavigationLogged = () => {
 				activeBackgroundColor: COLORS.ACCENT_1,
 				itemStyle: {
 					marginHorizontal: 0,
-					// padding: DIMENS.PADDING,
 					borderRadius: 0,
 				},
 			}}
