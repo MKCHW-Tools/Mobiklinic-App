@@ -18,13 +18,11 @@ import { AuthContext } from "../contexts/auth";
 import { CustomStatusBar } from "../ui/custom.status.bar";
 import Loader from "../ui/loader";
 
-const Login = () => {
+const Login = ({ navigation }) => {
 	const {
 		setUser: setMyUser,
 		isLoading,
 		setIsLoading,
-		tokens,
-		setTokens,
 	} = React.useContext(AuthContext);
 	const [user, setUser] = React.useState({
 		username: "",
@@ -102,9 +100,19 @@ const Login = () => {
 						/>
 					</TouchableOpacity>
 				)}
-				<TouchableOpacity>
-					<Text style={[styles.textColor, styles.linkItem]}>
-						or, sign up
+				<TouchableOpacity
+					style={[styles.paragraph, styles.paragraphCentered]}
+					onPress={() => navigation.navigate("Signup")}>
+					<Text style={[styles.textColor, styles.font14]}>
+						Don't have an Account?{" "}
+					</Text>
+					<Text
+						style={[
+							styles.textColor,
+							styles.font14,
+							styles.linkItem,
+						]}>
+						sign up
 					</Text>
 				</TouchableOpacity>
 			</View>
@@ -140,8 +148,15 @@ const styles = StyleSheet.create({
 	textColor: {
 		color: COLORS.WHITE_LOW,
 	},
+	paragraph: {
+		flexDirection: "row",
+		padding: DIMENS.PADDING,
+	},
+	paragraphCentered: {
+		justifyContent: "center",
+	},
 	linkItem: {
-		paddingTop: DIMENS.PADDING,
+		// paddingTop: DIMENS.PADDING,
 		textAlign: "center",
 	},
 	formContainer: {
@@ -160,9 +175,6 @@ const styles = StyleSheet.create({
 		paddingVertical: 5,
 		marginBottom: 10,
 		fontFamily: "Roboto",
-	},
-	btn: {
-		padding: DIMENS.PADDING,
 	},
 	errorMsg: {
 		color: COLORS.ERRORS,
@@ -190,5 +202,8 @@ const styles = StyleSheet.create({
 	},
 	whiteText: {
 		color: COLORS.WHITE,
+	},
+	font14: {
+		fontSize: 14,
 	},
 });

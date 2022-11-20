@@ -3,6 +3,7 @@ import forgotPassword from "../screens/password.forgot";
 import PasswordReset from "../screens/password.reset";
 import { createStackNavigator } from "@react-navigation/stack";
 import Login from "../screens/login";
+import Signup from "../screens/signup";
 const Stack = createStackNavigator();
 
 function AppStack() {
@@ -11,6 +12,14 @@ function AppStack() {
 			<Stack.Screen
 				name="Login"
 				component={Login}
+				options={{
+					headerShown: false,
+					// animationTypeForReplace: state.isSignout ? "pop" : "push",
+				}}
+			/>
+			<Stack.Screen
+				name="Signup"
+				component={Signup}
 				options={{
 					headerShown: false,
 					// animationTypeForReplace: state.isSignout ? "pop" : "push",
