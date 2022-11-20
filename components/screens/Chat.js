@@ -101,7 +101,7 @@ export default function Chat({ route, navigation }) {
 		}
 
 		// sort to ensure the equivalent string
-		const chatUsers = usersParam.map(user => user._id).sort().join(',');
+		const chatUsers = [...new Set(usersParam.map(user => user._id))].sort().join(',');
 		const savedChatId = await getChatId(chatUsers);
 		if (typeof savedChatId === "string") {
 			setChatId(savedChatId);
