@@ -20,11 +20,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomHeader from "../parts/custom-header";
 import { CustomStatusBar } from "../ui/custom.status.bar";
 import Loader from "../ui/loader";
+import {AuthContext} from "../contexts/auth";
 
 export default function Chats({ route, navigation }) {
 	const [isLoading, setLoading] = React.useState(true);
-	const [error, setError] = React.useState("");
 	const [chats, setChats] = React.useState([]);
+	const { user, setUser } = React.useContext(AuthContext);
 
 	const _header = () => (
 		<CustomHeader
@@ -42,49 +43,44 @@ export default function Chats({ route, navigation }) {
 			}
 		/>
 	);
-	const _keyExtractor = (item) => item.threadID;
+	const _keyExtractor = (item) => item._id;
 	React.useEffect(() => {
 		const fetchChats = async () => {
-			const user = JSON.parse(await AsyncStorage.getItem("@user"));
-			// console.log(user);
-			const {
-				tokens: { accessToken },
-			} = user;
 			axios.defaults.baseURL = URLS.BASE;
 			axios.defaults.headers.common[
 				"Authorization"
-			] = `Bearer ${accessToken}`;
+			] = `Bearer ${user.tokens.access}`;
 			axios.defaults.headers.post["Content-Type"] =
 				"application/json; charset=UTF-8";
 			axios.defaults.headers.post["Accept"] = "application/json";
 
-			const response = await axios.get(`/chats?page=1`);
-			const {
-				data: { chats: serverChats },
-			} = response;
-			// console.log(serverChats);
-			if (serverChats?.length <= 0) {
-				setLoading(false);
-				setError(`You do not have messages yet!`);
-				return;
-			}
+			const response = await axios.get(`/chats`);
+			// chat with no message should be hidden
+			const serverChats = response.data.filter( chat => chat.latestMessage );
 
+			/*
 			serverChats?.forEach((serverChat) => {
 				serverChat.users.forEach(async (user) => {
 					const response = await axios.get(`/users/${user}`);
 					console.log(response.data);
 				});
 			});
+			*/
 
 			// const _chats = response?.data;
 			// console.log(_chats);
-			/*let itemsOnDevice = await AsyncStorage.getItem(`@${items[i]}`);
+			/*
+			let itemsOnDevice = await AsyncStorage.getItem(`@${items[i]}`);
 			itemsOnDevice = JSON.parse(itemsOnDevice) || [];
 			const all = uniqWith([..._items, ...itemsOnDevice], isEqual);
-			AsyncStorage.setItem(`@${items[i]}`, JSON.stringify(all)); */
+			AsyncStorage.setItem(`@${items[i]}`, JSON.stringify(all));
+			*/
+
+			setChats(serverChats);
 		};
 
-		/* fetchChats(); */
+		fetchChats();
+		setLoading(false);
 	}, []);
 
 	const _renderItem = ({ item }) => (
@@ -93,8 +89,20 @@ export default function Chats({ route, navigation }) {
 				<Icon name="circle" color={COLORS.GREY} SIZE={25} />
 				<ListItem.Content>
 					<ListItem.Title style={STYLES.listTitle}>
-						{item.thread[item.thread.length - 1].msg}
+						{item.latestMessage.content}
 					</ListItem.Title>
+					<ListItem.Subtitle style={STYLES.subtitle}>
+						<View style={STYLES.wrapper}>
+							<View style={STYLES.subtitle}>
+								<Text>at </Text>
+								<Text style={STYLES.label}>{item.latestMessage.createdAt}</Text>
+							</View>
+							<View style={STYLES.subtitle}>
+								<Text>with </Text>
+								<Text style={STYLES.label}>{item.users.filter(u => u._id !== user.id).map(u => u.name).join(', ')}</Text>
+							</View>
+						</View>
+					</ListItem.Subtitle>
 				</ListItem.Content>
 				<ListItem.Chevron size={30} />
 			</ListItem>
@@ -105,31 +113,30 @@ export default function Chats({ route, navigation }) {
 		return <Loader />;
 	}
 
-	if (error !== "") {
+	if (chats?.length == 0)
 		return (
-			<View style={STYLES.darkWrapper}>
+			<View style={STYLES.wrapper}>
+				<CustomStatusBar />
 				{_header()}
 				<View style={STYLES.body}>
-					<Text style={STYLES.error}>{error}</Text>
-					<TouchableOpacity
-						style={STYLES.button}
-						onPress={() => navigation.navigate("Doctors")}>
-						<Text style={STYLES.buttonTextWhite}>
-							Choose a doctor to send your first message.
-						</Text>
-					</TouchableOpacity>
+					<Icon name="smile" size={60} color={COLORS.GREY} />
+					<Text style={STYLES.alert}>
+						Choose a doctor to send your first message.
+					</Text>
 				</View>
 			</View>
 		);
-	}
+
 	return (
-		<>
+		<View style={STYLES.wrapper}>
+			<CustomStatusBar />
+			{_header()}
 			<FlatList
 				data={chats}
 				renderItem={_renderItem}
 				keyExtractor={_keyExtractor}
 			/>
-		</>
+		</View>
 	);
 }
 

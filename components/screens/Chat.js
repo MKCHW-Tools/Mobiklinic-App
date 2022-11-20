@@ -37,37 +37,31 @@ export default function Chat({ route, navigation }) {
 	let [msg, setMsg] = React.useState("");
 	let [chatId, setChatId] = React.useState(null);
 	let [cameraOn, setCameraOn] = React.useState(false);
-	const doctor = route?.params?._id;
-	const name = route?.params?.name;
+	const { user, setUser } = React.useContext(AuthContext);
+
+	const chatIdParam = route?.params?._id || undefined;
+	const usersParam = route?.params?.users;
+	const name = usersParam.filter(participant => participant.id !== user.id).map(participant => participant.name).join(', ');
 
 	let currentTime = new Date();
 	let [keyboardStatus, setKeyboardStatus] = React.useState(false);
-	const { user, setUser } = React.useContext(AuthContext);
-	const getChats = async (chatId) => {
-		try {
-			const conversation = await AsyncStorage.getItem(chatId);
-			const messages = JSON.parse(conversation) || [];
-			setChats([...messages]);
-		} catch (e) {
-			console.log("Get chats", e);
-		}
-	};
 
-	const getChat = async (chatUsers) => {
-		try {
-			return await AsyncStorage.getItem(chatUsers);
-		} catch (e) {
-			console.log(e);
+	const convertMessageObject = (message) => (
+		{
+			msg: message.content,
+			image: message.image,
+			senderId: message.sender._id,
+			senderName: message.sender.name,
+			time: new Date(message.createdAt),
+			status: 1,
+			backendId: message._id
 		}
-	};
-	const makeChatId = async () => {
-		const myChat = await getChat(`${user.id}${doctor}`);
-		if (typeof myChat !== "string") {
-			let response = await fetch(`${URLS.BASE}/chats`, {
-				method: "POST",
-				body: JSON.stringify({
-					userId: [user.id, doctor],
-				}),
+	);
+	const getChatMessages = async (chatId) => {
+		try {
+			// try obtaining the information from the server
+			let response = await fetch(`${URLS.BASE}/messages/${chatId}`, {
+				method: "GET",
 				headers: {
 					"Content-type": "application/json; charset=UTF-8",
 					Accept: "application/json",
@@ -75,24 +69,72 @@ export default function Chat({ route, navigation }) {
 				},
 			});
 
-			let json_data = await response.json();
-			const chatUsers = `${user.id}${doctor}`;
-			const chatId = json_data._id;
-			await AsyncStorage.setItem(chatUsers, chatId);
-			setChatId(chatId);
-		} else {
-			setChatId(myChat);
-			getChats(myChat);
+			const messages = await response.json();
+			const chats = messages.map(convertMessageObject);
+			await AsyncStorage.setItem(chatId, JSON.stringify(chats));
+			setChats(chats);
+		} catch (e) {
+			console.log("Network error occurred while obtaining chat history, so use the local data", e);
+
+			try {
+				const conversation = await AsyncStorage.getItem(chatId);
+				const messages = JSON.parse(conversation) || [];
+				setChats(messages);
+			} catch (e) {
+				console.log("Get chats", e);
+			}
 		}
 	};
-	const sendMessage = async (message) => {
+
+	const getChatId = async (chatUsers) => {
+		try {
+			return await AsyncStorage.getItem(chatUsers);
+		} catch (e) {
+			console.log(e);
+		}
+	};
+	const makeChatId = async () => {
+		if (chatIdParam !== undefined) {
+			setChatId(chatIdParam);
+			getChatMessages(chatIdParam);
+			return;
+		}
+
+		// sort to ensure the equivalent string
+		const chatUsers = usersParam.map(user => user._id).sort().join(',');
+		const savedChatId = await getChatId(chatUsers);
+		if (typeof savedChatId === "string") {
+			setChatId(savedChatId);
+			getChatMessages(savedChatId);
+			return;
+		}
+
+		let response = await fetch(`${URLS.BASE}/chats`, {
+			method: "POST",
+			body: JSON.stringify({
+				userId: usersParam.map(user => user._id),
+			}),
+			headers: {
+				"Content-type": "application/json; charset=UTF-8",
+				Accept: "application/json",
+				Authorization: user.tokens.access,
+			},
+		});
+
+		const jsonData = await response.json();
+		const chatId = jsonData._id;
+		await AsyncStorage.setItem(chatUsers, chatId);
+		setChatId(chatId);
+		getChatMessages(chatId);
+	};
+	const sendMessage = async (chat) => {
 		let response = await fetch(`${URLS.BASE}/messages`, {
 			method: "POST",
 			body: JSON.stringify({
 				sender: user.id,
-				content: message,
+				content: chat.msg,
 				chatId: chatId,
-				image: image ? image : null,
+				image: chat.image ? chat.image : null,
 			}),
 			headers: {
 				"Content-type": "application/json; charset=UTF-8",
@@ -127,45 +169,43 @@ export default function Chat({ route, navigation }) {
 				offline: user.offline,
 			});
 
-			await sendMessage(message);
+			await sendMessage(chat);
+		} else {
+			const newChats = [
+				...chats,
+				{
+					...chat,
+					status: 1,
+					backendId: data._id
+				}
+			];
+
+			setChats(newChats);
+			await AsyncStorage.setItem(String(chatId), JSON.stringify(newChats));
 		}
 	};
 	const processMessage = async () => {
 		let date = new Date();
-		let time = `${date.getHours()}:${date.getMinutes()}`;
-		const myMsg = msg;
 		setCameraOn(false);
 
-		setChats([
-			...chats,
-			{
-				msg,
-				image: image,
-				sender: user.id,
-				time,
-				date: date.toDateString(),
-				status: 2,
-				backend_id: null,
-			},
-		]);
-		await AsyncStorage.setItem(
-			String(chatId),
-			JSON.stringify([
-				...chats,
-				{
-					msg: myMsg,
-					sender: user.id,
-					time,
-					image: image,
-					date: date.toDateString(),
-					status: 2,
-					backend_id: null,
-				},
-			])
-		);
-		await sendMessage(myMsg);
+		const newChat = {
+			msg,
+			image,
+			senderId: user.id,
+			senderName: "You",
+			time: new Date(),
+			status: 0,
+			backendId: null,
+		};
+
+		const newChats = [...chats, newChat];
+		console.log('c', newChats);
+		setChats(newChats);
+		await AsyncStorage.setItem(String(chatId), JSON.stringify(newChats));
+
 		setImage(undefined);
 		setMsg("");
+		await sendMessage(newChat);
 	};
 
 	const toggleCameraType = () => {
@@ -197,13 +237,13 @@ export default function Chat({ route, navigation }) {
 	const Amessage = ({ chat, style }) => {
 		let statusIcon = <Feather name="clock" />;
 		switch (chat?.status) {
-			case 0:
+			case 0:  // sending
 				statusIcon = <Feather name="clock" />;
 				break;
-			case 1:
+			case 1:  // sent
 				statusIcon = <Feather name="check" />;
 				break;
-			case 2:
+			case 2:  // read
 				statusIcon = <Ionicons name="checkmark-done" />;
 				break;
 			case 3:
@@ -216,8 +256,11 @@ export default function Chat({ route, navigation }) {
 
 		return (
 			<View style={style}>
-				<Text>{chat?.msg}</Text>
-				{chat?.image && (
+				<View>
+					<Text style={STYLES.messageName}>{chat.senderId == user.id? "You": chat.senderName}</Text>
+				</View>
+				<Text>{chat.msg}</Text>
+				{chat.image && (
 					<TouchableOpacity onPress={() => setViewImage(chat.image)}>
 						<Image
 							source={{ uri: chat.image }}
@@ -225,9 +268,9 @@ export default function Chat({ route, navigation }) {
 						/>
 					</TouchableOpacity>
 				)}
-				<View>
-					<Text style={STYLES.messageTime}>{chat?.time}</Text>
+				<View style={STYLES.messageTimeContainer}>
 					{statusIcon}
+					<Text style={STYLES.messageTime}>{chat.time.getHours()}:{chat.time.getMinutes().toString().padStart(2, '0')}, {chat.time.toDateString()}</Text>
 				</View>
 			</View>
 		);
@@ -388,7 +431,7 @@ export default function Chat({ route, navigation }) {
 					<Amessage
 						style={[
 							STYLES.message,
-							chatItem.sender === user.id
+							chatItem.senderId === user.id
 								? STYLES.you
 								: STYLES.other,
 						]}
@@ -484,9 +527,19 @@ const STYLES = StyleSheet.create({
 	lastSeen: {
 		fontSize: 9,
 	},
+	messageName: {
+		textAlign: "left",
+		color: "#064374",
+	},
+	messageTimeContainer: {
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
+	},
 	messageTime: {
 		textAlign: "right",
 		color: "#064374",
+		flexGrow: 1,
 	},
 	message: {
 		shadowColor: "#000",
