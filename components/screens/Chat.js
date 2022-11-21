@@ -79,7 +79,10 @@ export default function Chat({ route, navigation }) {
 			try {
 				const conversation = await AsyncStorage.getItem(chatId);
 				const messages = JSON.parse(conversation) || [];
-				setChats(messages);
+				setChats(messages.map(message => ({
+					...message,
+					time: new Date(message.time)
+				})));
 			} catch (e) {
 				console.log("Get chats", e);
 			}
