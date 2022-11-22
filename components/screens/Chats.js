@@ -8,7 +8,7 @@ import {
 	TouchableOpacity,
 	StyleSheet,
 	ScrollView,
-	View,
+	View, Alert,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons/Feather";
@@ -21,6 +21,7 @@ import CustomHeader from "../parts/custom-header";
 import { CustomStatusBar } from "../ui/custom.status.bar";
 import Loader from "../ui/loader";
 import {AuthContext} from "../contexts/auth";
+import {tokensRefresh} from "../helpers/functions";
 
 export default function Chats({ route, navigation }) {
 	const [isLoading, setLoading] = React.useState(true);
@@ -45,42 +46,55 @@ export default function Chats({ route, navigation }) {
 	);
 	const _keyExtractor = (item) => item._id;
 	React.useEffect(() => {
-		const fetchChats = async () => {
-			axios.defaults.baseURL = URLS.BASE;
-			axios.defaults.headers.common[
-				"Authorization"
-			] = `Bearer ${user.tokens.access}`;
-			axios.defaults.headers.post["Content-Type"] =
-				"application/json; charset=UTF-8";
-			axios.defaults.headers.post["Accept"] = "application/json";
-
-			const response = await axios.get(`/chats`);
-			// chat with no message should be hidden
-			const serverChats = response.data.filter( chat => chat.latestMessage );
-
-			/*
-			serverChats?.forEach((serverChat) => {
-				serverChat.users.forEach(async (user) => {
-					const response = await axios.get(`/users/${user}`);
-					console.log(response.data);
-				});
+		const fetchChats = async (user) => {
+			const response = fetch(`${URLS.BASE}/chats`, {
+				headers: {
+					"Content-type": "application/json; charset=UTF-8",
+					Accept: "application/json",
+					Authorization: `Bearer ${user.tokens.access}`,
+				},
 			});
-			*/
 
-			// const _chats = response?.data;
-			// console.log(_chats);
-			/*
-			let itemsOnDevice = await AsyncStorage.getItem(`@${items[i]}`);
-			itemsOnDevice = JSON.parse(itemsOnDevice) || [];
-			const all = uniqWith([..._items, ...itemsOnDevice], isEqual);
-			AsyncStorage.setItem(`@${items[i]}`, JSON.stringify(all));
-			*/
+			const data = await response.then(async (response) => {
+				if (response.status === 401) {
+					const newUser = await tokensRefresh(user);
 
-			setChats(serverChats);
+					if (newUser === null) {
+						Alert.alert(
+							"Login expired!",
+							"Please sign out once and sign in again",
+							[
+								{
+									text: "Cancel",
+									onPress: () => navigation.goBack(),
+								},
+							],
+						)
+						return;
+					}
+					setUser(newUser);
+					return await fetchChats(newUser);
+				}
+				return response.json();
+			});
+
+			if (data) {
+				// chat with no message should be hidden
+				const serverChats = data.filter(chat => chat.latestMessage);
+
+				/*
+                let itemsOnDevice = await AsyncStorage.getItem(`@${items[i]}`);
+                itemsOnDevice = JSON.parse(itemsOnDevice) || [];
+                const all = uniqWith([..._items, ...itemsOnDevice], isEqual);
+                AsyncStorage.setItem(`@${items[i]}`, JSON.stringify(all));
+                */
+
+				setChats(serverChats);
+				setLoading(false);
+			}
 		};
 
-		fetchChats();
-		setLoading(false);
+		fetchChats(user);
 	}, []);
 
 	const _renderItem = ({ item }) => (

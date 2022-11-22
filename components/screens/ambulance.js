@@ -14,11 +14,7 @@ import { ListItem } from "react-native-elements";
 import Icon from "react-native-vector-icons/Feather";
 
 import { COLORS, DIMENS } from "../constants/styles";
-import AuthContext from "../contexts/auth";
-import { UserContext } from "../providers/User";
-import { tokensRefresh } from "../helpers/functions";
 import Loader from "../ui/loader";
-import { URLS } from "../constants/API";
 
 import CustomHeader from "../parts/custom-header";
 import { CustomStatusBar } from "../ui/custom.status.bar";

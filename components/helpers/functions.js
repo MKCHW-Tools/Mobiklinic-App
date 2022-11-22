@@ -32,9 +32,9 @@ export const MyDate = () => {
 	}-${myDate.getDate()}-${myDate.getFullYear()} ${myDate.getHours()}:${myDate.getMinutes()}:${myDate.getSeconds()}`;
 };
 
-export const tokensRefresh = async () => {
-	const user = JSON.parse(await AsyncStorage.getItem("@user"));
+export const tokensRefresh = async (user) => {
 	const refresh = user.tokens.refresh;
+
 	try {
 		const response = await fetch(`${URLS.BASE}/tokens/refresh`, {
 			method: "GET",
@@ -46,21 +46,35 @@ export const tokensRefresh = async () => {
 		});
 
 		const JSON_RESPONSE = await response.json();
-
 		const { accessToken, refreshToken, msg, result } = JSON_RESPONSE;
-		// console.log(result);
-		// console.log(msg);
-		if (result === "Failure") return false;
 
 		if (result === "Success") {
+			await SAVE_LOCAL_USER({
+				id: user.id,
+				username: user.username,
+				password: user.password,
+				tokens: {
+					access: accessToken,
+					refresh: refreshToken,
+				},
+				offline: user.offline,
+			});
+
 			return {
-				accessToken,
-				refreshToken,
+				id: user.id,
+				username: user.username,
+				tokens: {
+					access: accessToken,
+					refresh: refreshToken,
+				},
+				offline: user.offline,
 			};
 		}
 	} catch (e) {
 		console.error(e.message);
 	}
+
+	return null;
 };
 
 export const RETRIEVE_LOCAL_USER = async () => {
@@ -185,7 +199,6 @@ export const signIn = async (data) => {
 				offline: true,
 			});
 			setIsLoading(false);
-			return;
 		} else {
 			Alert.alert(
 				"Failed to login",
@@ -204,7 +217,6 @@ export const signIn = async (data) => {
 					},
 				}
 			);
-			return;
 		}
 	} else {
 		try {
@@ -260,7 +272,6 @@ export const signIn = async (data) => {
 							onPress: () => setIsLoading(false),
 						},
 					],
-
 					{
 						cancelable: true,
 						onDismiss: () => {
@@ -281,7 +292,7 @@ export const signIn = async (data) => {
 					],
 					{
 						cancelable: true,
-						onDissmiss: () => {
+						onDismiss: () => {
 							setIsLoading(false);
 						},
 					}
@@ -391,7 +402,8 @@ export const signUp = async (data) => {
 	}
 };
 
-export const signOut = (callback) => {
+export const signOut = async (callback) => {
+	await AsyncStorage.removeItem("@user");
 	callback();
 };
 

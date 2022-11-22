@@ -6,7 +6,7 @@ import {
 	ScrollView,
 	View,
 	Button,
-	Image,
+	Image, ActivityIndicator, Alert,
 } from "react-native";
 import { Camera, CameraType } from "expo-camera";
 import { TextInput } from "react-native-gesture-handler";
@@ -24,8 +24,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { URLS } from "../constants/API";
 import { AuthContext } from "../contexts/auth";
 import { tokensRefresh, SAVE_LOCAL_USER } from "../helpers/functions";
+import Loader from "../ui/loader";
 
 export default function Chat({ route, navigation }) {
+	const [isLoading, setLoading] = React.useState(true);
 	const [type, setType] = React.useState(CameraType.back);
 	const [permission, requestPermission] = Camera.useCameraPermissions();
 	const [isCameraReady, setIsCameraReady] = React.useState(false);
@@ -57,22 +59,47 @@ export default function Chat({ route, navigation }) {
 			backendId: message._id
 		}
 	);
-	const getChatMessages = async (chatId) => {
+	const getChatMessages = async (user, chatId) => {
 		try {
 			// try obtaining the information from the server
-			let response = await fetch(`${URLS.BASE}/messages/${chatId}`, {
+			const response = fetch(`${URLS.BASE}/messages/${chatId}`, {
 				method: "GET",
 				headers: {
 					"Content-type": "application/json; charset=UTF-8",
 					Accept: "application/json",
-					Authorization: user.tokens.access,
+					Authorization: `Bearer ${user.tokens.access}`,
 				},
 			});
 
-			const messages = await response.json();
-			const chats = messages.map(convertMessageObject);
-			await AsyncStorage.setItem(chatId, JSON.stringify(chats));
-			setChats(chats);
+			const messages = await response.then(async (response) => {
+				if (response.status === 401) {
+					const newUser = await tokensRefresh(user);
+
+					if (newUser === null) {
+						Alert.alert(
+							"Login expired!",
+							"Please sign out once and sign in again",
+							[
+								{
+									text: "Cancel",
+									onPress: () => navigation.goBack(),
+								},
+							],
+						);
+						return;
+					}
+					setUser(newUser);
+					return await getChatMessages(newUser, chatId);
+				}
+				return response.json();
+			});
+
+			if (messages) {
+				const chats = messages.map(convertMessageObject);
+				await AsyncStorage.setItem(chatId, JSON.stringify(chats));
+				setChats(chats);
+				setLoading(false);
+			}
 		} catch (e) {
 			console.log("Network error occurred while obtaining chat history, so use the local data", e);
 
@@ -83,6 +110,7 @@ export default function Chat({ route, navigation }) {
 					...message,
 					time: new Date(message.time)
 				})));
+				setLoading(false);
 			} catch (e) {
 				console.log("Get chats", e);
 			}
@@ -99,7 +127,7 @@ export default function Chat({ route, navigation }) {
 	const makeChatId = async () => {
 		if (chatIdParam !== undefined) {
 			setChatId(chatIdParam);
-			getChatMessages(chatIdParam);
+			getChatMessages(user, chatIdParam);
 			return;
 		}
 
@@ -108,11 +136,11 @@ export default function Chat({ route, navigation }) {
 		const savedChatId = await getChatId(chatUsers);
 		if (typeof savedChatId === "string") {
 			setChatId(savedChatId);
-			getChatMessages(savedChatId);
+			getChatMessages(user, savedChatId);
 			return;
 		}
 
-		let response = await fetch(`${URLS.BASE}/chats`, {
+		const response = await fetch(`${URLS.BASE}/chats`, {
 			method: "POST",
 			body: JSON.stringify({
 				userId: usersParam.map(user => user._id),
@@ -120,7 +148,7 @@ export default function Chat({ route, navigation }) {
 			headers: {
 				"Content-type": "application/json; charset=UTF-8",
 				Accept: "application/json",
-				Authorization: user.tokens.access,
+				Authorization: `Bearer ${user.tokens.access}`,
 			},
 		});
 
@@ -130,8 +158,8 @@ export default function Chat({ route, navigation }) {
 		setChatId(chatId);
 		getChatMessages(chatId);
 	};
-	const sendMessage = async (chat) => {
-		let response = await fetch(`${URLS.BASE}/messages`, {
+	const sendMessage = async (user, chat) => {
+		const response = fetch(`${URLS.BASE}/messages`, {
 			method: "POST",
 			body: JSON.stringify({
 				sender: user.id,
@@ -146,34 +174,30 @@ export default function Chat({ route, navigation }) {
 			},
 		});
 
-		let data = await response.json();
-		console.log(data);
-		// console.log(typeof user.tokens.access);
-		if (data.result === "Failure" && data.msg === "Invalid Access Token") {
-			const newTokens = tokensRefresh();
-			// console.log(newTokens);
-			setUser({
-				id: user.id,
-				username: user.username,
-				tokens: {
-					access: newTokens.access,
-					refresh: newTokens.refresh,
-				},
-				offline: user.offline,
-			});
-			await SAVE_LOCAL_USER({
-				id: user.id,
-				username: user.username,
-				password: user.password,
-				tokens: {
-					access: newTokens.access,
-					refresh: newTokens.refresh,
-				},
-				offline: user.offline,
-			});
+		const data = await response.then(async (response) => {
+			if (response.status === 401) {
+				const newUser = await tokensRefresh(user);
 
-			await sendMessage(chat);
-		} else {
+				if (newUser === null) {
+					Alert.alert(
+						"Login expired!",
+						"Please sign out once and sign in again",
+						[
+							{
+								text: "Cancel",
+								onPress: () => navigation.goBack(),
+							},
+						],
+					);
+					return;
+				}
+				setUser(newUser);
+				return await sendMessage(newUser, chat);
+			}
+			return response.json();
+		});
+
+		if (data) {
 			const newChats = [
 				...chats,
 				{
@@ -188,7 +212,6 @@ export default function Chat({ route, navigation }) {
 		}
 	};
 	const processMessage = async () => {
-		let date = new Date();
 		setCameraOn(false);
 
 		const newChat = {
@@ -202,13 +225,12 @@ export default function Chat({ route, navigation }) {
 		};
 
 		const newChats = [...chats, newChat];
-		console.log('c', newChats);
 		setChats(newChats);
 		await AsyncStorage.setItem(String(chatId), JSON.stringify(newChats));
 
 		setImage(undefined);
 		setMsg("");
-		await sendMessage(newChat);
+		await sendMessage(user, newChat);
 	};
 
 	const toggleCameraType = () => {
@@ -398,6 +420,7 @@ export default function Chat({ route, navigation }) {
 	if (viewImage) {
 		return <RevealImage image={viewImage} />;
 	}
+
 	return (
 		<>
 			<View style={STYLES.messageHeader}>
@@ -424,25 +447,27 @@ export default function Chat({ route, navigation }) {
 					</Text>
 				</View>
 			</View>
-			<ScrollView
-				ref={scrollViewRef}
-				onContentSizeChange={() => scrollViewRef.current.scrollToEnd()}
-				contentContainerStyle={STYLES.contentContainerStyle}
-				style={STYLES.threadBody}
-				keyboardDismissMode="on-drag">
-				{chats?.map((chatItem, index) => (
-					<Amessage
-						style={[
-							STYLES.message,
-							chatItem.senderId === user.id
-								? STYLES.you
-								: STYLES.other,
-						]}
-						key={index.toString()}
-						chat={chatItem}
-					/>
-				))}
-			</ScrollView>
+			{isLoading ? <View style={STYLES.loadingStyle}><ActivityIndicator color={COLORS.ACCENT_1} size={'large'} /></View> :
+				<ScrollView
+					ref={scrollViewRef}
+					onContentSizeChange={() => scrollViewRef.current.scrollToEnd()}
+					contentContainerStyle={STYLES.contentContainerStyle}
+					style={STYLES.threadBody}
+					keyboardDismissMode="on-drag">
+					{chats?.map((chatItem, index) => (
+						<Amessage
+							style={[
+								STYLES.message,
+								chatItem.senderId === user.id
+									? STYLES.you
+									: STYLES.other,
+							]}
+							key={index.toString()}
+							chat={chatItem}
+						/>
+					))}
+				</ScrollView>
+			}
 			<View style={STYLES.messageFooter}>
 				<View style={STYLES.messageInput}>
 					{/* 					<TouchableOpacity>
@@ -561,6 +586,12 @@ const STYLES = StyleSheet.create({
 	threadBody: {
 		flex: 2,
 		padding: 20,
+	},
+	loadingStyle: {
+		flex:1,
+		flexDirection: 'column',
+		justifyContent:'center',
+		alignItems: 'center'
 	},
 	contentContainerStyle: {
 		paddingBottom: 40,
