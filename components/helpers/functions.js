@@ -32,11 +32,11 @@ export const MyDate = () => {
 	}-${myDate.getDate()}-${myDate.getFullYear()} ${myDate.getHours()}:${myDate.getMinutes()}:${myDate.getSeconds()}`;
 };
 
-export const tokensRefresh = async () => {
-	const user = JSON.parse(await AsyncStorage.getItem("@user"));
+export const tokensRefresh = async (user) => {
 	const refresh = user.tokens.refresh;
+
 	try {
-		const response = await fetch(`${URLS.BASE}/tokens/refresh`, {
+		const response = fetch(`${URLS.BASE}/tokens/refresh`, {
 			method: "GET",
 			headers: {
 				Authorization: `Bearer ${refresh}`,
@@ -45,22 +45,52 @@ export const tokensRefresh = async () => {
 			},
 		});
 
-		const JSON_RESPONSE = await response.json();
+		const data = await response.then(async (response) => {
+			if (response.status === 401) {  // the refresh token no longer works
+				await AsyncStorage.setItem(
+					"@user",
+					JSON.stringify({
+						id: user.id,
+						username: user.username,
+						hash: null,  // overwrite the hash so that the user surely try to obtain new refresh tokens when they sign in next time.
+						tokens: user.tokens,
+					})
+				);
+				return null;
+			}
+			return response.json()
+		});
+		if (data === null)
+			return null;
 
-		const { accessToken, refreshToken, msg, result } = JSON_RESPONSE;
-		// console.log(result);
-		// console.log(msg);
-		if (result === "Failure") return false;
-
+		const { accessToken, refreshToken, msg, result } = data;
 		if (result === "Success") {
+			await SAVE_LOCAL_USER({
+				id: user.id,
+				username: user.username,
+				password: user.password,
+				tokens: {
+					access: accessToken,
+					refresh: refreshToken,
+				},
+				offline: user.offline,
+			});
+
 			return {
-				accessToken,
-				refreshToken,
+				id: user.id,
+				username: user.username,
+				tokens: {
+					access: accessToken,
+					refresh: refreshToken,
+				},
+				offline: user.offline,
 			};
 		}
 	} catch (e) {
 		console.error(e.message);
 	}
+
+	return null;
 };
 
 export const RETRIEVE_LOCAL_USER = async () => {
@@ -186,27 +216,30 @@ export const signIn = async (data) => {
 			});
 			setIsLoading(false);
 			return;
-		} else {
-			Alert.alert(
-				"Failed to login",
-				"Check your login details",
-				[
-					{
-						text: "Cancel",
-						onPress: () => setIsLoading(false),
-					},
-				],
-
-				{
-					cancelable: true,
-					onDismiss: () => {
-						setIsLoading(false);
-					},
-				}
-			);
-			return;
+		//// It is possible that the user has changed the password, but it adheres to the past information stored on the device.
+		//// This, we need to ask the online server when the user fail to sign in with the stored information.
+		////
+		// } else {
+		// 	Alert.alert(
+		// 		"Failed to login",
+		// 		"Check your login details",
+		// 		[
+		// 			{
+		// 				text: "Cancel",
+		// 				onPress: () => setIsLoading(false),
+		// 			},
+		// 		],
+		//
+		// 		{
+		// 			cancelable: true,
+		// 			onDismiss: () => {
+		// 				setIsLoading(false);
+		// 			},
+		// 		}
+		// 	);
 		}
-	} else {
+	}
+	// } else {
 		try {
 			console.log("Starting network request");
 			let response = await fetch(`${URLS.BASE}/users/login`, {
@@ -250,7 +283,7 @@ export const signIn = async (data) => {
 					setIsLoading(false);
 					// setTokens({ access: accessToken });
 				}
-			} else
+			} else {
 				Alert.alert(
 					"Failed to login",
 					"Check your login details",
@@ -260,7 +293,6 @@ export const signIn = async (data) => {
 							onPress: () => setIsLoading(false),
 						},
 					],
-
 					{
 						cancelable: true,
 						onDismiss: () => {
@@ -268,6 +300,7 @@ export const signIn = async (data) => {
 						},
 					}
 				);
+			}
 		} catch (err) {
 			err?.message == "Network request failed" &&
 				Alert.alert(
@@ -281,7 +314,7 @@ export const signIn = async (data) => {
 					],
 					{
 						cancelable: true,
-						onDissmiss: () => {
+						onDismiss: () => {
 							setIsLoading(false);
 						},
 					}
@@ -289,7 +322,7 @@ export const signIn = async (data) => {
 			setIsLoading(false);
 			console.log(err);
 		}
-	}
+	// }
 };
 
 export const signUp = async (data) => {
@@ -391,7 +424,7 @@ export const signUp = async (data) => {
 	}
 };
 
-export const signOut = (callback) => {
+export const signOut = async (callback) => {
 	callback();
 };
 

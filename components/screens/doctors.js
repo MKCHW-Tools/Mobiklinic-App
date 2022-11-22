@@ -20,10 +20,8 @@ import Login from "./login";
 import { AuthContext } from "../contexts/auth";
 import { DoctorsContext } from "../providers/Doctors";
 import { UserContext } from "../providers/User";
-import { tokensRefresh } from "../helpers/functions";
 import CustomHeader from "../ui/custom-header";
 import Loader from "../ui/loader";
-import { URLS } from "../constants/API";
 
 const Doctors = ({ navigation }) => {
 	const [state, setState] = React.useState({
