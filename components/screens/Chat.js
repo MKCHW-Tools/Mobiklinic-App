@@ -24,7 +24,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { URLS } from "../constants/API";
 import { AuthContext } from "../contexts/auth";
 import { tokensRefresh, SAVE_LOCAL_USER } from "../helpers/functions";
-import Loader from "../ui/loader";
 
 export default function Chat({ route, navigation }) {
 	const [isLoading, setLoading] = React.useState(true);
@@ -156,7 +155,7 @@ export default function Chat({ route, navigation }) {
 		const chatId = jsonData._id;
 		await AsyncStorage.setItem(chatUsers, chatId);
 		setChatId(chatId);
-		getChatMessages(chatId);
+		getChatMessages(user, chatId);
 	};
 	const sendMessage = async (user, chat) => {
 		const response = fetch(`${URLS.BASE}/messages`, {
