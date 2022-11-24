@@ -9,6 +9,7 @@ import {
 	Image, ActivityIndicator, Alert,
 } from "react-native";
 import { Camera, CameraType } from "expo-camera";
+import { readAsStringAsync } from "expo-file-system";
 import { TextInput } from "react-native-gesture-handler";
 import {
 	Ionicons,
@@ -164,7 +165,7 @@ export default function Chat({ route, navigation }) {
 				sender: user.id,
 				content: chat.msg,
 				chatId: chatId,
-				image: chat.image ? chat.image : null,
+				image: chat.image ? await readAsStringAsync(chat.image, {encoding: 'base64'}) : null,
 			}),
 			headers: {
 				"Content-type": "application/json; charset=UTF-8",
