@@ -1,16 +1,18 @@
 import * as React from "react";
 import {
 	Text,
+	TextInput,
 	TouchableOpacity,
 	StyleSheet,
 	ScrollView,
 	View,
 	Button,
-	Image, ActivityIndicator, Alert,
+	Image,
+	ActivityIndicator,
+	Alert,
 } from "react-native";
 import { Camera, CameraType } from "expo-camera";
 import { readAsStringAsync } from "expo-file-system";
-import { TextInput } from "react-native-gesture-handler";
 import {
 	Ionicons,
 	Octicons,
@@ -43,22 +45,23 @@ export default function Chat({ route, navigation }) {
 
 	const chatIdParam = route?.params?._id || undefined;
 	const usersParam = route?.params?.users;
-	const name = usersParam.filter(participant => participant.id !== user.id).map(participant => participant.name).join(', ');
+	const name = usersParam
+		.filter((participant) => participant.id !== user.id)
+		.map((participant) => participant.name)
+		.join(", ");
 
 	let currentTime = new Date();
 	let [keyboardStatus, setKeyboardStatus] = React.useState(false);
 
-	const convertMessageObject = (message) => (
-		{
-			msg: message.content,
-			image: message.image,
-			senderId: message.sender._id,
-			senderName: message.sender.name,
-			time: new Date(message.createdAt),
-			status: 1,
-			backendId: message._id
-		}
-	);
+	const convertMessageObject = (message) => ({
+		msg: message.content,
+		image: message.image,
+		senderId: message.sender._id,
+		senderName: message.sender.name,
+		time: new Date(message.createdAt),
+		status: 1,
+		backendId: message._id,
+	});
 	const getChatMessages = async (user, chatId) => {
 		try {
 			// try obtaining the information from the server
@@ -84,7 +87,7 @@ export default function Chat({ route, navigation }) {
 									text: "Cancel",
 									onPress: () => navigation.goBack(),
 								},
-							],
+							]
 						);
 						return;
 					}
@@ -101,15 +104,20 @@ export default function Chat({ route, navigation }) {
 				setLoading(false);
 			}
 		} catch (e) {
-			console.log("Network error occurred while obtaining chat history, so use the local data", e);
+			console.log(
+				"Network error occurred while obtaining chat history, so use the local data",
+				e
+			);
 
 			try {
 				const conversation = await AsyncStorage.getItem(chatId);
 				const messages = JSON.parse(conversation) || [];
-				setChats(messages.map(message => ({
-					...message,
-					time: new Date(message.time)
-				})));
+				setChats(
+					messages.map((message) => ({
+						...message,
+						time: new Date(message.time),
+					}))
+				);
 				setLoading(false);
 			} catch (e) {
 				console.log("Get chats", e);
@@ -132,7 +140,9 @@ export default function Chat({ route, navigation }) {
 		}
 
 		// sort to ensure the equivalent string
-		const chatUsers = [...new Set(usersParam.map(user => user._id))].sort().join(',');
+		const chatUsers = [...new Set(usersParam.map((user) => user._id))]
+			.sort()
+			.join(",");
 		const savedChatId = await getChatId(chatUsers);
 		if (typeof savedChatId === "string") {
 			setChatId(savedChatId);
@@ -143,7 +153,7 @@ export default function Chat({ route, navigation }) {
 		const response = await fetch(`${URLS.BASE}/chats`, {
 			method: "POST",
 			body: JSON.stringify({
-				userId: usersParam.map(user => user._id),
+				userId: usersParam.map((user) => user._id),
 			}),
 			headers: {
 				"Content-type": "application/json; charset=UTF-8",
@@ -165,7 +175,11 @@ export default function Chat({ route, navigation }) {
 				sender: user.id,
 				content: chat.msg,
 				chatId: chatId,
-				image: chat.image ? await readAsStringAsync(chat.image, {encoding: 'base64'}) : null,
+				image: chat.image
+					? await readAsStringAsync(chat.image, {
+							encoding: "base64",
+					  })
+					: null,
 			}),
 			headers: {
 				"Content-type": "application/json; charset=UTF-8",
@@ -187,7 +201,7 @@ export default function Chat({ route, navigation }) {
 								text: "Cancel",
 								onPress: () => navigation.goBack(),
 							},
-						],
+						]
 					);
 					return;
 				}
@@ -203,12 +217,15 @@ export default function Chat({ route, navigation }) {
 				{
 					...chat,
 					status: 1,
-					backendId: data._id
-				}
+					backendId: data._id,
+				},
 			];
 
 			setChats(newChats);
-			await AsyncStorage.setItem(String(chatId), JSON.stringify(newChats));
+			await AsyncStorage.setItem(
+				String(chatId),
+				JSON.stringify(newChats)
+			);
 		}
 	};
 	const processMessage = async () => {
@@ -262,13 +279,13 @@ export default function Chat({ route, navigation }) {
 	const Amessage = ({ chat, style }) => {
 		let statusIcon = <Feather name="clock" />;
 		switch (chat?.status) {
-			case 0:  // sending
+			case 0: // sending
 				statusIcon = <Feather name="clock" />;
 				break;
-			case 1:  // sent
+			case 1: // sent
 				statusIcon = <Feather name="check" />;
 				break;
-			case 2:  // read
+			case 2: // read
 				statusIcon = <Ionicons name="checkmark-done" />;
 				break;
 			case 3:
@@ -282,7 +299,9 @@ export default function Chat({ route, navigation }) {
 		return (
 			<View style={style}>
 				<View>
-					<Text style={STYLES.messageName}>{chat.senderId == user.id? "You": chat.senderName}</Text>
+					<Text style={STYLES.messageName}>
+						{chat.senderId == user.id ? "You" : chat.senderName}
+					</Text>
 				</View>
 				<Text>{chat.msg}</Text>
 				{chat.image && (
@@ -295,7 +314,11 @@ export default function Chat({ route, navigation }) {
 				)}
 				<View style={STYLES.messageTimeContainer}>
 					{statusIcon}
-					<Text style={STYLES.messageTime}>{chat.time.getHours()}:{chat.time.getMinutes().toString().padStart(2, '0')}, {chat.time.toDateString()}</Text>
+					<Text style={STYLES.messageTime}>
+						{chat.time.getHours()}:
+						{chat.time.getMinutes().toString().padStart(2, "0")},{" "}
+						{chat.time.toDateString()}
+					</Text>
 				</View>
 			</View>
 		);
@@ -447,10 +470,16 @@ export default function Chat({ route, navigation }) {
 					</Text>
 				</View>
 			</View>
-			{isLoading ? <View style={STYLES.loadingStyle}><ActivityIndicator color={COLORS.ACCENT_1} size={'large'} /></View> :
+			{isLoading ? (
+				<View style={STYLES.loadingStyle}>
+					<ActivityIndicator color={COLORS.ACCENT_1} size={"large"} />
+				</View>
+			) : (
 				<ScrollView
 					ref={scrollViewRef}
-					onContentSizeChange={() => scrollViewRef.current.scrollToEnd()}
+					onContentSizeChange={() =>
+						scrollViewRef.current.scrollToEnd()
+					}
 					contentContainerStyle={STYLES.contentContainerStyle}
 					style={STYLES.threadBody}
 					keyboardDismissMode="on-drag">
@@ -467,7 +496,7 @@ export default function Chat({ route, navigation }) {
 						/>
 					))}
 				</ScrollView>
-			}
+			)}
 			<View style={STYLES.messageFooter}>
 				<View style={STYLES.messageInput}>
 					{/* 					<TouchableOpacity>
@@ -588,10 +617,10 @@ const STYLES = StyleSheet.create({
 		padding: 20,
 	},
 	loadingStyle: {
-		flex:1,
-		flexDirection: 'column',
-		justifyContent:'center',
-		alignItems: 'center'
+		flex: 1,
+		flexDirection: "column",
+		justifyContent: "center",
+		alignItems: "center",
 	},
 	contentContainerStyle: {
 		paddingBottom: 40,
