@@ -512,7 +512,7 @@ export default function Chat({ route, navigation }) {
 						style={STYLES.messageInputControl}
 						onChangeText={(text) => setMsg(text)}
 						placeholder={"Type a message"}
-						onFocus={() => setKeyboardStatus(true)}
+						// onFocus={() => setKeyboardStatus(true)}
 					/>
 					{/* <TouchableOpacity>
 						<MaterialCommunityIcons

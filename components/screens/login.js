@@ -102,11 +102,6 @@ const Login = () => {
 						/>
 					</TouchableOpacity>
 				)}
-				<TouchableOpacity>
-					<Text style={[styles.textColor, styles.linkItem]}>
-						or, sign up
-					</Text>
-				</TouchableOpacity>
 			</View>
 		</View>
 	);
