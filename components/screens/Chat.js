@@ -1,7 +1,6 @@
 import * as React from "react";
 import {
 	Text,
-	TextInput,
 	TouchableOpacity,
 	StyleSheet,
 	ScrollView,
@@ -10,6 +9,7 @@ import {
 	Image,
 	ActivityIndicator,
 	Alert,
+	TextInput,
 } from "react-native";
 import { Camera, CameraType } from "expo-camera";
 import { readAsStringAsync } from "expo-file-system";
@@ -22,7 +22,6 @@ import {
 import Feather from "@expo/vector-icons/Feather";
 import IconFont from "@expo/vector-icons/FontAwesome";
 import { COLORS, DIMENS } from "../constants/styles";
-import { colors, ListItem } from "react-native-elements";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { URLS } from "../constants/API";
 import { AuthContext } from "../contexts/auth";
@@ -51,7 +50,6 @@ export default function Chat({ route, navigation }) {
 		.join(", ");
 
 	let currentTime = new Date();
-	let [keyboardStatus, setKeyboardStatus] = React.useState(false);
 
 	const convertMessageObject = (message) => ({
 		msg: message.content,
