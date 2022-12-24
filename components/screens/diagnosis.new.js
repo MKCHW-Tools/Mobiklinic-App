@@ -225,7 +225,7 @@ const NewDiagnosis = ({ navigation }) => {
 						setState({ ...state, condition: text })
 					}
 					value={state.condition}
-					placeholder="Patience condition"
+					placeholder="Patient's condition"
 				/>
 			</ScrollView>
 		</View>
