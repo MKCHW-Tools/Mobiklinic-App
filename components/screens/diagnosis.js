@@ -52,7 +52,7 @@ const Diagnose = ({ navigation }) => {
 
 					<ListItem.Content>
 						<ListItem.Title style={STYLES.listTitle}>
-							{item?._id}
+							{item?.code}
 						</ListItem.Title>
 
 						<ListItem.Subtitle style={STYLES.subtitle}>
