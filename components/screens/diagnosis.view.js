@@ -94,7 +94,7 @@ const ViewDiagnosis = ({ route, navigation }) => {
 		}
 	};
  */
-	const { isLoading, _id, phone, patient, details, pregnant, followup } =
+	const { isLoading, code, phone, patient, details, pregnant, followup } =
 		state.diagnosis;
 
 	if (isLoading) return <Loader />;
@@ -155,7 +155,9 @@ const ViewDiagnosis = ({ route, navigation }) => {
 				/>
 			</View>
 			<TouchableOpacity
-				onPress={() => navigation.navigate("FollowUp", { item: code })}
+				onPress={() =>
+					navigation.navigate("FollowUp", { diagnosis_code: code })
+				}
 				style={{
 					marginBottom: 20,
 					flexDirection: "row",

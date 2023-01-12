@@ -24,7 +24,7 @@ const FollowUp = ({ route, navigation }) => {
 	const { diagnoses } = diagnosisContext;
 
 	const [state, setState] = React.useState({
-		id: route.params.item,
+		id: route.params.diagnosis_code,
 		type: 0,
 		details: "",
 		isLoading: false,
@@ -89,14 +89,13 @@ const FollowUp = ({ route, navigation }) => {
 			}
 			title={
 				<Text style={[STYLES.centerHeader, STYLES.title]}>
-					Add Follow up
+					Add New Follow Up to {state.id}
 				</Text>
 			}
 		/>
 	);
 
-	const { isLoading, details, type } = state;
-
+	const { isLoading, details, type, id } = state;
 	if (isLoading) return <Loader />;
 
 	return (
