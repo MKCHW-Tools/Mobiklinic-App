@@ -118,24 +118,6 @@ const NewDiagnosis = ({ navigation }) => {
 					Enter details
 				</Text>
 			}
-			right={
-				<TouchableOpacity
-					onPress={() => save()}
-					style={{
-						marginHorizontal: 4,
-						width: 35,
-						height: 35,
-						borderRadius: 100,
-						backgroundColor: COLORS.BLACK,
-						borderColor: COLORS.BLACK,
-						borderStyle: "solid",
-						borderWidth: 1,
-						justifyContent: "center",
-						alignItems: "center",
-					}}>
-					<Icon name="check" size={25} color={COLORS.WHITE} />
-				</TouchableOpacity>
-			}
 		/>
 	);
 
@@ -241,6 +223,21 @@ const NewDiagnosis = ({ navigation }) => {
 						Camera.saveToCameraRoll(photo.uri);
 					}}
 				/>
+				<TouchableOpacity
+					onPress={() => save()}
+					style={{
+						marginHorizontal: 4,
+						flexDirection: "row",
+						padding: 10,
+						paddingHorizontal: 20,
+						borderRadius: 100,
+						backgroundColor: COLORS.BLACK,
+						justifyContent: "space-between",
+						alignItems: "center",
+					}}>
+					<Text style={STYLES.textSubmit}>Save Diagnosis</Text>
+					<Icon name="check" size={25} color={COLORS.WHITE} />
+				</TouchableOpacity>
 			</ScrollView>
 		</View>
 	);
@@ -319,14 +316,15 @@ const STYLES = StyleSheet.create({
 		borderWidth: 1,
 		marginBottom: 10,
 	},
+	textSubmit: {
+		color: COLORS.WHITE,
+	},
 	terms: {
 		paddingVertical: 10,
 		textAlign: "center",
 		color: "grey",
 	},
 	pickers: {
-		// borderBottomColor: 'rgba(0,0,0,0.7)',
-		// borderBottomWidth:1,
 		borderColor: COLORS.GREY,
 		borderStyle: "solid",
 		borderWidth: 1,

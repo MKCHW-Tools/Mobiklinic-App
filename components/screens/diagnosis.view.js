@@ -74,26 +74,6 @@ const ViewDiagnosis = ({ route, navigation }) => {
 						Diagnosis {code}
 					</Text>
 				}
-				right={
-					<TouchableOpacity
-						onPress={() =>
-							navigation.navigate("FollowUp", { item: code })
-						}
-						style={{
-							marginHorizontal: 4,
-							width: 35,
-							height: 35,
-							borderRadius: 100,
-							backgroundColor: COLORS.BLACK,
-							borderColor: COLORS.BLACK,
-							borderStyle: "solid",
-							borderWidth: 1,
-							justifyContent: "center",
-							alignItems: "center",
-						}}>
-						<Icon name="plus" size={25} color={COLORS.WHITE} />
-					</TouchableOpacity>
-				}
 			/>
 		);
 	};
@@ -174,6 +154,25 @@ const ViewDiagnosis = ({ route, navigation }) => {
 					}
 				/>
 			</View>
+			<TouchableOpacity
+				onPress={() => navigation.navigate("FollowUp", { item: code })}
+				style={{
+					marginBottom: 20,
+					flexDirection: "row",
+					borderRadius: 100,
+					position: "absolute",
+					width: "90%",
+					bottom: 0,
+					left: "5%",
+					padding: 10,
+					paddingHorizontal: 20,
+					backgroundColor: COLORS.BLACK,
+					justifyContent: "space-between",
+					alignItems: "center",
+				}}>
+				<Text style={STYLES.textBtn}>Add New Follow Up</Text>
+				<Icon name="plus" size={25} color={COLORS.WHITE} />
+			</TouchableOpacity>
 		</View>
 	);
 };
@@ -279,5 +278,8 @@ const STYLES = StyleSheet.create({
 		alignSelf: "flex-end",
 		position: "absolute",
 		zIndex: 9999999,
+	},
+	textBtn: {
+		color: COLORS.WHITE,
 	},
 });

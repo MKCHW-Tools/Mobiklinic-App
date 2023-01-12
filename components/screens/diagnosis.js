@@ -106,24 +106,6 @@ const Diagnose = ({ navigation }) => {
 					Diagnoses
 				</Text>
 			}
-			right={
-				<TouchableOpacity
-					onPress={() => navigation.navigate("NewDiagnosis")}
-					style={{
-						marginHorizontal: 4,
-						width: 35,
-						height: 35,
-						borderRadius: 100,
-						backgroundColor: COLORS.BLACK,
-						borderColor: COLORS.BLACK,
-						borderStyle: "solid",
-						borderWidth: 1,
-						justifyContent: "center",
-						alignItems: "center",
-					}}>
-					<Icon name="plus" size={25} color={COLORS.WHITE} />
-				</TouchableOpacity>
-			}
 		/>
 	);
 
@@ -158,6 +140,22 @@ const Diagnose = ({ navigation }) => {
 					renderItem={_renderItem}
 					keyExtractor={_keyExtractor}
 				/>
+				<TouchableOpacity
+					onPress={() => navigation.navigate("NewDiagnosis")}
+					style={{
+						marginHorizontal: 10,
+						flexDirection: "row",
+						height: 50,
+						borderRadius: 100,
+						padding: 10,
+						paddingHorizontal: 20,
+						backgroundColor: COLORS.BLACK,
+						justifyContent: "space-between",
+						alignItems: "center",
+					}}>
+					<Text style={STYLES.textBtn}>Add New</Text>
+					<Icon name="plus" size={25} color={COLORS.WHITE} />
+				</TouchableOpacity>
 			</View>
 		);
 	}
@@ -214,6 +212,9 @@ const STYLES = StyleSheet.create({
 		flex: 1,
 		flexDirection: "row",
 		justifyContent: "flex-end",
+	},
+	textBtn: {
+		color: COLORS.WHITE,
 	},
 });
 
