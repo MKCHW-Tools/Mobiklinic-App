@@ -497,7 +497,7 @@ export default function Chat({ route, navigation }) {
 			)}
 			<View style={STYLES.messageFooter}>
 				<View style={STYLES.messageInput}>
-					{/* 					<TouchableOpacity>
+					{/* <TouchableOpacity>
 						<Feather
 							name="smile"
 							size={30}

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Camera } from "expo-camera";
 import {
 	View,
 	Alert,
@@ -225,7 +226,20 @@ const NewDiagnosis = ({ navigation }) => {
 						setState({ ...state, condition: text })
 					}
 					value={state.condition}
-					placeholder="Patience condition"
+					placeholder="Enter Patient's condition"
+				/>
+				<Camera
+					// Set the aspect ratio of the photo to 3:4
+					aspect={3 / 4}
+					// Set the type of camera to use (front or back)
+					type={Camera.Constants.Type.front}
+					// Set the quality of the photo
+					quality={0.5}
+					// Set a function to be called when a photo is taken
+					onTakePhoto={(photo) => {
+						// Save the photo to the device's photo library
+						Camera.saveToCameraRoll(photo.uri);
+					}}
 				/>
 			</ScrollView>
 		</View>
@@ -285,7 +299,7 @@ const STYLES = StyleSheet.create({
 	},
 	input: {
 		color: "rgba(0,0,0,0.7)",
-		borderRadius: 50,
+		borderRadius: 10,
 		paddingHorizontal: 15,
 		paddingVertical: 10,
 		borderColor: COLORS.GREY,

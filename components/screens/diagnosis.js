@@ -141,7 +141,7 @@ const Diagnose = ({ navigation }) => {
 						<Icon name="smile" size={60} color={COLORS.GREY} />
 
 						<Text style={STYLES.alert}>
-							You don't have Diagnosis info yet.
+							Can not find Diagnosis Info to Display.
 						</Text>
 					</View>
 				</View>
