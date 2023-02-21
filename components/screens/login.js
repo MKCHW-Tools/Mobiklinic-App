@@ -18,7 +18,7 @@ import { AuthContext } from "../contexts/auth";
 import { CustomStatusBar } from "../ui/custom.status.bar";
 import Loader from "../ui/loader";
 
-const Login = () => {
+const Login = ({ navigation }) => {
 	const {
 		setUser: setMyUser,
 		isLoading,
@@ -102,6 +102,11 @@ const Login = () => {
 						/>
 					</TouchableOpacity>
 				)}
+				<TouchableOpacity onPress={() => navigation.navigate("signUp")}>
+					<Text style={styles.linkItem}>
+						Don't have an Account? Sign up
+					</Text>
+				</TouchableOpacity>
 			</View>
 		</View>
 	);

@@ -1,4 +1,5 @@
 import React from "react";
+import signUp from "../screens/signup";
 import forgotPassword from "../screens/password.forgot";
 import PasswordReset from "../screens/password.reset";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -15,6 +16,11 @@ function AppStack() {
 					headerShown: false,
 					// animationTypeForReplace: state.isSignout ? "pop" : "push",
 				}}
+			/>
+			<Stack.Screen
+				name="signUp"
+				options={{ headerShown: false }}
+				component={signUp}
 			/>
 			<Stack.Screen
 				name="forgotPassword"

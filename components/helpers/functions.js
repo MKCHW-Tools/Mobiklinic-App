@@ -330,16 +330,16 @@ export const signUp = async (data) => {
 	// We will also need to handle errors if sign up failed
 	// After getting token, we need to persist the token using `AsyncStorage`
 	// In the example, we'll use a dummy token
-	const {
+	/* 	const {
 		firstname,
 		lastname,
 		theemail,
 		thephone,
 		thepassword,
 		thepassword2,
-	} = data.errors;
+	} = data.errors; */
 
-	if (
+	/* 	if (
 		firstname ||
 		lastname ||
 		theemail ||
@@ -349,35 +349,50 @@ export const signUp = async (data) => {
 	) {
 		Alert.alert("Fail", "Errors, Fix errors in the form, and try again!");
 		return;
-	}
+	} */
+	const {
+		firstName,
+		lastName,
+		phoneNumber,
+		password,
+		cPassword,
+		eMail,
+		setIsLoading,
+		setProcess,
+		setRegistered,
+	} = data;
 
-	const { firstName, lastName, phone, password, password2, email } = data;
+	setProcess("Registering, please wait!");
 
 	if (
 		firstName == "" ||
 		lastName == "" ||
-		phone.length < 12 ||
+		phoneNumber.length < 12 ||
 		password == "" ||
-		password2 == ""
+		cPassword == ""
 	) {
 		Alert.alert("Fail", "Fix errors in the form, and try again!");
-		console.log(firstName, lastName, phone, email, password, password2);
+		console.log(
+			firstName,
+			lastName,
+			phoneNumber,
+			eMail,
+			password,
+			cPassword
+		);
 		return;
 	}
 
-	userContext.setIsRegistering("yes");
-
 	try {
-		await fetch(`${URLS.BASE}/register`, {
+		await fetch(`${URLS.BASE}/users`, {
 			method: "POST",
 			body: JSON.stringify({
-				phone: phone,
-				fname: firstName,
-				lname: lastName,
-				email: email,
+				username: phoneNumber,
+				phone: phoneNumber,
+				name: `${firstName} ${lastName}`,
+				email: eMail,
 				role_id: 2,
 				password: password,
-				password_confirmation: password2,
 			}),
 			headers: {
 				"Content-type": "application/json; charset=UTF-8",
@@ -386,26 +401,18 @@ export const signUp = async (data) => {
 		})
 			.then((res) => res.json())
 			.then((response) => {
-				if (response.result == "success") {
-					try {
-						userContext.setIsRegistering("complete");
-					} catch (err) {
-						console.error(err);
-					}
-				} else if (response.result == "failure") {
-					const { email, phone } = response.message;
-
-					if (typeof email != "undefined")
-						Alert.alert(
-							"Registration failed!",
-							"The email address you entered was used by another member."
-						);
-					else if (typeof phone != "undefined")
-						Alert.alert(
-							"Registration failed!",
-							"The phone number you entered was used by another member."
-						);
-					else Alert.alert("Ooops!", "Try again!");
+				setIsLoading(false);
+				if (response.result == "Success") {
+					/* 					Alert.alert(
+						"Registered successfully",
+						"Press Okay to login!"
+					); */
+					setRegistered(true);
+				} else if (response.result == "Failure") {
+					Alert.alert(
+						"Sign up failure.",
+						"Check Phone number and E-mail. Press Ok to try again."
+					);
 
 					console.log(response);
 				} else {
@@ -413,7 +420,7 @@ export const signUp = async (data) => {
 				}
 			})
 			.catch((err) => {
-				console.log(err);
+				console.log(err.message);
 				Alert.alert(
 					"Failure",
 					"Something wrong happened. Check your internet and try again!"

@@ -66,12 +66,14 @@ const Diagnose = ({ navigation }) => {
 	};
 
 	React.useEffect(() => {
+		// AsyncStorage.removeItem("@diagnosis");
 		getDiagnoses();
 	}, []);
 
 	const getDiagnoses = async () => {
 		try {
 			const jsonString = await AsyncStorage.getItem("@diagnosis");
+			console.log(jsonString, null, 2);
 			diagnosesContext.setDiagnoses(
 				jsonString ? JSON.parse(jsonString) : diagnoses
 			);
@@ -126,6 +128,23 @@ const Diagnose = ({ navigation }) => {
 							Can not find Diagnosis Info to Display.
 						</Text>
 					</View>
+					<TouchableOpacity
+						onPress={() => navigation.navigate("NewDiagnosis")}
+						style={{
+							marginHorizontal: 10,
+							flexDirection: "row",
+							//height: 50,
+							borderRadius: 100,
+							padding: 10,
+							paddingHorizontal: 20,
+							backgroundColor: COLORS.BLACK,
+							justifyContent: "space-between",
+							alignItems: "center",
+							marginBottom: 20,
+						}}>
+						<Text style={STYLES.textBtn}>Add New</Text>
+						<Icon name="plus" size={25} color={COLORS.WHITE} />
+					</TouchableOpacity>
 				</View>
 			);
 
@@ -145,13 +164,14 @@ const Diagnose = ({ navigation }) => {
 					style={{
 						marginHorizontal: 10,
 						flexDirection: "row",
-						height: 50,
+						//height: 50,
 						borderRadius: 100,
 						padding: 10,
 						paddingHorizontal: 20,
 						backgroundColor: COLORS.BLACK,
 						justifyContent: "space-between",
 						alignItems: "center",
+						marginBottom: 20,
 					}}>
 					<Text style={STYLES.textBtn}>Add New</Text>
 					<Icon name="plus" size={25} color={COLORS.WHITE} />
