@@ -24,7 +24,7 @@
 				"backgroundColor": "#FFFFFF"
 			},
 			"package": "com.mobiklinic",
-			"versionCode": 15
+			"versionCode": 16
 		},
 		"web": {
 			"favicon": "./assets/favicon.png"
