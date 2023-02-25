@@ -33,17 +33,27 @@ const ViewDiagnosis = ({ route, navigation }) => {
 	const _keyExtractor = (item, index) => index.toString();
 
 	const _renderItem = ({ item }) => {
+		const FollowUptypes = {
+			1: "Trimester 1",
+			2: "Trimester 2",
+			3: "Trimester 3",
+			4: "General",
+		};
 		return (
-			<TouchableOpacity>
-				<ListItem bottomDivider>
-					<ListItem.Content>
-						<ListItem.Title style={STYLES.listTitle}>
-							{item.details}
-						</ListItem.Title>
-					</ListItem.Content>
-					<ListItem.Chevron size={30} />
-				</ListItem>
-			</TouchableOpacity>
+			<ListItem bottomDivider>
+				<ListItem.Content style={{ margin: 0, padding: 0 }}>
+					<ListItem.Title>
+						{FollowUptypes[Number(item?.type)]}
+					</ListItem.Title>
+					<ListItem.Subtitle style={STYLES.listItemTitle}>
+						Record on: {item?.date}
+					</ListItem.Subtitle>
+					<ListItem.Subtitle style={STYLES.listItemBody}>
+						{item.details}
+					</ListItem.Subtitle>
+				</ListItem.Content>
+				{/* <ListItem.Chevron size={30} /> */}
+			</ListItem>
 		);
 	};
 
@@ -94,7 +104,7 @@ const ViewDiagnosis = ({ route, navigation }) => {
 		}
 	};
  */
-	const { isLoading, code, phone, patient, details, pregnant, followup } =
+	const { isLoading, code, date, patient, details, pregnant, followups } =
 		state.diagnosis;
 
 	if (isLoading) return <Loader />;
@@ -106,21 +116,30 @@ const ViewDiagnosis = ({ route, navigation }) => {
 			{_header()}
 
 			<View style={STYLES.body}>
+				<Text style={STYLES.heading}>Diagnosis Info</Text>
 				<FlatList
 					style={{ paddingHorizontal: 10 }}
-					data={followup}
+					data={followups}
 					renderItem={_renderItem}
 					keyExtractor={_keyExtractor}
 					ListHeaderComponent={
 						<>
-							{phone != "" && (
-								<View style={{ paddingBottom: 10 }}>
-									<Text style={{ fontWeight: "bold" }}>
-										Phone
-									</Text>
-									<Text>{phone}</Text>
-								</View>
-							)}
+							<View style={{ paddingBottom: 10 }}>
+								<Text style={{ fontWeight: "bold" }}>
+									Date{" "}
+								</Text>
+								<Text>{date}</Text>
+							</View>
+							<View style={{ paddingBottom: 10 }}>
+								<Text style={{ fontWeight: "bold" }}>Name</Text>
+								<Text>{patient?.fullname}</Text>
+							</View>
+							<View style={{ paddingBottom: 10 }}>
+								<Text style={{ fontWeight: "bold" }}>
+									Phone
+								</Text>
+								<Text>{patient?.phone}</Text>
+							</View>
 							<View style={{ paddingBottom: 10 }}>
 								<Text style={{ fontWeight: "bold" }}>
 									Gender{" "}
@@ -145,11 +164,13 @@ const ViewDiagnosis = ({ route, navigation }) => {
 										Pregnant?
 									</Text>
 									<Text>
-										{pregnant == false ? "No" : "Yes"}
+										{patient?.pregnant == false
+											? "No"
+											: "Yes"}
 									</Text>
 								</View>
 							)}
-							<Text style={STYLES.followupsHeader}>Follow </Text>
+							<Text style={STYLES.heading}>Follow ups</Text>
 						</>
 					}
 				/>
@@ -189,9 +210,18 @@ const STYLES = StyleSheet.create({
 	header: {
 		flex: 1,
 	},
+	heading: {
+		borderBottom: 1,
+		borderColor: COLORS.GREY,
+		borderStyle: "solid",
+		padding: 10,
+		fontSize: 20,
+		fontWeight: "bold",
+	},
 	body: {
 		borderRadius: 10,
 		backgroundColor: COLORS.WHITE,
+		paddingTop: 10,
 	},
 	subtitle: {
 		flexDirection: "row",
@@ -283,5 +313,15 @@ const STYLES = StyleSheet.create({
 	},
 	textBtn: {
 		color: COLORS.WHITE,
+	},
+	listItemTitle: {
+		fontSize: 12,
+		fontStyle: "italic",
+		marginTop: 5,
+	},
+	listItemBody: {
+		marginTop: 5,
+		color: COLORS.BLACK,
+		fontSize: 15,
 	},
 });
