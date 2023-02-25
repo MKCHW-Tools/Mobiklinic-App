@@ -25,6 +25,7 @@ import Diagnose from "../screens/diagnosis";
 
 import Doctors from "../screens/doctors";
 import Ambulance from "../screens/ambulance";
+import Profile from "../screens/profile";
 
 const Drawer = createDrawerNavigator();
 
@@ -126,6 +127,7 @@ export const DrawerNavigationLogged = () => {
 			<Drawer.Screen name="Diagnose" component={Diagnose} />
 			<Drawer.Screen name="Doctors" component={Doctors} />
 			<Drawer.Screen name="Ambulance" component={Ambulance} />
+			<Drawer.Screen name="Profile" component={Profile} />
 			<Drawer.Screen name="Help" component={GetStarted} />
 			<Drawer.Screen name="About" component={About} />
 		</Drawer.Navigator>

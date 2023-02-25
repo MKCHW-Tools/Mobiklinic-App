@@ -12,12 +12,15 @@ import Icon from "@expo/vector-icons/Feather";
 import MIcon from "@expo/vector-icons/MaterialCommunityIcons";
 
 import FoIcon from "@expo/vector-icons/Fontisto";
+import FAIcon from "@expo/vector-icons/FontAwesome";
 import { COLORS, DIMENS } from "../constants/styles";
 
 import CustomHeader from "../parts/custom-header";
 import { CustomStatusBar } from "../ui/custom.status.bar";
-
+import { signOut } from "../helpers/functions";
+import { AuthContext } from "../contexts/auth";
 const Dashboard = ({ navigation }) => {
+	const { setTokens, setUser } = React.useContext(AuthContext);
 	return (
 		<View style={STYLES.wrapper}>
 			<CustomStatusBar />
@@ -66,23 +69,6 @@ const Dashboard = ({ navigation }) => {
 					<View style={STYLES.row}>
 						<TouchableOpacity
 							style={STYLES.card}
-							onPress={() => navigation.navigate("Doctors")}>
-							<View style={STYLES.cardIcon}>
-								<FoIcon
-									name="doctor"
-									size={40}
-									strokeSize={3}
-									color={COLORS.BLACK}
-								/>
-							</View>
-							<Text style={STYLES.cardTitle}>Doctors</Text>
-						</TouchableOpacity>
-					</View>
-				</View>
-				<View style={STYLES.column}>
-					<View style={STYLES.row}>
-						<TouchableOpacity
-							style={STYLES.card}
 							onPress={() => navigation.navigate("Messages")}>
 							<View style={STYLES.cardIcon}>
 								<Icon
@@ -98,6 +84,38 @@ const Dashboard = ({ navigation }) => {
 					<View style={STYLES.row}>
 						<TouchableOpacity
 							style={STYLES.card}
+							onPress={() => navigation.navigate("Profile")}>
+							<View style={STYLES.cardIcon}>
+								<FAIcon
+									name="user-md"
+									size={40}
+									strokeSize={3}
+									color={COLORS.BLACK}
+								/>
+							</View>
+							<Text style={STYLES.cardTitle}>My Profile</Text>
+						</TouchableOpacity>
+					</View>
+				</View>
+				<View style={STYLES.column}>
+					<View style={STYLES.row}>
+						<TouchableOpacity
+							style={STYLES.card}
+							onPress={() => navigation.navigate("Doctors")}>
+							<View style={STYLES.cardIcon}>
+								<FoIcon
+									name="doctor"
+									size={40}
+									strokeSize={3}
+									color={COLORS.BLACK}
+								/>
+							</View>
+							<Text style={STYLES.cardTitle}>Doctors</Text>
+						</TouchableOpacity>
+					</View>
+					<View style={STYLES.row}>
+						<TouchableOpacity
+							style={STYLES.card}
 							onPress={() => navigation.navigate("Ambulance")}>
 							<View style={STYLES.cardIcon}>
 								<MIcon
@@ -108,6 +126,24 @@ const Dashboard = ({ navigation }) => {
 								/>
 							</View>
 							<Text style={STYLES.cardTitle}>Ambulances</Text>
+						</TouchableOpacity>
+					</View>
+					<View style={STYLES.row}>
+						<TouchableOpacity
+							style={STYLES.card}
+							onPress={() => {
+								setTokens(null);
+								signOut(setUser);
+							}}>
+							<View style={STYLES.cardIcon}>
+								<MIcon
+									name="logout"
+									size={40}
+									strokeSize={3}
+									color={COLORS.BLACK}
+								/>
+							</View>
+							<Text style={STYLES.cardTitle}>Logout</Text>
 						</TouchableOpacity>
 					</View>
 				</View>
@@ -178,7 +214,7 @@ const STYLES = StyleSheet.create({
 	container: {
 		flexDirection: "row",
 		justifyContent: "space-between",
-		height: 300,
+		height: 400,
 		padding: 10,
 	},
 	column: {
@@ -205,7 +241,6 @@ const STYLES = StyleSheet.create({
 	},
 	cardIcon: {
 		flex: 1,
-		width: "100%",
 		alignItems: "center",
 		justifyContent: "center",
 		backgroundColor: COLORS.ACCENT_1,

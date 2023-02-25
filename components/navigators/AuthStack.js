@@ -9,6 +9,7 @@ import NewDiagnosis from "../screens/diagnosis.new";
 import FollowUp from "../screens/diagnosis.follow.up";
 import Chat from "../screens/Chat";
 import Chats from "../screens/Chats";
+import Profile from "../screens/profile";
 
 const Stack = createStackNavigator();
 
@@ -59,6 +60,11 @@ function AuthStack() {
 				name="Chat"
 				options={{ headerShown: false }}
 				component={Chat}
+			/>
+			<Stack.Screen
+				name="Profile"
+				options={{ headerShown: false }}
+				component={Profile}
 			/>
 		</Stack.Navigator>
 	);
