@@ -67,7 +67,7 @@ const About = ({navigation}) => {
                 <View>
                     <Text style={STYLES.desc}>Last mile health digital safetynet</Text>
                     <Text style={STYLES.heading}>In partnership with Ablestate Creatives</Text>
-                    <Text style={STYLES.desc}>Report technical challenges</Text>
+                    <Text style={STYLES.desc}>Report technical challenges faced</Text>
                     <Text>Ablestate Creatives</Text>
                     <Text><Icon name="phone-call" /> 0704255401</Text>
                 </View>
