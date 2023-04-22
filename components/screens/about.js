@@ -70,6 +70,7 @@ const About = ({navigation}) => {
                     <Text style={STYLES.desc}>Report technical challenges</Text>
                     <Text>Ablestate Creatives</Text>
                     <Text><Icon name="phone-call" /> 0704255401</Text>
+                    <Text><Icon email="email" /> hello@theablestate.com</Text>
                 </View>
             </View>
 
