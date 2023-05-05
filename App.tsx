@@ -64,19 +64,10 @@ function App(): JSX.Element {
 
   return (
     <View style={styles.container}>
-      <SendIntentButton action="android.intent.action.POWER_USAGE_SUMMARY">
-        Power Usage Summary
+      <SendIntentButton action="android.intent.action.simprints.id">
+        Hello SimPrints
       </SendIntentButton>
-      <SendIntentButton
-        action="android.settings.APP_NOTIFICATION_SETTINGS"
-        extras={[
-          {
-            key: 'android.provider.extra.APP_PACKAGE',
-            value: 'com.facebook.katana',
-          },
-        ]}>
-        App Notification Settings
-      </SendIntentButton>
+    
     </View>
   );
 };
