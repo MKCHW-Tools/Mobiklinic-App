@@ -21,7 +21,10 @@ public class OpenActivityModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void open  (){
+        //Referencing to the Screen called Android in a Native Android App. 
+        //Can we do the same to Simprints ID?
         Intent intent = new Intent(getCurrentActivity(), AndroidActivity.class);
+        //This is the actual usuage of the Intent that's derived from the the Android Activity.
         getCurrentActivity().startActivity(intent);
     }
 }
