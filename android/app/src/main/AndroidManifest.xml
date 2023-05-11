@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-sdk tools:overrideLibrary="com.simprints.libsimprints"/>
 
     <application
         android:name=".MainApplication"
@@ -11,7 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".AndroidActivity"
+            android:name=".SimPrintsRegisterActivity"
             android:exported="false"
             android:label="@string/title_activity_android"
             android:theme="@style/AppTheme.NoActionBar" />
