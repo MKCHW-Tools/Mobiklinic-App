@@ -71,7 +71,7 @@ function App(): JSX.Element {
 
   return (
     <View style={styles.container}>
-      <Button title="Open Native Activity" onPress={openFunction} />
+      <Button title="Open Simprints ID" onPress={openFunction} />
     </View>
   );
 };
