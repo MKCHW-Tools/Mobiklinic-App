@@ -95,6 +95,7 @@ type SectionProps = PropsWithChildren<{
 
 
 function App(): JSX.Element {
+  
   var OpenActivity = NativeModules.OpenActivity;
 
   const openFunction = () => {
@@ -109,18 +110,6 @@ function App(): JSX.Element {
 
   return (
     <View style={styles.container}>
-      {/* <SendIntentButton action="com.android.intent.chrome">
-        Hello SimPrints
-      </SendIntentButton>
-
-      <SendIntentButton action="android.intent.action.POWER_USAGE_SUMMARY">
-        Power Usage Summary
-      </SendIntentButton> */}
-
-      {/* <OpenSimprintsButton />
-
-      <MyComponent /> */}
-
       <Button title="Open Native Activity" onPress={openFunction} />
     </View>
   );
