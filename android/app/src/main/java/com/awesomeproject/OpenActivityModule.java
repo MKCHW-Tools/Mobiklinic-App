@@ -21,9 +21,15 @@ public class OpenActivityModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void open  (){
+    public void open(String projectId, String userId, String moduleId){
         Intent intent = new Intent("com.simprints.id.REGISTER");
-        getCurrentActivity().startActivity(intent);
+        intent.putExtra("tZqJnw0ajK04LMYdZzyw", projectId);
+        intent.putExtra("test_user", userId);
+        intent.putExtra("mpower", moduleId);
+        getCurrentActivity().startActivityForResult(intent, 1);
             
     }
 }
+
+
+

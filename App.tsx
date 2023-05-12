@@ -60,7 +60,7 @@ function App(): JSX.Element {
   var OpenActivity = NativeModules.OpenActivity;
 
   const openFunction = () => {
-    OpenActivity.open();
+    OpenActivity.open("tZqJnw0ajK04LMYdZzyw", "test_user", "mpower");
   };
 
   const isDarkMode = useColorScheme() === 'dark';
