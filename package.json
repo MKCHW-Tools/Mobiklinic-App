@@ -1,5 +1,5 @@
 {
-  "name": "AwesomeProject",
+  "name": "SimprintsProject",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -10,22 +10,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "^1.18.1",
-    "@react-native-masked-view/masked-view": "^0.2.9",
-    "@react-native-picker/picker": "^2.4.10",
-    "@react-navigation/drawer": "^6.6.2",
-    "@react-navigation/native": "^6.1.6",
-    "@react-navigation/stack": "^6.3.16",
-    "axios": "^1.4.0",
     "react": "18.2.0",
     "react-native": "0.71.7",
-    "react-native-background-fetch": "^4.1.10",
-    "react-native-background-job": "^2.3.1",
-    "react-native-code-push": "^8.0.1",
-    "react-native-fs": "^2.20.0",
-    "react-native-push-notification": "^8.1.1",
-    "react-native-vector-icons": "^9.2.0",
-    "react-native-vision-camera": "^2.15.4",
     "rn-openapp": "^2.1.2"
   },
   "devDependencies": {
