@@ -7,12 +7,22 @@ import {
   StatusBar,
   StyleSheet,
   Button,
+  NativeModules
 } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import { COLORS, DIMENS } from "../constants/styles";
 import CustomHeader from "../parts/custom-header";
 
 const About = ({ navigation }) => {
+  // simprints
+  var OpenActivity = NativeModules.OpenActivity;
+
+  const openFunction = () => {
+    OpenActivity.open("tZqJnw0ajK04LMYdZzyw", "test_user", "mpower");
+  };
+
+  // end 
+
   _header = () => (
     <CustomHeader
       left={
@@ -63,11 +73,7 @@ const About = ({ navigation }) => {
           <Text>
             <Icon name="phone-call" /> 0704255401
           </Text>
-          <Button
-            style={{ marginTop: 20 }}
-            title="Press me"
-            onPress={handlePress}
-          />
+          <Button title="Open Simprints ID" onPress={openFunction} />
         </View>
       </View>
     </View>

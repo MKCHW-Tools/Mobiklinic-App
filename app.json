@@ -1,41 +1,41 @@
 {
-	"expo": {
-		"name": "Mobiklinic",
-		"slug": "mobiklinic",
-		"version": "0.0.9",
-		"orientation": "portrait",
-		"icon": "./assets/icon.png",
-		"splash": {
-			"image": "./assets/splash.png",
-			"resizeMode": "cover",
-			"backgroundColor": "#7cd2ff"
-		},
-		"updates": {
-			"fallbackToCacheTimeout": 0,
-			"url": "https://u.expo.dev/5c5316b5-3b79-45cf-8241-278a144cf851"
-		},
-		"assetBundlePatterns": ["**/*"],
-		"ios": {
-			"supportsTablet": true
-		},
-		"android": {
-			"adaptiveIcon": {
-				"foregroundImage": "./assets/adaptive-icon.png",
-				"backgroundColor": "#FFFFFF"
-			},
-			"package": "com.mobiklinic",
-			"versionCode": 17
-		},
-		"web": {
-			"favicon": "./assets/favicon.png"
-		},
-		"extra": {
-			"eas": {
-				"projectId": "5c5316b5-3b79-45cf-8241-278a144cf851"
-			}
-		},
-		"runtimeVersion": {
-			"policy": "sdkVersion"
-		}
-	}
+  "expo": {
+    "name": "Mobiklinic",
+    "slug": "mobiklinic",
+    "version": "0.0.9",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#7cd2ff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/5c5316b5-3b79-45cf-8241-278a144cf851"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.mobiklinic",
+      "versionCode": 17
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "5c5316b5-3b79-45cf-8241-278a144cf851"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    }
+  }
 }
