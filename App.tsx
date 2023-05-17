@@ -33,22 +33,6 @@ type SendIntentButtonProps = {
 };
 
 
-// const SendIntentButton = ({
-//   action,
-//   extras,
-//   children,
-// }: SendIntentButtonProps) => {
-//   const handlePress = useCallback(async () => {
-//     try {
-//       await Linking.sendIntent(action, extras);
-//     } catch (e: any) {
-//       Alert.alert(e.message);
-//     }
-//   }, [action, extras]);
-
-//   return <Button title={children} onPress={handlePress} />;
-// };
-
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
