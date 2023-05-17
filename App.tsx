@@ -7,6 +7,7 @@
 
 import React, {useCallback} from 'react';
 import type {PropsWithChildren} from 'react';
+import { DeviceEventEmitter } from 'react-native';
 import {
   Linking,
   Button,
@@ -36,6 +37,20 @@ type SendIntentButtonProps = {
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
+
+
+DeviceEventEmitter.addListener('SimprintsRegistrationSuccess', (event)=>{
+  const {guid} = event;
+  console.log(event);
+   Alert.alert("Simprints Registration Success", guid);
+ }
+ );
+
+ DeviceEventEmitter.addListener('SimprintsRegistrationFailure', (event)=>{
+   const {error} = event;
+   Alert.alert("Simprints Registration Failure", error);
+ }
+ );
 
 
 
