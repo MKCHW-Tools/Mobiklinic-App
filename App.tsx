@@ -5,9 +5,9 @@
  * @format
  */
 
-import React, {useCallback} from 'react';
-import type {PropsWithChildren} from 'react';
-import { DeviceEventEmitter } from 'react-native';
+import React, { useCallback } from 'react';
+import type { PropsWithChildren } from 'react';
+import { DeviceEventEmitter, NativeEventEmitter } from 'react-native';
 import {
   Linking,
   Button,
@@ -39,38 +39,58 @@ type SectionProps = PropsWithChildren<{
 }>;
 
 
-DeviceEventEmitter.addListener('SimprintsRegistrationSuccess', (event)=>{
-  const {guid} = event;
+DeviceEventEmitter.addListener('SimprintsRegistrationSuccess', (event) => {
+  const { guid } = event;
   console.log(event);
-   Alert.alert("Simprints Registration Success", guid);
- }
- );
+  Alert.alert("Simprints Registration Success", guid);
+}
+);
 
- DeviceEventEmitter.addListener('SimprintsRegistrationFailure', (event)=>{
-   const {error} = event;
-   Alert.alert("Simprints Registration Failure", error);
- }
- );
+DeviceEventEmitter.addListener('SimprintsRegistrationFailure', (event) => {
+  const { error } = event;
+  Alert.alert("Simprints Registration Failure", error);
+}
+);
 
 
 
 function App(): JSX.Element {
+  const { IdentificationModule } = NativeModules;
   
+  // Listen for identification results
+  DeviceEventEmitter.addListener('identificationSuccess', (data) => {
+    // Handle successful identification
+    const sessionId = data.sessionId;
+    const identificationResults = data.identificationResults;
+    // Process the identification results
+    console.log(identificationResults);
+  });
+  
+  DeviceEventEmitter.addListener('identificationFailure', (data) => {
+    // Handle identification failure
+    const sessionId = data.sessionId;
+  });
+
+  const openIdentify = () => {
+    IdentificationModule.startIdentification("WuDDHuqhcQ36P2U9rM7Y", "test_user");
+  };
+
+
   var OpenActivity = NativeModules.OpenActivity;
 
   const openFunction = () => {
     OpenActivity.open("WuDDHuqhcQ36P2U9rM7Y", "test_user", "mpower");
   };
 
+
+
   const isDarkMode = useColorScheme() === 'dark';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
 
   return (
     <View style={styles.container}>
       <Button title="Open Simprints ID" onPress={openFunction} />
+      <Button title="Start Identification" onPress={openIdentify} />
     </View>
   );
 };
@@ -86,4 +106,3 @@ const styles = StyleSheet.create({
 
 
 export default App;
- 
