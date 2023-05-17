@@ -7,21 +7,28 @@ import {
   StatusBar,
   StyleSheet,
   Button,
-  NativeModules
+  NativeModules,
 } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import { COLORS, DIMENS } from "../constants/styles";
 import CustomHeader from "../parts/custom-header";
 
+
 const About = ({ navigation }) => {
   // simprints
-  var OpenActivity = NativeModules.OpenActivity;
+  var OpenSimprints = NativeModules.OpenActivity;
+  const { openActivity } = NativeModules;
 
   const openFunction = () => {
-    OpenActivity.open("tZqJnw0ajK04LMYdZzyw", "test_user", "mpower");
+    OpenSimprints.init(projectId, userId);
+    OpenSimprints.open("tZqJnw0ajK04LMYdZzyw", "test_user", "mpower");
+  };
+  const handlePress = () => {
+    // handle button press here
+    console.log("Pressed!");
   };
 
-  // end 
+  // end
 
   _header = () => (
     <CustomHeader
@@ -45,10 +52,6 @@ const About = ({ navigation }) => {
       }
     />
   );
-  const handlePress = () => {
-    // handle button press here
-    console.log("Pressed!");
-  };
 
   return (
     <View style={STYLES.wrapper}>
@@ -73,7 +76,7 @@ const About = ({ navigation }) => {
           <Text>
             <Icon name="phone-call" /> 0704255401
           </Text>
-          <Button title="Open Simprints ID" onPress={openFunction} />
+          <Button title="Open Simprints ID" onPress={() => openFunction()} />
         </View>
       </View>
     </View>
@@ -127,18 +130,6 @@ const STYLES = StyleSheet.create({
   },
   leftHeader: {
     flex: 1,
-    paddingLeft: 10,
-  },
-  centerHeader: {
-    flex: 2,
-    flexDirection: "row",
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  rightHeader: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "flex-end",
   },
 });
 
