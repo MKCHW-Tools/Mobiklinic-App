@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {RNCamera as Camera} from 'react-native-camera';
+// import {RNCamera as Camera} from 'react-native-camera';
 import {
   View,
   Alert,
@@ -196,7 +196,7 @@ const NewDiagnosis = ({navigation}) => {
           value={state.condition}
           placeholder="Enter Patient's condition"
         />
-        <Camera
+        {/* <Camera
           // Set the aspect ratio of the photo to 3:4
           aspect={3 / 4}
           // Set the type of camera to use (front or back)
@@ -208,7 +208,7 @@ const NewDiagnosis = ({navigation}) => {
             // Save the photo to the device's photo library
             Camera.saveToCameraRoll(photo.uri);
           }}
-        />
+        /> */}
         <TouchableOpacity
           onPress={() => save()}
           style={{

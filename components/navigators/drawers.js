@@ -46,7 +46,7 @@ export const CustomDrawerContent = (props) => {
 };
 
 export const DrawerNavigation = () => {
-	const { accessToken } = React.useContext(UserContext);
+	// const { accessToken } = React.useContext(UserContext);
 
 	return (
 		<Drawer.Navigator
@@ -87,7 +87,7 @@ export const DrawerNavigation = () => {
 };
 
 export const DrawerNavigationLogged = () => {
-	const { setTokens, setUser } = React.useContext(AuthContext);
+	// const { setTokens, setUser } = React.useContext(AuthContext);
 
 	return (
 		<Drawer.Navigator

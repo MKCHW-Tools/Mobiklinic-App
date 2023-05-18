@@ -10,7 +10,7 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
-import {Camera} from 'react-native-camera';
+// import {Camera} from 'react-native-camera';
 import RNFS from 'react-native-fs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {
@@ -28,17 +28,17 @@ import {tokensRefresh, SAVE_LOCAL_USER} from '../helpers/functions';
 
 export default function Chat({route, navigation}) {
   const [isLoading, setLoading] = useState(true);
-  const [type, setType] = useState(Camera.constants.Type.back);
+  // const [type, setType] = useState(Camera.constants.Type.back);
   const [permission, setPermission] = useState(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [image, setImage] = useState(null);
   const [viewImage, setViewImage] = useState(false);
-  const cameraRef = useRef(null);
+  // const cameraRef = useRef(null);
   const scrollViewRef = useRef(null);
   const [chats, setChats] = useState([]);
   const [msg, setMsg] = useState('');
   const [chatId, setChatId] = useState(null);
-  const [cameraOn, setCameraOn] = useState(false);
+  // const [cameraOn, setCameraOn] = useState(false);
   const {user, setUser} = useContext(AuthContext);
 
   const chatIdParam = route?.params?._id || undefined;
@@ -281,7 +281,7 @@ export default function Chat({route, navigation}) {
 
   const processMessage = async () => {
     try {
-      setCameraOn(false);
+      // setCameraOn(false);
 
       const newChat = {
         msg,
@@ -361,7 +361,7 @@ export default function Chat({route, navigation}) {
             {chat.senderId == user.id ? 'You' : chat.senderName}
           </Text>
         </View>
-        <Text>{chat.msg}</Text>
+        {/* <Text>{chat.msg}</Text>
         {chat.image && (
           <TouchableOpacity onPress={() => setViewImage(chat.image)}>
             <Image source={{uri: chat.image}} style={STYLES.image} />
@@ -374,7 +374,7 @@ export default function Chat({route, navigation}) {
             {chat.time.getMinutes().toString().padStart(2, '0')},{' '}
             {chat.time.toDateString()}
           </Text>
-        </View>
+        </View> */}
       </View>
     );
   };

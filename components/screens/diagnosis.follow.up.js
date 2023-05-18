@@ -9,7 +9,7 @@ import {
 	StyleSheet,
 	StatusBar,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+// import { Picker } from "@react-native-picker/picker";
 import Icon from "react-native-vector-icons/Feather";
 
 import { COLORS, DIMENS } from "../constants/styles";
@@ -110,7 +110,7 @@ const FollowUp = ({ route, navigation }) => {
 					<Text>Enter follow up details below.</Text>
 				</View>
 
-				<Picker
+				{/* <Picker
 					style={STYLES.pickers}
 					itemStyle={{
 						borderBottomColor: "#000",
@@ -125,7 +125,7 @@ const FollowUp = ({ route, navigation }) => {
 					<Picker.Item label="Trimester 2" value="2" />
 					<Picker.Item label="Trimester 3" value="3" />
 					<Picker.Item label="General" value="4" />
-				</Picker>
+				</Picker> */}
 
 				<TextInput
 					style={STYLES.input}
