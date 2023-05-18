@@ -33,17 +33,18 @@ public class IdentificationModule extends ReactContextBaseJavaModule {
 
     private final ActivityEventListener activityEventListener = new BaseActivityEventListener() {
         @Override
-        public void onActivityResult(Activity activity, int requestCode, int resultCode, @Nullable Intent data) {
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
 
-            if (requestCode == REQUEST_CODE_IDENTIFY) {
-                if (resultCode == Activity.RESULT_OK && data != null) {
+            if (resultCode == Activity.RESULT_OK) {
+                if (requestCode == REQUEST_CODE_IDENTIFY) {
                     handleIdentificationSuccess(data);
-                } else {
-                    handleIdentificationFailure();
                 }
+            } else {
+                handleIdentificationFailure();
             }
         }
+
     };
 
     public IdentificationModule(ReactApplicationContext reactContext) {
@@ -61,25 +62,26 @@ public class IdentificationModule extends ReactContextBaseJavaModule {
     public void startIdentification(String moduleId, String userId) {
         this.moduleId = moduleId;
         this.userId = userId;
-    
+
         if (TextUtils.isEmpty(this.userId)) {
             this.userId = userId; // Use the provided userId parameter
         }
-    
-        simHelper = new SimHelper(Constants.SIMPRINTS_PROJECT_ID, this.userId);
+
+        simHelper = new SimHelper("Project ID", this.userId);
         Intent intent = simHelper.identify(this.moduleId);
-    
+
         Activity currentActivity = getCurrentActivity();
         if (currentActivity != null) {
             currentActivity.startActivityForResult(intent, REQUEST_CODE_IDENTIFY);
         }
     }
-    
+
     private void handleIdentificationSuccess(Intent data) {
         boolean biometricsComplete = data.getBooleanExtra(Constants.SIMPRINTS_BIOMETRICS_COMPLETE_CHECK, false);
-        ArrayList<Identification> identifications = data.getParcelableArrayListExtra(Constants.SIMPRINTS_IDENTIFICATIONS);
+        ArrayList<Identification> identifications = data
+                .getParcelableArrayListExtra(Constants.SIMPRINTS_IDENTIFICATIONS);
         String sessionId = data.getStringExtra(Constants.SIMPRINTS_SESSION_ID);
-    
+
         if (biometricsComplete && identifications != null && identifications.size() > 0) {
             WritableArray identificationResults = processIdentificationResults(identifications);
             sendEvent("identificationSuccess", identificationResults, sessionId);
@@ -87,27 +89,28 @@ public class IdentificationModule extends ReactContextBaseJavaModule {
             sendEvent("identificationFailure", null, sessionId);
         }
     }
-    
+
     private WritableArray processIdentificationResults(ArrayList<Identification> identifications) {
         WritableArray results = Arguments.createArray();
-    
+
         for (Identification identification : identifications) {
             WritableMap result = Arguments.createMap();
             result.putString("guid", identification.getGuid());
-            result.putString("tier", identification.getTier().name()); // Use the name() method to get the string representation of the Tier enum
+            result.putString("tier", identification.getTier().name()); // Use the name() method to get the string
+                                                                       // representation of the Tier enum
             result.putDouble("confidence", identification.getConfidence());
             results.pushMap(result);
         }
-    
+
         return results;
     }
-    
 
     private void handleIdentificationFailure() {
         sendEvent("identificationFailure", null, null);
     }
 
-    private void sendEvent(String eventName, @Nullable WritableArray identificationResults, @Nullable String sessionId) {
+    private void sendEvent(String eventName, @Nullable WritableArray identificationResults,
+            @Nullable String sessionId) {
         WritableMap params = Arguments.createMap();
 
         if (!TextUtils.isEmpty(sessionId)) {
