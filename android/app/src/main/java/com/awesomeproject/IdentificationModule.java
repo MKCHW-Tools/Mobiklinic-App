@@ -15,8 +15,6 @@ import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.ReactContext;
-
 import com.simprints.libsimprints.Constants;
 import com.simprints.libsimprints.Identification;
 import com.simprints.libsimprints.SimHelper;
@@ -44,7 +42,6 @@ public class IdentificationModule extends ReactContextBaseJavaModule {
                 handleIdentificationFailure();
             }
         }
-
     };
 
     public IdentificationModule(ReactApplicationContext reactContext) {
@@ -59,7 +56,7 @@ public class IdentificationModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void startIdentification(String moduleId, String userId) {
+    public void startIdentification(String projectId, String moduleId, String userId) {
         this.moduleId = moduleId;
         this.userId = userId;
 
@@ -67,7 +64,7 @@ public class IdentificationModule extends ReactContextBaseJavaModule {
             this.userId = userId; // Use the provided userId parameter
         }
 
-        simHelper = new SimHelper("Project ID", this.userId);
+        simHelper = new SimHelper(projectId, this.userId);
         Intent intent = simHelper.identify(this.moduleId);
 
         Activity currentActivity = getCurrentActivity();
@@ -96,8 +93,7 @@ public class IdentificationModule extends ReactContextBaseJavaModule {
         for (Identification identification : identifications) {
             WritableMap result = Arguments.createMap();
             result.putString("guid", identification.getGuid());
-            result.putString("tier", identification.getTier().name()); // Use the name() method to get the string
-                                                                       // representation of the Tier enum
+            result.putString("tier", identification.getTier().name()); // Use the name() method to get the string representation of the Tier enum
             result.putDouble("confidence", identification.getConfidence());
             results.pushMap(result);
         }

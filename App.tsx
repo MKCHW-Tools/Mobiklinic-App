@@ -57,22 +57,30 @@ DeviceEventEmitter.addListener('SimprintsRegistrationFailure', (event) => {
 function App(): JSX.Element {
   const { IdentificationModule } = NativeModules;
   
-  // Listen for identification results
-  DeviceEventEmitter.addListener('identificationSuccess', (data) => {
-    // Handle successful identification
-    const sessionId = data.sessionId;
-    const identificationResults = data.identificationResults;
-    // Process the identification results
-    console.log(identificationResults);
-  });
+  // // Listen for identification results
+  // DeviceEventEmitter.addListener('identificationSuccess', (data) => {
+  //   // Handle successful identification
+  //   const sessionId = data.sessionId;
+  //   const identificationResults = data.identificationResults;
+  //   // Process the identification results
+  //   console.log(identificationResults);
+  // });
+
+   // Event listener to handle identification results
+DeviceEventEmitter.addListener('identificationSuccess', (identificationResults) => {
+  // Process and display identification results
+  console.log('Identification Results:', identificationResults);
+});
   
   DeviceEventEmitter.addListener('identificationFailure', (data) => {
     // Handle identification failure
     const sessionId = data.sessionId;
   });
 
+ 
+
   const openIdentify = () => {
-    IdentificationModule.startIdentification("WuDDHuqhcQ36P2U9rM7Y", "test_user");
+    IdentificationModule.startIdentification("WuDDHuqhcQ36P2U9rM7Y", "test_user", "mpower");
   };
 
 
