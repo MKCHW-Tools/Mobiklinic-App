@@ -5,14 +5,16 @@
  * @format
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import type { PropsWithChildren } from 'react';
-import { DeviceEventEmitter, NativeEventEmitter } from 'react-native';
+import { DeviceEventEmitter, NativeEventEmitter, Text } from 'react-native';
+// import BeneficiarySelectionScreen from './BeneficiarySelectionScreen';
+
 import {
   Linking,
   Button,
   Alert,
-  Platform,
+  Modal,
   StyleSheet,
   useColorScheme,
   NativeModules,
@@ -33,10 +35,15 @@ type SendIntentButtonProps = {
   }>;
 };
 
+interface IdentificationResult {
+  guid: string;
+  tier: string;
+  confidence: number;
+}
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+interface IdentificationEvent {
+  identificationResults: IdentificationResult[];
+}
 
 
 DeviceEventEmitter.addListener('SimprintsRegistrationSuccess', (event) => {
@@ -53,34 +60,15 @@ DeviceEventEmitter.addListener('SimprintsRegistrationFailure', (event) => {
 );
 
 
+const { IdentificationModule } = NativeModules;
+
 
 function App(): JSX.Element {
-  const { IdentificationModule } = NativeModules;
   
-  // // Listen for identification results
-  // DeviceEventEmitter.addListener('identificationSuccess', (data) => {
-  //   // Handle successful identification
-  //   const sessionId = data.sessionId;
-  //   const identificationResults = data.identificationResults;
-  //   // Process the identification results
-  //   console.log(identificationResults);
-  // });
-
-   // Event listener to handle identification results
-DeviceEventEmitter.addListener('identificationSuccess', (identificationResults) => {
-  // Process and display identification results
-  console.log('Identification Results:', identificationResults);
-});
-  
-  DeviceEventEmitter.addListener('identificationFailure', (data) => {
-    // Handle identification failure
-    const sessionId = data.sessionId;
-  });
-
- 
 
   const openIdentify = () => {
     IdentificationModule.startIdentification("WuDDHuqhcQ36P2U9rM7Y", "test_user", "mpower");
+
   };
 
 
@@ -89,6 +77,18 @@ DeviceEventEmitter.addListener('identificationSuccess', (identificationResults) 
   const openFunction = () => {
     OpenActivity.open("WuDDHuqhcQ36P2U9rM7Y", "test_user", "mpower");
   };
+  
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [identificationResults, setIdentificationResults] = useState<IdentificationResult[]>([]);
+
+  const handleIdentificationSuccess = (event: IdentificationEvent) => {
+    const { identificationResults } = event;
+    setIdentificationResults(identificationResults);
+    setModalVisible(true);
+  };
+
+  
 
 
 
@@ -97,8 +97,11 @@ DeviceEventEmitter.addListener('identificationSuccess', (identificationResults) 
 
   return (
     <View style={styles.container}>
-      <Button title="Open Simprints ID" onPress={openFunction} />
+      <View>
+      <Button title="Start Enorollment" onPress={openFunction} />
+      <View style={{ height: 20 }} />
       <Button title="Start Identification" onPress={openIdentify} />
+      </View>
     </View>
   );
 };
@@ -108,6 +111,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    padding: 20,
   },
 });
 

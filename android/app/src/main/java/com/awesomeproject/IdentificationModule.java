@@ -18,10 +18,13 @@ import com.facebook.react.bridge.Arguments;
 import com.simprints.libsimprints.Constants;
 import com.simprints.libsimprints.Identification;
 import com.simprints.libsimprints.SimHelper;
+import com.awesomeproject.Beneficiary;
 
 import java.util.ArrayList;
 
 public class IdentificationModule extends ReactContextBaseJavaModule {
+    private static final String EVENT_IDENTIFICATION_SUCCESS = "identificationSuccess";
+    private static final String EVENT_IDENTIFICATION_FAILURE = "identificationFailure";
     private static final int REQUEST_CODE_IDENTIFY = 1;
 
     private ReactApplicationContext reactContext;
@@ -61,7 +64,7 @@ public class IdentificationModule extends ReactContextBaseJavaModule {
         this.userId = userId;
 
         if (TextUtils.isEmpty(this.userId)) {
-            this.userId = userId; // Use the provided userId parameter
+            this.userId = userId;
         }
 
         simHelper = new SimHelper(projectId, this.userId);
@@ -70,21 +73,59 @@ public class IdentificationModule extends ReactContextBaseJavaModule {
         Activity currentActivity = getCurrentActivity();
         if (currentActivity != null) {
             currentActivity.startActivityForResult(intent, REQUEST_CODE_IDENTIFY);
+
         }
     }
 
     private void handleIdentificationSuccess(Intent data) {
-        boolean biometricsComplete = data.getBooleanExtra(Constants.SIMPRINTS_BIOMETRICS_COMPLETE_CHECK, false);
+        boolean biometricsCompleted = data.getBooleanExtra(Constants.SIMPRINTS_BIOMETRICS_COMPLETE_CHECK, false);
+        String sessionId = data.getStringExtra(Constants.SIMPRINTS_SESSION_ID);
         ArrayList<Identification> identifications = data
                 .getParcelableArrayListExtra(Constants.SIMPRINTS_IDENTIFICATIONS);
-        String sessionId = data.getStringExtra(Constants.SIMPRINTS_SESSION_ID);
 
-        if (biometricsComplete && identifications != null && identifications.size() > 0) {
-            WritableArray identificationResults = processIdentificationResults(identifications);
-            sendEvent("identificationSuccess", identificationResults, sessionId);
-        } else {
-            sendEvent("identificationFailure", null, sessionId);
+
+        ArrayList<Beneficiary> beneficiaries = new ArrayList<>();
+        for (Identification identification : identifications) {
+            String beneficiaryId = identification.getGuid();
+            Beneficiary beneficiary = retrieveBeneficiary(beneficiaryId);
+            if (beneficiary != null) {
+                beneficiaries.add(beneficiary);
+            }
         }
+
+        if (beneficiaries.size() > 0) {
+            sendBeneficiariesToReactNative(beneficiaries, sessionId);
+        } else {
+            sendEvent(EVENT_IDENTIFICATION_FAILURE, null, null);
+        }
+        
+
+    }
+
+    private Beneficiary retrieveBeneficiary(String beneficiaryId) {
+        // Implement the logic to retrieve the beneficiary based on the beneficiaryId
+        // For example, you can query a local database or make an API request to fetch
+        // the beneficiary
+        // Return the retrieved beneficiary object or null if not found
+        // ...
+
+        return null;
+    }
+
+    private void sendBeneficiariesToReactNative(ArrayList<Beneficiary> beneficiaries, String sessionId) {
+        WritableArray beneficiaryArray = Arguments.createArray();
+        for (Beneficiary beneficiary : beneficiaries) {
+            WritableMap beneficiaryMap = Arguments.createMap();
+            beneficiaryMap.putString("id", beneficiary.getId());
+            beneficiaryMap.putString("name", beneficiary.getName());
+            beneficiaryArray.pushMap(beneficiaryMap);
+        }
+
+        WritableMap params = Arguments.createMap();
+        params.putString("sessionId", sessionId);
+        params.putArray("beneficiaries", beneficiaryArray);
+
+        sendEvent("identificationSuccess", params, null);
     }
 
     private WritableArray processIdentificationResults(ArrayList<Identification> identifications) {
@@ -93,7 +134,7 @@ public class IdentificationModule extends ReactContextBaseJavaModule {
         for (Identification identification : identifications) {
             WritableMap result = Arguments.createMap();
             result.putString("guid", identification.getGuid());
-            result.putString("tier", identification.getTier().name()); // Use the name() method to get the string representation of the Tier enum
+            result.putString("tier", identification.getTier().name());
             result.putDouble("confidence", identification.getConfidence());
             results.pushMap(result);
         }
@@ -105,8 +146,7 @@ public class IdentificationModule extends ReactContextBaseJavaModule {
         sendEvent("identificationFailure", null, null);
     }
 
-    private void sendEvent(String eventName, @Nullable WritableArray identificationResults,
-            @Nullable String sessionId) {
+    private void sendEvent(String eventName, @Nullable WritableMap identificationResults, @Nullable String sessionId) {
         WritableMap params = Arguments.createMap();
 
         if (!TextUtils.isEmpty(sessionId)) {
@@ -114,10 +154,11 @@ public class IdentificationModule extends ReactContextBaseJavaModule {
         }
 
         if (identificationResults != null) {
-            params.putArray("identificationResults", identificationResults);
+            params.putMap("identificationResults", identificationResults);
         }
 
         reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                 .emit(eventName, params);
     }
+
 }
