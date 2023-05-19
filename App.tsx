@@ -8,13 +8,14 @@ import { DoctorsProvider } from './components/providers/Doctors'
 
 export const App = () => {
     return (
-        <UserProvider>
-            <DiagnosisProvider>
-                <DoctorsProvider>
-                    <Entry/>
-                </DoctorsProvider>
-            </DiagnosisProvider>
-        </UserProvider>
+        // <UserProvider>
+        //     <DiagnosisProvider>
+        //         <DoctorsProvider>
+        //             <Entry/>
+        //         </DoctorsProvider>
+        //     </DiagnosisProvider>
+        // </UserProvider>
+        <Entry/>
     )
 }
 

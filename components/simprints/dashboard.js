@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
 
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/Ionicons';
 import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FoIcon from 'react-native-vector-icons/Fontisto';
 import FAIcon from 'react-native-vector-icons/FontAwesome';
@@ -13,7 +13,7 @@ import {signOut} from '../helpers/functions';
 import {AuthContext} from '../contexts/auth';
 
 const Dashboard = ({navigation}) => {
-  // const {setTokens, setUser} = useContext(AuthContext);
+//   const {setTokens, setUser} = useContext(AuthContext);
 
   return (
     <View style={styles.wrapper}>
@@ -92,16 +92,6 @@ const Dashboard = ({navigation}) => {
               <Text style={styles.cardTitle}> Ambulances</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.row}>
-            <TouchableOpacity
-              style={styles.card}
-              onPress={() => navigation.navigate('About')}>
-              <View style={styles.cardIcon}>
-                <Icon name="doctor" size={40} color={COLORS.BLACK} />
-              </View>
-              <Text style={styles.cardTitle}> About</Text>
-            </TouchableOpacity>
-          </View>
           {/* <View style={styles.row}>
             <TouchableOpacity
               style={styles.card}
@@ -133,13 +123,10 @@ const styles = StyleSheet.create({
   heroHeading: {
     fontSize: 30,
     fontWeight: 'bold',
-    color: COLORS.BLACK,
   },
   heroParagraph: {
     fontSize: 20,
     fontWeight: '600',
-    color: COLORS.BLACK,
-
   },
   header: {
     flex: 1,

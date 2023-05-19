@@ -162,6 +162,8 @@ dependencies {
     implementation("com.facebook.react:react-android")
 //    implementation project(':react-native-camera')
     implementation project(':react-native-fs')
+    implementation project(':react-native-vector-icons')
+
     
     implementation project(':react-native-reanimated')
    
@@ -191,3 +193,6 @@ dependencies {
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+
+// react-vector-icons 
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
