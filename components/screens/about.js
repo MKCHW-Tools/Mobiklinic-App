@@ -146,7 +146,7 @@ import React, { useCallback } from 'react';
 import { Linking, Button, Alert, Platform, StyleSheet, useColorScheme, NativeModules, View } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-function About() {
+function About({navigation}) {
   var OpenActivity = NativeModules.OpenActivity;
 
   const openFunction = () => {

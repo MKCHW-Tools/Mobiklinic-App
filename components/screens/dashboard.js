@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet,Button} from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
 import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -75,7 +75,7 @@ const Dashboard = ({navigation}) => {
           <View style={styles.row}>
             <TouchableOpacity
               style={styles.card}
-              onPress={() => navigation.navigate('Doctors')}>
+              onPress={() => navigation.navigate('About')}>
               <View style={styles.cardIcon}>
                 <FoIcon name="doctor" size={40} color={COLORS.BLACK} />
               </View>
@@ -97,10 +97,11 @@ const Dashboard = ({navigation}) => {
               style={styles.card}
               onPress={() => navigation.navigate('About')}>
               <View style={styles.cardIcon}>
-                <Icon name="doctor" size={40} color={COLORS.BLACK} />
+                <Icon name="menu" size={40} color={COLORS.BLACK} />
               </View>
               <Text style={styles.cardTitle}> About</Text>
             </TouchableOpacity>
+           
           </View>
           {/* <View style={styles.row}>
             <TouchableOpacity
@@ -139,7 +140,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     color: COLORS.BLACK,
-
   },
   header: {
     flex: 1,
@@ -184,6 +184,7 @@ const styles = StyleSheet.create({
     padding: 10,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: COLORS.BLACK,
   },
   title: {
     fontWeight: 'bold',
