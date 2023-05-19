@@ -17,6 +17,7 @@ public class OpenActivityPackage implements ReactPackage {
     public List<NativeModule> createNativeModules(@NonNull ReactApplicationContext reactApplicationContext) {
         List<NativeModule> modules = new ArrayList<>();
         modules.add(new OpenActivityModule(reactApplicationContext));
+        modules.add(new IdentificationModule(reactApplicationContext));
         return modules;
     }
 
