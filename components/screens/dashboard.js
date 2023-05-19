@@ -43,7 +43,7 @@ const Dashboard = ({navigation}) => {
           <View style={styles.row}>
             <TouchableOpacity
               style={styles.card}
-              onPress={() => navigation.navigate('Diagnose')}>
+              onPress={() => navigation.navigate('About')}>
               <View style={styles.cardIcon}>
                 <Icon name="heart" size={40} color={COLORS.BLACK} />
               </View>
