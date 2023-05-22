@@ -41,19 +41,26 @@ public class OpenActivityModule extends ReactContextBaseJavaModule implements Ac
         }
     }
 
+    
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) { // Check if this is the result from the Simprints ID registration
-            if (resultCode == Activity.RESULT_OK) { // Check if the registration was successful
-                Registration registration =  data.getParcelableExtra("registration"); // Get the registration object
-                String guid = registration.getGuid(); // Get the GUID returned from Simprints ID
-
-                // Store the GUID or perform any desired actions
-                // For example, you can emit an event to your React Native code
-                WritableMap params = Arguments.createMap();
-                params.putString("guid", guid);
-                getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                        .emit("SimprintsRegistrationSuccess", params);
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK) {
+                Registration registration = data.getParcelableExtra("registration");
+                if (registration != null) { // Check if the registration object is not null
+                    String guid = registration.getGuid();
+                    // Store the GUID or perform any desired actions
+                    // For example, you can emit an event to your React Native code
+                    WritableMap params = Arguments.createMap();
+                    params.putString("guid", guid);
+                    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                            .emit("SimprintsRegistrationSuccess", params);
+                } else {
+                    // Handle the case when the registration object is null
+                    // You can emit an event to your React Native code to handle the error
+                    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                            .emit("SimprintsRegistrationError", null);
+                }
             } else {
                 // Handle the case when the registration was not successful
                 // You can emit an event to your React Native code to handle the error
@@ -62,6 +69,7 @@ public class OpenActivityModule extends ReactContextBaseJavaModule implements Ac
             }
         }
     }
+    
 
     @Override
     public void onNewIntent(Intent intent) {
