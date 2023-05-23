@@ -10,11 +10,11 @@ const Entry = () => {
     //autoLogin()
   }, []);
   return (
-    // <AuthProvider>
-    // 	<AppNav />
-    // </AuthProvider>
+    <AuthProvider>
+    	<AppNav />
+    </AuthProvider>
 
-    <AuthStack />
+    // <AuthStack />
   );
 };
 

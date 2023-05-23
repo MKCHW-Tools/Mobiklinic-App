@@ -23,7 +23,7 @@ import AuthStack from './AuthStack';
 function AppNav() {
   return (
     <NavigationContainer>
-      <AuthStack/>
+      <AppStack/>
     </NavigationContainer>
   );
 }
