@@ -52,7 +52,7 @@ const Doctors = ({ navigation }) => {
 		//Save each remote doctor to local storage.
 		//Show no doctors if returned doctors are 0
 
-		/*try {
+		try {
 			const tokenString = await AsyncStorage.getItem("@tokens");
 			console.log(tokenString);
 			const tokens = tokenString && (await JSON.parse(tokenString));
@@ -114,7 +114,7 @@ const Doctors = ({ navigation }) => {
 
 			console.log(e);
 		}
-		*/
+		
 	};
 
 	const _keyExtractor = (item) => item._id;

@@ -27,8 +27,8 @@ const ViewDiagnosis = ({ route, navigation }) => {
 		diagnosis: route.params,
 	});
 
-	/* 	const diagnosisContext = React.useContext(DiagnosisContext);
-	const { diagnoses } = diagnosisContext; */
+const diagnosisContext = React.useContext(DiagnosisContext);
+	const { diagnoses } = diagnosisContext; 
 
 	const _keyExtractor = (item, index) => index.toString();
 

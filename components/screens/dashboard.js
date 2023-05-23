@@ -13,7 +13,7 @@ import {signOut} from '../helpers/functions';
 import {AuthContext} from '../contexts/auth';
 
 const Dashboard = ({navigation}) => {
-  // const {setTokens, setUser} = useContext(AuthContext);
+  const {setTokens, setUser} = useContext(AuthContext);
 
   return (
     <View style={styles.wrapper}>
@@ -103,7 +103,7 @@ const Dashboard = ({navigation}) => {
             </TouchableOpacity>
            
           </View>
-          {/* <View style={styles.row}>
+          <View style={styles.row}>
             <TouchableOpacity
               style={styles.card}
               onPress={() => {
@@ -115,7 +115,7 @@ const Dashboard = ({navigation}) => {
               </View>
               <Text style={styles.cardTitle}>Logout</Text>
             </TouchableOpacity>
-          </View> */}
+          </View>
         </View>
       </View>
     </View>

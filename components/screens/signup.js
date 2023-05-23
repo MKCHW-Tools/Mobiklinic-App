@@ -62,7 +62,7 @@ const SignUp = ({ navigation }) => {
 				<Text style={[styles.subTitle]}>Registration successful!</Text>
 				<TouchableOpacity
 					style={[styles.btn, styles.btnPrimary]}
-					onPress={() => _moveTo("Login")}>
+					onPress={() => navigation.navigate('Login')}>
 					<Text>Login now</Text>
 				</TouchableOpacity>
 			</Loader>
@@ -221,7 +221,7 @@ const SignUp = ({ navigation }) => {
 					</TouchableOpacity>
 				)}
 
-				<TouchableOpacity onPress={() => _moveTo("Login")}>
+				<TouchableOpacity onPress={() => navigation.navigate('Login')}>
 					<Text style={[styles.linkItem]}>
 						Already have an account? Sign in
 					</Text>

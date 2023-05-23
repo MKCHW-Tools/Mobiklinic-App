@@ -219,27 +219,27 @@ export const signIn = async (data) => {
 			//// It is possible that the user has changed the password, but it adheres to the past information stored on the device.
 			//// This, we need to ask the online server when the user fail to sign in with the stored information.
 			////
-			// } else {
-			// 	Alert.alert(
-			// 		"Failed to login",
-			// 		"Check your login details",
-			// 		[
-			// 			{
-			// 				text: "Cancel",
-			// 				onPress: () => setIsLoading(false),
-			// 			},
-			// 		],
-			//
-			// 		{
-			// 			cancelable: true,
-			// 			onDismiss: () => {
-			// 				setIsLoading(false);
-			// 			},
-			// 		}
-			// 	);
+			} else {
+				Alert.alert(
+					"Failed to login",
+					"Check your login details",
+					[
+						{
+							text: "Cancel",
+							onPress: () => setIsLoading(false),
+						},
+					],
+			
+					{
+						cancelable: true,
+						onDismiss: () => {
+							setIsLoading(false);
+						},
+					}
+				);
 		}
 	}
-	// } else {
+	// } else {}
 	try {
 		console.log("Starting network request");
 		let response = await fetch(`${URLS.BASE}/users/login`, {
