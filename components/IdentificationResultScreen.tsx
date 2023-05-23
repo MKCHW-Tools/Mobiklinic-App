@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Button } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 
 type IdentificationResultScreenProps = {
@@ -7,7 +7,7 @@ type IdentificationResultScreenProps = {
 };
 
 const IdentificationResultScreen: React.FC<IdentificationResultScreenProps> = ({ route }) => {
-  const { identificationResults } = route.params;
+  const { identificationResults} = route.params;
 
   return (
     <View style={styles.container}>
