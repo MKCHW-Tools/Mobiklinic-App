@@ -22,7 +22,7 @@ import {
 } from 'react-native';
 
 const { IdentificationModule } = NativeModules;
-const identificationEventEmitter = new NativeEventEmitter(IdentificationModule);
+// const identificationEventEmitter = new NativeEventEmitter(IdentificationModule);
 
 
 DeviceEventEmitter.addListener('SimprintsRegistrationSuccess', (event) => {
@@ -44,7 +44,7 @@ function App(): JSX.Element {
   const [identificationResults, setIdentificationResults] = useState([]);
 
   useEffect(() => {
-    const identificationResultSubscription = identificationEventEmitter.addListener(
+    const identificationResultSubscription = DeviceEventEmitter.addListener(
       'onIdentificationResult',
       (results) => {
         setIdentificationResults(results);
@@ -79,9 +79,12 @@ function App(): JSX.Element {
       <Button title="Start Enorollment" onPress={openFunction} />
       <View style={{ height: 20 }} />
       <Button title="Start Identification" onPress={handleIdentification} />
+      <View style={{ height: 20 }} />
       <Text>Identification Results:</Text>
+      <View style={{ height: 20 }} />
       {(identificationResults as any[]).map((result) => (
         <Text key={result.guid}>
+           <View style={{ height: 20 }} />
           Tier: {result.tier}, Confidence: {result.confidenceScore}, Guid: {result.guid}
         </Text>
       ))}
