@@ -1,21 +1,23 @@
-import * as React from "react";
-export const AuthContext = React.createContext();
+import React, {createContext, useState} from 'react';
 
-export function AuthProvider({ children }) {
-	const [isLoading, setIsLoading] = React.useState(false);
-	const [user, setUser] = React.useState(null);
-	const [tokens, setTokens] = React.useState(null);
-	return (
-		<AuthContext.Provider
-			value={{
-				isLoading,
-				setIsLoading,
-				user,
-				setUser,
-				tokens,
-				setTokens,
-			}}>
-			{children}
-		</AuthContext.Provider>
-	);
+export const AuthContext = createContext();
+
+export function AuthProvider({children}) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState(null);
+  const [tokens, setTokens] = useState(null);
+
+  return (
+    <AuthContext.Provider
+      value={{
+        isLoading,
+        setIsLoading,
+        user,
+        setUser,
+        tokens,
+        setTokens,
+      }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }

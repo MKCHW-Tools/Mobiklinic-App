@@ -5,6 +5,7 @@ import {TextInput} from 'react-native-gesture-handler';
 import {Feather} from '@expo/vector-icons';
 import {COLORS, DIMENS} from '../constants/styles';
 import {AuthContext} from '../contexts/auth';
+import {CustomStatusBar} from '../ui/custom.status.bar';
 
 export default function Chats({route, navigation}) {
   const [isLoading, setLoading] = useState(true);
