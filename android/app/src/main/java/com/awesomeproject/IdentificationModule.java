@@ -79,9 +79,7 @@ public class IdentificationModule extends ReactContextBaseJavaModule {
                 Identification topMatch = identifications.get(0);
                 String topMatchId = topMatch.getGuid();
     
-                // TODO: Retrieve beneficiary information using the top match ID
-    
-                // Create an array to hold the identification results
+               
                 WritableArray resultArray = Arguments.createArray();
     
                 for (Identification identification : identifications) {
