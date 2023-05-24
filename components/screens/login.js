@@ -1,4 +1,5 @@
-import React, {useContext, useState} from 'react';
+import * as React from 'react';
+
 import {
   View,
   Image,
@@ -17,7 +18,7 @@ import {AuthContext} from '../contexts/auth';
 import {CustomStatusBar} from '../ui/custom.status.bar';
 import Loader from '../ui/loader';
 
-const Login = ({navigation}) => {
+const Login = () => {
   const {
     setUser: setMyUser,
     isLoading,
@@ -57,7 +58,8 @@ const Login = ({navigation}) => {
 
         <TextInput
           style={styles.input}
-          secureTextEntry
+          password={true}
+          secureTextEntry={true}
           autoCorrect={false}
           placeholderTextColor="grey"
           selectionColor={COLORS.SECONDARY}
@@ -66,7 +68,7 @@ const Login = ({navigation}) => {
           placeholder="Password"
         />
 
-        {user.username !== '' && user.password !== '' ? (
+        {user.username != '' && user.password != '' ? (
           <TouchableOpacity
             style={[styles.btn, styles.btnPrimary]}
             onPress={() => {
@@ -96,94 +98,91 @@ const Login = ({navigation}) => {
             />
           </TouchableOpacity>
         )}
-       <TouchableOpacity onPress={() => navigation.navigate("signUp")}>
-					<Text style={styles.linkItem}>
-						Don't have an Account? Sign up
-					</Text>
-				</TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('signUp')}>
+          <Text style={styles.linkItem}>Don't have an Account? Sign up</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 };
+
 export default Login;
 
-
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: COLORS.WHITE,
-	},
-	logoContainer: {
-		flexGrow: 2,
-		alignItems: "center",
-		justifyContent: "center",
-		padding: DIMENS.FORM.PADDING,
-	},
-	title: {
-		color: COLORS.ACCENT_1,
-		fontSize: 14,
-		fontWeight: "bold",
-		textTransform: "uppercase",
-		padding: DIMENS.PADDING,
-	},
-	subTitle: {
-		color: COLORS.SECONDARY,
-		fontWeight: "bold",
-		paddingVertical: 20,
-	},
-	textColor: {
-		color: COLORS.WHITE_LOW,
-	},
-	linkItem: {
-		paddingTop: DIMENS.PADDING,
-		textAlign: "center",
-	},
-	formContainer: {
-		flexGrow: 1,
-		padding: DIMENS.FORM.PADDING,
-		justifyContent: "center",
-		borderTopLeftRadius: 30,
-		borderTopRightRadius: 30,
-		backgroundColor: COLORS.PRIMARY,
-	},
-	input: {
-		backgroundColor: COLORS.WHITE_LOW,
-		borderColor: COLORS.WHITE_LOW,
-		borderRadius: 50,
-		paddingHorizontal: 15,
-		paddingVertical: 5,
-		marginBottom: 10,
-		fontFamily: "Roboto",
-	},
-	btn: {
-		padding: DIMENS.PADDING,
-	},
-	errorMsg: {
-		color: COLORS.ERRORS,
-	},
-	btn: {
-		padding: DIMENS.PADDING,
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-		borderRadius: 50,
-		paddingHorizontal: 15,
-	},
-	btnInfo: {
-		backgroundColor: COLORS.WHITE_LOW,
-	},
-	btnPrimary: {
-		backgroundColor: COLORS.ACCENT_1,
-	},
-	submitText: {
-		color: COLORS.ACCENT_1,
-		fontWeight: "bold",
-	},
-	muteText: {
-		color: COLORS.WHITE_LOW,
-	},
-	whiteText: {
-		color: COLORS.WHITE,
-	},
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.WHITE,
+  },
+  logoContainer: {
+    flexGrow: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: DIMENS.FORM.PADDING,
+  },
+  title: {
+    color: COLORS.ACCENT_1,
+    fontSize: 14,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    padding: DIMENS.PADDING,
+  },
+  subTitle: {
+    color: COLORS.SECONDARY,
+    fontWeight: 'bold',
+    paddingVertical: 20,
+  },
+  textColor: {
+    color: COLORS.WHITE_LOW,
+  },
+  linkItem: {
+    paddingTop: DIMENS.PADDING,
+    textAlign: 'center',
+  },
+  formContainer: {
+    flexGrow: 1,
+    padding: DIMENS.FORM.PADDING,
+    justifyContent: 'center',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    backgroundColor: COLORS.PRIMARY,
+  },
+  input: {
+    backgroundColor: COLORS.WHITE_LOW,
+    borderColor: COLORS.WHITE_LOW,
+    borderRadius: 50,
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    marginBottom: 10,
+    fontFamily: 'Roboto',
+  },
+  btn: {
+    padding: DIMENS.PADDING,
+  },
+  errorMsg: {
+    color: COLORS.ERRORS,
+  },
+  btn: {
+    padding: DIMENS.PADDING,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderRadius: 50,
+    paddingHorizontal: 15,
+  },
+  btnInfo: {
+    backgroundColor: COLORS.WHITE_LOW,
+  },
+  btnPrimary: {
+    backgroundColor: COLORS.ACCENT_1,
+  },
+  submitText: {
+    color: COLORS.ACCENT_1,
+    fontWeight: 'bold',
+  },
+  muteText: {
+    color: COLORS.WHITE_LOW,
+  },
+  whiteText: {
+    color: COLORS.WHITE,
+  },
 });
-
