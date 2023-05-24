@@ -24,26 +24,27 @@ import {
 const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
 
-DeviceEventEmitter.addListener('SimprintsRegistrationSuccess', event => {
-  const {guid} = event;
-  console.log(event);
-  Alert.alert('Simprints Registration Success', guid);
-});
+// DeviceEventEmitter.addListener('SimprintsRegistrationSuccess', event => {
+//   const {guid} = event;
+//   console.log(event);
+//   Alert.alert('Simprints Registration Success', guid);
+// });
 
-DeviceEventEmitter.addListener('SimprintsRegistrationFailure', event => {
-  const {error} = event;
-  Alert.alert('Simprints Registration Failure', error);
-});
+// DeviceEventEmitter.addListener('SimprintsRegistrationFailure', event => {
+//   const {error} = event;
+//   Alert.alert('Simprints Registration Failure', error);
+// });
 
-DeviceEventEmitter.addListener('SimprintsRegistrationSuccess+', event => {
-  const {guid} = event;
-  console.log(event);
-  Alert.alert('Beneficiary Enrolled on id :', guid);
-});
+// DeviceEventEmitter.addListener('SimprintsRegistrationSuccess+', event => {
+//   const {guid} = event;
+//   console.log(event);
+//   Alert.alert('Beneficiary Enrolled on id :', guid);
+// });
 
 function App(): JSX.Element {
   const [identificationResults, setIdentificationResults] = useState([]);
   const [identificationPlusResults, setIdentificationPlusResults] = useState([]);
+  const [enrollmentGuid, setEnrollmentGuid] = useState(null);
   const [showButtons, setShowButtons] = useState(true);
 
   useEffect(() => {
@@ -71,6 +72,20 @@ function App(): JSX.Element {
 
     return () => {
       identificationResultPlusSubscription.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    const registrationSuccessSubscription = DeviceEventEmitter.addListener(
+      'SimprintsRegistrationSuccess',
+      (event) => {
+        const { guid } = event;
+        setEnrollmentGuid(guid);
+      }
+    );
+
+    return () => {
+      registrationSuccessSubscription.remove();
     };
   }, []);
 
@@ -118,6 +133,14 @@ function App(): JSX.Element {
           </>
         )}
         <View style={{height: 20}} />
+
+        {enrollmentGuid && (
+          <>
+            <Text style={styles.text}>Beneficiary Enrolled on ID:</Text>
+            <Text>{enrollmentGuid}</Text>
+            <View style={{ height: 20 }} />
+          </>
+        )}
         
         {/* {identificationResults.length > 0 && (
           <React.Fragment key="identificationplus-heading">
