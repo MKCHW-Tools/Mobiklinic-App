@@ -24,26 +24,11 @@ import {
 const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
 
-// DeviceEventEmitter.addListener('SimprintsRegistrationSuccess', event => {
-//   const {guid} = event;
-//   console.log(event);
-//   Alert.alert('Simprints Registration Success', guid);
-// });
-
-// DeviceEventEmitter.addListener('SimprintsRegistrationFailure', event => {
-//   const {error} = event;
-//   Alert.alert('Simprints Registration Failure', error);
-// });
-
-// DeviceEventEmitter.addListener('SimprintsRegistrationSuccess+', event => {
-//   const {guid} = event;
-//   console.log(event);
-//   Alert.alert('Beneficiary Enrolled on id :', guid);
-// });
-
 function App(): JSX.Element {
   const [identificationResults, setIdentificationResults] = useState([]);
-  const [identificationPlusResults, setIdentificationPlusResults] = useState([]);
+  const [identificationPlusResults, setIdentificationPlusResults] = useState(
+    [],
+  );
   const [enrollmentGuid, setEnrollmentGuid] = useState(null);
   const [showButtons, setShowButtons] = useState(true);
 
@@ -78,10 +63,10 @@ function App(): JSX.Element {
   useEffect(() => {
     const registrationSuccessSubscription = DeviceEventEmitter.addListener(
       'SimprintsRegistrationSuccess',
-      (event) => {
-        const { guid } = event;
+      event => {
+        const {guid} = event;
         setEnrollmentGuid(guid);
-      }
+      },
     );
 
     return () => {
@@ -113,6 +98,13 @@ function App(): JSX.Element {
     OpenActivity.open('WuDDHuqhcQ36P2U9rM7Y', 'test_user', 'mpower');
   };
 
+  const goBack = () => {
+    setShowButtons(true);
+    setIdentificationResults([]);
+    setIdentificationPlusResults([]);
+    setEnrollmentGuid(null);
+  };
+
   return (
     <View style={styles.container}>
       <View>
@@ -138,44 +130,28 @@ function App(): JSX.Element {
           <>
             <Text style={styles.text}>Beneficiary Enrolled on ID:</Text>
             <Text>{enrollmentGuid}</Text>
-            <View style={{ height: 20 }} />
+            <View style={{height: 20}} />
           </>
         )}
-        
-        {/* {identificationResults.length > 0 && (
-          <React.Fragment key="identificationplus-heading">
+
+        {identificationPlusResults.length > 0 && (
+          <React.Fragment key="identification-heading">
             <Text style={styles.text}>Identification Results:</Text>
-            <View style={{ height: 20 }} />
+            <View style={{height: 20}} />
           </React.Fragment>
         )}
-        
-        {(identificationResults as any[]).map(result => (
-          <View key={result.id}>
-            <Text key={result.guid}>
+
+        {(identificationPlusResults as any[]).map((result, index) => (
+          <View key={result.id + index}>
+            <Text key={result.guid + index}>
               <View style={{height: 20}} />
               Tier: {result.tier}, Confidence: {result.confidenceScore}, Guid:{' '}
               {result.guid}
             </Text>
           </View>
-        ))} */}
-
-{identificationPlusResults.length > 0 && (
-  <React.Fragment key="identification-heading">
-    <Text style={styles.text}>Identification Results:</Text>
-    <View style={{ height: 20 }} />
-  </React.Fragment>
-)}
-
-{(identificationPlusResults as any[]).map((result, index) => (
-  <View key={result.id + index}>
-    <Text key={result.guid + index}>
-      <View style={{ height: 20 }} />
-      Tier: {result.tier}, Confidence: {result.confidenceScore}, Guid: {result.guid}
-    </Text>
-  </View>
-))}
-
-
+        ))}
+        <View style={{height: 20}} />
+        {!showButtons && <Button title="Go Back" onPress={goBack} />}
       </View>
     </View>
   );
