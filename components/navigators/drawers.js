@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import * as React from 'react';
-import {View, Image, StyleSheet, Text} from 'react-native';
+import {View, Image, TouchableOpacity, StyleSheet, Text} from 'react-native';
 
 import {COLORS, DIMENS} from '../constants/styles';
 import {
@@ -25,11 +25,17 @@ import Diagnose from '../screens/diagnosis';
 
 import Doctors from '../screens/doctors';
 import Ambulance from '../screens/ambulance';
-import Profile from '../screens/profile';
 
 const Drawer = createDrawerNavigator();
 
 export const CustomDrawerContent = props => {
+  const {tokens} = React.useContext(AuthContext);
+
+  React.useEffect(() => {
+    // console.log('Drawer header')
+    // console.log(userDetail)
+  }, []);
+
   return (
     <DrawerContentScrollView {...props}>
       <View style={styles.DrawerHeader}>
@@ -101,6 +107,7 @@ export const DrawerNavigationLogged = () => {
         activeBackgroundColor: COLORS.ACCENT_1,
         itemStyle: {
           marginHorizontal: 0,
+          // padding: DIMENS.PADDING,
           borderRadius: 0,
         },
       }}
@@ -123,11 +130,11 @@ export const DrawerNavigationLogged = () => {
         </CustomDrawerContent>
       )}>
       <Drawer.Screen name="Dashboard" component={Dashboard} />
-      <Drawer.Screen name="Messages" component={Chats} />
+      {/* 			<Drawer.Screen name="Messages" component={Chats} />
+       */}
       <Drawer.Screen name="Diagnose" component={Diagnose} />
       <Drawer.Screen name="Doctors" component={Doctors} />
       <Drawer.Screen name="Ambulance" component={Ambulance} />
-      <Drawer.Screen name="Profile" component={Profile} />
       <Drawer.Screen name="Help" component={GetStarted} />
       <Drawer.Screen name="About" component={About} />
     </Drawer.Navigator>
