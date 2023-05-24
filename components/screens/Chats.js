@@ -1,27 +1,10 @@
 import React, {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
-import {URLS} from '../constants/API';
-import {
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  View,
-  Alert,
-} from 'react-native';
+import {View, Text, FlatList, TouchableOpacity, StyleSheet} from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
-import {Ionicons} from 'react-native-vector-icons';
-import Icon from 'react-native-vector-icons/Feather';
-import IconFont from 'react-native-vector-icons/FontAwesome';
+import {Feather} from '@expo/vector-icons';
 import {COLORS, DIMENS} from '../constants/styles';
-import {ListItem} from 'react-native-elements';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import CustomHeader from '../parts/custom-header';
-import {CustomStatusBar} from '../ui/custom.status.bar';
-import Loader from '../ui/loader';
 import {AuthContext} from '../contexts/auth';
-import {tokensRefresh} from '../helpers/functions';
 
 export default function Chats({route, navigation}) {
   const [isLoading, setLoading] = useState(true);
@@ -41,51 +24,53 @@ export default function Chats({route, navigation}) {
     />
   );
   const _keyExtractor = item => item._id;
+
   useEffect(() => {
     const fetchChats = async user => {
-      const response = await fetch(`${URLS.BASE}/chats`, {
-        headers: {
-          'Content-type': 'application/json; charset=UTF-8',
-          Accept: 'application/json',
-          Authorization: `Bearer ${user.tokens.access}`,
-        },
-      });
+      try {
+        const response = await axios.get(`${URLS.BASE}/chats`, {
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+            Accept: 'application/json',
+            Authorization: `Bearer ${user.tokens.access}`,
+          },
+        });
 
-      const data = await response.json();
+        const data = response.data;
+        if (data) {
+          // chat with no message should be hidden
+          const serverChats = data.filter(chat => chat.latestMessage);
 
-      if (response.status === 401) {
-        const newUser = await tokensRefresh(user);
-
-        if (newUser === null) {
-          Alert.alert(
-            'Login expired!',
-            'Please sign out once and sign in again',
-            [
-              {
-                text: 'Cancel',
-                onPress: () => navigation.goBack(),
-              },
-            ],
-          );
-          return;
-        }
-        setUser(newUser);
-        return await fetchChats(newUser);
-      }
-
-      if (data) {
-        // chat with no message should be hidden
-        const serverChats = data.filter(chat => chat.latestMessage);
-
-        /*
+          /*
           let itemsOnDevice = await AsyncStorage.getItem(`@${items[i]}`);
           itemsOnDevice = JSON.parse(itemsOnDevice) || [];
           const all = uniqWith([..._items, ...itemsOnDevice], isEqual);
           AsyncStorage.setItem(`@${items[i]}`, JSON.stringify(all));
-        */
+          */
 
-        setChats(serverChats);
-        setLoading(false);
+          setChats(serverChats);
+          setLoading(false);
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          const newUser = await tokensRefresh(user);
+
+          if (newUser === null) {
+            Alert.alert(
+              'Login expired!',
+              'Please sign out once and sign in again',
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () => navigation.goBack(),
+                },
+              ],
+            );
+            return;
+          }
+          setUser(newUser);
+          await fetchChats(newUser);
+        }
       }
     };
 

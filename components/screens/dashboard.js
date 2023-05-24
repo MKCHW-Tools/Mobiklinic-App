@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet,Button} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet, Button} from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
 import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -101,7 +101,6 @@ const Dashboard = ({navigation}) => {
               </View>
               <Text style={styles.cardTitle}> About</Text>
             </TouchableOpacity>
-           
           </View>
           <View style={styles.row}>
             <TouchableOpacity
@@ -111,7 +110,12 @@ const Dashboard = ({navigation}) => {
                 signOut(setUser);
               }}>
               <View style={styles.cardIcon}>
-                <MIcon name="logout" size={40} color={COLORS.BLACK} />
+                <MIcon
+                  name="logout"
+                  size={40}
+                  strokeSize={3}
+                  color={COLORS.BLACK}
+                />
               </View>
               <Text style={styles.cardTitle}>Logout</Text>
             </TouchableOpacity>

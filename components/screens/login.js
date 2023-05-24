@@ -1,5 +1,4 @@
-import * as React from 'react';
-
+import React, {useContext, useState} from 'react';
 import {
   View,
   Image,
@@ -58,8 +57,7 @@ const Login = ({navigation}) => {
 
         <TextInput
           style={styles.input}
-          password={true}
-          secureTextEntry={true}
+          secureTextEntry
           autoCorrect={false}
           placeholderTextColor="grey"
           selectionColor={COLORS.SECONDARY}
@@ -68,7 +66,7 @@ const Login = ({navigation}) => {
           placeholder="Password"
         />
 
-        {user.username != '' && user.password != '' ? (
+        {user.username !== '' && user.password !== '' ? (
           <TouchableOpacity
             style={[styles.btn, styles.btnPrimary]}
             onPress={() => {
@@ -97,216 +95,95 @@ const Login = ({navigation}) => {
               color={COLORS.WHITE_LOW}
             />
           </TouchableOpacity>
-        )} 
-
-        <TouchableOpacity onPress={() => navigation.navigate('Dashboard')}>
-          <Text style={styles.linkItem}>Don't have an Account? Sign up</Text>
-        </TouchableOpacity>
+        )}
+       <TouchableOpacity onPress={() => navigation.navigate("signUp")}>
+					<Text style={styles.linkItem}>
+						Don't have an Account? Sign up
+					</Text>
+				</TouchableOpacity>
       </View>
     </View>
   );
 };
-
 export default Login;
 
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.WHITE,
-  },
-  logoContainer: {
-    flexGrow: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: DIMENS.FORM.PADDING,
-  },
-  title: {
-    color: COLORS.ACCENT_1,
-    fontSize: 14,
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
-    padding: DIMENS.PADDING,
-  },
-  subTitle: {
-    color: COLORS.SECONDARY,
-    fontWeight: 'bold',
-    paddingVertical: 20,
-  },
-  textColor: {
-    color: COLORS.WHITE_LOW,
-  },
-  linkItem: {
-    paddingTop: DIMENS.PADDING,
-    textAlign: 'center',
-  },
-  formContainer: {
-    flexGrow: 1,
-    padding: DIMENS.FORM.PADDING,
-    justifyContent: 'center',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    backgroundColor: COLORS.PRIMARY,
-  },
-  input: {
-    backgroundColor: COLORS.WHITE_LOW,
-    borderColor: COLORS.WHITE_LOW,
-    borderRadius: 50,
-    paddingHorizontal: 15,
-    paddingVertical: 5,
-    marginBottom: 10,
-    fontFamily: 'Roboto',
-  },
-  btn: {
-    padding: DIMENS.PADDING,
-  },
-  errorMsg: {
-    color: COLORS.ERRORS,
-  },
-  btn: {
-    padding: DIMENS.PADDING,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderRadius: 50,
-    paddingHorizontal: 15,
-  },
-  btnInfo: {
-    backgroundColor: COLORS.WHITE_LOW,
-  },
-  btnPrimary: {
-    backgroundColor: COLORS.ACCENT_1,
-  },
-  submitText: {
-    color: COLORS.ACCENT_1,
-    fontWeight: 'bold',
-  },
-  muteText: {
-    color: COLORS.WHITE_LOW,
-  },
-  whiteText: {
-    color: COLORS.WHITE,
-  },
+	container: {
+		flex: 1,
+		backgroundColor: COLORS.WHITE,
+	},
+	logoContainer: {
+		flexGrow: 2,
+		alignItems: "center",
+		justifyContent: "center",
+		padding: DIMENS.FORM.PADDING,
+	},
+	title: {
+		color: COLORS.ACCENT_1,
+		fontSize: 14,
+		fontWeight: "bold",
+		textTransform: "uppercase",
+		padding: DIMENS.PADDING,
+	},
+	subTitle: {
+		color: COLORS.SECONDARY,
+		fontWeight: "bold",
+		paddingVertical: 20,
+	},
+	textColor: {
+		color: COLORS.WHITE_LOW,
+	},
+	linkItem: {
+		paddingTop: DIMENS.PADDING,
+		textAlign: "center",
+	},
+	formContainer: {
+		flexGrow: 1,
+		padding: DIMENS.FORM.PADDING,
+		justifyContent: "center",
+		borderTopLeftRadius: 30,
+		borderTopRightRadius: 30,
+		backgroundColor: COLORS.PRIMARY,
+	},
+	input: {
+		backgroundColor: COLORS.WHITE_LOW,
+		borderColor: COLORS.WHITE_LOW,
+		borderRadius: 50,
+		paddingHorizontal: 15,
+		paddingVertical: 5,
+		marginBottom: 10,
+		fontFamily: "Roboto",
+	},
+	btn: {
+		padding: DIMENS.PADDING,
+	},
+	errorMsg: {
+		color: COLORS.ERRORS,
+	},
+	btn: {
+		padding: DIMENS.PADDING,
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		borderRadius: 50,
+		paddingHorizontal: 15,
+	},
+	btnInfo: {
+		backgroundColor: COLORS.WHITE_LOW,
+	},
+	btnPrimary: {
+		backgroundColor: COLORS.ACCENT_1,
+	},
+	submitText: {
+		color: COLORS.ACCENT_1,
+		fontWeight: "bold",
+	},
+	muteText: {
+		color: COLORS.WHITE_LOW,
+	},
+	whiteText: {
+		color: COLORS.WHITE,
+	},
 });
 
-// import * as React from 'react';
-// import {
-//   View,
-//   Image,
-//   Text,
-//   TextInput,
-//   StyleSheet,
-//   TouchableOpacity,
-// } from 'react-native';
-// import Icon from 'react-native-vector-icons/Feather';
-// import {COLORS, DIMENS} from '../constants/styles';
-
-// const Login = ({navigation}) => {
-//   const [user, setUser] = React.useState({
-//     username: '',
-//     password: '',
-//   });
-
-//   return (
-//     <View style={styles.container}>
-//       <View style={styles.logoContainer}>
-//         <Image
-//           style={{width: 80, height: 80}}
-//           source={require('../imgs/logo.png')}
-//         />
-//         <Text style={styles.title}>Sign in</Text>
-//       </View>
-//       <View style={styles.formContainer}>
-//         <TextInput
-//           style={styles.input}
-//           autoCorrect={false}
-//           placeholderTextColor="grey"
-//           onChangeText={text => setUser({...user, username: text})}
-//           value={user.username}
-//           placeholder="Phone number e.g: 256778xxxxxx"
-//         />
-
-//         <TextInput
-//           style={styles.input}
-//           password={true}
-//           secureTextEntry={true}
-//           autoCorrect={false}
-//           placeholderTextColor="grey"
-//           onChangeText={text => setUser({...user, password: text})}
-//           value={user.password}
-//           placeholder="Password"
-//         />
-
-//         <TouchableOpacity style={[styles.btn, styles.btnPrimary]}>
-//           <Text style={styles.whiteText}>Sign in</Text>
-//           <Icon
-//             name="arrow-right"
-//             size={20}
-//             strokeSize={3}
-//             color={COLORS.WHITE}
-//           />
-//         </TouchableOpacity>
-
-//         <TouchableOpacity onPress={() => navigation.navigate('signUp')}>
-//           <Text style={styles.linkItem}>Don't have an Account? Sign up</Text>
-//         </TouchableOpacity>
-//       </View>
-//     </View>
-//   );
-// };
-
-// export default Login;
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: COLORS.WHITE,
-//   },
-//   logoContainer: {
-//     flexGrow: 2,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     padding: DIMENS.FORM.PADDING,
-//   },
-//   title: {
-//     color: COLORS.ACCENT_1,
-//     fontSize: 14,
-//     fontWeight: 'bold',
-//     textTransform: 'uppercase',
-//     padding: DIMENS.PADDING,
-//   },
-//   formContainer: {
-//     flexGrow: 1,
-//     padding: DIMENS.FORM.PADDING,
-//     justifyContent: 'center',
-//     borderTopLeftRadius: 30,
-//     borderTopRightRadius: 30,
-//     backgroundColor: COLORS.PRIMARY,
-//   },
-//   input: {
-//     backgroundColor: COLORS.WHITE_LOW,
-//     borderColor: COLORS.WHITE_LOW,
-//     borderRadius: 50,
-//     paddingHorizontal: 15,
-//     paddingVertical: 5,
-//     marginBottom: 10,
-//     fontFamily: 'Roboto',
-//   },
-//   btn: {
-//     padding: DIMENS.PADDING,
-//     flexDirection: 'row',
-//     justifyContent: 'space-between',
-//     alignItems: 'center',
-//     borderRadius: 50,
-//     paddingHorizontal: 15,
-//   },
-//   btnPrimary: {
-//     backgroundColor: COLORS.ACCENT_1,
-//   },
-//   linkItem: {
-//     paddingTop: DIMENS.PADDING,
-//     textAlign: 'center',
-//   },
-//   whiteText: {
-//     color: COLORS.WHITE,
-//   },
-// });
