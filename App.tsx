@@ -25,26 +25,12 @@ const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
 
 function App(): JSX.Element {
-  const [identificationResults, setIdentificationResults] = useState([]);
   const [identificationPlusResults, setIdentificationPlusResults] = useState(
     [],
   );
   const [enrollmentGuid, setEnrollmentGuid] = useState(null);
   const [showButtons, setShowButtons] = useState(true);
 
-  useEffect(() => {
-    const identificationResultSubscription = DeviceEventEmitter.addListener(
-      'onIdentificationResult',
-      results => {
-        setIdentificationResults(results);
-        setShowButtons(false); // Hide buttons after getting identification results
-      },
-    );
-
-    return () => {
-      identificationResultSubscription.remove();
-    };
-  }, []);
 
   useEffect(() => {
     const identificationResultPlusSubscription = DeviceEventEmitter.addListener(
@@ -74,15 +60,6 @@ function App(): JSX.Element {
     };
   }, []);
 
-  const handleIdentification = () => {
-    const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
-    const moduleID = 'test_user';
-    const userID = 'mpower';
-
-    setShowButtons(false); // Hide buttons when identification starts
-    IdentificationModule.triggerIdentification(projectID, moduleID, userID);
-  };
-
   const handleIdentificationPlus = () => {
     const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
     const moduleID = 'test_user';
@@ -92,15 +69,9 @@ function App(): JSX.Element {
     IdentificationPlus.registerOrIdentify(projectID, moduleID, userID);
   };
 
-  var OpenActivity = NativeModules.OpenActivity;
-
-  const openFunction = () => {
-    OpenActivity.open('WuDDHuqhcQ36P2U9rM7Y', 'test_user', 'mpower');
-  };
 
   const goBack = () => {
     setShowButtons(true);
-    setIdentificationResults([]);
     setIdentificationPlusResults([]);
     setEnrollmentGuid(null);
   };
@@ -110,12 +81,6 @@ function App(): JSX.Element {
       <View>
         {showButtons && ( // Render buttons only when showButtons is true
           <>
-            <Button title="Start Enrollment" onPress={openFunction} />
-            <View style={{height: 20}} />
-            <Button
-              title="Start Identification"
-              onPress={handleIdentification}
-            />
             <View style={{height: 20}} />
             <Button
               title="Start Biometric Search"
@@ -136,7 +101,7 @@ function App(): JSX.Element {
 
         {identificationPlusResults.length > 0 && (
           <React.Fragment key="identification-heading">
-            <Text style={styles.text}>Identification Results:</Text>
+            <Text style={styles.text}>Beneficiary Identified :</Text>
             <View style={{height: 20}} />
           </React.Fragment>
         )}
