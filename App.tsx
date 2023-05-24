@@ -38,7 +38,7 @@ DeviceEventEmitter.addListener('SimprintsRegistrationFailure', event => {
 DeviceEventEmitter.addListener('SimprintsRegistrationSuccess+', event => {
   const {guid} = event;
   console.log(event);
-  Alert.alert('Simprints Enrollment Plus achieved', guid);
+  Alert.alert('Beneficiary Enrolled on id :', guid);
 });
 
 function App(): JSX.Element {
@@ -111,7 +111,7 @@ function App(): JSX.Element {
             />
             <View style={{height: 20}} />
             <Button
-              title="Start Identification Plus"
+              title="Start Biometric Search"
               onPress={handleIdentificationPlus}
             />
             <View style={{height: 20}} />
@@ -119,7 +119,7 @@ function App(): JSX.Element {
         )}
         <View style={{height: 20}} />
         
-        {identificationResults.length > 0 && (
+        {/* {identificationResults.length > 0 && (
           <React.Fragment key="identificationplus-heading">
             <Text style={styles.text}>Identification Results:</Text>
             <View style={{ height: 20 }} />
@@ -134,24 +134,23 @@ function App(): JSX.Element {
               {result.guid}
             </Text>
           </View>
-        ))}
+        ))} */}
 
-  {identificationPlusResults.length > 0 && (
-          <React.Fragment key="identification-heading">
-            <Text style={styles.text}>Identification Results:</Text>
-            <View style={{ height: 20 }} />
-          </React.Fragment>
-        )}
-        
-        {(identificationPlusResults as any[]).map(result => (
-          <View key={result.id}>
-            <Text key={result.guid}>
-              <View style={{height: 20}} />
-              Tier: {result.tier}, Confidence: {result.confidenceScore}, Guid:{' '}
-              {result.guid}
-            </Text>
-          </View>
-        ))}
+{identificationPlusResults.length > 0 && (
+  <React.Fragment key="identification-heading">
+    <Text style={styles.text}>Identification Results:</Text>
+    <View style={{ height: 20 }} />
+  </React.Fragment>
+)}
+
+{(identificationPlusResults as any[]).map((result, index) => (
+  <View key={result.id + index}>
+    <Text key={result.guid + index}>
+      <View style={{ height: 20 }} />
+      Tier: {result.tier}, Confidence: {result.confidenceScore}, Guid: {result.guid}
+    </Text>
+  </View>
+))}
 
 
       </View>
