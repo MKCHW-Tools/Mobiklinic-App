@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
 import {View, Text, FlatList, TouchableOpacity, StyleSheet} from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
-import {Feather} from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/Feather';
 import {COLORS, DIMENS} from '../constants/styles';
 import {AuthContext} from '../contexts/auth';
 import {CustomStatusBar} from '../ui/custom.status.bar';
