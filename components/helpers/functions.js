@@ -6,7 +6,6 @@ import axios from 'axios';
 import {URLS} from '../constants/API';
 import uniqWith from 'lodash/uniqWith';
 import isEqual from 'lodash/isEqual';
-import {CommonActions} from '@react-navigation/native';
 
 export const _removeStorageItem = async key => {
   return await AsyncStorage.removeItem(key);
@@ -93,6 +92,7 @@ export const tokensRefresh = async user => {
 };
 
 export const RETRIEVE_LOCAL_USER = async () => {
+  console.log('Retrieving local user');
   try {
     let user = await AsyncStorage.getItem('@user');
     return JSON.parse(user) || null;
@@ -176,9 +176,8 @@ export const DOWNLOAD = async data => {
 };
 
 export const signIn = async data => {
-  //clearStorage();
+  clearStorage();
   let {user, setIsLoading, setMyUser: setUser} = data;
-
   if (typeof user === undefined) {
     Alert.alert('Error', 'Provide your phone number and password');
     return;
@@ -238,7 +237,7 @@ export const signIn = async data => {
   }
   // } else {
   try {
-    console.log('Logging in user ' + username);
+    console.log('Starting network request');
     let response = await fetch(`${URLS.BASE}/users/login`, {
       method: 'POST',
       body: JSON.stringify({
@@ -254,7 +253,7 @@ export const signIn = async data => {
     let json_data = await response.json();
     const {result, id, accessToken, refreshToken} = json_data;
 
-    if (result == 'Success') {
+    if (result === 'Success') {
       await SAVE_LOCAL_USER({
         id,
         username,
@@ -277,12 +276,6 @@ export const signIn = async data => {
           tokens: {access: accessToken, refresh: refreshToken},
           offline: false,
         });
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{name: 'Dashboard'}],
-          }),
-        );
         setIsLoading(false);
         // setTokens({ access: accessToken });
       }
