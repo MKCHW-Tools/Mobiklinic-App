@@ -30,65 +30,37 @@ export const MyDate = () => {
   }-${myDate.getDate()}-${myDate.getFullYear()} ${myDate.getHours()}:${myDate.getMinutes()}:${myDate.getSeconds()}`;
 };
 
-export const tokensRefresh = async user => {
-  const refresh = user.tokens.refresh;
-
+export const tokensRefresh = async () => {
+  const Tokens = await AsyncStorage.getItem('tokens');
+  // console.log(Tokens);
   try {
-    const response = fetch(`${URLS.BASE}/tokens/refresh`, {
+    const {refreshToken: rToken} = JSON.parse(Tokens);
+    console.log(refreshToken);
+
+    const response = await fetch(`${URLS.BASE}/tokens/refresh`, {
       method: 'GET',
       headers: {
-        Authorization: `Bearer ${refresh}`,
+        Authorization: 'Bearer ' + rToken,
         'Content-type': 'application/json; charset=UTF-8',
         Accept: 'application/json',
       },
     });
 
-    const data = await response.then(async response => {
-      if (response.status === 401) {
-        // the refresh token no longer works
-        await AsyncStorage.setItem(
-          '@user',
-          JSON.stringify({
-            id: user.id,
-            username: user.username,
-            hash: null, // overwrite the hash so that the user surely try to obtain new refresh tokens when they sign in next time.
-            tokens: user.tokens,
-          }),
-        );
-        return null;
-      }
-      return response.json();
-    });
-    if (data === null) return null;
+    const JSON_RESPONSE = await response.json();
 
-    const {accessToken, refreshToken, msg, result} = data;
+    const {accessToken, refreshToken, msg, result} = JSON_RESPONSE;
+
+    if (result === 'Failure') return false;
+
     if (result === 'Success') {
-      await SAVE_LOCAL_USER({
-        id: user.id,
-        username: user.username,
-        password: user.password,
-        tokens: {
-          access: accessToken,
-          refresh: refreshToken,
-        },
-        offline: user.offline,
-      });
-
       return {
-        id: user.id,
-        username: user.username,
-        tokens: {
-          access: accessToken,
-          refresh: refreshToken,
-        },
-        offline: user.offline,
+        accessToken,
+        refreshToken,
       };
     }
   } catch (e) {
     console.error(e.message);
   }
-
-  return null;
 };
 
 export const RETRIEVE_LOCAL_USER = async () => {
@@ -175,9 +147,10 @@ export const DOWNLOAD = async data => {
 };
 
 export const signIn = async data => {
+  //clearStorage();
   let {user, setIsLoading, setMyUser: setUser} = data;
 
-  if (!user || typeof user === 'undefined') {
+  if (typeof user === undefined) {
     Alert.alert('Error', 'Provide your phone number and password');
     return;
   }
@@ -185,7 +158,7 @@ export const signIn = async data => {
   const {username, password} = user;
   let hash = cyrb53(password);
 
-  if (!username || !password) {
+  if (username === '' && password === '') {
     Alert.alert('Error', 'Provide your phone number and password');
     return;
   }
@@ -194,6 +167,7 @@ export const signIn = async data => {
 
   try {
     theUser = await RETRIEVE_LOCAL_USER();
+    // theUser = JSON.parse(theUser);
   } catch (err) {
     console.log(err);
   }
@@ -210,102 +184,96 @@ export const signIn = async data => {
         offline: true,
       });
       setIsLoading(false);
+      // console.log(myUser);
+      // setTokens({ access: hash });
       return;
     } else {
-      Alert.alert(
-        'Failed to login',
-        'Check your login details',
-        [
-          {
-            text: 'Cancel',
-            onPress: () => setIsLoading(false),
-          },
-        ],
-        {
-          cancelable: true,
-          onDismiss: () => {
-            setIsLoading(false);
-          },
-        },
-      );
+      Alert.alert('Failed to login', 'Try again, please!');
+      return;
     }
-  }
-
-  try {
-    console.log('Starting network request');
-    let response = await fetch(`${URLS.BASE}/users/login`, {
-      method: 'POST',
-      body: JSON.stringify({
-        username: username,
-        password: password,
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-        Accept: 'application/json',
-      },
-    });
-
-    let json_data = await response.json();
-    const {result, id, accessToken, refreshToken} = json_data;
-
-    if (result === 'Success') {
-      await SAVE_LOCAL_USER({
-        id,
-        username,
-        password,
-        tokens: {access: accessToken, refresh: refreshToken},
+  } else {
+    try {
+      console.log('Starting network request');
+      let response = await fetch(`${URLS.BASE}/users/login`, {
+        method: 'POST',
+        body: JSON.stringify({
+          username: username,
+          password: password,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          Accept: 'application/json',
+        },
       });
 
-      const resources = ['ambulances', 'doctors', 'diagnosis'];
+      let json_data = await response.json();
+      const {result, id, accessToken, refreshToken} = json_data;
 
-      if (DOWNLOAD({accessToken, items: resources, per_page: 10})) {
-        setUser({
+      if (result == 'Success') {
+        await SAVE_LOCAL_USER({
           id,
           username,
+          password,
           tokens: {access: accessToken, refresh: refreshToken},
-          offline: false,
         });
-        setIsLoading(false);
-      }
-    } else {
-      Alert.alert(
-        'Failed to login',
-        'Check your login details',
-        [
+
+        const resources = ['ambulances', 'doctors', 'diagnosis'];
+
+        if (
+          DOWNLOAD({
+            accessToken,
+            items: resources,
+            per_page: 10,
+          })
+        ) {
+          setUser({
+            id,
+            username,
+            tokens: {access: accessToken, refresh: refreshToken},
+            offline: false,
+          });
+          setIsLoading(false);
+          // setTokens({ access: accessToken });
+        }
+      } else
+        Alert.alert(
+          'Failed to login',
+          'Check your login details',
+          [
+            {
+              text: 'Cancel',
+              onPress: () => setIsLoading(false),
+            },
+          ],
+
           {
-            text: 'Cancel',
-            onPress: () => setIsLoading(false),
+            cancelable: true,
+            onDissmiss: () => {
+              setIsLoading(false);
+            },
           },
-        ],
-        {
-          cancelable: true,
-          onDismiss: () => {
-            setIsLoading(false);
-          },
-        },
-      );
-    }
-  } catch (err) {
-    if (err?.message === 'Network request failed') {
-      Alert.alert(
-        'Oops!',
-        'Check your internet connection',
-        [
+        );
+    } catch (err) {
+      err?.message == 'Network request failed' &&
+        Alert.alert(
+          'Oops!',
+          'Check your internet connection',
+          [
+            {
+              text: 'Cancel',
+              onPress: () => setIsLoading(false),
+            },
+          ],
           {
-            text: 'Cancel',
-            onPress: () => setIsLoading(false),
+            cancelable: true,
+            onDissmiss: () => {
+              setIsLoading(false);
+            },
           },
-        ],
-        {
-          cancelable: true,
-          onDismiss: () => {
-            setIsLoading(false);
-          },
-        },
-      );
+        );
+      setIsLoading(false);
+      console.log(err);
     }
-    setIsLoading(false);
-    console.log(err);
   }
 };
 
@@ -314,62 +282,48 @@ export const signUp = async data => {
   // We will also need to handle errors if sign up failed
   // After getting token, we need to persist the token using `AsyncStorage`
   // In the example, we'll use a dummy token
-  /* 	const {
-		firstname,
-		lastname,
-		theemail,
-		thephone,
-		thepassword,
-		thepassword2,
-	} = data.errors; */
+  const {firstname, lastname, theemail, thephone, thepassword, thepassword2} =
+    data.errors;
 
-  /* 	if (
-		firstname ||
-		lastname ||
-		theemail ||
-		thephone ||
-		thepassword ||
-		thepassword2
-	) {
-		Alert.alert("Fail", "Errors, Fix errors in the form, and try again!");
-		return;
-	} */
-  const {
-    firstName,
-    lastName,
-    phoneNumber,
-    password,
-    cPassword,
-    eMail,
-    setIsLoading,
-    setProcess,
-    setRegistered,
-  } = data;
+  if (
+    firstname ||
+    lastname ||
+    theemail ||
+    thephone ||
+    thepassword ||
+    thepassword2
+  ) {
+    Alert.alert('Fail', 'Errors, Fix errors in the form, and try again!');
+    return;
+  }
 
-  setProcess('Registering, please wait!');
+  const {firstName, lastName, phone, password, password2, email} = data;
 
   if (
     firstName == '' ||
     lastName == '' ||
-    phoneNumber.length < 12 ||
+    phone.length < 12 ||
     password == '' ||
-    cPassword == ''
+    password2 == ''
   ) {
     Alert.alert('Fail', 'Fix errors in the form, and try again!');
-    console.log(firstName, lastName, phoneNumber, eMail, password, cPassword);
+    console.log(firstName, lastName, phone, email, password, password2);
     return;
   }
 
+  userContext.setIsRegistering('yes');
+
   try {
-    await fetch(`${URLS.BASE}/users`, {
+    await fetch(`${URLS.BASE}/register`, {
       method: 'POST',
       body: JSON.stringify({
-        username: phoneNumber,
-        phone: phoneNumber,
-        name: `${firstName} ${lastName}`,
-        email: eMail,
+        phone: phone,
+        fname: firstName,
+        lname: lastName,
+        email: email,
         role_id: 2,
         password: password,
+        password_confirmation: password2,
       }),
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
@@ -378,18 +332,26 @@ export const signUp = async data => {
     })
       .then(res => res.json())
       .then(response => {
-        setIsLoading(false);
-        if (response.result == 'Success') {
-          /* 					Alert.alert(
-						"Registered successfully",
-						"Press Okay to login!"
-					); */
-          setRegistered(true);
-        } else if (response.result == 'Failure') {
-          Alert.alert(
-            'Sign up failure.',
-            'Check Phone number and E-mail. Press Ok to try again.',
-          );
+        if (response.result == 'success') {
+          try {
+            userContext.setIsRegistering('complete');
+          } catch (err) {
+            console.error(err);
+          }
+        } else if (response.result == 'failure') {
+          const {email, phone} = response.message;
+
+          if (typeof email != 'undefined')
+            Alert.alert(
+              'Registration failed!',
+              'The email address you entered was used by another member.',
+            );
+          else if (typeof phone != 'undefined')
+            Alert.alert(
+              'Registration failed!',
+              'The phone number you entered was used by another member.',
+            );
+          else Alert.alert('Ooops!', 'Try again!');
 
           console.log(response);
         } else {
@@ -397,7 +359,7 @@ export const signUp = async data => {
         }
       })
       .catch(err => {
-        console.log(err.message);
+        console.log(err);
         Alert.alert(
           'Failure',
           'Something wrong happened. Check your internet and try again!',
@@ -408,7 +370,7 @@ export const signUp = async data => {
   }
 };
 
-export const signOut = async callback => {
+export const signOut = callback => {
   callback();
 };
 
