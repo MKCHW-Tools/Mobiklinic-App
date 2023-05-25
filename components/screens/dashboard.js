@@ -1,115 +1,138 @@
-import React, {useContext} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet, Button} from 'react-native';
+import * as React from 'react';
+
+import {
+  View,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  StatusBar,
+} from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
 import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FoIcon from 'react-native-vector-icons/Fontisto';
 import FAIcon from 'react-native-vector-icons/FontAwesome';
-import {COLORS} from '../constants/styles';
+import {COLORS, DIMENS} from '../constants/styles';
 
 import CustomHeader from '../parts/custom-header';
 import {CustomStatusBar} from '../ui/custom.status.bar';
 import {signOut} from '../helpers/functions';
 import {AuthContext} from '../contexts/auth';
-
 const Dashboard = ({navigation}) => {
-  //const {setTokens, setUser} = useContext(AuthContext);
-
+  const {setTokens, setUser} = React.useContext(AuthContext);
   return (
-    <View style={styles.wrapper}>
+    <View style={STYLES.wrapper}>
       <CustomStatusBar />
       <CustomHeader
-        style={styles.header}
+        style={STYLES.header}
         left={
-          <TouchableOpacity
-            style={styles.leftHeader}
-            onPress={() => navigation.openDrawer()}>
-            <Icon name="menu" size={32} color={COLORS.SECONDARY} />
+          <TouchableOpacity style={STYLES.leftHeader}>
+            <Icon
+              name="menu"
+              size={32}
+              color={COLORS.SECONDARY}
+              onPress={() => navigation.openDrawer()}
+            />
           </TouchableOpacity>
         }
         title={
-          <Text style={[styles.centerHeader, styles.title]}>Dashboard</Text>
+          <Text style={[STYLES.centerHeader, STYLES.title]}>Dashboard</Text>
         }
       />
-      <View style={styles.hero}>
-        <Text style={styles.heroHeading}>Hey CHP,</Text>
-        <Text style={styles.heroParagraph}>Welcome back!</Text>
-        <Text style={styles.heroParagraph}>
+      <View style={STYLES.hero}>
+        <Text style={STYLES.heroHeading}>Hey CHP,</Text>
+        <Text style={STYLES.heroParagraph}>Welcome back!</Text>
+        <Text style={STYLES.heroParagraph}>
           Choose an option below to continue.
         </Text>
       </View>
-      <View style={styles.container}>
-        <View style={[styles.column, styles.rightPad]}>
-          <View style={styles.row}>
+      <View style={STYLES.container}>
+        <View style={[STYLES.column, STYLES.rightPad]}>
+          <View style={STYLES.row}>
             <TouchableOpacity
-              style={styles.card}
-              onPress={() => navigation.navigate('About')}>
-              <View style={styles.cardIcon}>
-                <Icon name="heart" size={40} color={COLORS.BLACK} />
+              style={STYLES.card}
+              onPress={() => navigation.navigate('Diagnose')}>
+              <View style={STYLES.cardIcon}>
+                <Icon
+                  name="heart"
+                  size={40}
+                  strokeSize={3}
+                  color={COLORS.BLACK}
+                />
               </View>
-              <Text style={styles.cardTitle}>Diagnosis</Text>
+              <Text style={STYLES.cardTitle}>Diagnosis</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.row}>
+          <View style={STYLES.row}>
             <TouchableOpacity
-              style={styles.card}
+              style={STYLES.card}
               onPress={() => navigation.navigate('Messages')}>
-              <View style={styles.cardIcon}>
-                <Icon name="message-circle" size={40} color={COLORS.BLACK} />
+              <View style={STYLES.cardIcon}>
+                <Icon
+                  name="message-circle"
+                  size={40}
+                  strokeSize={3}
+                  color={COLORS.BLACK}
+                />
               </View>
-              <Text style={styles.cardTitle}>Messages</Text>
+              <Text style={STYLES.cardTitle}>Messages</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.row}>
+          <View style={STYLES.row}>
             <TouchableOpacity
-              style={styles.card}
+              style={STYLES.card}
               onPress={() => navigation.navigate('Profile')}>
-              <View style={styles.cardIcon}>
-                <FAIcon name="user-md" size={40} color={COLORS.BLACK} />
+              <View style={STYLES.cardIcon}>
+                <FAIcon
+                  name="user-md"
+                  size={40}
+                  strokeSize={3}
+                  color={COLORS.BLACK}
+                />
               </View>
-              <Text style={styles.cardTitle}>My Profile</Text>
+              <Text style={STYLES.cardTitle}>My Profile</Text>
             </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.column}>
-          <View style={styles.row}>
+        <View style={STYLES.column}>
+          <View style={STYLES.row}>
             <TouchableOpacity
-              style={styles.card}
+              style={STYLES.card}
               onPress={() => navigation.navigate('Doctors')}>
-              <View style={styles.cardIcon}>
-                <FoIcon name="doctor" size={40} color={COLORS.BLACK} />
+              <View style={STYLES.cardIcon}>
+                <FoIcon
+                  name="doctor"
+                  size={40}
+                  strokeSize={3}
+                  color={COLORS.BLACK}
+                />
               </View>
-              <Text style={styles.cardTitle}>Doctors</Text>
+              <Text style={STYLES.cardTitle}>Doctors</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.row}>
+          <View style={STYLES.row}>
             <TouchableOpacity
-              style={styles.card}
+              style={STYLES.card}
               onPress={() => navigation.navigate('Ambulance')}>
-              <View style={styles.cardIcon}>
-                <MIcon name="ambulance" size={40} color={COLORS.BLACK} />
+              <View style={STYLES.cardIcon}>
+                <MIcon
+                  name="ambulance"
+                  size={40}
+                  strokeSize={3}
+                  color={COLORS.BLACK}
+                />
               </View>
-              <Text style={styles.cardTitle}> Ambulances</Text>
+              <Text style={STYLES.cardTitle}>Ambulances</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.row}>
+          <View style={STYLES.row}>
             <TouchableOpacity
-              style={styles.card}
-              onPress={() => navigation.navigate('About')}>
-              <View style={styles.cardIcon}>
-                <Icon name="menu" size={40} color={COLORS.BLACK} />
-              </View>
-              <Text style={styles.cardTitle}> About</Text>
-            </TouchableOpacity>
-          </View>
-          {/* <View style={styles.row}>
-            <TouchableOpacity
-              style={styles.card}
+              style={STYLES.card}
               onPress={() => {
                 setTokens(null);
                 signOut(setUser);
               }}>
-              <View style={styles.cardIcon}>
+              <View style={STYLES.cardIcon}>
                 <MIcon
                   name="logout"
                   size={40}
@@ -117,18 +140,20 @@ const Dashboard = ({navigation}) => {
                   color={COLORS.BLACK}
                 />
               </View>
-              <Text style={styles.cardTitle}>Logout</Text>
+              <Text style={STYLES.cardTitle}>Logout</Text>
             </TouchableOpacity>
-          </View> */}
-
-          
+          </View>
         </View>
       </View>
+      {/* <View style={STYLES.body}>
+				<Icon name="smile" size={60} color={COLORS.GREY} />
+				<Text style={STYLES.alert}>No data to show now.</Text>
+			</View> */}
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const STYLES = StyleSheet.create({
   wrapper: {
     flex: 1,
     backgroundColor: COLORS.SECONDARY,
@@ -140,14 +165,47 @@ const styles = StyleSheet.create({
   heroHeading: {
     fontSize: 30,
     fontWeight: 'bold',
-    color: COLORS.BLACK,
   },
   heroParagraph: {
     fontSize: 20,
-    fontWeight: '600',
-    color: COLORS.BLACK,
+    fontWeight: 'semi-bold',
   },
   header: {
+    flex: 1,
+  },
+  body: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  alert: {
+    color: COLORS.GREY,
+    textAlign: 'center',
+    marginTop: 15,
+  },
+  subtitle: {
+    flexDirection: 'row',
+    fontSize: 10,
+    color: COLORS.GREY,
+  },
+  label: {
+    fontWeight: 'bold',
+    marginLeft: 5,
+    marginRight: 5,
+  },
+  title: {
+    fontWeight: 'bold',
+    color: COLORS.SECONDARY,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  leftHeader: {
+    marginLeft: 10,
+    flex: 1,
+  },
+  centerHeader: {
+    flex: 2,
+  },
+  rightHeader: {
     flex: 1,
   },
   container: {
@@ -190,23 +248,6 @@ const styles = StyleSheet.create({
     padding: 10,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: COLORS.BLACK,
-  },
-  title: {
-    fontWeight: 'bold',
-    color: COLORS.SECONDARY,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  leftHeader: {
-    marginLeft: 10,
-    flex: 1,
-  },
-  centerHeader: {
-    flex: 2,
-  },
-  rightHeader: {
-    flex: 1,
   },
 });
 
