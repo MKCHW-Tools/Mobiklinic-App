@@ -162,11 +162,7 @@ dependencies {
     implementation("com.facebook.react:react-android")
 //    implementation project(':react-native-camera')
     implementation project(':react-native-fs')
-    implementation project(':react-native-vector-icons')
-
-    
-    implementation project(':react-native-reanimated')
-   
+    implementation project(':react-native-vector-icons')   
 
     implementation "com.simprints:libsimprints:2022.3.0"
     
