@@ -40,8 +40,8 @@ const Profile = ({ navigation }) => {
 			/>
 			<View style={STYLES.container}>
 				<View>
-					<Text>Username</Text>
-					<Text>{user.username}</Text>
+					<Text style={[STYLES.centerHeader, STYLES.heroParagraph]}>Username</Text>
+					<Text style={[STYLES.centerHeader, STYLES.heroParagraph]}>{user.username}</Text>
 				</View>
 			</View>
 		</View>
@@ -60,13 +60,19 @@ const STYLES = StyleSheet.create({
 	heroHeading: {
 		fontSize: 30,
 		fontWeight: "bold",
+		color:COLORS.BLACK,
+
 	},
 	heroParagraph: {
 		fontSize: 20,
 		fontWeight: "semi-bold",
+		color:COLORS.BLACK,
+
 	},
 	header: {
 		flex: 1,
+		color:COLORS.BLACK,
+
 	},
 	body: {
 		justifyContent: "center",
@@ -89,19 +95,22 @@ const STYLES = StyleSheet.create({
 	},
 	title: {
 		fontWeight: "bold",
-		color: COLORS.SECONDARY,
+		color: COLORS.BLACK,
 		alignItems: "center",
 		justifyContent: "flex-end",
 	},
 	leftHeader: {
 		marginLeft: 10,
 		flex: 1,
+		color:COLORS.BLACK,
 	},
 	centerHeader: {
 		flex: 2,
 	},
 	rightHeader: {
 		flex: 1,
+		color:COLORS.BLACK,
+
 	},
 	container: {
 		flexDirection: "row",
