@@ -3,13 +3,10 @@ import React from 'react';
 
 const validationSchema = Yup.object({
   personalInformation: Yup.object().shape({
-    fullName: Yup.string().required('Full Name is required'),
-    dateOfBirth: Yup.date().required('Date of Birth is required'),
-    gender: Yup.string().required('Gender is required'),
-    contactInformation: Yup.object().shape({
-      phoneNumber: Yup.string().required('Phone Number is required'),
-      email: Yup.string(),
-    }),
+    fullname: Yup.string().required('Full Name is required'),
+    age_group: Yup.string().required('Age Group is required'),
+    phone: Yup.string().required('Phone number is required'),
+    condition: Yup.string().required('Condition is required'),
   }),
   medicalConditions: Yup.object().shape({
     currentConditions: Yup.string(),
