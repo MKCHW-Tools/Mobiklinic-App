@@ -66,7 +66,7 @@ const Dashboard = ({navigation}) => {
           <View style={STYLES.row}>
             <TouchableOpacity
               style={STYLES.card}
-              onPress={() => navigation.navigate('PatientData')}>
+              onPress={() => navigation.navigate('SimprintsConnect')}>
               <View style={STYLES.cardIcon}>
                 <Icon
                   name="message-circle"
