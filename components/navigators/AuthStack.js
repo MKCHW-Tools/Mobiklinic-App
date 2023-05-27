@@ -10,7 +10,7 @@ import FollowUp from '../screens/diagnosis.follow.up';
 import Chat from '../screens/Chat';
 import Chats from '../screens/Chats';
 import Profile from '../screens/profile';
-import PatientData from '../screens/patient.data';
+import PatientData from '../simprints/patient.data';
 
 const Stack = createStackNavigator();
 
