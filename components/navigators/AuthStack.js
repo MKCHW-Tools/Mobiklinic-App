@@ -10,6 +10,7 @@ import FollowUp from '../screens/diagnosis.follow.up';
 import Chat from '../screens/Chat';
 import Chats from '../screens/Chats';
 import Profile from '../screens/profile';
+import PatientData from '../screens/patient.data';
 
 const Stack = createStackNavigator();
 
@@ -65,6 +66,11 @@ function AuthStack() {
         name="Profile"
         options={{headerShown: false}}
         component={Profile}
+      />
+      <Stack.Screen
+        name="PatientData"
+        options={{headerShown: false}}
+        component={PatientData}
       />
     </Stack.Navigator>
   );
