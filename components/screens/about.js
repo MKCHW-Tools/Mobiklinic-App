@@ -1,123 +1,129 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React from 'react';
+import {
+  View,
+  Image,
+  TouchableOpacity,
+  Text,
+  StatusBar,
+  StyleSheet,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
+import {COLORS, DIMENS} from '../constants/styles';
+import CustomHeader from '../parts/custom-header';
 
-import React, { useCallback, useEffect, useState } from 'react';
-import { DeviceEventEmitter, Text, Button, Alert, Modal, StyleSheet, useColorScheme, NativeModules, View } from 'react-native';
-
-const { IdentificationModule } = NativeModules;
-const { IdentificationPlus } = NativeModules;
-
-function About({navigation}) {
-  const [identificationPlusResults, setIdentificationPlusResults] = useState([]);
-  const [enrollmentGuid, setEnrollmentGuid] = useState(null);
-  const [showButtons, setShowButtons] = useState(true);
-
-  useEffect(() => {
-    const identificationResultPlusSubscription = DeviceEventEmitter.addListener(
-      'onIdentificationResult',
-      (results) => {
-        setIdentificationPlusResults(results);
-        setShowButtons(false); // Hide buttons after getting identification results
-      },
-    );
-
-    return () => {
-      identificationResultPlusSubscription.remove();
-    };
-  }, []);
-
-  useEffect(() => {
-    const registrationSuccessSubscription = DeviceEventEmitter.addListener(
-      'SimprintsRegistrationSuccess',
-      (event) => {
-        const { guid } = event;
-        setEnrollmentGuid(guid);
-      },
-    );
-
-    return () => {
-      registrationSuccessSubscription.remove();
-    };
-  }, []);
-
-  const handleIdentificationPlus = () => {
-    const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
-    const moduleID = 'test_user';
-    const userID = 'mpower';
-
-    setShowButtons(false); // Hide buttons when identification starts
-    IdentificationPlus.registerOrIdentify(projectID, moduleID, userID);
-  };
-
-  const goBack = () => {
-    setShowButtons(true);
-    setIdentificationPlusResults([]);
-    setEnrollmentGuid(null);
-  };
+const About = ({navigation}) => {
+  _header = () => (
+    <CustomHeader
+      left={
+        <TouchableOpacity
+          style={{paddingLeft: 10}}
+          onPress={() => navigation.openDrawer()}>
+          <Icon name="menu" size={25} color={COLORS.BLACK} />
+        </TouchableOpacity>
+      }
+      title={
+        <Text style={[STYLES.centerHeader, STYLES.textColor]}>
+          About the app
+        </Text>
+      }
+      right={
+        <TouchableOpacity style={{paddingRight: 10}}>
+          <Icon name="user" size={25} color={COLORS.BLACK} />
+        </TouchableOpacity>
+      }
+    />
+  );
 
   return (
-    <View style={styles.container}>
-      <View>
-        {showButtons && (
-          <>
-            <View style={{ height: 20 }} />
-            <Button title="Start Biometric Search" onPress={handleIdentificationPlus} />
-            <View style={{ height: 20 }} />
-          </>
-        )}
-        <View style={{ height: 20 }} />
+    <View style={STYLES.wrapper}>
+      <StatusBar backgroundColor={COLORS.PRIMARY} barStyle="light-content" />
+      {_header()}
+      <View style={STYLES.body}>
+        <View style={STYLES.logoContainer}>
+          <Image
+            style={{width: 70, height: 70}}
+            source={require('../imgs/logo.png')}
+          />
+          <Text style={STYLES.title}>MobiKlinic</Text>
+        </View>
 
-        {enrollmentGuid && (
-          <>
-            <Text style={styles.text}>Beneficiary Enrolled on ID:</Text>
-            <Text>{enrollmentGuid}</Text>
-            <View style={{ height: 20 }} />
-          </>
-        )}
-
-        {identificationPlusResults.length > 0 && (
-          <React.Fragment key="identification-heading">
-            <Text style={styles.text}>Beneficiary Identified:</Text>
-            <View style={{ height: 20 }} />
-          </React.Fragment>
-        )}
-
-        {identificationPlusResults.map((result, index) => (
-          <View key={result.id + index}>
-            <Text key={result.guid + index}>
-              <View style={{ height: 20 }} />
-              Tier: {result.tier}, Confidence: {result.confidenceScore}, Guid: {result.guid}
-            </Text>
-          </View>
-        ))}
-        <View style={{ height: 20 }} />
-        {!showButtons && <Button title="Go Back" onPress={goBack} />}
+        <View>
+          <Text style={STYLES.desc}>Last mile health digital safetynet</Text>
+          <Text style={STYLES.heading}>
+            In partnership with Ablestate Creatives
+          </Text>
+          <Text style={STYLES.desc}>Report technical challenges</Text>
+          <Text style={STYLES.desc}>Ablestate Creatives</Text>
+          <Text style={STYLES.desc}>
+            <Icon name="phone-call" /> 0704255401
+          </Text>
+        </View>
       </View>
     </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
+const STYLES = StyleSheet.create({
+  logoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 30,
+    marginBottom: 20,
+  },
+  textColor: {
+    color: COLORS.BLACK,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'column',
+    height: '100%',
+    backgroundColor: COLORS.SECONDARY,
   },
-  modalContainer: {
+  wrapper: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: COLORS.SECONDARY,
+  },
+  body: {
+    flex: 2,
     alignItems: 'center',
-    backgroundColor: 'white',
     padding: 20,
   },
-  text: {
-    fontSize: 20,
+  heading: {
     fontWeight: 'bold',
+    color: COLORS.BLACK,
+  },
+  desc: {
+    fontStyle: 'italic',
+    marginTop: 5,
     marginBottom: 10,
+    color: COLORS.BLACK,
+  },
+  title: {
+    fontWeight: 'bold',
+    color: COLORS.BLACK,
+    textAlign: 'center',
+  },
+  alert: {
+    color: COLORS.GREY,
+    textAlign: 'center',
+    marginTop: 15,
+  },
+  leftHeader: {
+    flex: 1,
+    paddingLeft: 10,
+  },
+  centerHeader: {
+    flex: 2,
+    flexDirection: 'row',
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  rightHeader: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
 });
 
