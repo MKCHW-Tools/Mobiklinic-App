@@ -93,7 +93,7 @@ function SimprintsID({navigation}) {
         {enrollmentGuid && (
           <>
             <Text style={styles.text}>Beneficiary Enrolled on ID:</Text>
-            <Text>{enrollmentGuid}</Text>
+            <Text style={styles.results} >{enrollmentGuid}</Text>
             <View style={{height: 20}} />
           </>
         )}
