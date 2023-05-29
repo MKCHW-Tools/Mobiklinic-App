@@ -51,7 +51,7 @@ const Dashboard = ({navigation}) => {
           <View style={STYLES.row}>
             <TouchableOpacity
               style={STYLES.card}
-              onPress={() => navigation.navigate('Diagnose')}>
+              onPress={() => navigation.navigate('SimprintsConnect')}>
               <View style={STYLES.cardIcon}>
                 <Icon
                   name="heart"
@@ -60,13 +60,13 @@ const Dashboard = ({navigation}) => {
                   color={COLORS.BLACK}
                 />
               </View>
-              <Text style={STYLES.cardTitle}>Diagnosis</Text>
+              <Text style={STYLES.cardTitle}>Beneficary Data</Text>
             </TouchableOpacity>
           </View>
           <View style={STYLES.row}>
             <TouchableOpacity
               style={STYLES.card}
-              onPress={() => navigation.navigate('SimprintsConnect')}>
+              onPress={() => navigation.navigate('Messages')}>
               <View style={STYLES.cardIcon}>
                 <Icon
                   name="message-circle"
@@ -75,7 +75,7 @@ const Dashboard = ({navigation}) => {
                   color={COLORS.BLACK}
                 />
               </View>
-              <Text style={STYLES.cardTitle}>Patient Data</Text>
+              <Text style={STYLES.cardTitle}>Messages</Text>
             </TouchableOpacity>
           </View>
           <View style={STYLES.row}>
@@ -165,13 +165,12 @@ const STYLES = StyleSheet.create({
   heroHeading: {
     fontSize: 30,
     fontWeight: 'bold',
-    color:COLORS.BLACK,
+    color: COLORS.BLACK,
   },
   heroParagraph: {
     fontSize: 20,
     fontWeight: 'semi-bold',
-    color:COLORS.BLACK,
-
+    color: COLORS.BLACK,
   },
   header: {
     flex: 1,
@@ -231,7 +230,7 @@ const STYLES = StyleSheet.create({
     flex: 1,
     borderRadius: 10,
     marginBottom: 10,
-    
+
     shadowOffset: {
       width: 0,
       height: 2,
@@ -252,7 +251,7 @@ const STYLES = StyleSheet.create({
     padding: 10,
     fontWeight: 'bold',
     textAlign: 'center',
-    color:COLORS.BLACK,
+    color: COLORS.BLACK,
   },
 });
 
