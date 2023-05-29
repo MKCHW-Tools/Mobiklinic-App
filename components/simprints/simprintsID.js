@@ -9,8 +9,10 @@ import {
   useColorScheme,
   NativeModules,
   View,
+  TouchableOpacity,
 } from 'react-native';
 import {COLORS, DIMENS} from '../constants/styles';
+import Icon from 'react-native-vector-icons/Feather';
 
 const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
@@ -71,10 +73,18 @@ function SimprintsID({navigation}) {
         {showButtons && (
           <>
             <View style={{height: 20}} />
-            <Button
-              title="Start Biometric Search"
-              onPress={handleIdentificationPlus}
-            />
+            <TouchableOpacity
+              style={styles.buttonStyle}
+              onPress={handleIdentificationPlus}>
+              <Text style={styles.buttonText}>Open Simprints</Text>
+              <Icon
+                name="arrow-right"
+                size={20}
+                strokeSize={3}
+                color={COLORS.WHITE}
+              />
+            </TouchableOpacity>
+
             <View style={{height: 20}} />
           </>
         )}
@@ -107,7 +117,19 @@ function SimprintsID({navigation}) {
           </View>
         ))}
         <View style={{height: 20}} />
-        {!showButtons && <Button title="Go Back"  onPress={() => navigation.navigate('PatientData')}/>}
+        {!showButtons && (
+          <TouchableOpacity
+            style={styles.buttonStyle}
+            onPress={() => navigation.navigate('PatientData')}>
+            <Text style={styles.buttonText}>Diagnose Patient</Text>
+            <Icon
+              name="arrow-right"
+              size={20}
+              strokeSize={3}
+              color={COLORS.WHITE}
+            />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -136,6 +158,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: COLORS.BLACK,
     fontWeight: 'light',
+  },
+  buttonStyle: {
+    backgroundColor: COLORS.BLACK,
+    padding: DIMENS.PADDING,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderRadius: 50,
+    marginTop: 20,
+    fontWeight: 'bold',
+  },
+  buttonText: {
+    fontSize: 16,
+    padding: DIMENS.PADDING,
+    fontWeight: '900',
+    color: COLORS.WHITE,
   },
 });
 
