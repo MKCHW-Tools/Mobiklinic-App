@@ -1,19 +1,35 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { DeviceEventEmitter, Text, Button, Alert, Modal, StyleSheet, useColorScheme, NativeModules, View } from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {
+  DeviceEventEmitter,
+  Text,
+  Button,
+  Alert,
+  Modal,
+  StyleSheet,
+  useColorScheme,
+  NativeModules,
+  View,
+} from 'react-native';
+import {COLORS, DIMENS} from '../constants/styles';
 
-const { IdentificationModule } = NativeModules;
-const { IdentificationPlus } = NativeModules;
+const {IdentificationModule} = NativeModules;
+const {IdentificationPlus} = NativeModules;
 
-function SimprintsConnect({}) {
-  const [identificationPlusResults, setIdentificationPlusResults] = useState([]);
+function SimprintsID({navigation}) {
+  const [identificationPlusResults, setIdentificationPlusResults] = useState(
+    [],
+  );
   const [enrollmentGuid, setEnrollmentGuid] = useState(null);
   const [showButtons, setShowButtons] = useState(true);
 
   useEffect(() => {
-    const identificationResultPlusSubscription = DeviceEventEmitter.addListener('onIdentificationResult', results => {
-      setIdentificationPlusResults(results);
-      setShowButtons(false); // Hide buttons after getting identification results
-    });
+    const identificationResultPlusSubscription = DeviceEventEmitter.addListener(
+      'onIdentificationResult',
+      results => {
+        setIdentificationPlusResults(results);
+        setShowButtons(false); // Hide buttons after getting identification results
+      },
+    );
 
     return () => {
       identificationResultPlusSubscription.remove();
@@ -21,10 +37,13 @@ function SimprintsConnect({}) {
   }, []);
 
   useEffect(() => {
-    const registrationSuccessSubscription = DeviceEventEmitter.addListener('SimprintsRegistrationSuccess', event => {
-      const { guid } = event;
-      setEnrollmentGuid(guid);
-    });
+    const registrationSuccessSubscription = DeviceEventEmitter.addListener(
+      'SimprintsRegistrationSuccess',
+      event => {
+        const {guid} = event;
+        setEnrollmentGuid(guid);
+      },
+    );
 
     return () => {
       registrationSuccessSubscription.remove();
@@ -51,38 +70,44 @@ function SimprintsConnect({}) {
       <View>
         {showButtons && (
           <>
-            <View style={{ height: 20 }} />
-            <Button title="Start Biometric Search" onPress={handleIdentificationPlus} />
-            <View style={{ height: 20 }} />
+            <View style={{height: 20}} />
+            <Button
+              title="Start Biometric Search"
+              onPress={handleIdentificationPlus}
+            />
+            <View style={{height: 20}} />
           </>
         )}
-        <View style={{ height: 20 }} />
+        <View style={{height: 20}} />
 
         {enrollmentGuid && (
           <>
             <Text style={styles.text}>Beneficiary Enrolled on ID:</Text>
             <Text>{enrollmentGuid}</Text>
-            <View style={{ height: 20 }} />
+            <View style={{height: 20}} />
           </>
         )}
 
         {identificationPlusResults.length > 0 && (
           <>
             <Text style={styles.text}>Beneficiary Identified :</Text>
-            <View style={{ height: 20 }} />
+            <View style={{height: 20}} />
           </>
         )}
 
         {identificationPlusResults.map((result, index) => (
           <View key={result.id + index}>
             <Text>
-              <View style={{ height: 20 }} />
-              Tier: {result.tier}, Confidence: {result.confidenceScore}, Guid: {result.guid}
+              <View style={{height: 20}} />
+              <Text style={styles.results}>
+                Tier: {result.tier}, Confidence: {result.confidenceScore}, Guid:{' '}
+                {result.guid}
+              </Text>
             </Text>
           </View>
         ))}
-        <View style={{ height: 20 }} />
-        {!showButtons && <Button title="Go Back" onPress={goBack} />}
+        <View style={{height: 20}} />
+        {!showButtons && <Button title="Go Back"  onPress={() => navigation.navigate('PatientData')}/>}
       </View>
     </View>
   );
@@ -91,19 +116,27 @@ function SimprintsConnect({}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalContainer: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: 'white',
     padding: 20,
   },
   text: {
     fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: COLORS.BLACK,
+  },
+  results: {
+    fontSize: 16,
+    color: COLORS.BLACK,
+    fontWeight: 'light',
   },
 });
 
-export default SimprintsConnect;
+export default SimprintsID;
