@@ -10,6 +10,7 @@ import {
   StyleSheet,
   StatusBar,
   Button,
+  Image,
 } from 'react-native';
 
 import {Picker} from '@react-native-picker/picker';
@@ -43,20 +44,20 @@ const SelectActivity = ({navigation}) => {
           <Icon name="arrow-left" size={25} color={COLORS.BLACK} />
         </TouchableOpacity>
       }
-      title={
-        <Text style={[STYLES.centerHeader, STYLES.title]}>
-          Back
-        </Text>
-      }
-      
+      title={<Text style={[STYLES.centerHeader, STYLES.title]}>Back</Text>}
     />
   );
   return (
     <View style={STYLES.wrapper}>
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
       {_header()}
-    
-        <View style={STYLES.wrap}>
+
+      <View style={STYLES.wrap}>
+        <Image
+          style={{width: 70, height: 70}}
+          source={require('../imgs/logo.png')}
+        />
+        <View style={STYLES.btnContainer}>
           <TouchableOpacity
             style={STYLES.btn}
             onPress={() => navigation.navigate('PatientMedical')}>
@@ -68,11 +69,11 @@ const SelectActivity = ({navigation}) => {
               color={COLORS.WHITE}
             />
           </TouchableOpacity>
+
           <TouchableOpacity
             style={STYLES.btn}
             onPress={() => navigation.navigate('CovidData')}>
-            <Text style={STYLES.btnText}>Covid Vaccine
-            </Text>
+            <Text style={STYLES.btnText}>Covid Vaccine</Text>
             <Icon
               name="arrow-right"
               size={20}
@@ -81,6 +82,7 @@ const SelectActivity = ({navigation}) => {
             />
           </TouchableOpacity>
         </View>
+      </View>
     </View>
   );
 };
@@ -99,21 +101,13 @@ const STYLES = StyleSheet.create({
     flex: 2,
     paddingHorizontal: 20,
   },
+
   alert: {
     color: COLORS.GREY,
     textAlign: 'center',
     marginTop: 15,
   },
-  subtitle: {
-    flexDirection: 'row',
-    fontSize: 10,
-    color: COLORS.GREY,
-  },
-  label: {
-    fontWeight: 'bold',
-    marginLeft: 5,
-    marginRight: 5,
-  },
+
   title: {
     fontWeight: 'bold',
     color: COLORS.BLACK,
@@ -137,69 +131,7 @@ const STYLES = StyleSheet.create({
     paddingTop: 15,
     paddingBottom: 15,
   },
-  input: {
-    color: 'rgba(0,0,0,0.7)',
-    borderRadius: 20,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderColor: COLORS.GREY,
-    borderStyle: 'solid',
-    borderWidth: 1,
-    marginBottom: 10,
-    backgroundColor: COLORS.GREY_LIGHTER,
-  },
-  textarea: {
-    color: 'rgba(0,0,0,0.7)',
-    minHeight: 70,
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 5,
-    borderColor: COLORS.GREY,
-    borderStyle: 'solid',
-    borderWidth: 1,
-    marginBottom: 10,
-    borderRadius: 20,
-  },
-  terms: {
-    paddingVertical: 10,
-    textAlign: 'center',
-    color: 'grey',
-    fontSize: 16,
-    fontWeight: 'bold',
-    paddingVertical: 20,
-  },
-  pickers: {
-    // borderBottomColor: 'rgba(0,0,0,0.7)',
-    // borderBottomWidth:1,
-    borderColor: COLORS.GREY,
-    borderStyle: 'solid',
-    borderWidth: 1,
-    borderRadius: 20,
-    paddingHorizontal: 15,
-    paddingVertical: -5,
-    marginBottom: 10,
-  },
-  pickerItemStyle: {
-    color: 'rgba(0,0,0,0.7)',
-    fontWeight: 'bold', // Customize the text color here
-  },
-  labeled: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    color: COLORS.BLACK,
-    marginTop: 10,
-    marginBottom: 10,
-    borderColor: COLORS.GREY,
-    borderStyle: 'solid',
-    borderWidth: 1,
-    borderRadius: 20,
-  },
-  label: {
-    flex: 2,
-    color: 'rgba(0,0,0,0.7)',
-  },
+
   field: {
     flex: 1,
     justifyContent: 'flex-end',
@@ -220,24 +152,20 @@ const STYLES = StyleSheet.create({
     fontWeight: 'bold',
   },
   wrap: {
+    flex: 2,
+    alignItems: 'center',
+    padding: 20,
+  },
+  btnContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  detail: {
-    flex: 1,
-    height: 40,
-    marginHorizontal: 8,
 
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: COLORS.GREY,
-    borderRadius: 15,
-    backgroundColor: COLORS.GREY_LIGHTER,
-  },
   btn: {
     backgroundColor: COLORS.BLACK,
     padding: DIMENS.PADDING,
+    // padding: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -251,7 +179,7 @@ const STYLES = StyleSheet.create({
     alignItems: 'center',
     fontWeight: '900',
     justifyContent: 'center',
-    paddingLeft: 40,
+    paddingHorizontal: 20,
     color: COLORS.WHITE,
   },
 });
