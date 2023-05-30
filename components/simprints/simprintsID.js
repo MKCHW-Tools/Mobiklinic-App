@@ -106,7 +106,7 @@ function SimprintsID({navigation}) {
         )}
 
         {identificationPlusResults.map((result) => (
-          <View key={result.id}>
+          <View key={result.guid}>
             <Text>
               <View style={{height: 20}} />
               <Text style={styles.results}>
