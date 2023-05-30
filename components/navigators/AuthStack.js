@@ -12,6 +12,7 @@ import Chats from '../screens/Chats';
 import Profile from '../screens/profile';
 import PatientData from '../simprints/patient.data';
 import SimprintsConnect from '../simprints/simprintsID';
+import PatientMedical from '../simprints/patient.medical';
 
 const Stack = createStackNavigator();
 
@@ -77,6 +78,11 @@ function AuthStack() {
         name="SimprintsConnect"
         options={{headerShown: false}}
         component={SimprintsConnect}
+      />
+      <Stack.Screen
+        name="PatientMedical"
+        options={{headerShown: false}}
+        component={PatientMedical}
       />
     </Stack.Navigator>
   );
