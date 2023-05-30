@@ -13,6 +13,7 @@ import Profile from '../screens/profile';
 import PatientData from '../simprints/patient.data';
 import SimprintsConnect from '../simprints/simprintsID';
 import PatientMedical from '../simprints/patient.medical';
+import CovidData from '../simprints/covid';
 
 const Stack = createStackNavigator();
 
@@ -83,6 +84,11 @@ function AuthStack() {
         name="PatientMedical"
         options={{headerShown: false}}
         component={PatientMedical}
+      />
+      <Stack.Screen
+        name="CovidData"
+        options={{headerShown: false}}
+        component={CovidData}
       />
     </Stack.Navigator>
   );
