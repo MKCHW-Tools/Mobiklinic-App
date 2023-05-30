@@ -135,7 +135,7 @@ const PatientData = ({navigation}) => {
         </TouchableOpacity>
       }
       title={
-        <Text style={[STYLES.centerHeader, STYLES.title]}>Enter details</Text>
+        <Text style={[STYLES.centerHeader, STYLES.title]}>Enter Patient Details</Text>
       }
       right={
         <TouchableOpacity
