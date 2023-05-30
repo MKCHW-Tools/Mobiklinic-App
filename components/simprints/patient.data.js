@@ -14,7 +14,7 @@ import {
 
 import {Picker} from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/Feather';
-
+import DateTimePicker from '@react-native-community/datetimepicker';
 import {COLORS, DIMENS} from '../constants/styles';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -29,9 +29,12 @@ import {DiagnosisContext} from '../providers/Diagnosis';
 import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 
-const NewDiagnosis = ({navigation}) => {
+const PatientData = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
   const {diagnoses} = diagnosisContext;
+
+  // date
+  const currentDate = new Date();
 
   const [state, setState] = React.useState({
     isLoading: false,
@@ -40,12 +43,27 @@ const NewDiagnosis = ({navigation}) => {
     age_group: '',
     phone: '',
     condition: '',
+    weight: '',
+    height: '',
+    address: '',
     isPregnant: false,
+    dob: new Date(),
     diagnosises: [],
   });
 
   const save = async () => {
-    const {fullname, gender, age_group, phone, condition, isPregnant} = state;
+    const {
+      fullname,
+      gender,
+      age_group,
+      phone,
+      condition,
+      isPregnant,
+      dob,
+      weight,
+      height,
+      address,
+    } = state;
     const code = generateRandomCode(5),
       date = MyDate();
 
@@ -56,6 +74,10 @@ const NewDiagnosis = ({navigation}) => {
         fullname,
         phone,
         gender,
+        dob,
+        weight,
+        height,
+        address,
         age: age_group,
       },
       details: condition,
@@ -83,6 +105,9 @@ const NewDiagnosis = ({navigation}) => {
             age_group: '',
             phone: '',
             condition: '',
+            dob: '',
+            weight: 0,
+            height: 0,
             isPregnant: false,
             followups: [],
             isLoading: false,
@@ -150,9 +175,42 @@ const NewDiagnosis = ({navigation}) => {
           selectionColor={COLORS.SECONDARY}
           onChangeText={text => setState({...state, fullname: text})}
           value={state.fullname}
-          placeholder="Full name"
+          placeholder="Full name *"
+        />
+        {/* date of birth */}
+        <TextInput
+          style={STYLES.input}
+          autoCorrect={false}
+          placeholderTextColor="rgba(0,0,0,0.7)"
+          selectionColor={COLORS.SECONDARY}
+          onChangeText={text => setState({...state, dob: text})}
+          value={state.dob}
+          placeholder="Date of birth"
         />
 
+        {/* wieght and height */}
+        <View style={STYLES.wrap}>
+          <TextInput
+            style={STYLES.detail}
+            autoCorrect={false}
+            placeholderTextColor="rgba(0,0,0,0.7)"
+            selectionColor={COLORS.SECONDARY}
+            onChangeText={text => setState({...state, weight: text})}
+            value={state.weight}
+            placeholder="Weight(kg)"
+          />
+          <TextInput
+            style={STYLES.detail}
+            autoCorrect={false}
+            placeholderTextColor="rgba(0,0,0,0.7)"
+            selectionColor={COLORS.SECONDARY}
+            onChangeText={text => setState({...state, height: text})}
+            value={state.height}
+            placeholder="Height(cm)"
+          />
+        </View>
+
+        {/* gender */}
         <View style={STYLES.pickers}>
           <Picker
             placeholder="Gender"
@@ -160,11 +218,11 @@ const NewDiagnosis = ({navigation}) => {
             selectedValue={state.gender}
             onValueChange={(value, index) =>
               setState({...state, gender: value})
-            }>
-            <Picker.Item label="Gender" value="Gender" />
+            }
+            itemStyle={STYLES.pickerItemStyle}>
+            <Picker.Item label="Gender *" value="Gender" />
             <Picker.Item label="Female" value="Female" />
             <Picker.Item label="Male" value="Male" />
-            <Picker.Item label="Other" value="Other" />
           </Picker>
         </View>
 
@@ -203,25 +261,35 @@ const NewDiagnosis = ({navigation}) => {
           selectionColor={COLORS.SECONDARY}
           onChangeText={text => setState({...state, phone: text})}
           value={state.phone}
-          placeholder="Phone number"
+          placeholder="Phone number *"
         />
 
         <TextInput
-          style={STYLES.textarea}
+          style={STYLES.input}
           autoCorrect={false}
-          multiline={true}
           placeholderTextColor="rgba(0,0,0,0.7)"
           selectionColor={COLORS.SECONDARY}
-          onChangeText={text => setState({...state, condition: text})}
-          value={state.condition}
-          placeholder="Patience condition"
+          onChangeText={text => setState({...state, address: text})}
+          value={state.address}
+          placeholder="Address*"
         />
+        <TouchableOpacity
+          style={STYLES.btn}
+          onPress={() => navigation.navigate('PatientMedical')}>
+          <Text style={STYLES.btnText}>Next</Text>
+          <Icon
+            name="arrow-right"
+            size={20}
+            strokeSize={3}
+            color={COLORS.WHITE}
+          />
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
 };
 
-export default NewDiagnosis;
+export default PatientData;
 
 const STYLES = StyleSheet.create({
   wrapper: {
@@ -264,7 +332,6 @@ const STYLES = StyleSheet.create({
     flex: 2,
     alignItems: 'center',
     color: COLORS.SECONDARY,
-
   },
   rightHeader: {
     paddingRight: 10,
@@ -276,7 +343,7 @@ const STYLES = StyleSheet.create({
   },
   input: {
     color: 'rgba(0,0,0,0.7)',
-    borderRadius: 50,
+    borderRadius: 20,
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderColor: COLORS.GREY,
@@ -295,11 +362,15 @@ const STYLES = StyleSheet.create({
     borderStyle: 'solid',
     borderWidth: 1,
     marginBottom: 10,
+    borderRadius: 20,
   },
   terms: {
     paddingVertical: 10,
     textAlign: 'center',
     color: 'grey',
+    fontSize:16,
+    fontWeight: 'bold',
+    paddingVertical:20,
   },
   pickers: {
     // borderBottomColor: 'rgba(0,0,0,0.7)',
@@ -307,10 +378,13 @@ const STYLES = StyleSheet.create({
     borderColor: COLORS.GREY,
     borderStyle: 'solid',
     borderWidth: 1,
-    borderRadius: 50,
+    borderRadius: 20,
     paddingHorizontal: 15,
-    paddingVertical: -10,
+    paddingVertical: -5,
     marginBottom: 10,
+  },
+  pickerItemStyle: {
+    color: 'red', // Customize the text color here
   },
   labeled: {
     flexDirection: 'row',
@@ -323,7 +397,7 @@ const STYLES = StyleSheet.create({
     borderColor: COLORS.GREY,
     borderStyle: 'solid',
     borderWidth: 1,
-    borderRadius: 50,
+    borderRadius: 20,
   },
   label: {
     flex: 2,
@@ -347,5 +421,41 @@ const STYLES = StyleSheet.create({
     textAlign: 'center',
     textTransform: 'uppercase',
     fontWeight: 'bold',
+  },
+  wrap: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: 70,
+  },
+  detail: {
+    flex: 1,
+    height: 40,
+    marginHorizontal: 8,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: COLORS.GREY,
+    borderRadius: 15,
+    backgroundColor: COLORS.GREY_LIGHTER,
+  },
+  btn: {
+    backgroundColor: COLORS.BLACK,
+    padding: DIMENS.PADDING,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderRadius: 50,
+    marginTop: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  btnText: {
+    fontSize: 16,
+    alignItems: 'center',
+    fontWeight: '900',
+    justifyContent: 'center',
+    paddingLeft: 40,
+    color: COLORS.WHITE,
   },
 });
