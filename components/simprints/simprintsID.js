@@ -10,9 +10,12 @@ import {
   NativeModules,
   View,
   TouchableOpacity,
+  ScrollView,
+  StatusBar,
 } from 'react-native';
 import {COLORS, DIMENS} from '../constants/styles';
 import Icon from 'react-native-vector-icons/Feather';
+import CustomHeader from '../parts/custom-header';
 
 const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
@@ -67,16 +70,84 @@ function SimprintsID({navigation}) {
     setEnrollmentGuid(null);
   };
 
+  const _header = () => (
+    <CustomHeader
+      left={
+        <TouchableOpacity
+          style={{
+            marginHorizontal: 4,
+            width: 35,
+            height: 35,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          onPress={() => navigation.goBack()}>
+          <Icon name="arrow-left" size={25} color={COLORS.BLACK} />
+        </TouchableOpacity>
+      }
+    />
+  );
+
   return (
-    <View style={styles.container}>
-      <View>
-        {showButtons && (
-          <>
-            <View style={{height: 20}} />
+    <View style={styles.wrapper}>
+      <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
+      {_header()}
+      
+
+      <View style={styles.container}>
+        <View>
+          {showButtons && (
+            <>
+              <View style={{height: 20}} />
+              <TouchableOpacity
+                style={styles.buttonStyle}
+                onPress={handleIdentificationPlus}>
+                <Text style={styles.buttonText}>Launch Simprints</Text>
+                <Icon
+                  name="arrow-right"
+                  size={20}
+                  strokeSize={3}
+                  color={COLORS.WHITE}
+                />
+              </TouchableOpacity>
+
+              <View style={{height: 20}} />
+            </>
+          )}
+          <View style={{height: 20}} />
+
+          {enrollmentGuid && (
+            <>
+              <Text style={styles.text}>Beneficiary Enrolled on ID:</Text>
+              <Text style={styles.results}>{enrollmentGuid}</Text>
+              <View style={{height: 20}} />
+            </>
+          )}
+
+          {identificationPlusResults.length > 0 && (
+            <>
+              <Text style={styles.text}>Beneficiary Identified :</Text>
+              <View style={{height: 20}} />
+            </>
+          )}
+
+          {identificationPlusResults.map(result => (
+            <View key={result.guid}>
+              <Text>
+                <View style={{height: 20}} />
+                <Text style={styles.results}>
+                  Tier: {result.tier}, Confidence: {result.confidenceScore},
+                  Guid: {result.guid}
+                </Text>
+              </Text>
+            </View>
+          ))}
+          <View style={{height: 20}} />
+          {!showButtons && (
             <TouchableOpacity
               style={styles.buttonStyle}
-              onPress={handleIdentificationPlus}>
-              <Text style={styles.buttonText}>Open Simprints</Text>
+              onPress={() => navigation.navigate('PatientData')}>
+              <Text style={styles.buttonText}>Diagnose Patient</Text>
               <Icon
                 name="arrow-right"
                 size={20}
@@ -84,58 +155,18 @@ function SimprintsID({navigation}) {
                 color={COLORS.WHITE}
               />
             </TouchableOpacity>
-
-            <View style={{height: 20}} />
-          </>
-        )}
-        <View style={{height: 20}} />
-
-        {enrollmentGuid && (
-          <>
-            <Text style={styles.text}>Beneficiary Enrolled on ID:</Text>
-            <Text style={styles.results} >{enrollmentGuid}</Text>
-            <View style={{height: 20}} />
-          </>
-        )}
-
-        {identificationPlusResults.length > 0 && (
-          <>
-            <Text style={styles.text}>Beneficiary Identified :</Text>
-            <View style={{height: 20}} />
-          </>
-        )}
-
-        {identificationPlusResults.map((result) => (
-          <View key={result.guid}>
-            <Text>
-              <View style={{height: 20}} />
-              <Text style={styles.results}>
-                Tier: {result.tier}, Confidence: {result.confidenceScore}, Guid:{' '}
-                {result.guid}
-              </Text>
-            </Text>
-          </View>
-        ))}
-        <View style={{height: 20}} />
-        {!showButtons && (
-          <TouchableOpacity
-            style={styles.buttonStyle}
-            onPress={() => navigation.navigate('PatientData')}>
-            <Text style={styles.buttonText}>Diagnose Patient</Text>
-            <Icon
-              name="arrow-right"
-              size={20}
-              strokeSize={3}
-              color={COLORS.WHITE}
-            />
-          </TouchableOpacity>
-        )}
+          )}
+        </View>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    backgroundColor: COLORS.WHITE_LOW,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -147,6 +178,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     padding: 20,
+  },
+  centerHeader: {
+    flex: 2,
+    alignItems: 'center',
+    color: COLORS.SECONDARY,
+  },
+  title: {
+    fontWeight: 'bold',
+    color: COLORS.BLACK,
+    alignItems: 'center',
+    flexGrow: 1,
   },
   text: {
     fontSize: 20,
