@@ -135,7 +135,9 @@ const PatientData = ({navigation}) => {
         </TouchableOpacity>
       }
       title={
-        <Text style={[STYLES.centerHeader, STYLES.title]}>Enter Patient Details</Text>
+        <Text style={[STYLES.centerHeader, STYLES.title]}>
+          Enter Patient Details
+        </Text>
       }
       right={
         <TouchableOpacity
@@ -172,7 +174,7 @@ const PatientData = ({navigation}) => {
           style={STYLES.input}
           autoCorrect={false}
           placeholderTextColor="rgba(0,0,0,0.7)"
-          selectionColor={COLORS.SECONDARY}
+          selectionColor={COLORS.BLACK}
           onChangeText={text => setState({...state, fullname: text})}
           value={state.fullname}
           placeholder="Full name *"
@@ -194,7 +196,6 @@ const PatientData = ({navigation}) => {
             style={STYLES.detail}
             autoCorrect={false}
             placeholderTextColor="rgba(0,0,0,0.7)"
-            selectionColor={COLORS.SECONDARY}
             onChangeText={text => setState({...state, weight: text})}
             value={state.weight}
             placeholder="Weight(kg)"
@@ -203,7 +204,6 @@ const PatientData = ({navigation}) => {
             style={STYLES.detail}
             autoCorrect={false}
             placeholderTextColor="rgba(0,0,0,0.7)"
-            selectionColor={COLORS.SECONDARY}
             onChangeText={text => setState({...state, height: text})}
             value={state.height}
             placeholder="Height(cm)"
@@ -214,12 +214,11 @@ const PatientData = ({navigation}) => {
         <View style={STYLES.pickers}>
           <Picker
             placeholder="Gender"
-            style={{color: 'rgba(0,0,0,0.7)'}}
             selectedValue={state.gender}
             onValueChange={(value, index) =>
               setState({...state, gender: value})
             }
-            itemStyle={STYLES.pickerItemStyle}>
+            style={STYLES.pickerItemStyle}>
             <Picker.Item label="Gender *" value="Gender" />
             <Picker.Item label="Female" value="Female" />
             <Picker.Item label="Male" value="Male" />
@@ -258,7 +257,6 @@ const PatientData = ({navigation}) => {
           style={STYLES.input}
           autoCorrect={false}
           placeholderTextColor="rgba(0,0,0,0.7)"
-          selectionColor={COLORS.SECONDARY}
           onChangeText={text => setState({...state, phone: text})}
           value={state.phone}
           placeholder="Phone number *"
@@ -268,14 +266,13 @@ const PatientData = ({navigation}) => {
           style={STYLES.input}
           autoCorrect={false}
           placeholderTextColor="rgba(0,0,0,0.7)"
-          selectionColor={COLORS.SECONDARY}
           onChangeText={text => setState({...state, address: text})}
           value={state.address}
           placeholder="Address*"
         />
         <TouchableOpacity
           style={STYLES.btn}
-          onPress={() => navigation.navigate('PatientMedical')}>
+          onPress={() => navigation.navigate('SelectActivity')}>
           <Text style={STYLES.btnText}>Next</Text>
           <Icon
             name="arrow-right"
@@ -368,9 +365,9 @@ const STYLES = StyleSheet.create({
     paddingVertical: 10,
     textAlign: 'center',
     color: 'grey',
-    fontSize:16,
+    fontSize: 16,
     fontWeight: 'bold',
-    paddingVertical:20,
+    paddingVertical: 20,
   },
   pickers: {
     // borderBottomColor: 'rgba(0,0,0,0.7)',
@@ -384,7 +381,8 @@ const STYLES = StyleSheet.create({
     marginBottom: 10,
   },
   pickerItemStyle: {
-    color: 'red', // Customize the text color here
+    color:'rgba(0,0,0,0.7)',
+    fontWeight:'bold' // Customize the text color here
   },
   labeled: {
     flexDirection: 'row',
