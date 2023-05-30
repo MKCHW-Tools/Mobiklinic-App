@@ -45,7 +45,7 @@ const SelectActivity = ({navigation}) => {
       }
       title={
         <Text style={[STYLES.centerHeader, STYLES.title]}>
-          Enter Patient Details
+          Back
         </Text>
       }
       
@@ -55,7 +55,7 @@ const SelectActivity = ({navigation}) => {
     <View style={STYLES.wrapper}>
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
       {_header()}
-      <ScrollView style={STYLES.body} keyboardDismissMode="on-drag">
+    
         <View style={STYLES.wrap}>
           <TouchableOpacity
             style={STYLES.btn}
@@ -71,7 +71,8 @@ const SelectActivity = ({navigation}) => {
           <TouchableOpacity
             style={STYLES.btn}
             onPress={() => navigation.navigate('CovidData')}>
-            <Text style={STYLES.btnText}>Covid Data Vaccination</Text>
+            <Text style={STYLES.btnText}>Covid Vaccine
+            </Text>
             <Icon
               name="arrow-right"
               size={20}
@@ -80,7 +81,6 @@ const SelectActivity = ({navigation}) => {
             />
           </TouchableOpacity>
         </View>
-      </ScrollView>
     </View>
   );
 };
@@ -220,15 +220,15 @@ const STYLES = StyleSheet.create({
     fontWeight: 'bold',
   },
   wrap: {
-    flexDirection: 'column',
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    minHeight: 100,
   },
   detail: {
     flex: 1,
     height: 40,
     marginHorizontal: 8,
+
     paddingHorizontal: 10,
     borderWidth: 1,
     borderColor: COLORS.GREY,
