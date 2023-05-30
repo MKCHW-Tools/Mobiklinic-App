@@ -169,7 +169,7 @@ const STYLES = StyleSheet.create({
   },
   heroParagraph: {
     fontSize: 20,
-    fontWeight: 'semi-bold',
+    fontWeight: 'bold',
     color: COLORS.BLACK,
   },
   header: {
