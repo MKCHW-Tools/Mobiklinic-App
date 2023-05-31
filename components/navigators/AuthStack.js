@@ -15,7 +15,6 @@ import SimprintsConnect from '../simprints/simprintsID';
 import PatientMedical from '../simprints/patient.medical';
 import CovidData from '../simprints/covid';
 import SelectActivity from '../simprints/select.activity';
-import PatientDetails from '../simprints/patient.details';
 
 const Stack = createStackNavigator();
 
@@ -97,11 +96,7 @@ function AuthStack() {
         options={{headerShown: false}}
         component={SelectActivity}
       />
-      <Stack.Screen
-        name="PatientDetails"
-        options={{headerShown: false}}
-        component={PatientDetails}
-      />
+      
     </Stack.Navigator>
   );
 }
