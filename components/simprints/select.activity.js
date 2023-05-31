@@ -44,7 +44,7 @@ const SelectActivity = ({navigation}) => {
           <Icon name="arrow-left" size={25} color={COLORS.BLACK} />
         </TouchableOpacity>
       }
-      title={<Text style={[STYLES.centerHeader, STYLES.title]}>Back</Text>}
+      title={<Text style={[STYLES.centerHeader, ]}>Back</Text>}
     />
   );
   return (
@@ -57,6 +57,8 @@ const SelectActivity = ({navigation}) => {
           style={{width: 70, height: 70}}
           source={require('../imgs/logo.png')}
         />
+        <Text style={STYLES.title}>Mobiklinic</Text>
+
         <View style={STYLES.btnContainer}>
           <TouchableOpacity
             style={STYLES.btn}
@@ -121,7 +123,10 @@ const STYLES = StyleSheet.create({
   centerHeader: {
     flex: 2,
     alignItems: 'center',
-    color: COLORS.SECONDARY,
+    color: COLORS.BLACK,
+    fontWeight:'bold',
+    
+
   },
   rightHeader: {
     paddingRight: 10,
@@ -158,8 +163,9 @@ const STYLES = StyleSheet.create({
   },
   btnContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginVertical:80,
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
 
   btn: {
@@ -167,7 +173,7 @@ const STYLES = StyleSheet.create({
     padding: DIMENS.PADDING,
     // padding: 10,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 50,
     marginTop: 20,
@@ -181,5 +187,13 @@ const STYLES = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 20,
     color: COLORS.WHITE,
+  },
+  title: {
+    color: COLORS.ACCENT_1,
+    fontSize: 20,
+    marginVertical: 10,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    padding: DIMENS.PADDING,
   },
 });
