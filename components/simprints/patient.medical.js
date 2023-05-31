@@ -39,11 +39,12 @@ const PatientMedical = ({navigation}) => {
   const [state, setState] = React.useState({
     isLoading: false,
     labResults: '',
-    existingMedical:'',
+    existingMedical: '',
     currentMedication: '',
     phone: '',
     condition: '',
-    sampleCollection:'',
+    sampleCollection: '',
+    isPregnant: false,
     diagnoseDate: new Date(),
     diagnosises: [],
   });
@@ -58,6 +59,7 @@ const PatientMedical = ({navigation}) => {
       frequency,
       labResults,
       sampleCollection,
+      isPregnant,
     } = state;
     const code = generateRandomCode(5),
       date = MyDate();
@@ -76,6 +78,7 @@ const PatientMedical = ({navigation}) => {
         sampleCollection,
       },
       details: condition,
+      pregnant: isPregnant,
       followups: [],
       uploaded: false,
     };
@@ -104,6 +107,7 @@ const PatientMedical = ({navigation}) => {
             labResults,
             followups: [],
             isLoading: false,
+            isPregnant: false,
           });
         },
       );
@@ -192,6 +196,17 @@ const PatientMedical = ({navigation}) => {
           value={state.currentMedication}
           placeholder="Name Of Drug Adminstered"
         />
+        {/* is pregnant */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>
+            Is pregnant? {state.isPregnant == false ? 'No' : 'Yes'}
+          </Text>
+          <Switch
+            style={STYLES.field}
+            onValueChange={text => setState({...state, isPregnant: text})}
+            value={state.isPregnant}
+          />
+        </View>
 
         {/* dosage and frequency */}
         <View style={STYLES.wrap}>
@@ -212,6 +227,15 @@ const PatientMedical = ({navigation}) => {
             onChangeText={text => setState({...state, frequency: text})}
             value={state.frequency}
             placeholder="Frequency"
+          />
+          <TextInput
+            style={STYLES.detail}
+            autoCorrect={false}
+            placeholderTextColor="rgba(0,0,0,0.7)"
+            selectionColor={COLORS.SECONDARY}
+            onChangeText={text => setState({...state, frequency: text})}
+            value={state.frequency}
+            placeholder="Duration"
           />
         </View>
 

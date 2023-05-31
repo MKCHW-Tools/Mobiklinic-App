@@ -46,7 +46,6 @@ const PatientData = ({navigation}) => {
     weight: '',
     height: '',
     address: '',
-    isPregnant: false,
     dob: new Date(),
     diagnosises: [],
   });
@@ -58,7 +57,6 @@ const PatientData = ({navigation}) => {
       age_group,
       phone,
       condition,
-      isPregnant,
       dob,
       weight,
       height,
@@ -81,7 +79,6 @@ const PatientData = ({navigation}) => {
         age: age_group,
       },
       details: condition,
-      pregnant: isPregnant,
       followups: [],
       uploaded: false,
     };
@@ -108,7 +105,6 @@ const PatientData = ({navigation}) => {
             dob: '',
             weight: 0,
             height: 0,
-            isPregnant: false,
             followups: [],
             isLoading: false,
           });
@@ -225,16 +221,7 @@ const PatientData = ({navigation}) => {
           </Picker>
         </View>
 
-        <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>
-            Is pregnant? {state.isPregnant == false ? 'No' : 'Yes'}
-          </Text>
-          <Switch
-            style={STYLES.field}
-            onValueChange={text => setState({...state, isPregnant: text})}
-            value={state.isPregnant}
-          />
-        </View>
+       
 
         <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
           <Picker
