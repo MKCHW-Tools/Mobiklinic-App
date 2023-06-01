@@ -14,7 +14,9 @@ import {
 
 import {Picker} from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/Feather';
-import DateTimePicker from '@react-native-community/datetimepicker';
+// import DateTimePicker from '@react-native-community/datetimepicker';
+
+
 import {COLORS, DIMENS} from '../constants/styles';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -221,8 +223,6 @@ const PatientData = ({navigation}) => {
           </Picker>
         </View>
 
-       
-
         <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
           <Picker
             style={{color: 'rgba(0,0,0,0.7)'}}
@@ -259,7 +259,7 @@ const PatientData = ({navigation}) => {
         />
         <TouchableOpacity
           style={STYLES.btn}
-          onPress={() => navigation.navigate('SelectActivity')}>
+          onPress={() => navigation.navigate('PatientSummary')}>
           <Text style={STYLES.btnText}>Next</Text>
           <Icon
             name="arrow-right"
@@ -368,8 +368,8 @@ const STYLES = StyleSheet.create({
     marginBottom: 10,
   },
   pickerItemStyle: {
-    color:'rgba(0,0,0,0.7)',
-    fontWeight:'bold' // Customize the text color here
+    color: 'rgba(0,0,0,0.7)',
+    fontWeight: 'bold', // Customize the text color here
   },
   labeled: {
     flexDirection: 'row',
