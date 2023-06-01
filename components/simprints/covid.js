@@ -38,31 +38,29 @@ const CovidData = ({navigation}) => {
 
   const [state, setState] = React.useState({
     isLoading: false,
-    vaccineManufacturer: '',
-    facilty: '',
-    dateAdminster: '',
-    firstDose: false,
+    vaccineManufacturerOne: '',
+    facilityOne: '',
+    facilityTwo: '',
     secondDoseDate: '',
-    firstDoseDate:'',
+    thirdDoseDate: '',
+    firstDoseDate: '',
+    vaccineManufacturerTwo:'',
+    vaccineManufacturerThird:'',
+
   });
-
-  //   first dose
-  const handleFirstDoseChange = value => {
-    setState({...state, firstDose: value});
-  };
-
-  const handleSecondDoseDateChange = value => {
-    setState({...state, secondDoseDate: value});
-  };
 
   const save = async () => {
     const {
-      vaccineManufacturer,
-      facilty,
-      dateAdminster,
+      vaccineManufacturerOne,
+      facilityOne,
+      facilityTwo,
+      firstDoseDate,
       firstDose,
       secondDoseDate,
-      firstDoseDate,
+      thirdDoseDate,
+      vaccineManufacturerTwo,
+      vaccineManufacturerThird,
+
     } = state;
     const code = generateRandomCode(5),
       date = MyDate();
@@ -71,19 +69,22 @@ const CovidData = ({navigation}) => {
       code,
       date,
       patient: {
-        vaccineManufacturer,
-        facilty,
+        vaccineManufacturerOne,
+        facilityOne,
         firstDoseDate,
         firstDose,
+        facilityTwo,
         secondDoseDate,
-
+        thirdDoseDate,
+        vaccineManufacturerTwo, 
+        vaccineManufacturerThird,
       },
       details: condition,
       followups: [],
       uploaded: false,
     };
 
-    if (vaccineManufacturer && facilty && firstDoseDate) {
+    if (vaccineManufacturerOne && facilityOne && firstDoseDate) {
       // const data = await AsyncStorage.getItem('@diagnosis')
       // const prevstate = data !== null ? JSON.parse(data) : []
       setState({...state, isLoading: true});
@@ -97,11 +98,14 @@ const CovidData = ({navigation}) => {
           Alert.alert('Saved', `Diagnosis code: ${code}`, [{text: 'OK'}]);
 
           setState({
-            vaccineManufacturer: '',
-            facilty: '',
+            vaccineManufacturerOne: '',
+            facilityOne: '',
             firstDoseDate: '',
+            facilityTwo:'',
             firstDose: false,
             secondDoseDate: '',
+            thirdDoseDate,
+            vaccineManufacturerTwo,
             followups: [],
             isLoading: false,
           });
@@ -161,57 +165,128 @@ const CovidData = ({navigation}) => {
 
       <ScrollView style={STYLES.body} keyboardDismissMode="on-drag">
         <Text style={STYLES.terms}>Covid Vaccine.</Text>
-        {/* type of vaccine */}
-        <View style={STYLES.pickers}>
-          <Picker
-            style={STYLES.pickerField}
-            selectedValue={state.vaccineManufacturer}
-            onValueChange={value =>
-              setState({...state, vaccineManufacturer: value})
-            }>
-            <Picker.Item label="Pfizer-BioNTech" value="Pfizer-BioNTech" />
-            <Picker.Item label="Moderna" value="Moderna" />
-            <Picker.Item label="Johnson & Johnson" value="Johnson & Johnson" />
-          </Picker>
-        </View>
+        {/* FIRST DOSE*/}
+        <View style={STYLES.wrap}>
+          <Text style={STYLES.terms}>FIRST DOSE *</Text>
 
-        <Text style={STYLES.label}>
-          Did you receive the first dose of the COVID vaccine?
-        </Text>
-        <View style={STYLES.pickers}>
-          <Picker
-            selectedValue={state.firstDose}
-            style={STYLES.pickerField}
-            onValueChange={handleFirstDoseChange}>
-            <Picker.Item label="No" value={false} />
-            <Picker.Item label="Yes" value={true} />
-          </Picker>
-        </View>
-
-        {state.firstDose && (
-          <View>
-            <Text>Second dose date:</Text>
-            <TextInput
-              style={STYLES.input}
-              autoCorrect={false}
+          <View style={STYLES.pickers}>
+            <Picker
+              style={STYLES.pickerField}
+              selectedValue={state.vaccineManufacturerOne}
               placeholderTextColor="rgba(0,0,0,0.7)"
-              selectionColor={COLORS.BLACK}
-              onChange={(event, date) => handleSecondDoseDateChange(date)}
-              value={state.secondDoseDate}
-              placeholder='Date for the second dose'
-            />
+              onValueChange={value =>
+                setState({...state, vaccineManufacturerOne: value})
+              }>
+              <Picker.Item label="Pfizer-BioNTech" value="Pfizer-BioNTech" />
+              <Picker.Item label="Moderna" value="Moderna" />
+              <Picker.Item
+                label="Johnson & Johnson"
+                value="Johnson & Johnson"
+              />
+            </Picker>
           </View>
-        )}
+        </View>
+        <View style={STYLES.wrap}>
+          <TextInput
+            style={STYLES.detail}
+            autoCorrect={false}
+            placeholderTextColor="rgba(0,0,0,0.7)"
+            onChangeText={text => setState({...state, facilityOne: text})}
+            value={state.facilityOne}
+            placeholder="FACILITY"
+          />
 
-        <TextInput
-          style={STYLES.input}
-          autoCorrect={false}
-          placeholderTextColor="rgba(0,0,0,0.7)"
-          selectionColor={COLORS.BLACK}
-          onChangeText={text => setState({...state, firstDoseDate: text})}
-          value={state.firstDoseDate}
-          placeholder="Date for Adminstration *"
-        />
+          <TextInput
+            style={STYLES.detail}
+            autoCorrect={false}
+            placeholderTextColor="rgba(0,0,0,0.7)"
+            onChangeText={text => setState({...state, firstDoseDate: text})}
+            value={state.firstDoseDate}
+            placeholder="DATE"
+          />
+        </View>
+
+        {/* SECOND DOSE*/}
+        <View style={STYLES.wrap}>
+          <Text style={STYLES.terms}>SECOND DOSE</Text>
+
+          <View style={STYLES.pickers}>
+            <Picker
+              style={STYLES.pickerField}
+              selectedValue={state.vaccineManufacturerTwo}
+              placeholderTextColor="rgba(0,0,0,0.7)"
+              onValueChange={value =>
+                setState({...state, vaccineManufacturerTwo: value})
+              }>
+              <Picker.Item label="Pfizer-BioNTech" value="Pfizer-BioNTech" />
+              <Picker.Item label="Moderna" value="Moderna" />
+              <Picker.Item
+                label="Johnson & Johnson"
+                value="Johnson & Johnson"
+              />
+            </Picker>
+          </View>
+        </View>
+        <View style={STYLES.wrap}>
+          <TextInput
+            style={STYLES.detail}
+            autoCorrect={false}
+            placeholderTextColor="rgba(0,0,0,0.7)"
+            onChangeText={text => setState({...state, facilityTwo: text})}
+            value={state.facilityTwo}
+            placeholder="FACILITY"
+          />
+
+          <TextInput
+            style={STYLES.detail}
+            autoCorrect={false}
+            placeholderTextColor="rgba(0,0,0,0.7)"
+            onChangeText={text => setState({...state, secondDoseDate: text})}
+            value={state.secondDoseDate}
+            placeholder="DATE"
+          />
+        </View>
+
+         {/* THIRD DOSE*/}
+        <View style={STYLES.wrap}>
+          <Text style={STYLES.terms}>THIRD DOSE</Text>
+
+          <View style={STYLES.pickers}>
+            <Picker
+              style={STYLES.pickerField}
+              selectedValue={state.vaccineManufacturerTwo}
+              placeholderTextColor="rgba(0,0,0,0.7)"
+              onValueChange={value =>
+                setState({...state, vaccineManufacturerTwo: value})
+              }>
+              <Picker.Item label="Pfizer-BioNTech" value="Pfizer-BioNTech" />
+              <Picker.Item label="Moderna" value="Moderna" />
+              <Picker.Item
+                label="Johnson & Johnson"
+                value="Johnson & Johnson"
+              />
+            </Picker>
+          </View>
+        </View>
+        <View style={STYLES.wrap}>
+          <TextInput
+            style={STYLES.detail}
+            autoCorrect={false}
+            placeholderTextColor="rgba(0,0,0,0.7)"
+            onChangeText={text => setState({...state, facilityTwo: text})}
+            value={state.facilityTwo}
+            placeholder="FACILITY"
+          />
+
+          <TextInput
+            style={STYLES.detail}
+            autoCorrect={false}
+            placeholderTextColor="rgba(0,0,0,0.7)"
+            onChangeText={text => setState({...state, thirdDoseDate: text})}
+            value={state.thirdDoseDate}
+            placeholder="DATE FOR THIRD DOSE"
+          />
+        </View>
 
         <TouchableOpacity
           style={STYLES.btn}
@@ -295,13 +370,7 @@ const STYLES = StyleSheet.create({
   },
   pickerField: {
     color: 'rgba(0,0,0,0.7)',
-    borderRadius: 20,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderColor: COLORS.GREY,
-    borderStyle: 'solid',
-    borderWidth: 1,
-    marginBottom: 10,
+    paddingHorizontal: -10,
   },
   textarea: {
     color: 'rgba(0,0,0,0.7)',
@@ -319,20 +388,21 @@ const STYLES = StyleSheet.create({
     paddingVertical: 10,
     textAlign: 'center',
     color: 'grey',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 'bold',
     paddingVertical: 20,
   },
   pickers: {
-    // borderBottomColor: 'rgba(0,0,0,0.7)',
-    // borderBottomWidth:1,
-    borderColor: COLORS.GREY,
-    borderStyle: 'solid',
-    borderWidth: 1,
-    borderRadius: 20,
+    flex: 1,
+    height: 40,
+    marginHorizontal: 10,
     paddingHorizontal: 15,
-    paddingVertical: -5,
-    marginBottom: 10,
+    paddingVertical: -10,
+    justifyContent:'center',
+    borderWidth: 1,
+    borderColor: COLORS.GREY,
+    borderRadius: 15,
+    backgroundColor: COLORS.GREY_LIGHTER,
   },
   pickerItemStyle: {
     color: 'red', // Customize the text color here
@@ -353,7 +423,7 @@ const STYLES = StyleSheet.create({
   label: {
     flex: 2,
     color: 'rgba(0,0,0,0.7)',
-    marginVertical:10,
+    marginVertical: 10,
   },
   field: {
     flex: 1,
@@ -382,6 +452,7 @@ const STYLES = StyleSheet.create({
     minHeight: 70,
   },
   detail: {
+    color: 'rgba(0,0,0,0.7)',
     flex: 1,
     height: 40,
     marginHorizontal: 8,
