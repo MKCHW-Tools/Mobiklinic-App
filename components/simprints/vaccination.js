@@ -34,33 +34,26 @@ const CovidData = ({navigation}) => {
   const {diagnoses} = diagnosisContext;
 
   // date
-  const currentDate = new Date();
+  // const currentDate = new Date();
 
   const [state, setState] = React.useState({
     isLoading: false,
-    vaccineManufacturerOne: '',
-    facilityOne: '',
-    facilityTwo: '',
-    secondDoseDate: '',
-    thirdDoseDate: '',
-    firstDoseDate: '',
-    vaccineManufacturerTwo:'',
-    vaccineManufacturerThird:'',
-
+    vaccineType: '',
+    facilty: '',
+    dateOfVaccination: '',
+    units: false,
+    dateForNextDose:'',
+    siteOfAdminstration: '',
   });
 
   const save = async () => {
     const {
-      vaccineManufacturerOne,
-      facilityOne,
-      facilityTwo,
-      firstDoseDate,
-      firstDose,
-      secondDoseDate,
-      thirdDoseDate,
-      vaccineManufacturerTwo,
-      vaccineManufacturerThird,
-
+      vaccineType,
+      facilty,
+      dateOfVaccination,
+      units,
+      siteOfAdminstration,
+      dateForNextDose,
     } = state;
     const code = generateRandomCode(5),
       date = MyDate();
@@ -69,22 +62,19 @@ const CovidData = ({navigation}) => {
       code,
       date,
       patient: {
-        vaccineManufacturerOne,
-        facilityOne,
-        firstDoseDate,
-        firstDose,
-        facilityTwo,
-        secondDoseDate,
-        thirdDoseDate,
-        vaccineManufacturerTwo, 
-        vaccineManufacturerThird,
+        vaccineType,
+        facilty,
+        dateOfVaccination,
+        units,
+        siteOfAdminstration,
+        dateForNextDose,
       },
       details: condition,
       followups: [],
       uploaded: false,
     };
 
-    if (vaccineManufacturerOne && facilityOne && firstDoseDate) {
+    if (vaccineType && facilty && dateOfVaccination) {
       // const data = await AsyncStorage.getItem('@diagnosis')
       // const prevstate = data !== null ? JSON.parse(data) : []
       setState({...state, isLoading: true});
@@ -98,14 +88,12 @@ const CovidData = ({navigation}) => {
           Alert.alert('Saved', `Diagnosis code: ${code}`, [{text: 'OK'}]);
 
           setState({
-            vaccineManufacturerOne: '',
-            facilityOne: '',
-            firstDoseDate: '',
-            facilityTwo:'',
-            firstDose: false,
-            secondDoseDate: '',
-            thirdDoseDate,
-            vaccineManufacturerTwo,
+            vaccineType: '',
+            facilty: '',
+            dateOfVaccination: '',
+            units: false,
+            siteOfAdminstration: '',
+            dateForNextDose: '',
             followups: [],
             isLoading: false,
           });
@@ -165,128 +153,66 @@ const CovidData = ({navigation}) => {
 
       <ScrollView style={STYLES.body} keyboardDismissMode="on-drag">
         <Text style={STYLES.terms}>Covid Vaccine.</Text>
-        {/* FIRST DOSE*/}
-        <View style={STYLES.wrap}>
-          <Text style={STYLES.terms}>FIRST DOSE *</Text>
-
-          <View style={STYLES.pickers}>
-            <Picker
-              style={STYLES.pickerField}
-              selectedValue={state.vaccineManufacturerOne}
-              placeholderTextColor="rgba(0,0,0,0.7)"
-              onValueChange={value =>
-                setState({...state, vaccineManufacturerOne: value})
-              }>
-              <Picker.Item label="Pfizer-BioNTech" value="Pfizer-BioNTech" />
-              <Picker.Item label="Moderna" value="Moderna" />
-              <Picker.Item
-                label="Johnson & Johnson"
-                value="Johnson & Johnson"
-              />
-            </Picker>
-          </View>
-        </View>
-        <View style={STYLES.wrap}>
-          <TextInput
-            style={STYLES.detail}
-            autoCorrect={false}
-            placeholderTextColor="rgba(0,0,0,0.7)"
-            onChangeText={text => setState({...state, facilityOne: text})}
-            value={state.facilityOne}
-            placeholder="FACILITY"
-          />
-
-          <TextInput
-            style={STYLES.detail}
-            autoCorrect={false}
-            placeholderTextColor="rgba(0,0,0,0.7)"
-            onChangeText={text => setState({...state, firstDoseDate: text})}
-            value={state.firstDoseDate}
-            placeholder="DATE"
-          />
-        </View>
-
-        {/* SECOND DOSE*/}
-        <View style={STYLES.wrap}>
-          <Text style={STYLES.terms}>SECOND DOSE</Text>
-
-          <View style={STYLES.pickers}>
-            <Picker
-              style={STYLES.pickerField}
-              selectedValue={state.vaccineManufacturerTwo}
-              placeholderTextColor="rgba(0,0,0,0.7)"
-              onValueChange={value =>
-                setState({...state, vaccineManufacturerTwo: value})
-              }>
-              <Picker.Item label="Pfizer-BioNTech" value="Pfizer-BioNTech" />
-              <Picker.Item label="Moderna" value="Moderna" />
-              <Picker.Item
-                label="Johnson & Johnson"
-                value="Johnson & Johnson"
-              />
-            </Picker>
-          </View>
-        </View>
-        <View style={STYLES.wrap}>
-          <TextInput
-            style={STYLES.detail}
-            autoCorrect={false}
-            placeholderTextColor="rgba(0,0,0,0.7)"
-            onChangeText={text => setState({...state, facilityTwo: text})}
-            value={state.facilityTwo}
-            placeholder="FACILITY"
-          />
-
-          <TextInput
-            style={STYLES.detail}
-            autoCorrect={false}
-            placeholderTextColor="rgba(0,0,0,0.7)"
-            onChangeText={text => setState({...state, secondDoseDate: text})}
-            value={state.secondDoseDate}
-            placeholder="DATE"
-          />
-        </View>
-
-         {/* THIRD DOSE*/}
-        <View style={STYLES.wrap}>
-          <Text style={STYLES.terms}>THIRD DOSE</Text>
-
-          <View style={STYLES.pickers}>
-            <Picker
-              style={STYLES.pickerField}
-              selectedValue={state.vaccineManufacturerTwo}
-              placeholderTextColor="rgba(0,0,0,0.7)"
-              onValueChange={value =>
-                setState({...state, vaccineManufacturerTwo: value})
-              }>
-              <Picker.Item label="Pfizer-BioNTech" value="Pfizer-BioNTech" />
-              <Picker.Item label="Moderna" value="Moderna" />
-              <Picker.Item
-                label="Johnson & Johnson"
-                value="Johnson & Johnson"
-              />
-            </Picker>
-          </View>
-        </View>
-        <View style={STYLES.wrap}>
-          <TextInput
-            style={STYLES.detail}
-            autoCorrect={false}
-            placeholderTextColor="rgba(0,0,0,0.7)"
-            onChangeText={text => setState({...state, facilityTwo: text})}
-            value={state.facilityTwo}
-            placeholder="FACILITY"
-          />
-
-          <TextInput
-            style={STYLES.detail}
-            autoCorrect={false}
-            placeholderTextColor="rgba(0,0,0,0.7)"
-            onChangeText={text => setState({...state, thirdDoseDate: text})}
-            value={state.thirdDoseDate}
-            placeholder="DATE FOR THIRD DOSE"
-          />
-        </View>
+        {/* vaccine type */}
+        <TextInput
+          style={STYLES.input}
+          autoCorrect={false}
+          placeholderTextColor="rgba(0,0,0,0.7)"
+          selectionColor={COLORS.BLACK}
+          onChangeText={text => setState({...state, vaccineType: text})}
+          value={state.vaccineType}
+          placeholder="Vaccine Type *"
+        />
+        {/* date of vaccination */}
+        <TextInput
+          style={STYLES.input}
+          autoCorrect={false}
+          placeholderTextColor="rgba(0,0,0,0.7)"
+          selectionColor={COLORS.BLACK}
+          onChangeText={text => setState({...state, dateOfVaccination: text})}
+          value={state.dateOfVaccination}
+          placeholder="Date of Vaccination*"
+        />
+        {/* facility */}
+        <TextInput
+          style={STYLES.input}
+          autoCorrect={false}
+          placeholderTextColor="rgba(0,0,0,0.7)"
+          selectionColor={COLORS.BLACK}
+          onChangeText={text => setState({...state, facilty: text})}
+          value={state.facilty}
+          placeholder="Facilty*"
+        />
+        {/* units of measurement */}
+        <TextInput
+          style={STYLES.input}
+          autoCorrect={false}
+          placeholderTextColor="rgba(0,0,0,0.7)"
+          selectionColor={COLORS.BLACK}
+          onChangeText={text => setState({...state, units: text})}
+          value={state.units}
+          placeholder="Units (mls)*"
+        />
+        {/* site for adminstration */}
+        <TextInput
+          style={STYLES.input}
+          autoCorrect={false}
+          placeholderTextColor="rgba(0,0,0,0.7)"
+          selectionColor={COLORS.BLACK}
+          onChangeText={text => setState({...state, siteOfAdminstration: text})}
+          value={state.siteOfAdminstration}
+          placeholder="Site of Adminstration"
+        />
+        {/* next dosage */}
+        <TextInput
+          style={STYLES.input}
+          autoCorrect={false}
+          placeholderTextColor="rgba(0,0,0,0.7)"
+          selectionColor={COLORS.BLACK}
+          onChangeText={text => setState({...state, dateForNextDose: text})}
+          value={state.dateForNextDose}
+          placeholder="Date for Next Dosage"
+        />
 
         <TouchableOpacity
           style={STYLES.btn}
@@ -388,7 +314,7 @@ const STYLES = StyleSheet.create({
     paddingVertical: 10,
     textAlign: 'center',
     color: 'grey',
-    fontSize: 15,
+    fontSize: 20,
     fontWeight: 'bold',
     paddingVertical: 20,
   },
@@ -398,7 +324,7 @@ const STYLES = StyleSheet.create({
     marginHorizontal: 10,
     paddingHorizontal: 15,
     paddingVertical: -10,
-    justifyContent:'center',
+    justifyContent: 'center',
     borderWidth: 1,
     borderColor: COLORS.GREY,
     borderRadius: 15,

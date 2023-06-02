@@ -13,7 +13,7 @@ import Profile from '../screens/profile';
 import PatientData from '../simprints/patient.data';
 import SimprintsConnect from '../simprints/simprintsID';
 import PatientMedical from '../simprints/patient.medical';
-import CovidData from '../simprints/covid';
+import CovidData from '../simprints/vaccination';
 import SelectActivity from '../simprints/select.activity';
 import PatientSummary from '../simprints/patient.summary';
 
