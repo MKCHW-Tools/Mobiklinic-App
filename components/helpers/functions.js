@@ -5,6 +5,21 @@ import axios from 'axios';
 import {URLS} from '../constants/API';
 import uniqWith from 'lodash/uniqWith';
 import isEqual from 'lodash/isEqual';
+import {
+  LOGIN_USER,
+  SIGN_UP_USER,
+  REFRESH_TOKENS,
+  DOWNLOAD_MUTATION,
+  SAVE_LOCAL_USER_MUTATION,
+} from '../GraphQL/Mutations';
+import {RETRIEVE_LOCAL_USER_QUERY} from '../GraphQL/Queries';
+import {ApolloClient, InMemoryCache} from '@apollo/client';
+
+// Create an Apollo Client instance
+const client = new ApolloClient({
+  uri: 'https://staging.mobiklinic.com/graphql', // Replace with your GraphQL server URL
+  cache: new InMemoryCache(),
+});
 
 export const _removeStorageItem = async key => {
   return await AsyncStorage.removeItem(key);
@@ -29,91 +44,107 @@ export const MyDate = () => {
   }-${myDate.getDate()}-${myDate.getFullYear()} ${myDate.getHours()}:${myDate.getMinutes()}:${myDate.getSeconds()}`;
 };
 
+// tokens refresh
 export const tokensRefresh = async user => {
   const refresh = user.tokens.refresh;
 
   try {
-    const response = fetch(`${URLS.BASE}/tokens/refresh`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${refresh}`,
-        'Content-type': 'application/json; charset=UTF-8',
-        Accept: 'application/json',
+    const response = await client.query({
+      query: REFRESH_TOKENS,
+      variables: {
+        refreshToken: refresh,
+      },
+      context: {
+        headers: {
+          Authorization: `Bearer ${refresh}`,
+        },
       },
     });
 
-    const data = await response.then(async response => {
-      if (response.status === 401) {
-        // the refresh token no longer works
-        await AsyncStorage.setItem(
-          '@user',
-          JSON.stringify({
-            id: user.id,
-            username: user.username,
-            hash: null, // overwrite the hash so that the user surely try to obtain new refresh tokens when they sign in next time.
-            tokens: user.tokens,
-          }),
-        );
-        return null;
-      }
-      return response.json();
-    });
-    if (data === null) return null;
+    const {data} = response;
+    const {tokensRefresh} = data;
 
-    const {accessToken, refreshToken, msg, result} = data;
-    if (result === 'Success') {
-      await SAVE_LOCAL_USER({
-        id: user.id,
-        username: user.username,
-        password: user.password,
-        tokens: {
-          access: accessToken,
-          refresh: refreshToken,
-        },
-        offline: user.offline,
-      });
-
-      return {
-        id: user.id,
-        username: user.username,
-        tokens: {
-          access: accessToken,
-          refresh: refreshToken,
-        },
-        offline: user.offline,
-      };
+    if (tokensRefresh === null) {
+      await AsyncStorage.setItem(
+        '@user',
+        JSON.stringify({
+          id: user.id,
+          username: user.username,
+          hash: null,
+          tokens: user.tokens,
+        }),
+      );
+      return null;
     }
-  } catch (e) {
-    console.error(e.message);
+
+    const {id, username, tokens, offline} = tokensRefresh;
+    const {access, refresh: newRefresh} = tokens;
+
+    await SAVE_LOCAL_USER({
+      id,
+      username,
+      password: user.password,
+      tokens: {
+        access,
+        refresh: newRefresh,
+      },
+      offline,
+    });
+
+    return {
+      id,
+      username,
+      tokens: {
+        access,
+        refresh: newRefresh,
+      },
+      offline,
+    };
+  } catch (error) {
+    console.error(error.message);
   }
 
   return null;
 };
 
+// retrrieve local user
 export const RETRIEVE_LOCAL_USER = async () => {
   console.log('Retrieving local user');
   try {
-    let user = await AsyncStorage.getItem('@user');
-    return JSON.parse(user) || null;
-  } catch (err) {
-    new Error(err);
+    const response = await client.query({
+      query: RETRIEVE_LOCAL_USER_QUERY,
+    });
+
+    const {data} = response;
+    return data.retrieveLocalUser;
+  } catch (error) {
+    console.error(error.message);
+    throw error;
   }
 };
+
+// save local user
 export const SAVE_LOCAL_USER = async (user = {}) => {
   try {
     const HASH = cyrb53(user.password);
 
-    await AsyncStorage.setItem(
-      '@user',
-      JSON.stringify({
-        id: user.id,
-        username: user.username,
-        hash: HASH,
-        tokens: user.tokens,
-      }),
-    );
-  } catch (err) {
-    new Error(err);
+    const response = await client.mutate({
+      mutation: SAVE_LOCAL_USER_MUTATION,
+      variables: {
+        input: {
+          id: user.id,
+          username: user.username,
+          hash: HASH,
+          tokens: user.tokens,
+        },
+      },
+    });
+
+    const {data} = response;
+    return data.saveLocalUser;
+  } catch (error) {
+    console.error(error.message);
+    throw error;
   }
 };
 
@@ -136,44 +167,37 @@ export const cyrb53 = function (str, seed = 0) {
   return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 };
 
+// download
 export const DOWNLOAD = async data => {
-  // await AsyncStorage.removeItem("@doctors");
-  // await AsyncStorage.removeItem("@ambulances");
   const {accessToken, items, userId, per_page} = data;
-  axios.defaults.baseURL = URLS.BASE;
-  axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-  axios.defaults.headers.post['Content-Type'] =
-    'application/json; charset=UTF-8';
-  axios.defaults.headers.post['Accept'] = 'application/json';
-  const DATA_CATEGORY = ['diagnosis', 'chats'];
-  for (let i = 0; i < items.length; i++) {
-    try {
-      const {
-        data: {total},
-      } = await axios.get(`/${items[i]}`);
 
-      let pages = Math.round(total / per_page);
-      pages = pages < 1 ? 1 : pages;
-      let _downloaded = 0;
-      for (let page = 1; page <= pages; page++) {
-        const response = await axios.get(`/${items[i]}?page=${page}`);
-        const _items = response.data[items[i]];
+  try {
+    const response = await client.query({
+      query: DOWNLOAD_MUTATION,
+      variables: {
+        accessToken,
+        items,
+        per_page,
+      },
+      context: {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    });
 
-        let itemsOnDevice = await AsyncStorage.getItem(`@${items[i]}`);
-        itemsOnDevice = JSON.parse(itemsOnDevice) || [];
-        const all = uniqWith([..._items, ...itemsOnDevice], isEqual);
-        AsyncStorage.setItem(`@${items[i]}`, JSON.stringify(all));
-      }
-    } catch (error) {
-      console.log('Downlod', error);
-    }
+    const {data} = response;
+    const {download} = data;
 
-    if (i >= items.length) {
-      return true;
-    }
+    return download;
+  } catch (error) {
+    console.error(error.message);
   }
+
+  return false;
 };
 
+// signin a user
 export const signIn = async data => {
   clearStorage();
   let {user, setIsLoading, setMyUser: setUser} = data;
@@ -211,140 +235,77 @@ export const signIn = async data => {
       });
       setIsLoading(false);
       return;
-      //// It is possible that the user has changed the password, but it adheres to the past information stored on the device.
-      //// This, we need to ask the online server when the user fail to sign in with the stored information.
-      ////
-      // } else {
-      // 	Alert.alert(
-      // 		"Failed to login",
-      // 		"Check your login details",
-      // 		[
-      // 			{
-      // 				text: "Cancel",
-      // 				onPress: () => setIsLoading(false),
-      // 			},
-      // 		],
-      //
-      // 		{
-      // 			cancelable: true,
-      // 			onDismiss: () => {
-      // 				setIsLoading(false);
-      // 			},
-      // 		}
-      // 	);
     }
   }
-  // } else {
+
   try {
     console.log('Starting network request');
-    let response = await fetch(`${URLS.BASE}/users/login`, {
-      method: 'POST',
-      body: JSON.stringify({
-        username: username,
-        password: password,
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-        Accept: 'application/json',
+    const response = await client.mutate({
+      mutation: LOGIN_USER,
+      variables: {
+        username,
+        password,
       },
     });
 
-    let json_data = await response.json();
-    const {result, id, accessToken, refreshToken} = json_data;
+    const {data} = response;
+    const {signIn} = data;
 
-    if (result === 'Success') {
-      await SAVE_LOCAL_USER({
+    const {id, tokens, offline} = signIn;
+
+    await SAVE_LOCAL_USER({
+      id,
+      username,
+      password,
+      tokens: {
+        access: tokens.access,
+        refresh: tokens.refresh,
+      },
+    });
+
+    const resources = ['ambulances', 'doctors', 'diagnosis'];
+
+    if (
+      DOWNLOAD({
+        accessToken: tokens.access,
+        items: resources,
+        per_page: 10,
+      })
+    ) {
+      setUser({
         id,
         username,
-        password,
-        tokens: {access: accessToken, refresh: refreshToken},
+        tokens: {
+          access: tokens.access,
+          refresh: tokens.refresh,
+        },
+        offline,
       });
-
-      const resources = ['ambulances', 'doctors', 'diagnosis'];
-
-      if (
-        DOWNLOAD({
-          accessToken,
-          items: resources,
-          per_page: 10,
-        })
-      ) {
-        setUser({
-          id,
-          username,
-          tokens: {access: accessToken, refresh: refreshToken},
-          offline: false,
-        });
-        setIsLoading(false);
-        // setTokens({ access: accessToken });
-      }
-    } else {
-      Alert.alert(
-        'Failed to login',
-        'Check your login details',
-        [
-          {
-            text: 'Cancel',
-            onPress: () => setIsLoading(false),
-          },
-        ],
-        {
-          cancelable: true,
-          onDismiss: () => {
-            setIsLoading(false);
-          },
-        },
-      );
+      setIsLoading(false);
     }
-  } catch (err) {
-    err?.message == 'Network request failed' &&
-      Alert.alert(
-        'Oops!',
-        'Check your internet connection',
-        [
-          {
-            text: 'Cancel',
-            onPress: () => setIsLoading(false),
-          },
-        ],
+  } catch (error) {
+    console.error(error);
+    Alert.alert(
+      'Failed to login',
+      'Check your login details',
+      [
         {
-          cancelable: true,
-          onDismiss: () => {
-            setIsLoading(false);
-          },
+          text: 'Cancel',
+          onPress: () => setIsLoading(false),
         },
-      );
-    setIsLoading(false);
-    console.log(err);
+      ],
+      {
+        cancelable: true,
+        onDismiss: () => {
+          setIsLoading(false);
+        },
+      },
+    );
   }
-  // }
 };
 
+// signup a user
 export const signUp = async data => {
-  // In a production app, we need to send user data to server and get a token
-  // We will also need to handle errors if sign up failed
-  // After getting token, we need to persist the token using `AsyncStorage`
-  // In the example, we'll use a dummy token
-  /* 	const {
-		firstname,
-		lastname,
-		theemail,
-		thephone,
-		thepassword,
-		thepassword2,
-	} = data.errors; */
-
-  /* 	if (
-		firstname ||
-		lastname ||
-		theemail ||
-		thephone ||
-		thepassword ||
-		thepassword2
-	) {
-		Alert.alert("Fail", "Errors, Fix errors in the form, and try again!");
-		return;
-	} */
   const {
     firstName,
     lastName,
@@ -360,62 +321,51 @@ export const signUp = async data => {
   setProcess('Registering, please wait!');
 
   if (
-    firstName == '' ||
-    lastName == '' ||
+    firstName === '' ||
+    lastName === '' ||
     phoneNumber.length < 12 ||
-    password == '' ||
-    cPassword == ''
+    password === '' ||
+    cPassword === ''
   ) {
-    Alert.alert('Fail', 'Fix errors in the form, and try again!');
+    Alert.alert('Fail', 'Fix errors in the form and try again!');
     console.log(firstName, lastName, phoneNumber, eMail, password, cPassword);
     return;
   }
 
   try {
-    await fetch(`${URLS.BASE}/users`, {
-      method: 'POST',
-      body: JSON.stringify({
+    const response = await client.mutate({
+      mutation: SIGN_UP_USER,
+      variables: {
         username: phoneNumber,
         phone: phoneNumber,
         name: `${firstName} ${lastName}`,
         email: eMail,
-        role_id: 2,
         password: password,
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-        Accept: 'application/json',
       },
-    })
-      .then(res => res.json())
-      .then(response => {
-        setIsLoading(false);
-        if (response.result == 'Success') {
-          /* 					Alert.alert(
-						"Registered successfully",
-						"Press Okay to login!"
-					); */
-          setRegistered(true);
-        } else if (response.result == 'Failure') {
-          Alert.alert(
-            'Sign up failure.',
-            'Check Phone number and E-mail. Press Ok to try again.',
-          );
+    });
 
-          console.log(response);
-        } else {
-          Alert.alert('Ooops!', 'Try again!');
-        }
-      })
-      .catch(err => {
-        console.log(err.message);
-        Alert.alert(
-          'Failure',
-          'Something wrong happened. Check your internet and try again!',
-        );
-      });
-  } catch (err) {
-    console.error(err);
+    const {data} = response;
+    const {signUp} = data;
+    const {result} = signUp;
+
+    setIsLoading(false);
+
+    if (result === 'Success') {
+      setRegistered(true);
+    } else if (result === 'Failure') {
+      Alert.alert(
+        'Sign up failure.',
+        'Check Phone number and E-mail. Press Ok to try again.',
+      );
+    } else {
+      Alert.alert('Oops!', 'Try again!');
+    }
+  } catch (error) {
+    console.error(error);
+    Alert.alert(
+      'Failure',
+      'Something wrong happened. Check your internet and try again!',
+    );
   }
 };
 
