@@ -29,7 +29,13 @@ import {DiagnosisContext} from '../providers/Diagnosis';
 import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 
-const PatientSummary = ({navigation}) => {
+
+import { useNavigation } from '@react-navigation/native';
+
+const PatientSummary = ({route}, navigation) => {
+  
+
+
   const _header = () => (
     <CustomHeader
       left={
@@ -72,12 +78,12 @@ const PatientSummary = ({navigation}) => {
       {_header()}
       <ScrollView style={STYLES.body} keyboardDismissMode="on-drag">
         <Text style={STYLES.terms}>Patient Summary Details</Text>
-        <Text style={STYLES.text}>Full Name:</Text>
-        <Text style={STYLES.text}>Phone Number:</Text>
-        <Text style={STYLES.text}>Address:</Text>
+        <Text style={STYLES.text}>Full Name: {route.params.paramKey.fullname} </Text>
+        <Text style={STYLES.text}>Phone Number: {route.params.paramKey.phone}</Text>
+        <Text style={STYLES.text}>Address:{route.params.paramKey.address}</Text>
         <Text style={STYLES.text}>GUI:</Text>
         <Text style={STYLES.text}>Confidence Level:</Text>
-        <Text style={STYLES.text}>Gender</Text>
+        <Text style={STYLES.text}>Gender:{route.params.paramKey.gender}</Text>
 
         <TouchableOpacity
           style={STYLES.btn}
