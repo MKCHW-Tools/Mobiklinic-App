@@ -16,7 +16,6 @@ import {Picker} from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/Feather';
 // import DateTimePicker from '@react-native-community/datetimepicker';
 
-
 import {COLORS, DIMENS} from '../constants/styles';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -27,14 +26,17 @@ import {
   MyDate,
 } from '../helpers/functions';
 
+import { useNavigation } from '@react-navigation/native';
+
 import {DiagnosisContext} from '../providers/Diagnosis';
 import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 
-const PatientData = ({navigation}) => {
+const PatientData = () => {
   const diagnosisContext = React.useContext(DiagnosisContext);
   const {diagnoses} = diagnosisContext;
 
+  const navigation = useNavigation();
   // date
   const currentDate = new Date();
 
@@ -259,7 +261,9 @@ const PatientData = ({navigation}) => {
         />
         <TouchableOpacity
           style={STYLES.btn}
-          onPress={() => navigation.navigate('PatientSummary')}>
+          onPress={() =>
+            navigation.navigate('PatientSummary', {paramKey: state })
+          }>
           <Text style={STYLES.btnText}>Next</Text>
           <Icon
             name="arrow-right"
