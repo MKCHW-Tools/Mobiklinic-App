@@ -23,6 +23,13 @@ import {
 
 const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
+var OpenActivity = NativeModules.OpenActivity;
+
+DeviceEventEmitter.addListener('SimprintsRegistrationSuccess', event => {
+  const {guid} = event;
+  console.log(event);
+  Alert.alert('Beneficiary Biometrics registered', guid);
+});
 
 const App = () => {
   const [identificationPlusResults, setIdentificationPlusResults] = useState<
@@ -33,6 +40,10 @@ const App = () => {
   >([]);
   const [displayMode, setDisplayMode] = useState<string | null>(null);
   const [enrollmentGuid, setEnrollmentGuid] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState(null);
+  const [selectedUserUniqueId, setSelectedUserUniqueId] = useState(null);
+  const [noMatchButtonPressed, setNoMatchButtonPressed] = useState(false);
+  const [showButtons, setShowButtons] = useState(true);
 
   useEffect(() => {
     const identificationPlusSubscription = DeviceEventEmitter.addListener(
@@ -83,6 +94,27 @@ const App = () => {
     IdentificationModule.triggerIdentification(projectID, moduleID, userID);
   };
 
+
+  const confirmSelectedBeneficiary = () => {
+    if (sessionId && selectedUserUniqueId) {
+      IdentificationPlus.confirmSelectedBeneficiary(
+        sessionId,
+        selectedUserUniqueId,
+      );
+    }
+    goBack();
+
+    console.log('Beneficiary confirmed');
+  };
+
+  useEffect(() => {
+    if (noMatchButtonPressed) {
+      console.log('No match found button pressed');
+      // Call the noMatchFound method here if needed
+      setNoMatchButtonPressed(false); // Reset the button pressed state
+    }
+  }, [noMatchButtonPressed]);
+
   const goBack = () => {
     setDisplayMode(null);
     setIdentificationPlusResults([]);
@@ -101,7 +133,7 @@ const App = () => {
               <View style={{height: 20}} />
             </>
           )}
-<View style={{height: 20}} />
+          <View style={{height: 20}} />
           <Button title="Go Back" onPress={goBack} />
         </>
       )}
@@ -115,19 +147,33 @@ const App = () => {
             </React.Fragment>
           )}
 
-          {identificationPlusResults.map((result, index) => (
-            <View key={result.id + index}>
-              <Text>
-                <View style={{height: 20}} />
-                Tier: {result.tier}, Confidence: {result.confidenceScore}, Guid:{' '}
-                {result.guid}
-              </Text>
-            </View>
-          ))}
-<View style={{height: 20}} />
-          <Button title="Go Back" onPress={goBack} />
-        </>
-      )}
+          {identificationPlusResults
+            .filter(
+              result =>
+                result.confidenceScore >= 50 && result.confidenceScore <= 99,
+            )
+            .map((result, index) => (
+              <View key={index}>
+                <Text>
+                  <View style={{height: 20}} />
+                  Tier: {result.tier}, Confidence: {result.confidenceScore},
+                  Guid: {result.guid}
+                </Text>
+              </View>
+            ))}
+            <View style={{ height: 20 }} />
+             {showButtons ? (
+      <>
+        <Button title="Confirm Beneficiary" onPress={confirmSelectedBeneficiary} />
+        <View style={{ height: 20 }} />
+        <Button title="No Match" onPress={() => setNoMatchButtonPressed(true)} />
+      </>
+    ) : (
+      <Button title="Go Back" onPress={goBack} />
+    )}
+  </>
+)}
+
 
       {displayMode === 'identification' && (
         <>
@@ -138,28 +184,41 @@ const App = () => {
             </React.Fragment>
           )}
 
-          {identificationResults.map((result, index) => (
-            <View key={index}>
-              <Text>
-                <View style={{height: 20}} />
-                Tier: {result.tier}, Confidence: {result.confidenceScore}, Guid:{' '}
-                {result.guid}
-              </Text>
-            </View>
-          ))}
-<View style={{height: 20}} />
-          <Button title="Go Back" onPress={goBack} />
-        </>
-      )}
+          {identificationResults
+            .filter(
+              result =>
+                result.confidenceScore >= 50 && result.confidenceScore <= 99,
+            )
+            .map((result, index) => (
+              <View key={index}>
+                <Text>
+                  <View style={{height: 20}} />
+                  Tier: {result.tier}, Confidence: {result.confidenceScore},
+                  Guid: {result.guid}
+                </Text>
+              </View>
+            ))}
+            <View style={{ height: 20 }} />
+            {showButtons ? (
+      <>
+        <Button title="Confirm Beneficiary" onPress={confirmSelectedBeneficiary} />
+        <View style={{ height: 20 }} />
+        <Button title="No Match" onPress={() => setNoMatchButtonPressed(true)} />
+      </>
+    ) : (
+      <Button title="Go Back" onPress={goBack} />
+    )}
+  </>
+)}
 
       {!displayMode && (
         <>
           <Button
-            title="Start Biometric Search"
+            title="Launch Biometrics to start registration"
             onPress={handleIdentificationPlus}
           />
           <View style={{height: 20}} />
-          <Button title="Start Identification" onPress={handleIdentification} />
+          <Button title="Identify Beneficiary" onPress={handleIdentification} />
         </>
       )}
     </View>
