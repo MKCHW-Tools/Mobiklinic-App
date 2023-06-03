@@ -24,38 +24,45 @@ import {
 const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
 
-function App(): JSX.Element {
-  const [identificationPlusResults, setIdentificationPlusResults] = useState(
-    [],
-  );
-  const [enrollmentGuid, setEnrollmentGuid] = useState(null);
-  const [showButtons, setShowButtons] = useState(true);
-
+const App = () => {
+  const [identificationPlusResults, setIdentificationPlusResults] = useState<
+    {id: number; tier: string; confidenceScore: number; guid: string}[]
+  >([]);
+  const [identificationResults, setIdentificationResults] = useState<
+    {id: number; tier: string; confidenceScore: number; guid: string}[]
+  >([]);
+  const [displayMode, setDisplayMode] = useState<string | null>(null);
+  const [enrollmentGuid, setEnrollmentGuid] = useState<string | null>(null);
 
   useEffect(() => {
-    const identificationResultPlusSubscription = DeviceEventEmitter.addListener(
+    const identificationPlusSubscription = DeviceEventEmitter.addListener(
       'onIdentificationResult',
       results => {
         setIdentificationPlusResults(results);
-        setShowButtons(false); // Hide buttons after getting identification results
+        setDisplayMode('identificationPlus');
       },
     );
 
-    return () => {
-      identificationResultPlusSubscription.remove();
-    };
-  }, []);
+    const identificationSubscription = DeviceEventEmitter.addListener(
+      'onIdentificationResult',
+      results => {
+        setIdentificationResults(results);
+        setDisplayMode('identification');
+      },
+    );
 
-  useEffect(() => {
     const registrationSuccessSubscription = DeviceEventEmitter.addListener(
       'SimprintsRegistrationSuccess',
       event => {
         const {guid} = event;
         setEnrollmentGuid(guid);
+        setDisplayMode('enrollment');
       },
     );
 
     return () => {
+      identificationPlusSubscription.remove();
+      identificationSubscription.remove();
       registrationSuccessSubscription.remove();
     };
   }, []);
@@ -65,75 +72,105 @@ function App(): JSX.Element {
     const moduleID = 'test_user';
     const userID = 'mpower';
 
-    setShowButtons(false); // Hide buttons when identification starts
     IdentificationPlus.registerOrIdentify(projectID, moduleID, userID);
   };
 
+  const handleIdentification = () => {
+    const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
+    const moduleID = 'test_user';
+    const userID = 'mpower';
+
+    IdentificationModule.triggerIdentification(projectID, moduleID, userID);
+  };
 
   const goBack = () => {
-    setShowButtons(true);
+    setDisplayMode(null);
     setIdentificationPlusResults([]);
+    setIdentificationResults([]);
     setEnrollmentGuid(null);
   };
 
   return (
     <View style={styles.container}>
-      <View>
-        {showButtons && ( // Render buttons only when showButtons is true
-          <>
-            <View style={{height: 20}} />
-            <Button
-              title="Start Biometric Search"
-              onPress={handleIdentificationPlus}
-            />
-            <View style={{height: 20}} />
-          </>
-        )}
-        <View style={{height: 20}} />
-
-        {enrollmentGuid && (
-          <>
-            <Text style={styles.text}>Beneficiary Enrolled on ID:</Text>
-            <Text>{enrollmentGuid}</Text>
-            <View style={{height: 20}} />
-          </>
-        )}
-
-        {identificationPlusResults.length > 0 && (
-          <React.Fragment key="identification-heading">
-            <Text style={styles.text}>Beneficiary Identified :</Text>
-            <View style={{height: 20}} />
-          </React.Fragment>
-        )}
-
-        {(identificationPlusResults as any[]).map((result, index) => (
-          <View key={result.id + index}>
-            <Text key={result.guid + index}>
+      {displayMode === 'enrollment' && (
+        <>
+          {enrollmentGuid && (
+            <>
+              <Text style={styles.text}>Beneficiary Enrolled on ID:</Text>
+              <Text>{enrollmentGuid}</Text>
               <View style={{height: 20}} />
-              Tier: {result.tier}, Confidence: {result.confidenceScore}, Guid:{' '}
-              {result.guid}
-            </Text>
-          </View>
-        ))}
-        <View style={{height: 20}} />
-        {!showButtons && <Button title="Go Back" onPress={goBack} />}
-      </View>
+            </>
+          )}
+<View style={{height: 20}} />
+          <Button title="Go Back" onPress={goBack} />
+        </>
+      )}
+
+      {displayMode === 'identificationPlus' && (
+        <>
+          {identificationPlusResults.length > 0 && (
+            <React.Fragment key="identification-plus-heading">
+              <Text style={styles.text}>Beneficiary Identified:</Text>
+              <View style={{height: 20}} />
+            </React.Fragment>
+          )}
+
+          {identificationPlusResults.map((result, index) => (
+            <View key={result.id + index}>
+              <Text>
+                <View style={{height: 20}} />
+                Tier: {result.tier}, Confidence: {result.confidenceScore}, Guid:{' '}
+                {result.guid}
+              </Text>
+            </View>
+          ))}
+<View style={{height: 20}} />
+          <Button title="Go Back" onPress={goBack} />
+        </>
+      )}
+
+      {displayMode === 'identification' && (
+        <>
+          {identificationResults.length > 0 && (
+            <React.Fragment key="identification-heading">
+              <Text style={styles.text}>Identification Results:</Text>
+              <View style={{height: 20}} />
+            </React.Fragment>
+          )}
+
+          {identificationResults.map((result, index) => (
+            <View key={index}>
+              <Text>
+                <View style={{height: 20}} />
+                Tier: {result.tier}, Confidence: {result.confidenceScore}, Guid:{' '}
+                {result.guid}
+              </Text>
+            </View>
+          ))}
+<View style={{height: 20}} />
+          <Button title="Go Back" onPress={goBack} />
+        </>
+      )}
+
+      {!displayMode && (
+        <>
+          <Button
+            title="Start Biometric Search"
+            onPress={handleIdentificationPlus}
+          />
+          <View style={{height: 20}} />
+          <Button title="Start Identification" onPress={handleIdentification} />
+        </>
+      )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    padding: 20,
   },
   text: {
     fontSize: 20,
