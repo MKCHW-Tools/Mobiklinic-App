@@ -10,3 +10,20 @@ export const RETRIEVE_LOCAL_USER_QUERY = gql`
     }
   }
 `;
+
+// query to retreive data filled in patient data
+
+export const GET_PATIENT_DATA_QUERY = gql`
+  query GetPatientData($patientId: ID!) {
+    patient(id: $patientId) {
+      fullname
+      phone
+      gender
+      dob
+      weight
+      height
+      address
+      age
+    }
+  }
+`;
