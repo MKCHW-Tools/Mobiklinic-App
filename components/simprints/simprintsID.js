@@ -150,9 +150,16 @@ function SimprintsID({navigation}) {
             ))}
             <View style={{height: 20}} />
             {!showButtons && (
+              // <TouchableOpacity
+              //   style={styles.buttonStyle}
+              //   onPress={() => navigation.navigate('PatientData')}>
               <TouchableOpacity
                 style={styles.buttonStyle}
-                onPress={() => navigation.navigate('PatientData')}>
+                onPress={() =>
+                  navigation.navigate('PatientData', {
+                    simprintsId: enrollmentGuid,
+                  })
+                }>
                 <Text style={styles.buttonText}>Diagnose Patient</Text>
                 <Icon
                   name="arrow-right"
@@ -178,7 +185,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // justifyContent: 'center',
     alignItems: 'center',
-    marginVertical:10,
+    marginVertical: 10,
   },
   modalContainer: {
     flex: 1,
@@ -233,7 +240,7 @@ const styles = StyleSheet.create({
   title: {
     color: COLORS.ACCENT_1,
     fontSize: 20,
-    marginVertical:30,
+    marginVertical: 30,
     fontWeight: 'bold',
     textTransform: 'uppercase',
     padding: DIMENS.PADDING,
