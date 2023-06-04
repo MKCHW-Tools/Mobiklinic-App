@@ -15,21 +15,25 @@ import {
 import {Picker} from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/Feather';
 // import DateTimePicker from '@react-native-community/datetimepicker';
-
-
 import {COLORS, DIMENS} from '../constants/styles';
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import {
   _removeStorageItem,
   generateRandomCode,
   MyDate,
 } from '../helpers/functions';
-
 import {DiagnosisContext} from '../providers/Diagnosis';
 import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
+// add apollo client
+import {useMutation, useQuery} from '@apollo/client';
+import {
+  LOGIN_USER,
+  SIGN_UP_USER,
+  DOWNLOAD_MUTATION,
+  SAVE_LOCAL_USER_MUTATION,
+} from '../graphql/Mutations';
+import {RETRIEVE_LOCAL_USER_QUERY} from '../graphql/Queries';
 
 const PatientData = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -51,6 +55,8 @@ const PatientData = ({navigation}) => {
     dob: new Date(),
     diagnosises: [],
   });
+
+  const [saveDiagnosis] = useMutation(SAVE_LOCAL_USER_MUTATION);
 
   const save = async () => {
     const {
@@ -86,32 +92,41 @@ const PatientData = ({navigation}) => {
     };
 
     if (fullname && gender && age_group && condition) {
-      // const data = await AsyncStorage.getItem('@diagnosis')
-      // const prevstate = data !== null ? JSON.parse(data) : []
       setState({...state, isLoading: true});
 
-      AsyncStorage.setItem(
-        '@diagnosis',
-        JSON.stringify([newstate, ...diagnoses]),
-        () => {
-          diagnosisContext.setDiagnoses([newstate, ...diagnoses]);
-
-          Alert.alert('Saved', `Diagnosis code: ${code}`, [{text: 'OK'}]);
-
-          setState({
-            fullname: '',
-            gender: '',
-            age_group: '',
-            phone: '',
-            condition: '',
-            dob: '',
-            weight: 0,
-            height: 0,
+      try {
+        const response = await saveDiagnosis({
+          variables: {
+            code,
+            date,
+            patient: {
+              fullname,
+              phone,
+              gender,
+              dob,
+              weight,
+              height,
+              address,
+              age: age_group,
+            },
+            details: condition,
             followups: [],
-            isLoading: false,
-          });
-        },
-      );
+            uploaded: false,
+          },
+        });
+        // ...handle the response...
+        if (response.data) {
+          // Process the successful response
+          console.log('Diagnosis saved successfully!', response.data);
+          // Perform any additional actions or update the UI accordingly
+        } else {
+          // Handle the case where the response does not contain data
+          console.log('Response does not contain data');
+        }
+      } catch (error) {
+        Alert.alert('Error', 'Failed to save diagnosis.', [{text: 'OK'}]);
+        console.error(error);
+      }
     } else {
       Alert.alert('Ooops!', 'Complete all fields', [{text: 'OK'}]);
     }
