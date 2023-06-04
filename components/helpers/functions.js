@@ -11,18 +11,23 @@ import {
   REFRESH_TOKENS,
   DOWNLOAD_MUTATION,
   SAVE_LOCAL_USER_MUTATION,
-} from '../GraphQL/Mutations';
-import {RETRIEVE_LOCAL_USER_QUERY} from '../GraphQL/Queries';
+} from '../graphql/Mutations';
+import {RETRIEVE_LOCAL_USER_QUERY} from '../graphql/Queries';
 import {ApolloClient, InMemoryCache} from '@apollo/client';
 
 // Create an Apollo Client instance
 const client = new ApolloClient({
-  uri: 'https://staging.mobiklinic.com/graphql', // Replace with your GraphQL server URL
+  uri: 'https://staging.mobiklinic.com/graphql',
   cache: new InMemoryCache(),
 });
 
+// remove storage item
 export const _removeStorageItem = async key => {
-  return await AsyncStorage.removeItem(key);
+  try {
+    await AsyncStorage.removeItem(key);
+  } catch (error) {
+    console.error('Failed to remove item from storage:', error);
+  }
 };
 
 export const generateRandomCode = length => {
@@ -323,7 +328,7 @@ export const signUp = async data => {
   if (
     firstName === '' ||
     lastName === '' ||
-    phoneNumber.length < 12 ||
+    phoneNumber.length < 8 ||
     password === '' ||
     cPassword === ''
   ) {
