@@ -32,8 +32,10 @@ import com.simprints.libsimprints.SimHelper;
 public class IdentificationModule extends ReactContextBaseJavaModule {
     private static final int IDENTIFY_REQUEST_CODE = 1;
     private static final String EVENT_IDENTIFICATION_RESULT = "onIdentificationResult";
+    private static final int CONFIRM_IDENTITY_REQUEST_CODE = 2;
 
     private ReactApplicationContext reactContext;
+    private SimHelper simHelper;
 
     public IdentificationModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -51,6 +53,18 @@ public class IdentificationModule extends ReactContextBaseJavaModule {
         SimHelper simHelper = new SimHelper(projectID, userID);
         Intent identifyIntent = simHelper.identify(moduleID);
         getCurrentActivity().startActivityForResult(identifyIntent, IDENTIFY_REQUEST_CODE);
+    }
+
+    @ReactMethod
+    public void confirmSelectedBeneficiary(String sessionId, String selectedUserUniqueId) {
+        Intent intent = simHelper.confirmIdentity(getReactApplicationContext(), sessionId, selectedUserUniqueId);
+        getCurrentActivity().startActivityForResult(intent, CONFIRM_IDENTITY_REQUEST_CODE);
+    }
+
+    @ReactMethod
+    public void noMatch(String sessionId, String selectedUserUniqueId) {
+        Intent intent = simHelper.confirmIdentity(getReactApplicationContext(), sessionId, "none_selected");
+        getCurrentActivity().startActivityForResult(intent, CONFIRM_IDENTITY_REQUEST_CODE);
     }
 
     private final ActivityEventListener activityEventListener = new BaseActivityEventListener() {

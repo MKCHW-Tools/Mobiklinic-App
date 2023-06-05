@@ -32,7 +32,7 @@ import Loader from '../ui/loader';
 
 import { useNavigation } from '@react-navigation/native';
 
-const PatientSummary = ({route}, navigation) => {
+const PatientSummary = ({route, navigation}) => {
   
 
 

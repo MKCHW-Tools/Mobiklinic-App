@@ -1,7 +1,9 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   DeviceEventEmitter,
+  NativeEventEmitter,
   Text,
+  Linking,
   Button,
   Alert,
   Modal,
@@ -17,41 +19,59 @@ import {
 import {COLORS, DIMENS} from '../constants/styles';
 import Icon from 'react-native-vector-icons/Feather';
 import CustomHeader from '../parts/custom-header';
+import {TouchableOpacityBase} from 'react-native';
 
 const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
+var OpenActivity = NativeModules.OpenActivity;
 
-function SimprintsID({navigation}) {
+// DeviceEventEmitter.addListener('SimprintsRegistrationSuccess', event => {
+//   const {guid} = event;
+//   console.log(event);
+//   // Alert.alert('Beneficiary Biometrics registered', guid);
+// });
+
+const SimprintsID = ({navigation}) => {
   const [identificationPlusResults, setIdentificationPlusResults] = useState(
     [],
   );
+  const [identificationResults, setIdentificationResults] = useState([]);
+  const [displayMode, setDisplayMode] = useState(null);
   const [enrollmentGuid, setEnrollmentGuid] = useState(null);
+  const [sessionId, setSessionId] = useState(null);
+  const [selectedUserUniqueId, setSelectedUserUniqueId] = useState(null);
+  const [noMatchButtonPressed, setNoMatchButtonPressed] = useState(false);
   const [showButtons, setShowButtons] = useState(true);
 
   useEffect(() => {
-    const identificationResultPlusSubscription = DeviceEventEmitter.addListener(
+    const identificationPlusSubscription = DeviceEventEmitter.addListener(
       'onIdentificationResult',
       results => {
         setIdentificationPlusResults(results);
-        setShowButtons(false); // Hide buttons after getting identification results
+        setDisplayMode('identificationPlus');
       },
     );
 
-    return () => {
-      identificationResultPlusSubscription.remove();
-    };
-  }, []);
+    const identificationSubscription = DeviceEventEmitter.addListener(
+      'onIdentificationResult',
+      results => {
+        setIdentificationResults(results);
+        setDisplayMode('identification');
+      },
+    );
 
-  useEffect(() => {
     const registrationSuccessSubscription = DeviceEventEmitter.addListener(
       'SimprintsRegistrationSuccess',
       event => {
         const {guid} = event;
         setEnrollmentGuid(guid);
+        setDisplayMode('enrollment');
       },
     );
 
     return () => {
+      identificationPlusSubscription.remove();
+      identificationSubscription.remove();
       registrationSuccessSubscription.remove();
     };
   }, []);
@@ -61,13 +81,40 @@ function SimprintsID({navigation}) {
     const moduleID = 'test_user';
     const userID = 'mpower';
 
-    setShowButtons(false); // Hide buttons when identification starts
     IdentificationPlus.registerOrIdentify(projectID, moduleID, userID);
   };
 
+  const handleIdentification = () => {
+    const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
+    const moduleID = 'test_user';
+    const userID = 'mpower';
+
+    IdentificationModule.triggerIdentification(projectID, moduleID, userID);
+  };
+
+  const confirmSelectedBeneficiary = () => {
+    if (sessionId && selectedUserUniqueId) {
+      IdentificationPlus.confirmSelectedBeneficiary(
+        sessionId,
+        selectedUserUniqueId,
+      );
+    }
+    navigation.navigate('PatientData');
+    console.log('Beneficiary confirmed');
+  };
+
+  useEffect(() => {
+    if (noMatchButtonPressed) {
+      console.log('No match found button pressed');
+      // Call the noMatchFound method here if needed
+      setNoMatchButtonPressed(false); // Reset the button pressed state
+    }
+  }, [noMatchButtonPressed]);
+
   const goBack = () => {
-    setShowButtons(true);
+    setDisplayMode(null);
     setIdentificationPlusResults([]);
+    setIdentificationResults([]);
     setEnrollmentGuid(null);
   };
 
@@ -101,14 +148,79 @@ function SimprintsID({navigation}) {
         <Text style={styles.title}>Mobiklinic</Text>
 
         <View style={styles.container}>
-          <View>
-            {showButtons && (
-              <>
-                <View style={{height: 20}} />
+          {displayMode === 'enrollment' && (
+            <>
+              {enrollmentGuid && (
+                <>
+                  <Text style={styles.text}>Beneficiary Enrolled on ID:</Text>
+                  <Text style={styles.results}>{enrollmentGuid}</Text>
+                  <View style={{height: 20}} />
+                </>
+              )}
+              <View style={{height: 20}} />
+              <Button
+                title="Go Back"
+                onPress={() => navigation.navigate('PatientData')}
+              />
+            </>
+          )}
+
+          {displayMode === 'identificationPlus' && (
+            <>
+              {identificationPlusResults.length > 0 && (
+                <React.Fragment key="identification-plus-heading">
+                  <Text style={styles.text}>Beneficiary Identified:</Text>
+                  <View style={{height: 20}} />
+                </React.Fragment>
+              )}
+
+              {identificationPlusResults
+                .filter(
+                  result =>
+                    result.confidenceScore >= 50 &&
+                    result.confidenceScore <= 99,
+                )
+                .map((result, index) => (
+                  <View key={index}>
+                    <Text>
+                      <View style={{height: 20}} />
+                      Tier: {result.tier}, Confidence: {result.confidenceScore},
+                      Guid: {result.guid}
+                    </Text>
+                  </View>
+                ))}
+              <View style={{height: 20}} />
+              {showButtons ? (
+                <>
+                  <TouchableOpacity
+                    style={styles.buttonStyle}
+                    onPress={confirmSelectedBeneficiary}>
+                    <Text style={styles.buttonText}> Confirm Beneficiary</Text>
+                    <Icon
+                      name="arrow-right"
+                      size={20}
+                      strokeSize={3}
+                      color={COLORS.WHITE}
+                    />
+                  </TouchableOpacity>
+                  <View style={{height: 20}} />
+                  <TouchableOpacity
+                    style={styles.buttonStyle}
+                    onPress={goBack}>
+                    <Text style={styles.buttonText}> No Match</Text>
+                    <Icon
+                      name="arrow-right"
+                      size={20}
+                      strokeSize={3}
+                      color={COLORS.WHITE}
+                    />
+                  </TouchableOpacity>
+                </>
+              ) : (
                 <TouchableOpacity
                   style={styles.buttonStyle}
-                  onPress={handleIdentificationPlus}>
-                  <Text style={styles.buttonText}>Launch Simprints</Text>
+                  onPress={() => setNoMatchButtonPressed(true)}>
+                  <Text style={styles.buttonText}> No Match</Text>
                   <Icon
                     name="arrow-right"
                     size={20}
@@ -116,44 +228,83 @@ function SimprintsID({navigation}) {
                     color={COLORS.WHITE}
                   />
                 </TouchableOpacity>
+              )}
+            </>
+          )}
 
-                <View style={{height: 20}} />
-              </>
-            )}
-            <View style={{height: 20}} />
-
-            {enrollmentGuid && (
-              <>
-                <Text style={styles.text}>Beneficiary Enrolled on ID:</Text>
-                <Text style={styles.results}>{enrollmentGuid}</Text>
-                <View style={{height: 20}} />
-              </>
-            )}
-
-            {identificationPlusResults.length > 0 && (
-              <>
-                <Text style={styles.text}>Beneficiary Identified :</Text>
-                <View style={{height: 20}} />
-              </>
-            )}
-
-            {identificationPlusResults.map(result => (
-              <View key={result.guid}>
-                <Text>
+          {displayMode === 'identification' && (
+            <>
+              {identificationResults.length > 0 && (
+                <React.Fragment key="identification-heading">
+                  <Text style={styles.text}>Identification Results:</Text>
                   <View style={{height: 20}} />
-                  <Text style={styles.results}>
-                    Tier: {result.tier}, Confidence: {result.confidenceScore},
-                    Guid: {result.guid}
-                  </Text>
-                </Text>
-              </View>
-            ))}
-            <View style={{height: 20}} />
-            {!showButtons && (
+                </React.Fragment>
+              )}
+
+              {identificationResults
+                .filter(
+                  result =>
+                    result.confidenceScore >= 50 &&
+                    result.confidenceScore <= 99,
+                )
+                .map((result, index) => (
+                  <View key={index}>
+                    <Text style={styles.text}>
+                      <View style={{height: 20}} />
+                      Tier: {result.tier}, Confidence: {result.confidenceScore},
+                      Guid: {result.guid}
+                    </Text>
+                    
+                  </View>
+                ))}
+              <View style={{height: 20}} />
+              {showButtons ? (
+                <>
+                  <TouchableOpacity
+                    style={styles.buttonStyle}
+                    onPress={confirmSelectedBeneficiary}>
+                    <Text style={styles.buttonText}>Confirm Beneficiary</Text>
+                    <Icon
+                      name="arrow-right"
+                      size={20}
+                      strokeSize={3}
+                      color={COLORS.WHITE}
+                    />
+                  </TouchableOpacity>
+
+                  <View style={{height: 20}} />
+                  <TouchableOpacity style={styles.buttonStyle} onPress={goBack}>
+                    <Text style={styles.buttonText}>No Match</Text>
+                    <Icon
+                      name="arrow-right"
+                      size={20}
+                      strokeSize={3}
+                      color={COLORS.WHITE}
+                    />
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <TouchableOpacity style={styles.buttonStyle} onPress={goBack}>
+                  <Text style={styles.buttonText}>Go Back</Text>
+                  <Icon
+                    name="arrow-right"
+                    size={20}
+                    strokeSize={3}
+                    color={COLORS.WHITE}
+                  />
+                </TouchableOpacity>
+              )}
+            </>
+          )}
+
+          {!displayMode && (
+            <>
               <TouchableOpacity
                 style={styles.buttonStyle}
-                onPress={() => navigation.navigate('PatientData')}>
-                <Text style={styles.buttonText}>Diagnose Patient</Text>
+                onPress={handleIdentification}>
+                <Text style={styles.buttonText}>
+                  Launch Biometrics to start registration
+                </Text>
                 <Icon
                   name="arrow-right"
                   size={20}
@@ -161,13 +312,25 @@ function SimprintsID({navigation}) {
                   color={COLORS.WHITE}
                 />
               </TouchableOpacity>
-            )}
-          </View>
+              <View style={{height: 20}} />
+              <TouchableOpacity
+                style={styles.buttonStyle}
+                onPress={handleIdentification}>
+                <Text style={styles.buttonText}>Identify Beneficiary </Text>
+                <Icon
+                  name="arrow-right"
+                  size={20}
+                  strokeSize={3}
+                  color={COLORS.WHITE}
+                />
+              </TouchableOpacity>
+            </>
+          )}
         </View>
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -178,7 +341,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // justifyContent: 'center',
     alignItems: 'center',
-    marginVertical:10,
+    marginVertical: 10,
   },
   modalContainer: {
     flex: 1,
@@ -199,10 +362,10 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   text: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: COLORS.BLACK,
+    color: 'rgba(0,0,0,0.7)',
   },
   results: {
     fontSize: 16,
@@ -233,7 +396,7 @@ const styles = StyleSheet.create({
   title: {
     color: COLORS.ACCENT_1,
     fontSize: 20,
-    marginVertical:30,
+    marginVertical: 30,
     fontWeight: 'bold',
     textTransform: 'uppercase',
     padding: DIMENS.PADDING,
