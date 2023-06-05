@@ -26,17 +26,17 @@ import {
   MyDate,
 } from '../helpers/functions';
 
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 import {DiagnosisContext} from '../providers/Diagnosis';
 import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 
-const PatientData = () => {
+const PatientData = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
   const {diagnoses} = diagnosisContext;
 
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
   // date
   const currentDate = new Date();
 
@@ -262,7 +262,7 @@ const PatientData = () => {
         <TouchableOpacity
           style={STYLES.btn}
           onPress={() =>
-            navigation.navigate('PatientSummary', {paramKey: state })
+            navigation.navigate('PatientSummary', {paramKey: state})
           }>
           <Text style={STYLES.btnText}>Next</Text>
           <Icon
@@ -427,6 +427,7 @@ const STYLES = StyleSheet.create({
     borderColor: COLORS.GREY,
     borderRadius: 15,
     backgroundColor: COLORS.GREY_LIGHTER,
+    color: 'rgba(0,0,0,0.7)',
   },
   btn: {
     backgroundColor: COLORS.BLACK,
