@@ -308,6 +308,7 @@ const STYLES = StyleSheet.create({
   },
   title: {
     fontWeight: 'bold',
+    
     color: COLORS.BLACK,
     alignItems: 'center',
     flexGrow: 1,
