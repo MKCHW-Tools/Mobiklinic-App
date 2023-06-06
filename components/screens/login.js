@@ -1,63 +1,37 @@
-import React, { useState } from 'react';
+import * as React from 'react';
+
 import {
   View,
   Image,
+  Alert,
   Text,
   TextInput,
   StyleSheet,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
-import { useMutation, gql } from '@apollo/client';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation from @react-navigation/native
 
-import { CustomStatusBar } from '../ui/custom.status.bar';
-import Loader from '../ui/loader';
-import { COLORS, DIMENS } from '../constants/styles';
 import Icon from 'react-native-vector-icons/Feather';
+import {COLORS, DIMENS} from '../constants/styles';
+import {signIn} from '../helpers/functions';
 
-const LOGIN_USER = gql`
-  mutation LoginUser($username: String!, $password: String!) {
-    loginUser(password: $password, username: $username) {
-      user {
-        username
-        firstName
-        pk
-        id
-      }
-    }
-  }
-`;
+import {AuthContext} from '../contexts/auth';
+import {CustomStatusBar} from '../ui/custom.status.bar';
+import Loader from '../ui/loader';
 
-const Login = () => {
-  const navigation = useNavigation(); // Use useNavigation to get the navigation object
-  const [user, setUser] = useState({ username: '', password: '' });
-  const [isLoading, setIsLoading] = useState(false);
-  const [loginUser] = useMutation(LOGIN_USER);
+const Login = ({navigation}) => {
+  const {
+    setUser: setMyUser,
+    isLoading,
+    setIsLoading,
+    tokens,
+    setTokens,
+  } = React.useContext(AuthContext);
+  const [user, setUser] = React.useState({
+    username: '',
+    password: '',
+  });
 
-  const handleLogin = async () => {
-    setIsLoading(true);
-    try {
-      const { data } = await loginUser({
-        variables: {
-          username: user.username,
-          password: user.password,
-        },
-      });
-      console.log(data);
-      setIsLoading(false);
-      if (data.loginUser) {
-        navigation.navigate('Dashboard', { user: data.loginUser.user });
-      }
-    } catch (error) {
-      setIsLoading(false);
-      Alert.alert('Error', error.message);
-    }
-  };
-
-  if (isLoading) {
-    return <Loader />;
-  }
+  if (isLoading) return <Loader />;
 
   return (
     <View style={styles.container}>
@@ -65,19 +39,19 @@ const Login = () => {
 
       <View style={styles.logoContainer}>
         <Image
-          style={{ width: 80, height: 80 }}
+          style={{width: 80, height: 80}}
           source={require('../imgs/logo.png')}
         />
         <Text style={styles.title}>Sign in</Text>
       </View>
-
       <View style={styles.formContainer}>
         <TextInput
           style={styles.input}
           autoCorrect={false}
           placeholderTextColor="grey"
+          // keyboardType={'phone-pad'}
           selectionColor={COLORS.SECONDARY}
-          onChangeText={(text) => setUser({ ...user, username: text })}
+          onChangeText={text => setUser({...user, username: text})}
           value={user.username}
           placeholder="Phone number e.g: 256778xxxxxx"
         />
@@ -89,25 +63,41 @@ const Login = () => {
           autoCorrect={false}
           placeholderTextColor="grey"
           selectionColor={COLORS.SECONDARY}
-          onChangeText={(text) => setUser({ ...user, password: text })}
+          onChangeText={text => setUser({...user, password: text})}
           value={user.password}
           placeholder="Password"
         />
 
-        <TouchableOpacity
-          style={[styles.btn, styles.btnPrimary]}
-          onPress={handleLogin}
-          disabled={!user.username || !user.password}
-        >
-          <Text style={styles.whiteText}>Sign in</Text>
-          <Icon
-            name="arrow-right"
-            size={20}
-            strokeSize={3}
-            color={COLORS.WHITE}
-          />
-        </TouchableOpacity>
-
+        {user.username != '' && user.password != '' ? (
+          <TouchableOpacity
+            style={[styles.btn, styles.btnPrimary]}
+            onPress={() => {
+              setIsLoading(true);
+              signIn({
+                user,
+                setIsLoading,
+                setMyUser,
+              });
+            }}>
+            <Text style={styles.whiteText}>Sign in</Text>
+            <Icon
+              name="arrow-right"
+              size={20}
+              strokeSize={3}
+              color={COLORS.WHITE}
+            />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity style={[styles.btn, styles.btnInfo]}>
+            <Text style={styles.muteText}>Sign in</Text>
+            <Icon
+              name="arrow-right"
+              size={20}
+              strokeSize={5}
+              color={COLORS.WHITE_LOW}
+            />
+          </TouchableOpacity>
+        )}
         <TouchableOpacity onPress={() => navigation.navigate('signUp')}>
           <Text style={styles.linkItem}>Don't have an Account? Sign up</Text>
         </TouchableOpacity>
@@ -115,6 +105,8 @@ const Login = () => {
     </View>
   );
 };
+
+export default Login;
 
 const styles = StyleSheet.create({
   container: {
@@ -165,6 +157,12 @@ const styles = StyleSheet.create({
   },
   btn: {
     padding: DIMENS.PADDING,
+  },
+  errorMsg: {
+    color: COLORS.ERRORS,
+  },
+  btn: {
+    padding: DIMENS.PADDING,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -188,5 +186,3 @@ const styles = StyleSheet.create({
     color: COLORS.WHITE,
   },
 });
-
-export default Login;
