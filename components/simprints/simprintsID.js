@@ -182,11 +182,12 @@ const SimprintsID = ({navigation}) => {
                 )
                 .map((result, index) => (
                   <View key={index}>
-                    <Text>
-                      <View style={{height: 20}} />
-                      Tier: {result.tier}, Confidence: {result.confidenceScore},
-                      Guid: {result.guid}
+                    <View style={{height: 20}} />
+                    <Text style={styles.results}>Tier: {result.tier}</Text>
+                    <Text style={styles.results}>
+                      Confidence: {result.confidenceScore}
                     </Text>
+                    <Text style={styles.results}>Guid: {result.guid}</Text>
                   </View>
                 ))}
               <View style={{height: 20}} />
@@ -204,9 +205,7 @@ const SimprintsID = ({navigation}) => {
                     />
                   </TouchableOpacity>
                   <View style={{height: 20}} />
-                  <TouchableOpacity
-                    style={styles.buttonStyle}
-                    onPress={goBack}>
+                  <TouchableOpacity style={styles.buttonStyle} onPress={goBack}>
                     <Text style={styles.buttonText}> No Match</Text>
                     <Icon
                       name="arrow-right"
@@ -236,7 +235,7 @@ const SimprintsID = ({navigation}) => {
             <>
               {identificationResults.length > 0 && (
                 <React.Fragment key="identification-heading">
-                  <Text style={styles.text}>Identification Results:</Text>
+                  <Text style={styles.text}>Identification Results</Text>
                   <View style={{height: 20}} />
                 </React.Fragment>
               )}
@@ -249,12 +248,12 @@ const SimprintsID = ({navigation}) => {
                 )
                 .map((result, index) => (
                   <View key={index}>
-                    <Text style={styles.text}>
-                      <View style={{height: 20}} />
-                      Tier: {result.tier}, Confidence: {result.confidenceScore},
-                      Guid: {result.guid}
+                    <View style={{height: 20}} />
+                    <Text style={styles.results}>Tier: {result.tier}</Text>
+                    <Text style={styles.results}>
+                      Confidence: {result.confidenceScore}
                     </Text>
-                    
+                    <Text style={styles.results}>Guid: {result.guid}</Text>
                   </View>
                 ))}
               <View style={{height: 20}} />
@@ -298,13 +297,11 @@ const SimprintsID = ({navigation}) => {
           )}
 
           {!displayMode && (
-            <>
+            <View style={styles.btnContainer}>
               <TouchableOpacity
                 style={styles.buttonStyle}
                 onPress={handleIdentification}>
-                <Text style={styles.buttonText}>
-                  Launch Biometrics to start registration
-                </Text>
+                <Text style={styles.buttonText}>Start Registration</Text>
                 <Icon
                   name="arrow-right"
                   size={20}
@@ -324,7 +321,7 @@ const SimprintsID = ({navigation}) => {
                   color={COLORS.WHITE}
                 />
               </TouchableOpacity>
-            </>
+            </View>
           )}
         </View>
       </View>
@@ -362,7 +359,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   text: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
     color: 'rgba(0,0,0,0.7)',
@@ -370,7 +367,10 @@ const styles = StyleSheet.create({
   results: {
     fontSize: 16,
     color: COLORS.BLACK,
-    fontWeight: 'light',
+    fontWeight: 'medium',
+    borderBottomWidth: 1,
+    padding: DIMENS.PADDING,
+    borderBottomColor: '#000',
   },
   buttonStyle: {
     backgroundColor: COLORS.BLACK,
@@ -391,15 +391,18 @@ const styles = StyleSheet.create({
   wrap: {
     flex: 2,
     alignItems: 'center',
-    padding: 20,
+    padding: 25,
   },
   title: {
     color: COLORS.ACCENT_1,
     fontSize: 20,
-    marginVertical: 30,
+    marginVertical: 10,
     fontWeight: 'bold',
     textTransform: 'uppercase',
     padding: DIMENS.PADDING,
+  },
+  btnContainer: {
+    paddingVertical: 100,
   },
 });
 

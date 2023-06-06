@@ -38,28 +38,28 @@ const PatientMedical = ({navigation}) => {
 
   const [state, setState] = React.useState({
     isLoading: false,
-    labResults: '',
-    existingMedical: '',
-    currentMedication: '',
-    phone: '',
+    patient: '',
     condition: '',
-    sampleCollection: '',
+    date_of_diagnosis: new Date(),
+    impression: [],
+    drugs_prescribed: '',
     isPregnant: false,
-    diagnoseDate: new Date(),
-    diagnosises: [],
+    dosage: '',
+    frequency: '',
+    duration:'',
   });
 
   const save = async () => {
     const {
-      currentMedication,
-      existingMedical,
+      patient,
       condition,
-      dateOfDiagnosis,
+      date_of_diagnosis,
+      impression,
+      drugs_prescribed,
+      isPregnant,
       dosage,
       frequency,
-      labResults,
-      sampleCollection,
-      isPregnant,
+      duration,
     } = state;
     const code = generateRandomCode(5),
       date = MyDate();
@@ -67,23 +67,18 @@ const PatientMedical = ({navigation}) => {
     const newstate = {
       code,
       date,
-      patient: {
-        existingMedical,
-        currentMedication,
-        dateOfDiagnosis,
-        condition,
-        dosage,
-        frequency,
-        labResults,
-        sampleCollection,
-      },
-      details: condition,
-      pregnant: isPregnant,
-      followups: [],
-      uploaded: false,
+      patient: '',
+      condition: '',
+      date_of_diagnosis: new Date(),
+      impression: [],
+      drugs_prescribed: '',
+      isPregnant: false,
+      dosage: '',
+      frequency: '',
+      duration:'',
     };
 
-    if (dateOfDiagnosis && existingMedical && condition) {
+    if (date_of_diagnosis && impression && drugs_prescribed && dosage && frequency && duration) {
       // const data = await AsyncStorage.getItem('@diagnosis')
       // const prevstate = data !== null ? JSON.parse(data) : []
       setState({...state, isLoading: true});
@@ -97,17 +92,16 @@ const PatientMedical = ({navigation}) => {
           Alert.alert('Saved', `Diagnosis code: ${code}`, [{text: 'OK'}]);
 
           setState({
-            existingMedical: '',
-            currentMedication: '',
+            patient: '',
             condition: '',
-            dateOfDiagnosis: '',
+            date_of_diagnosis: new Date(),
+            impression: [],
+            drugs_prescribed: '',
+            isPregnant: false,
             dosage: '',
             frequency: '',
-            sampleCollection,
-            labResults,
-            followups: [],
+            duration: '',
             isLoading: false,
-            isPregnant: false,
           });
         },
       );
@@ -172,8 +166,8 @@ const PatientMedical = ({navigation}) => {
           autoCorrect={false}
           placeholderTextColor="rgba(0,0,0,0.7)"
           selectionColor={COLORS.SECONDARY}
-          onChangeText={text => setState({...state, condition: text})}
-          value={state.condition}
+          onChangeText={text => setState({...state, impression: text})}
+          value={state.impression}
           placeholder="Condition/Disorder Name"
         />
         {/* date of diagnoses */}
@@ -182,8 +176,8 @@ const PatientMedical = ({navigation}) => {
           autoCorrect={false}
           placeholderTextColor="rgba(0,0,0,0.7)"
           selectionColor={COLORS.SECONDARY}
-          onChangeText={text => setState({...state, dateOfDiagnosis: text})}
-          value={state.dateOfDiagnosis}
+          onChangeText={text => setState({...state, date_of_diagnosis: text})}
+          value={state.date_of_diagnosis}
           placeholder="Date of Diagnosis"
         />
         {/* drug adminstered */}
@@ -192,8 +186,8 @@ const PatientMedical = ({navigation}) => {
           autoCorrect={false}
           placeholderTextColor="rgba(0,0,0,0.7)"
           selectionColor={COLORS.SECONDARY}
-          onChangeText={text => setState({...state, currentMedication: text})}
-          value={state.currentMedication}
+          onChangeText={text => setState({...state, drugs_prescribed: text})}
+          value={state.drugs_prescribed}
           placeholder="Name Of Drug Adminstered"
         />
         {/* is pregnant */}
@@ -233,33 +227,11 @@ const PatientMedical = ({navigation}) => {
             autoCorrect={false}
             placeholderTextColor="rgba(0,0,0,0.7)"
             selectionColor={COLORS.SECONDARY}
-            onChangeText={text => setState({...state, frequency: text})}
-            value={state.frequency}
+            onChangeText={text => setState({...state, duration: text})}
+            value={state.duration}
             placeholder="Duration"
           />
         </View>
-
-        {/* lab results */}
-        <TextInput
-          style={STYLES.input}
-          autoCorrect={false}
-          placeholderTextColor="rgba(0,0,0,0.7)"
-          selectionColor={COLORS.SECONDARY}
-          onChangeText={text => setState({...state, labResults: text})}
-          value={state.labResults}
-          placeholder="Lab Results"
-        />
-
-        {/* date for sample collection */}
-        <TextInput
-          style={STYLES.input}
-          autoCorrect={false}
-          placeholderTextColor="rgba(0,0,0,0.7)"
-          selectionColor={COLORS.SECONDARY}
-          onChangeText={text => setState({...state, sampleCollection: text})}
-          value={state.sampleCollection}
-          placeholder="Date of Sample Collection"
-        />
 
         <TouchableOpacity
           style={STYLES.btn}
