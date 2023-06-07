@@ -32,6 +32,8 @@ import Loader from '../ui/loader';
 import {useNavigation} from '@react-navigation/native';
 
 const PatientSummary = ({route, navigation}) => {
+  const {simprintsGuid} = route.params;
+
   const _header = () => (
     <CustomHeader
       left={
@@ -73,22 +75,27 @@ const PatientSummary = ({route, navigation}) => {
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
       {_header()}
       <ScrollView style={STYLES.body} keyboardDismissMode="on-drag">
-        <Text style={STYLES.terms}>Patient Summary Details</Text>
+        <Text style={STYLES.terms}>Patient Profile </Text>
         <Text style={STYLES.text}>
-          Full Name: {route.params.paramKey.first_name}{route.params.paramKey.last_name}
+          Full Name {'\n'}
+          {route.params.paramKey.first_name}
+          {route.params.paramKey.last_name}
         </Text>
         <Text style={STYLES.text}>
-          Phone Number: {route.params.paramKey.phone_number}
+          Phone Number {'\n'}{route.params.paramKey.phone_number}
         </Text>
         <Text style={STYLES.text}>
-          District:{route.params.paramKey.district}
+          Primary Language{'\n'}{route.params.paramKey.primary_language}
         </Text>
-        <Text style={STYLES.text}>Country:{route.params.paramKey.country}</Text>
         <Text style={STYLES.text}>
-          Age Group:{route.params.paramKey.age_group}
+          District{'\n'}{route.params.paramKey.district}
+        </Text>
+        <Text style={STYLES.text}>Country{'\n'}{route.params.paramKey.country}</Text>
+        <Text style={STYLES.text}>
+          Age Group{'\n'}{route.params.paramKey.age_group}
         </Text>
 
-        <Text style={STYLES.text}>GUI:</Text>
+        <Text style={STYLES.text}>Simprints GUID{'\n'}</Text>
 
         <TouchableOpacity
           style={STYLES.btn}
@@ -129,9 +136,9 @@ const STYLES = StyleSheet.create({
     flex: 1,
     paddingVertical: 10,
     textAlign: 'left',
-    fontSize: 16,
+    fontSize: 18,
     color: COLORS.BLACK,
-    fontWeight: 'medium',
+    fontWeight: 'MEDIUM',
     borderBottomWidth: 1,
     padding: DIMENS.PADDING,
     borderBottomColor: '#000',

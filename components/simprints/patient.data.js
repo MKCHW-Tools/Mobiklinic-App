@@ -14,13 +14,9 @@ import {
 
 import {Picker} from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/Feather';
-
-// import DateTimePicker from '@react-native-community/datetimepicker';
-
+import DatePicker from 'react-native-datepicker';
 import {COLORS, DIMENS} from '../constants/styles';
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import {
   _removeStorageItem,
   generateRandomCode,
@@ -200,42 +196,64 @@ const PatientData = ({navigation}) => {
           style={STYLES.input}
           autoCorrect={false}
           placeholderTextColor="rgba(0,0,0,0.7)"
+          keyboardType="phone-pad"
           selectionColor={COLORS.SECONDARY}
           onChangeText={text => setState({...state, phone_number: text})}
           value={state.phone_number}
           placeholder="Phone Number *"
         />
         {/* country */}
-        <TextInput
-          style={STYLES.input}
-          autoCorrect={false}
-          placeholderTextColor="rgba(0,0,0,0.7)"
-          selectionColor={COLORS.SECONDARY}
-          onChangeText={text => setState({...state, country: text})}
-          value={state.country}
-          placeholder="Country*"
-        />
+        <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Picker
+            placeholder="Gender"
+            selectedValue={state.country}
+            onValueChange={(value, index) =>
+              setState({...state, country: value})
+            }
+            style={STYLES.pickerItemStyle}>
+            <Picker.Item label="Country" value="Country" />
+            <Picker.Item label="Uganda" value="Uganda" />
+            <Picker.Item label="Kenya" value="Kenya" />
+            <Picker.Item label="Rwanda" value="Rwanda" />
+            <Picker.Item label="Tanzania" value="Tanzania" />
+            <Picker.Item label="Burundi" value="Burundi" />
+          </Picker>
+        </View>
         {/* district */}
-        <TextInput
-          style={STYLES.input}
-          autoCorrect={false}
-          placeholderTextColor="rgba(0,0,0,0.7)"
-          selectionColor={COLORS.SECONDARY}
-          onChangeText={text => setState({...state, district: text})}
-          value={state.district}
-          placeholder="District of Residence *"
-        />
+        <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Picker
+            placeholder="District"
+            selectedValue={state.district}
+            onValueChange={(value, index) =>
+              setState({...state, district: value})
+            }
+            style={STYLES.pickerItemStyle}>
+            <Picker.Item label="District" value="District" />
+            <Picker.Item label="Kampala" value="Kampala" />
+            <Picker.Item label="Buikwe" value="Buikwe" />
+            <Picker.Item label="Jinja" value="Jinja" />
+            <Picker.Item label="Masaka" value="Masaka" />
+            <Picker.Item label="Mbarara" value="Mbarara" />
+          </Picker>
+        </View>
 
         {/* primary_language */}
-        <TextInput
-          style={STYLES.input}
-          autoCorrect={false}
-          placeholderTextColor="rgba(0,0,0,0.7)"
-          selectionColor={COLORS.SECONDARY}
-          onChangeText={text => setState({...state, primary_language: text})}
-          value={state.primary_language}
-          placeholder="Primary Language *"
-        />
+        <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Picker
+            placeholder="Language*"
+            selectedValue={state.primary_language}
+            onValueChange={(value, index) =>
+              setState({...state, primary_language: value})
+            }
+            style={STYLES.pickerItemStyle}>
+            <Picker.Item label="Primary Language" value="Language" />
+            <Picker.Item label="Luganda" value="Luganda" />
+            <Picker.Item label="Lusoga" value="Lusoga" />
+            <Picker.Item label="Runyakore" value="Runyakore" />
+            <Picker.Item label="Rutoro" value="Rutoro" />
+            <Picker.Item label="English" value="English" />
+          </Picker>
+        </View>
 
         {/* sex */}
         <View style={STYLES.pickers}>
@@ -274,6 +292,7 @@ const PatientData = ({navigation}) => {
           <TextInput
             style={STYLES.detail}
             autoCorrect={false}
+            keyboardType="numeric"
             placeholderTextColor="rgba(0,0,0,0.7)"
             onChangeText={text => setState({...state, weight: text})}
             value={state.weight}
@@ -282,6 +301,7 @@ const PatientData = ({navigation}) => {
           <TextInput
             style={STYLES.detail}
             autoCorrect={false}
+            keyboardType="numeric"
             placeholderTextColor="rgba(0,0,0,0.7)"
             onChangeText={text => setState({...state, height: text})}
             value={state.height}
@@ -399,12 +419,12 @@ const STYLES = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 20,
     paddingHorizontal: 15,
-    paddingVertical: -5,
     marginBottom: 10,
+    backgroundColor: COLORS.GREY,
   },
   pickerItemStyle: {
     color: 'rgba(0,0,0,0.7)',
-    fontWeight: 'bold', // Customize the text color here
+    // fontWeight: 'bold', // Customize the text color here
   },
   labeled: {
     flexDirection: 'row',
