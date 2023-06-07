@@ -39,87 +39,17 @@ const PatientData = ({navigation}) => {
 
   const [state, setState] = React.useState({
     isLoading: false,
-    first_name: '',
+    firstName: '',
     sex: 'female',
-    age_group: '',
-    phone_number: '',
-    last_name: '',
+    ageGroup: '',
+    phoneNumber: '',
+    lastName: '',
     weight: '',
     height: '',
     district: '',
     country: '',
-    date_of_birth: new Date(),
-    primary_language: '',
+    primaryLanguage: '',
   });
-
-  const save = async () => {
-    const {
-      first_name,
-      sex,
-      age_group,
-      phone_number,
-      last_name,
-      weight,
-      height,
-      district,
-      country,
-      date_of_birth,
-      primary_language,
-    } = state;
-    const code = generateRandomCode(5),
-      date = MyDate();
-
-    const newstate = {
-      code,
-      date,
-      first_name,
-      sex,
-      age_group,
-      first_name,
-      last_name,
-      weight,
-      height,
-      district,
-      country,
-      phone_number,
-      date_of_birth,
-      primary_language,
-      uploaded: false,
-    };
-
-    if (first_name && phone_number && age_group) {
-      // const data = await AsyncStorage.getItem('@diagnosis')
-      // const prevstate = data !== null ? JSON.parse(data) : []
-      setState({...state, isLoading: true});
-
-      AsyncStorage.setItem(
-        '@diagnosis',
-        JSON.stringify([newstate, ...diagnoses]),
-        () => {
-          diagnosisContext.setDiagnoses([newstate, ...diagnoses]);
-
-          Alert.alert('Saved', `Diagnosis code: ${code}`, [{text: 'OK'}]);
-
-          setState({
-            first_name: '',
-            sex: 'female',
-            age_group: '',
-            phone_number: '',
-            last_name: '',
-            weight: '',
-            height: '',
-            district: '',
-            country: '',
-            date_of_birth: new Date(),
-            primary_language: '',
-            isLoading: false,
-          });
-        },
-      );
-    } else {
-      Alert.alert('Ooops!', 'Complete all fields', [{text: 'OK'}]);
-    }
-  };
 
   const _header = () => (
     <CustomHeader
@@ -139,24 +69,7 @@ const PatientData = ({navigation}) => {
       title={
         <Text style={[STYLES.centerHeader, STYLES.title]}>PATIENT PROFILE</Text>
       }
-      right={
-        <TouchableOpacity
-          onPress={() => save()}
-          style={{
-            marginHorizontal: 4,
-            width: 35,
-            height: 35,
-            borderRadius: 100,
-            backgroundColor: COLORS.BLACK,
-            borderColor: COLORS.BLACK,
-            borderStyle: 'solid',
-            borderWidth: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Icon name="check" size={25} color={COLORS.WHITE} />
-        </TouchableOpacity>
-      }
+      
     />
   );
 
@@ -176,8 +89,8 @@ const PatientData = ({navigation}) => {
           autoCorrect={false}
           placeholderTextColor="rgba(0,0,0,0.7)"
           selectionColor={COLORS.BLACK}
-          onChangeText={text => setState({...state, first_name: text})}
-          value={state.first_name}
+          onChangeText={text => setState({...state, firstName: text})}
+          value={state.firstName}
           placeholder="First Name *"
         />
         {/* last name */}
@@ -186,8 +99,8 @@ const PatientData = ({navigation}) => {
           autoCorrect={false}
           placeholderTextColor="rgba(0,0,0,0.7)"
           selectionColor={COLORS.BLACK}
-          onChangeText={text => setState({...state, last_name: text})}
-          value={state.last_name}
+          onChangeText={text => setState({...state, lastName: text})}
+          value={state.lastName}
           placeholder="Last Name *"
         />
 
@@ -198,27 +111,11 @@ const PatientData = ({navigation}) => {
           placeholderTextColor="rgba(0,0,0,0.7)"
           keyboardType="phone-pad"
           selectionColor={COLORS.SECONDARY}
-          onChangeText={text => setState({...state, phone_number: text})}
-          value={state.phone_number}
+          onChangeText={text => setState({...state, phoneNumber: text})}
+          value={state.phoneNumber}
           placeholder="Phone Number *"
         />
-        {/* country */}
-        <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Picker
-            placeholder="Gender"
-            selectedValue={state.country}
-            onValueChange={(value, index) =>
-              setState({...state, country: value})
-            }
-            style={STYLES.pickerItemStyle}>
-            <Picker.Item label="Country" value="Country" />
-            <Picker.Item label="Uganda" value="Uganda" />
-            <Picker.Item label="Kenya" value="Kenya" />
-            <Picker.Item label="Rwanda" value="Rwanda" />
-            <Picker.Item label="Tanzania" value="Tanzania" />
-            <Picker.Item label="Burundi" value="Burundi" />
-          </Picker>
-        </View>
+        
         {/* district */}
         <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
           <Picker
@@ -241,9 +138,9 @@ const PatientData = ({navigation}) => {
         <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
           <Picker
             placeholder="Language*"
-            selectedValue={state.primary_language}
+            selectedValue={state.primaryLanguage}
             onValueChange={(value, index) =>
-              setState({...state, primary_language: value})
+              setState({...state, primaryLanguage: value})
             }
             style={STYLES.pickerItemStyle}>
             <Picker.Item label="Primary Language" value="Language" />
@@ -273,9 +170,9 @@ const PatientData = ({navigation}) => {
         <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
           <Picker
             style={{color: 'rgba(0,0,0,0.7)'}}
-            selectedValue={state.age_group}
+            selectedValue={state.ageGroup}
             onValueChange={(value, index) =>
-              setState({...state, age_group: value})
+              setState({...state, ageGroup: value})
             }>
             <Picker.Item label="Age group" value="Age group" />
             <Picker.Item label="0 - 3" value="0 - 3" />

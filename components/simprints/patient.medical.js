@@ -49,66 +49,7 @@ const PatientMedical = ({navigation}) => {
     duration:'',
   });
 
-  const save = async () => {
-    const {
-      patient,
-      condition,
-      date_of_diagnosis,
-      impression,
-      drugs_prescribed,
-      isPregnant,
-      dosage,
-      frequency,
-      duration,
-    } = state;
-    const code = generateRandomCode(5),
-      date = MyDate();
-
-    const newstate = {
-      code,
-      date,
-      patient: '',
-      condition: '',
-      date_of_diagnosis: new Date(),
-      impression: [],
-      drugs_prescribed: '',
-      isPregnant: false,
-      dosage: '',
-      frequency: '',
-      duration:'',
-    };
-
-    if (date_of_diagnosis && impression && drugs_prescribed && dosage && frequency && duration) {
-      // const data = await AsyncStorage.getItem('@diagnosis')
-      // const prevstate = data !== null ? JSON.parse(data) : []
-      setState({...state, isLoading: true});
-
-      AsyncStorage.setItem(
-        '@diagnosis',
-        JSON.stringify([newstate, ...diagnoses]),
-        () => {
-          diagnosisContext.setDiagnoses([newstate, ...diagnoses]);
-
-          Alert.alert('Saved', `Diagnosis code: ${code}`, [{text: 'OK'}]);
-
-          setState({
-            patient: '',
-            condition: '',
-            date_of_diagnosis: new Date(),
-            impression: [],
-            drugs_prescribed: '',
-            isPregnant: false,
-            dosage: '',
-            frequency: '',
-            duration: '',
-            isLoading: false,
-          });
-        },
-      );
-    } else {
-      Alert.alert('Ooops!', 'Complete all fields', [{text: 'OK'}]);
-    }
-  };
+ 
 
   const _header = () => (
     <CustomHeader
@@ -130,24 +71,7 @@ const PatientMedical = ({navigation}) => {
           Enter Medical Details
         </Text>
       }
-      right={
-        <TouchableOpacity
-          onPress={() => save()}
-          style={{
-            marginHorizontal: 4,
-            width: 35,
-            height: 35,
-            borderRadius: 100,
-            backgroundColor: COLORS.BLACK,
-            borderColor: COLORS.BLACK,
-            borderStyle: 'solid',
-            borderWidth: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Icon name="check" size={25} color={COLORS.WHITE} />
-        </TouchableOpacity>
-      }
+      
     />
   );
 

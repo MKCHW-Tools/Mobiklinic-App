@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useContext} from 'react';
 import {
   View,
   Alert,
@@ -28,11 +28,32 @@ import {
 import {DiagnosisContext} from '../providers/Diagnosis';
 import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
-
+import DataResultsContext from '../contexts/DataResultsContext';
 import {useNavigation} from '@react-navigation/native';
 
 const PatientSummary = ({route, navigation}) => {
-  const {simprintsGuid} = route.params;
+  const {dataResults} = useContext(DataResultsContext);
+  const handleSubmit = async () => {
+    try {
+      const data = {
+        firstName,
+        lastName,
+        sex,
+        ageGroup,
+        phoneNumber,
+        weight,
+        height,
+        district,
+        primaryLanguage,
+        simprintsGui,
+      };
+
+      const response = await axios.post('<your-backend-url>', data);
+      console.log('Data posted successfully:', response.data);
+    } catch (error) {
+      console.error('Error posting data:', error);
+    }
+  };
 
   const _header = () => (
     <CustomHeader
@@ -78,28 +99,52 @@ const PatientSummary = ({route, navigation}) => {
         <Text style={STYLES.terms}>Patient Profile </Text>
         <Text style={STYLES.text}>
           Full Name {'\n'}
-          {route.params.paramKey.first_name}
-          {route.params.paramKey.last_name}
+          {route.params.paramKey.firstName}
+          {route.params.paramKey.lastName}
         </Text>
         <Text style={STYLES.text}>
-          Phone Number {'\n'}{route.params.paramKey.phone_number}
+          Phone Number {'\n'}
+          {route.params.paramKey.phoneNumber}
         </Text>
         <Text style={STYLES.text}>
-          Primary Language{'\n'}{route.params.paramKey.primary_language}
+          Primary Language{'\n'}
+          {route.params.paramKey.primaryLanguage}
         </Text>
         <Text style={STYLES.text}>
-          District{'\n'}{route.params.paramKey.district}
-        </Text>
-        <Text style={STYLES.text}>Country{'\n'}{route.params.paramKey.country}</Text>
-        <Text style={STYLES.text}>
-          Age Group{'\n'}{route.params.paramKey.age_group}
+          District{'\n'}
+          {route.params.paramKey.district}
         </Text>
 
-        <Text style={STYLES.text}>Simprints GUID{'\n'}</Text>
+        <Text style={STYLES.text}>
+          Age Group{'\n'}
+          {route.params.paramKey.ageGroup}
+        </Text>
+
+        <Text style={STYLES.text}>
+          Weight{'\n'}
+          {route.params.paramKey.weight}
+        </Text>
+        <Text style={STYLES.text}>
+          Height{'\n'}
+          {route.params.paramKey.weight}
+        </Text>
+        <Text style={STYLES.text}>
+          Sex{'\n'}
+          {route.params.paramKey.sex}
+        </Text>
+
+        <Text style={STYLES.text}>
+          Simprints GUID{'\n'}
+          {dataResults.map((result, index) => (
+            <Text key={index}>
+              GUID: {result.guid}a
+            </Text>
+          ))}
+        </Text>
 
         <TouchableOpacity
           style={STYLES.btn}
-          onPress={() => navigation.navigate('SelectActivity')}>
+          onPress={() => navigation.navigate('GetPatients')}>
           <Text style={STYLES.btnText}>Confirm Details</Text>
           <Icon
             name="arrow-right"
@@ -134,14 +179,15 @@ const STYLES = StyleSheet.create({
   },
   text: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: 8,
     textAlign: 'left',
-    fontSize: 18,
+    fontSize: 16,
     color: COLORS.BLACK,
-    fontWeight: 'MEDIUM',
+    fontWeight: 'medium',
     borderBottomWidth: 1,
     padding: DIMENS.PADDING,
     borderBottomColor: '#000',
+    borderColor: COLORS.GREY,
   },
   subtitle: {
     flexDirection: 'row',
