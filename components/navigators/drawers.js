@@ -77,7 +77,7 @@ export const DrawerNavigation = () => {
         width: 240,
       }}
       drawerContent={props => <CustomDrawerContent {...props} />}>
-      <Drawer.Screen name="Dashboard" component={Dashboard} />
+      {/* <Drawer.Screen name="Dashboard" component={Dashboard} /> */}
       <Drawer.Screen name="Covid" component={Covid19} />
       <Drawer.Screen name="News" component={News} />
       <Drawer.Screen name="Maternal" component={Maternal} />
