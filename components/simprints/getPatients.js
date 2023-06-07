@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Alert,
@@ -11,55 +11,41 @@ import {
   StatusBar,
   Button,
 } from 'react-native';
-
-import {Picker} from '@react-native-picker/picker';
+import Loader from '../ui/loader';
 import Icon from 'react-native-vector-icons/Feather';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import CustomHeader from '../ui/custom-header';
 import {COLORS, DIMENS} from '../constants/styles';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
+function GetPatients({navigation}) {
+  const [userData, setUserData] = useState(null);
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-import {
-  _removeStorageItem,
-  generateRandomCode,
-  MyDate,
-} from '../helpers/functions';
-
-import {DiagnosisContext} from '../providers/Diagnosis';
-import CustomHeader from '../ui/custom-header';
-import Loader from '../ui/loader';
-import DataResultsContext from '../contexts/DataResultsContext';
-import {useNavigation} from '@react-navigation/native';
-import axios from 'axios';
-
-const PatientSummary = ({route, navigation}) => {
-  const {dataResults} = useContext(DataResultsContext);
-  const handleSubmit = async () => {
+  const fetchData = async () => {
     try {
-      const data = {
-        firstName: route.params.firstName,
-        lastName: route.params.lastName,
-        sex: route.params.sex,
-        ageGroup: route.params.ageGroup,
-        country: route.params.country,
-        phoneNumber: route.params.phoneNumber,
-        weight: route.params.weight,
-        height: route.params.height,
-        district: route.params.district,
-        primaryLanguage: route.params.primaryLanguage,
-        simprintsGUID: dataResults.map((result) => result.guid),
-      };
-
-      const response = await axios.post(
+      // Make an API call or fetch data from your database
+      const response = await fetch(
         'http://mobi-be-production.up.railway.app/patients',
-        data,
       );
-      console.log('Data posted successfully:', response.data);
-      navigation.navigate('SelectActivity');
+      const data = await response.json();
+
+      // Assuming the fetched data is an array and you want to access the first item
+      const user = data[0];
+
+      setUserData(user);
     } catch (error) {
-      console.error('Error posting data:', error);
+      Alert.alert('Error fetching data:', error);
     }
   };
+
+  if (!userData) {
+    return (
+      <View>
+        <Loader />
+      </View>
+    );
+  }
 
   const _header = () => (
     <CustomHeader
@@ -77,26 +63,9 @@ const PatientSummary = ({route, navigation}) => {
         </TouchableOpacity>
       }
       title={<Text style={[STYLES.centerHeader, STYLES.title]}>Back</Text>}
-      right={
-        <TouchableOpacity
-          onPress={() => save()}
-          style={{
-            marginHorizontal: 4,
-            width: 35,
-            height: 35,
-            borderRadius: 100,
-            backgroundColor: COLORS.BLACK,
-            borderColor: COLORS.BLACK,
-            borderStyle: 'solid',
-            borderWidth: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Icon name="check" size={25} color={COLORS.WHITE} />
-        </TouchableOpacity>
-      }
     />
   );
+
   return (
     <View style={STYLES.wrapper}>
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
@@ -104,27 +73,17 @@ const PatientSummary = ({route, navigation}) => {
       <ScrollView style={STYLES.body} keyboardDismissMode="on-drag">
         <Text style={STYLES.terms}>Patient Profile </Text>
         <Text style={STYLES.text}>
-          Simprints GUID{'\n'}
-          {dataResults.map((result, index) => (
-            <Text key={index}>{result.guid}a</Text>
-          ))}
-        </Text>
-        <Text style={STYLES.text}>
           Full Name {'\n'}
-          {route.params.paramKey.firstName}
-          {route.params.paramKey.lastName}
+          {userData.firstName}
+          {userData.lastName}
         </Text>
         <Text style={STYLES.text}>
           Phone Number {'\n'}
-          {route.params.paramKey.phoneNumber}
+          {userData.phoneNumber}
         </Text>
         <Text style={STYLES.text}>
           Primary Language{'\n'}
-          {route.params.paramKey.primaryLanguage}
-        </Text>
-        <Text style={STYLES.text}>
-          Country{'\n'}
-          {route.params.paramKey.country}
+          {userData.primaryLanguage}
         </Text>
         <Text style={STYLES.text}>
           District{'\n'}
@@ -133,23 +92,19 @@ const PatientSummary = ({route, navigation}) => {
 
         <Text style={STYLES.text}>
           Age Group{'\n'}
-          {route.params.paramKey.ageGroup}
+          {userData.ageGroup}
         </Text>
 
-        <Text style={STYLES.text}>
-          Weight{'\n'}
-          {route.params.paramKey.weight}
-        </Text>
-        <Text style={STYLES.text}>
-          Height{'\n'}
-          {route.params.paramKey.weight}
-        </Text>
         <Text style={STYLES.text}>
           Sex{'\n'}
-          {route.params.paramKey.sex}
+          {userData.sex}
         </Text>
 
-        <TouchableOpacity style={STYLES.btn} onPress={handleSubmit}>
+        <Text style={STYLES.text}>Simprints GUID{'\n'}</Text>
+
+        <TouchableOpacity
+          style={STYLES.btn}
+          onPress={() => navigation.navigate('SelectActivity')}>
           <Text style={STYLES.btnText}>Confirm Details</Text>
           <Icon
             name="arrow-right"
@@ -161,9 +116,9 @@ const PatientSummary = ({route, navigation}) => {
       </ScrollView>
     </View>
   );
-};
+}
 
-export default PatientSummary;
+export default GetPatients;
 
 const STYLES = StyleSheet.create({
   wrapper: {
@@ -192,7 +147,7 @@ const STYLES = StyleSheet.create({
     borderBottomWidth: 1,
     padding: DIMENS.PADDING,
     borderBottomColor: '#000',
-    borderColor: COLORS.GREY,
+    borderColor:COLORS.GREY,
   },
   subtitle: {
     flexDirection: 'row',

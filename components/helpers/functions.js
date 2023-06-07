@@ -237,17 +237,20 @@ export const signIn = async data => {
   // } else {
   try {
     console.log('Starting network request');
-    let response = await fetch(`https://mobi-be-production.up.railway.app/auth/login`, {
-      method: 'POST',
-      body: JSON.stringify({
-        phone: username,
-        password: password,
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-        Accept: 'application/json',
+    let response = await fetch(
+      `https://mobi-be-production.up.railway.app/auth/login`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          phone: username,
+          password: password,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          Accept: 'application/json',
+        },
       },
-    });
+    );
 
     let json_data = await response.json();
     const {message, id, accessToken, refreshToken} = json_data;

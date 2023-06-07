@@ -38,22 +38,24 @@ const CovidData = ({navigation}) => {
 
   const [state, setState] = React.useState({
     isLoading: false,
-    vaccineType: '',
+    patient: '',
+    date_of_vaccination: '',
+    units: '',
+    date_for_next_dose: '',
+    site_administered: '',
+    vaccine_name: '',
     facilty: '',
-    dateOfVaccination: '',
-    units: false,
-    dateForNextDose:'',
-    siteOfAdminstration: '',
   });
 
   const save = async () => {
     const {
-      vaccineType,
-      facilty,
-      dateOfVaccination,
+      patient,
+      date_of_vaccination,
       units,
-      siteOfAdminstration,
-      dateForNextDose,
+      date_for_next_dose,
+      site_administered,
+      vaccine_name,
+      facilty,
     } = state;
     const code = generateRandomCode(5),
       date = MyDate();
@@ -61,20 +63,17 @@ const CovidData = ({navigation}) => {
     const newstate = {
       code,
       date,
-      patient: {
-        vaccineType,
-        facilty,
-        dateOfVaccination,
-        units,
-        siteOfAdminstration,
-        dateForNextDose,
-      },
-      details: condition,
-      followups: [],
+      patient,
+      date_of_vaccination,
+      units,
+      date_for_next_dose,
+      site_administered,
+      vaccine_name,
+      facilty,
       uploaded: false,
     };
 
-    if (vaccineType && facilty && dateOfVaccination) {
+    if (vaccine_name && facilty && date_of_vaccination) {
       // const data = await AsyncStorage.getItem('@diagnosis')
       // const prevstate = data !== null ? JSON.parse(data) : []
       setState({...state, isLoading: true});
@@ -88,14 +87,14 @@ const CovidData = ({navigation}) => {
           Alert.alert('Saved', `Diagnosis code: ${code}`, [{text: 'OK'}]);
 
           setState({
-            vaccineType: '',
-            facilty: '',
-            dateOfVaccination: '',
-            units: false,
-            siteOfAdminstration: '',
-            dateForNextDose: '',
-            followups: [],
             isLoading: false,
+            patient: '',
+            date_of_vaccination: '',
+            units: '',
+            date_for_next_dose: '',
+            site_administered: '',
+            vaccine_name: '',
+            facilty: '',
           });
         },
       );
@@ -159,9 +158,9 @@ const CovidData = ({navigation}) => {
           autoCorrect={false}
           placeholderTextColor="rgba(0,0,0,0.7)"
           selectionColor={COLORS.BLACK}
-          onChangeText={text => setState({...state, vaccineType: text})}
-          value={state.vaccineType}
-          placeholder="Vaccine Type *"
+          onChangeText={text => setState({...state, vaccine_name: text})}
+          value={state.vaccine_name}
+          placeholder="Vaccine Name *"
         />
         {/* date of vaccination */}
         <TextInput
@@ -169,8 +168,8 @@ const CovidData = ({navigation}) => {
           autoCorrect={false}
           placeholderTextColor="rgba(0,0,0,0.7)"
           selectionColor={COLORS.BLACK}
-          onChangeText={text => setState({...state, dateOfVaccination: text})}
-          value={state.dateOfVaccination}
+          onChangeText={text => setState({...state, date_of_vaccination: text})}
+          value={state.date_of_vaccination}
           placeholder="Date of Vaccination*"
         />
         {/* facility */}
@@ -199,8 +198,8 @@ const CovidData = ({navigation}) => {
           autoCorrect={false}
           placeholderTextColor="rgba(0,0,0,0.7)"
           selectionColor={COLORS.BLACK}
-          onChangeText={text => setState({...state, siteOfAdminstration: text})}
-          value={state.siteOfAdminstration}
+          onChangeText={text => setState({...state, site_administered: text})}
+          value={state.site_administered}
           placeholder="Site of Adminstration"
         />
         {/* next dosage */}
@@ -209,8 +208,8 @@ const CovidData = ({navigation}) => {
           autoCorrect={false}
           placeholderTextColor="rgba(0,0,0,0.7)"
           selectionColor={COLORS.BLACK}
-          onChangeText={text => setState({...state, dateForNextDose: text})}
-          value={state.dateForNextDose}
+          onChangeText={text => setState({...state, date_for_next_dose: text})}
+          value={state.date_for_next_dose}
           placeholder="Date for Next Dosage"
         />
 
