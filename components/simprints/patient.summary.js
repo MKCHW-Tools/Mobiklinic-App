@@ -30,26 +30,32 @@ import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
 
 const PatientSummary = ({route, navigation}) => {
   const {dataResults} = useContext(DataResultsContext);
   const handleSubmit = async () => {
     try {
       const data = {
-        firstName,
-        lastName,
-        sex,
-        ageGroup,
-        phoneNumber,
-        weight,
-        height,
-        district,
-        primaryLanguage,
-        simprintsGui,
+        firstName: route.params.firstName,
+        lastName: route.params.lastName,
+        sex: route.params.sex,
+        ageGroup: route.params.ageGroup,
+        country: route.params.country,
+        phoneNumber: route.params.phoneNumber,
+        weight: route.params.weight,
+        height: route.params.height,
+        district: route.params.district,
+        primaryLanguage: route.params.primaryLanguage,
+        simprintsGUID: dataResults.map((result) => result.guid),
       };
 
-      const response = await axios.post('<your-backend-url>', data);
+      const response = await axios.post(
+        'http://mobi-be-production.up.railway.app/patients',
+        data,
+      );
       console.log('Data posted successfully:', response.data);
+      navigation.navigate('SelectActivity');
     } catch (error) {
       console.error('Error posting data:', error);
     }
@@ -100,9 +106,7 @@ const PatientSummary = ({route, navigation}) => {
         <Text style={STYLES.text}>
           Simprints GUID{'\n'}
           {dataResults.map((result, index) => (
-            <Text key={index}>
-              {result.guid}a
-            </Text>
+            <Text key={index}>{result.guid}a</Text>
           ))}
         </Text>
         <Text style={STYLES.text}>
@@ -145,11 +149,7 @@ const PatientSummary = ({route, navigation}) => {
           {route.params.paramKey.sex}
         </Text>
 
-       
-
-        <TouchableOpacity
-          style={STYLES.btn}
-          onPress={() => navigation.navigate('GetPatients')}>
+        <TouchableOpacity style={STYLES.btn} onPress={handleSubmit}>
           <Text style={STYLES.btnText}>Confirm Details</Text>
           <Icon
             name="arrow-right"
