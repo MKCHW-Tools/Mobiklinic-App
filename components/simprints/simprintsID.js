@@ -301,7 +301,7 @@ const SimprintsID = ({navigation}) => {
             <>
               <TouchableOpacity
                 style={styles.buttonStyle}
-                onPress={handleIdentification}>
+                onPress={handleIdentificationPlus}>
                 <Text style={styles.buttonText}>
                   Launch Biometrics to start registration
                 </Text>
