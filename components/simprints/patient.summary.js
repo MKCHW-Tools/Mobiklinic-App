@@ -73,12 +73,16 @@ const PatientSummary = ({route, navigation}) => {
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
       {_header()}
       <ScrollView style={STYLES.body} keyboardDismissMode="on-drag">
-        <Text style={STYLES.terms}>Patient Summary Details</Text>
+        <Text style={STYLES.terms}>Patient Profile </Text>
         <Text style={STYLES.text}>
-          Full Name: {route.params.paramKey.first_name}{route.params.paramKey.last_name}
+          Full Name: {route.params.paramKey.first_name}
+          {route.params.paramKey.last_name}
         </Text>
         <Text style={STYLES.text}>
           Phone Number: {route.params.paramKey.phone_number}
+        </Text>
+        <Text style={STYLES.text}>
+          Primary Language: {route.params.paramKey.primary_language}
         </Text>
         <Text style={STYLES.text}>
           District:{route.params.paramKey.district}
@@ -88,7 +92,7 @@ const PatientSummary = ({route, navigation}) => {
           Age Group:{route.params.paramKey.age_group}
         </Text>
 
-        <Text style={STYLES.text}>GUI:</Text>
+        <Text style={STYLES.text}>Simprints GUID:</Text>
 
         <TouchableOpacity
           style={STYLES.btn}
@@ -127,14 +131,15 @@ const STYLES = StyleSheet.create({
   },
   text: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: 20,
     textAlign: 'left',
     fontSize: 16,
     color: COLORS.BLACK,
-    fontWeight: 'medium',
+    fontWeight: 'bold',
     borderBottomWidth: 1,
     padding: DIMENS.PADDING,
     borderBottomColor: '#000',
+    
   },
   subtitle: {
     flexDirection: 'row',
