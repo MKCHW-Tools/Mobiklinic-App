@@ -5,7 +5,7 @@
  * @format
  */
 
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState,useContext} from 'react';
 import {DeviceEventEmitter, NativeEventEmitter, Text} from 'react-native';
 // import BeneficiarySelectionScreen from './BeneficiarySelectionScreen';
 
@@ -19,18 +19,22 @@ import {
   NativeModules,
   View,
 } from 'react-native';
+import DataResultsContext from '../contexts/DataResultsContext';
 
 const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
 var OpenActivity = NativeModules.OpenActivity;
 
-// DeviceEventEmitter.addListener('SimprintsRegistrationSuccess', event => {
-//   const {guid} = event;
-//   console.log(event);
-//   Alert.alert('Beneficiary Biometrics registered', guid);
-// });
 
-const SimprintsID = ({navigation, onNextStep}) => {
+DeviceEventEmitter.addListener('SimprintsRegistrationSuccess', event => {
+  const {guid} = event;
+  console.log(event);
+  Alert.alert('Beneficiary Biometrics registered', guid);
+});
+
+const SimprintsID = ({navigation}) => {
+  const {updateDataResults} = useContext(DataResultsContext);
+
   const [identificationPlusResults, setIdentificationPlusResults] = useState(
     [],
   );
@@ -56,6 +60,7 @@ const SimprintsID = ({navigation, onNextStep}) => {
       results => {
         setIdentificationResults(results);
         setDisplayMode('identification');
+        updateDataResults(results);
       },
     );
 
@@ -73,7 +78,7 @@ const SimprintsID = ({navigation, onNextStep}) => {
       identificationSubscription.remove();
       registrationSuccessSubscription.remove();
     };
-  }, []);
+  }, [updateDataResults]);
 
   const handleIdentificationPlus = () => {
     const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
@@ -89,7 +94,6 @@ const SimprintsID = ({navigation, onNextStep}) => {
     const userID = 'mpower';
 
     IdentificationModule.triggerIdentification(projectID, moduleID, userID);
-    
   };
 
   const confirmSelectedBeneficiary = () => {
@@ -99,10 +103,8 @@ const SimprintsID = ({navigation, onNextStep}) => {
         selectedUserUniqueId,
       );
     }
-
-    console.log('Beneficiary confirmed');
-    
     navigation.navigate('PatientData');
+    console.log('Beneficiary confirmed');
   };
 
   useEffect(() => {
@@ -132,10 +134,7 @@ const SimprintsID = ({navigation, onNextStep}) => {
             </>
           )}
           <View style={{height: 20}} />
-          <Button
-            title="Register Profile"
-            onPress={() => navigation.navigate('PatientData')}
-          />
+          <Button title="Go Back" onPress={goBack} />
         </>
       )}
 
@@ -155,7 +154,7 @@ const SimprintsID = ({navigation, onNextStep}) => {
             )
             .map((result, index) => (
               <View key={index}>
-                <Text>
+                <Text style={styles.text}>
                   <View style={{height: 20}} />
                   Tier: {result.tier}, Confidence: {result.confidenceScore},
                   Guid: {result.guid}
@@ -176,10 +175,7 @@ const SimprintsID = ({navigation, onNextStep}) => {
               />
             </>
           ) : (
-            <Button
-              title="Go Back"
-              onPress={() => navigation.navigate('PatientData')}
-            />
+            <Button title="Go Back" onPress={goBack} />
           )}
         </>
       )}
