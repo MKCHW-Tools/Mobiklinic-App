@@ -237,10 +237,10 @@ export const signIn = async data => {
   // } else {
   try {
     console.log('Starting network request');
-    let response = await fetch(`${URLS.BASE}/users/login`, {
+    let response = await fetch(`https://mobi-be-production.up.railway.app/auth/login`, {
       method: 'POST',
       body: JSON.stringify({
-        username: username,
+        phone: username,
         password: password,
       }),
       headers: {
@@ -250,14 +250,14 @@ export const signIn = async data => {
     });
 
     let json_data = await response.json();
-    const {result, id, accessToken, refreshToken} = json_data;
+    const {message, id, accessToken, refreshToken} = json_data;
 
-    if (result === 'Success') {
+    if (message === 'Login successful') {
       await SAVE_LOCAL_USER({
         id,
         username,
         password,
-        tokens: {access: accessToken, refresh: refreshToken},
+        tokens: {accessToken: accessToken, refreshToken: refreshToken},
       });
 
       const resources = ['ambulances', 'doctors', 'diagnosis'];
@@ -272,7 +272,7 @@ export const signIn = async data => {
         setUser({
           id,
           username,
-          tokens: {access: accessToken, refresh: refreshToken},
+          tokens: {accessToken: accessToken, refreshToken: refreshToken},
           offline: false,
         });
         setIsLoading(false);
@@ -372,14 +372,13 @@ export const signUp = async data => {
   }
 
   try {
-    await fetch(`${URLS.BASE}/users`, {
+    await fetch(`https://mobi-be-production.up.railway.app/auth/signup`, {
       method: 'POST',
       body: JSON.stringify({
-        username: phoneNumber,
         phone: phoneNumber,
-        name: `${firstName} ${lastName}`,
+        firstName: firstName,
+        lastName: lastName,
         email: eMail,
-        role_id: 2,
         password: password,
       }),
       headers: {
@@ -390,7 +389,7 @@ export const signUp = async data => {
       .then(res => res.json())
       .then(response => {
         setIsLoading(false);
-        if (response.result == 'Success') {
+        if (response.message == 'Signup successful') {
           /* 					Alert.alert(
 						"Registered successfully",
 						"Press Okay to login!"
