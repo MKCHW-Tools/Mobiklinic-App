@@ -69,7 +69,6 @@ const PatientData = ({navigation}) => {
       title={
         <Text style={[STYLES.centerHeader, STYLES.title]}>PATIENT PROFILE</Text>
       }
-      
     />
   );
 
@@ -115,7 +114,23 @@ const PatientData = ({navigation}) => {
           value={state.phoneNumber}
           placeholder="Phone Number *"
         />
-        
+        {/* district */}
+        <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Picker
+            placeholder="District"
+            selectedValue={state.country}
+            onValueChange={(value, index) =>
+              setState({...state, country: value})
+            }
+            style={STYLES.pickerItemStyle}>
+            <Picker.Item label="Country" value="Country" />
+            <Picker.Item label="Uganda" value="Uganda" />
+            <Picker.Item label="Kenya" value="Kenya" />
+            <Picker.Item label="Rwanda" value="Rwanda" />
+            <Picker.Item label="Tanzania" value="Tanzania" />
+          </Picker>
+        </View>
+
         {/* district */}
         <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
           <Picker

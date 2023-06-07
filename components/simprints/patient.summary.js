@@ -98,6 +98,14 @@ const PatientSummary = ({route, navigation}) => {
       <ScrollView style={STYLES.body} keyboardDismissMode="on-drag">
         <Text style={STYLES.terms}>Patient Profile </Text>
         <Text style={STYLES.text}>
+          Simprints GUID{'\n'}
+          {dataResults.map((result, index) => (
+            <Text key={index}>
+              {result.guid}a
+            </Text>
+          ))}
+        </Text>
+        <Text style={STYLES.text}>
           Full Name {'\n'}
           {route.params.paramKey.firstName}
           {route.params.paramKey.lastName}
@@ -109,6 +117,10 @@ const PatientSummary = ({route, navigation}) => {
         <Text style={STYLES.text}>
           Primary Language{'\n'}
           {route.params.paramKey.primaryLanguage}
+        </Text>
+        <Text style={STYLES.text}>
+          Country{'\n'}
+          {route.params.paramKey.country}
         </Text>
         <Text style={STYLES.text}>
           District{'\n'}
@@ -133,14 +145,7 @@ const PatientSummary = ({route, navigation}) => {
           {route.params.paramKey.sex}
         </Text>
 
-        <Text style={STYLES.text}>
-          Simprints GUID{'\n'}
-          {dataResults.map((result, index) => (
-            <Text key={index}>
-              GUID: {result.guid}a
-            </Text>
-          ))}
-        </Text>
+       
 
         <TouchableOpacity
           style={STYLES.btn}
