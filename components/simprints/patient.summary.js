@@ -47,11 +47,11 @@ const PatientSummary = ({route, navigation}) => {
         height: route.params.height,
         district: route.params.district,
         primaryLanguage: route.params.primaryLanguage,
-        simprintsGUID: dataResults.map((result) => result.guid),
+        simprintsGUID: dataResults,
       };
 
       const response = await axios.post(
-        'http://mobi-be-production.up.railway.app/patients',
+        'https://mobi-be-production.up.railway.app/patients',
         data,
       );
       console.log('Data posted successfully:', response.data);
@@ -105,9 +105,7 @@ const PatientSummary = ({route, navigation}) => {
         <Text style={STYLES.terms}>Patient Profile </Text>
         <Text style={STYLES.text}>
           Simprints GUID{'\n'}
-          {dataResults.map((result, index) => (
-            <Text key={index}>{result.guid}a</Text>
-          ))}
+          {dataResults}
         </Text>
         <Text style={STYLES.text}>
           Full Name {'\n'}
@@ -150,7 +148,7 @@ const PatientSummary = ({route, navigation}) => {
         </Text>
 
         <TouchableOpacity style={STYLES.btn} onPress={handleSubmit}>
-          <Text style={STYLES.btnText}>Confirm Details</Text>
+          <Text style={STYLES.btnText}>Register</Text>
           <Icon
             name="arrow-right"
             size={20}

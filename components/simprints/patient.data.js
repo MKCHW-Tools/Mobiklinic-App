@@ -14,7 +14,6 @@ import {
 
 import {Picker} from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/Feather';
-import DatePicker from 'react-native-datepicker';
 import {COLORS, DIMENS} from '../constants/styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {

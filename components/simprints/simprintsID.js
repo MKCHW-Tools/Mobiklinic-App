@@ -25,13 +25,6 @@ const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
 var OpenActivity = NativeModules.OpenActivity;
 
-
-DeviceEventEmitter.addListener('SimprintsRegistrationSuccess', event => {
-  const {guid} = event;
-  console.log(event);
-  Alert.alert('Beneficiary Biometrics registered', guid);
-});
-
 const SimprintsID = ({navigation}) => {
   const {updateDataResults} = useContext(DataResultsContext);
 
@@ -60,7 +53,7 @@ const SimprintsID = ({navigation}) => {
       results => {
         setIdentificationResults(results);
         setDisplayMode('identification');
-        updateDataResults(results);
+        // updateDataResults(results);
       },
     );
 
@@ -70,6 +63,7 @@ const SimprintsID = ({navigation}) => {
         const {guid} = event;
         setEnrollmentGuid(guid);
         setDisplayMode('enrollment');
+        updateDataResults(guid);
       },
     );
 
@@ -134,7 +128,7 @@ const SimprintsID = ({navigation}) => {
             </>
           )}
           <View style={{height: 20}} />
-          <Button title="Go Back" onPress={goBack} />
+          <Button title="Continue to Registration" onPress={confirmSelectedBeneficiary} />
         </>
       )}
 
