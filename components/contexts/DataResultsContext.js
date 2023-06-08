@@ -3,7 +3,7 @@ import React, {createContext, useState} from 'react';
 const DataResultsContext = createContext();
 
 export const DataResultsProvider = ({children}) => {
-  const [dataResults, setDataResults] = useState([]);
+  const [dataResults, setDataResults] = useState('');
 
   const updateDataResults = newDataResults => {
     setDataResults(newDataResults);
