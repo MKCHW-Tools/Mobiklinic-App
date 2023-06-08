@@ -34,30 +34,47 @@ import axios from 'axios';
 
 const PatientSummary = ({route, navigation}) => {
   const {dataResults} = useContext(DataResultsContext);
-  const handleSubmit = async () => {
-    try {
-      const data = {
-        firstName: route.params.firstName,
-        lastName: route.params.lastName,
-        sex: route.params.sex,
-        ageGroup: route.params.ageGroup,
-        country: route.params.country,
-        phoneNumber: route.params.phoneNumber,
-        weight: route.params.weight,
-        height: route.params.height,
-        district: route.params.district,
-        primaryLanguage: route.params.primaryLanguage,
-        simprintsGUID: dataResults,
-      };
 
-      const response = await axios.post(
+  const handleSubmit = async () => {
+   
+
+    try {
+      const response = await fetch(
         'https://mobi-be-production.up.railway.app/patients',
-        data,
-      );
-      console.log('Data posted successfully:', response.data);
-      navigation.navigate('SelectActivity');
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            firstName: route.params.firstName,
+            lastName: route.params.lastName,
+            sex: route.params.sex,
+            ageGroup: route.params.ageGroup,
+            phoneNumber: route.params.phoneNumber,
+            weight: route.params.weight,
+            height: route.params.height,
+            district: route.params.district,
+            country: route.params.country,
+            primaryLanguage: route.params.primaryLanguage,
+            simprintsGui : dataResults,
+          }),
+
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+            Accept: 'application/json',
+          },
+         
+        }
+      )
+
+      if (response.ok) {
+        console.log('Data posted successfully');
+        navigation.navigate('SelectActivity');
+      } else {
+        console.error('Error posting data:', response.status);
+        Alert.alert('Error', 'Failed to submit data. Please try again later.');
+      }
     } catch (error) {
       console.error('Error posting data:', error);
+      Alert.alert('Error', 'Failed to submit data. Please try again later.');
     }
   };
 
@@ -108,8 +125,11 @@ const PatientSummary = ({route, navigation}) => {
           {dataResults}
         </Text>
         <Text style={STYLES.text}>
-          Full Name {'\n'}
+          First Name {'\n'}
           {route.params.paramKey.firstName}
+        </Text>
+        <Text style={STYLES.text}>
+          Last Name {'\n'}
           {route.params.paramKey.lastName}
         </Text>
         <Text style={STYLES.text}>
@@ -140,7 +160,7 @@ const PatientSummary = ({route, navigation}) => {
         </Text>
         <Text style={STYLES.text}>
           Height{'\n'}
-          {route.params.paramKey.weight}
+          {route.params.paramKey.height}
         </Text>
         <Text style={STYLES.text}>
           Sex{'\n'}

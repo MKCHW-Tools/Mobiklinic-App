@@ -101,6 +101,8 @@ const SimprintsID = ({navigation}) => {
     console.log('Beneficiary confirmed');
   };
 
+  
+
   useEffect(() => {
     if (noMatchButtonPressed) {
       console.log('No match found button pressed');
