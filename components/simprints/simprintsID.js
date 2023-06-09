@@ -5,9 +5,8 @@
  * @format
  */
 
-import React, {useCallback, useEffect, useState,useContext} from 'react';
+import React, {useCallback, useEffect, useState, useContext} from 'react';
 import {DeviceEventEmitter, NativeEventEmitter, Text} from 'react-native';
-// import BeneficiarySelectionScreen from './BeneficiarySelectionScreen';
 
 import {
   Linking,
@@ -25,15 +24,9 @@ const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
 var OpenActivity = NativeModules.OpenActivity;
 
-
-DeviceEventEmitter.addListener('SimprintsRegistrationSuccess', event => {
-  const {guid} = event;
-  console.log(event);
-  Alert.alert('Beneficiary Biometrics registered', guid);
-});
-
 const SimprintsID = ({navigation}) => {
   const {updateDataResults} = useContext(DataResultsContext);
+  const {updateBenData} = useContext(DataResultsContext);
 
   const [identificationPlusResults, setIdentificationPlusResults] = useState(
     [],
@@ -52,6 +45,7 @@ const SimprintsID = ({navigation}) => {
       results => {
         setIdentificationPlusResults(results);
         setDisplayMode('identificationPlus');
+        updateBenData(results);
       },
     );
 
@@ -60,7 +54,8 @@ const SimprintsID = ({navigation}) => {
       results => {
         setIdentificationResults(results);
         setDisplayMode('identification');
-        updateDataResults(results);
+        updateBenData(results);
+        // updateDataResults(results);
       },
     );
 
@@ -70,6 +65,7 @@ const SimprintsID = ({navigation}) => {
         const {guid} = event;
         setEnrollmentGuid(guid);
         setDisplayMode('enrollment');
+        updateDataResults(guid);
       },
     );
 
@@ -78,7 +74,7 @@ const SimprintsID = ({navigation}) => {
       identificationSubscription.remove();
       registrationSuccessSubscription.remove();
     };
-  }, [updateDataResults]);
+  }, [updateDataResults, updateBenData]);
 
   const handleIdentificationPlus = () => {
     const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
@@ -104,6 +100,17 @@ const SimprintsID = ({navigation}) => {
       );
     }
     navigation.navigate('PatientData');
+    console.log('Beneficiary confirmed');
+  };
+
+  const confirmSelectedBeneficiaryy = () => {
+    if (sessionId && selectedUserUniqueId) {
+      IdentificationPlus.confirmSelectedBeneficiary(
+        sessionId,
+        selectedUserUniqueId,
+      );
+    }
+    navigation.navigate('GetPatients');
     console.log('Beneficiary confirmed');
   };
 
@@ -134,7 +141,10 @@ const SimprintsID = ({navigation}) => {
             </>
           )}
           <View style={{height: 20}} />
-          <Button title="Go Back" onPress={goBack} />
+          <Button
+            title="Continue to Registration"
+            onPress={confirmSelectedBeneficiary}
+          />
         </>
       )}
 
@@ -166,7 +176,7 @@ const SimprintsID = ({navigation}) => {
             <>
               <Button
                 title="Confirm Beneficiary"
-                onPress={confirmSelectedBeneficiary}
+                onPress={confirmSelectedBeneficiaryy}
               />
               <View style={{height: 20}} />
               <Button
@@ -208,7 +218,7 @@ const SimprintsID = ({navigation}) => {
             <>
               <Button
                 title="Confirm Beneficiary"
-                onPress={confirmSelectedBeneficiary}
+                onPress={confirmSelectedBeneficiaryy}
               />
               <View style={{height: 20}} />
               <Button

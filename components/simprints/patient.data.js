@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useContext, useState} from 'react';
 import {
   View,
   Alert,
@@ -11,36 +11,27 @@ import {
   StatusBar,
   Button,
 } from 'react-native';
-
 import {Picker} from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/Feather';
-import DatePicker from 'react-native-datepicker';
-import {COLORS, DIMENS} from '../constants/styles';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  _removeStorageItem,
-  generateRandomCode,
-  MyDate,
-} from '../helpers/functions';
-
-import {useNavigation} from '@react-navigation/native';
-
+import {_removeStorageItem} from '../helpers/functions';
 import {DiagnosisContext} from '../providers/Diagnosis';
 import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
+import DataResultsContext from '../contexts/DataResultsContext';
+import {COLORS, DIMENS} from '../constants/styles';
 
 const PatientData = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
   const {diagnoses} = diagnosisContext;
+  const {dataResults} = useContext(DataResultsContext);
 
   // const navigation = useNavigation();
   // date
   const currentDate = new Date();
 
   const [state, setState] = React.useState({
-    isLoading: false,
     firstName: '',
-    sex: 'female',
+    sex: '',
     ageGroup: '',
     phoneNumber: '',
     lastName: '',
@@ -49,7 +40,47 @@ const PatientData = ({navigation}) => {
     district: '',
     country: '',
     primaryLanguage: '',
+    simprintsGui: '',
   });
+
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch(
+        'https://mobi-be-production.up.railway.app/patients',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            firstName: state.firstName,
+            lastName: state.lastName,
+            sex: state.sex,
+            ageGroup: state.ageGroup,
+            phoneNumber: state.phoneNumber,
+            weight: state.weight,
+            height: state.height,
+            district: state.district,
+            country: state.country,
+            primaryLanguage: state.primaryLanguage,
+            simprintsGui: dataResults,
+          }),
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+            Accept: 'application/json',
+          },
+        },
+      );
+
+      if (response.ok) {
+        console.log('Data posted successfully');
+        navigation.navigate('SelectActivity');
+      } else {
+        console.error('Error posting data:', response.status);
+        Alert.alert('Error', 'Failed to submit data. Please try again later.');
+      }
+    } catch (error) {
+      console.error('Error posting data:', error);
+      Alert.alert('Error', 'Failed to submit data. Please try again later.');
+    }
+  };
 
   const _header = () => (
     <CustomHeader
@@ -76,65 +107,120 @@ const PatientData = ({navigation}) => {
 
   return (
     <View style={STYLES.wrapper}>
-      <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
-
       {_header()}
-
-      <ScrollView style={STYLES.body} keyboardDismissMode="on-drag">
+      <ScrollView style={STYLES.body}>
         <Text style={STYLES.terms}>Patient Profile</Text>
-        {/* first Name */}
-        <TextInput
-          style={STYLES.input}
-          autoCorrect={false}
-          placeholderTextColor="rgba(0,0,0,0.7)"
-          selectionColor={COLORS.BLACK}
-          onChangeText={text => setState({...state, firstName: text})}
-          value={state.firstName}
-          placeholder="First Name *"
-        />
-        {/* last name */}
-        <TextInput
-          style={STYLES.input}
-          autoCorrect={false}
-          placeholderTextColor="rgba(0,0,0,0.7)"
-          selectionColor={COLORS.BLACK}
-          onChangeText={text => setState({...state, lastName: text})}
-          value={state.lastName}
-          placeholder="Last Name *"
-        />
 
-        {/* Phone Number */}
-        <TextInput
-          style={STYLES.input}
-          autoCorrect={false}
-          placeholderTextColor="rgba(0,0,0,0.7)"
-          keyboardType="phone-pad"
-          selectionColor={COLORS.SECONDARY}
-          onChangeText={text => setState({...state, phoneNumber: text})}
-          value={state.phoneNumber}
-          placeholder="Phone Number *"
-        />
-        {/* district */}
-        <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Picker
-            placeholder="District"
-            selectedValue={state.country}
-            onValueChange={(value, index) =>
-              setState({...state, country: value})
-            }
-            style={STYLES.pickerItemStyle}>
-            <Picker.Item label="Country" value="Country" />
-            <Picker.Item label="Uganda" value="Uganda" />
-            <Picker.Item label="Kenya" value="Kenya" />
-            <Picker.Item label="Rwanda" value="Rwanda" />
-            <Picker.Item label="Tanzania" value="Tanzania" />
-          </Picker>
+        {/* Simprints GUI */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Simprints GUI</Text>
+          <TextInput
+            style={STYLES.field}
+            value={dataResults}
+            onChangeText={text => setState({...state, simprintsGui: text})}
+            placeholder="Enter simprints GUI"
+          />
+        </View>
+        {/* First Name */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>First Name:</Text>
+          <TextInput
+            style={STYLES.field}
+            value={state.firstName}
+            onChangeText={text => setState({...state, firstName: text})}
+            placeholder="Enter first name"
+          />
         </View>
 
-        {/* district */}
+        {/* Last Name */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Last Name:</Text>
+          <TextInput
+            style={STYLES.field}
+            value={state.lastName}
+            onChangeText={text => setState({...state, lastName: text})}
+            placeholder="Enter last name"
+          />
+        </View>
+        {/* Phone Number */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Phone Number:</Text>
+          <TextInput
+            style={STYLES.field}
+            value={state.phoneNumber}
+            keyboardType="phone-pad"
+            onChangeText={text => setState({...state, phoneNumber: text})}
+            placeholder="Enter phone number"
+          />
+        </View>
+
+        <View style={STYLES.wrap}>
+          {/* Sex */}
+          <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
+            <Picker
+              placeholder="Sex"
+              placeholderTextColor={COLORS.BLACK}
+              selectedValue={state.sex}
+              onValueChange={(value, index) => setState({...state, sex: value})}
+              style={STYLES.pickerItemStyle}>
+              <Picker.Item label="Sex" value="Gender" />
+              <Picker.Item label="Female" value="Female" />
+              <Picker.Item label="Male" value="Male" />
+              <Picker.Item label="Other" value="Other" />
+            </Picker>
+          </View>
+          {/* Age Group */}
+          <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
+            <Picker
+              placeholder="Age"
+              placeholderTextColor={COLORS.BLACK}
+              selectedValue={state.ageGroup}
+              onValueChange={(value, index) =>
+                setState({...state, ageGroup: value})
+              }
+              style={STYLES.pickerItemStyle}>
+              <Picker.Item label="Age" value="Age group" />
+              <Picker.Item label="0 - 3" value="0 - 3" />
+              <Picker.Item label="3 - 10" value="3 - 10" />
+              <Picker.Item label="10 - 17" value="10 - 17" />
+              <Picker.Item label="17 - 40" value="17 - 40" />
+              <Picker.Item label="40 - 60" value="40 - 60" />
+              <Picker.Item label="60 above" value="60 above" />
+            </Picker>
+          </View>
+        </View>
+
+        <View style={STYLES.wrap}>
+          {/* Weight */}
+          <View style={STYLES.detail}>
+            {/* <Text style={STYLES.label}>Weight:</Text> */}
+            <TextInput
+              keyboardType="numeric"
+              value={state.weight}
+              placeholderTextColor={COLORS.BLACK}
+              onChangeText={text => setState({...state, weight: text})}
+              placeholder="Weight (Kgs)"
+            />
+          </View>
+
+          {/* Height */}
+          <View style={STYLES.detail}>
+            {/* <Text style={STYLES.label}>Height:</Text> */}
+            <TextInput
+              keyboardType="numeric"
+              placeholderTextColor={COLORS.BLACK}
+              value={state.weight}
+              onChangeText={text => setState({...state, weight: text})}
+              placeholder="Height (cm)"
+            />
+          </View>
+        </View>
+
+        {/* District */}
         <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
           <Picker
             placeholder="District"
+            placeholderTextColor={COLORS.BLACK}
             selectedValue={state.district}
             onValueChange={(value, index) =>
               setState({...state, district: value})
@@ -148,11 +234,29 @@ const PatientData = ({navigation}) => {
             <Picker.Item label="Mbarara" value="Mbarara" />
           </Picker>
         </View>
-
-        {/* primary_language */}
+        {/* country */}
         <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
           <Picker
-            placeholder="Language*"
+            placeholder="Country"
+            placeholderTextColor={COLORS.BLACK}
+            selectedValue={state.country}
+            onValueChange={(value, index) =>
+              setState({...state, country: value})
+            }
+            style={STYLES.pickerItemStyle}>
+            <Picker.Item label="Country" value="Country" />
+            <Picker.Item label="Uganda" value="Uganda" />
+            <Picker.Item label="Kenya" value="Kenya" />
+            <Picker.Item label="Rwanda" value="Rwanda" />
+            <Picker.Item label="Tanzania" value="Tanzania" />
+          </Picker>
+        </View>
+
+        {/* Primary Language */}
+        <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Picker
+            placeholder="Primary Language"
+            placeholderTextColor={COLORS.BLACK}
             selectedValue={state.primaryLanguage}
             onValueChange={(value, index) =>
               setState({...state, primaryLanguage: value})
@@ -167,72 +271,9 @@ const PatientData = ({navigation}) => {
           </Picker>
         </View>
 
-        {/* sex */}
-        <View style={STYLES.pickers}>
-          <Picker
-            placeholder="Gender"
-            selectedValue={state.sex}
-            onValueChange={(value, index) => setState({...state, sex: value})}
-            style={STYLES.pickerItemStyle}>
-            <Picker.Item label="Gender *" value="Gender" />
-            <Picker.Item label="Female" value="Female" />
-            <Picker.Item label="Male" value="Male" />
-            <Picker.Item label="Other" value="Other" />
-          </Picker>
-        </View>
-
-        {/* age group */}
-        <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Picker
-            style={{color: 'rgba(0,0,0,0.7)'}}
-            selectedValue={state.ageGroup}
-            onValueChange={(value, index) =>
-              setState({...state, ageGroup: value})
-            }>
-            <Picker.Item label="Age group" value="Age group" />
-            <Picker.Item label="0 - 3" value="0 - 3" />
-            <Picker.Item label="3 - 10" value="3 - 10" />
-            <Picker.Item label="10 - 17" value="10 - 17" />
-            <Picker.Item label="17 - 40" value="17 - 40" />
-            <Picker.Item label="40 - 60" value="40 - 60" />
-            <Picker.Item label="60 above" value="60 above" />
-          </Picker>
-        </View>
-
-        {/* wieght and height */}
-        <View style={STYLES.wrap}>
-          <TextInput
-            style={STYLES.detail}
-            autoCorrect={false}
-            keyboardType="numeric"
-            placeholderTextColor="rgba(0,0,0,0.7)"
-            onChangeText={text => setState({...state, weight: text})}
-            value={state.weight}
-            placeholder="Weight(kg)"
-          />
-          <TextInput
-            style={STYLES.detail}
-            autoCorrect={false}
-            keyboardType="numeric"
-            placeholderTextColor="rgba(0,0,0,0.7)"
-            onChangeText={text => setState({...state, height: text})}
-            value={state.height}
-            placeholder="Height(cm)"
-          />
-        </View>
-
-        <TouchableOpacity
-          style={STYLES.btn}
-          onPress={() =>
-            navigation.navigate('PatientSummary', {paramKey: state})
-          }>
-          <Text style={STYLES.btnText}>Next</Text>
-          <Icon
-            name="arrow-right"
-            size={20}
-            strokeSize={3}
-            color={COLORS.WHITE}
-          />
+        {/* Submit Button */}
+        <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
+          <Text style={STYLES.submitText}>Submit</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -264,13 +305,14 @@ const STYLES = StyleSheet.create({
     color: COLORS.GREY,
   },
   label: {
-    fontWeight: 'bold',
+    fontWeight: 'medium',
     marginLeft: 5,
     marginRight: 5,
+    color: COLORS.BLACK,
+    fontSize:15
   },
   title: {
     fontWeight: 'bold',
-
     color: COLORS.BLACK,
     alignItems: 'center',
     flexGrow: 1,
@@ -324,55 +366,85 @@ const STYLES = StyleSheet.create({
     paddingVertical: 20,
   },
   pickers: {
-    // borderBottomColor: 'rgba(0,0,0,0.7)',
-    // borderBottomWidth:1,
     borderColor: COLORS.GREY,
     borderStyle: 'solid',
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: 10,
     paddingHorizontal: 15,
     marginBottom: 10,
-    backgroundColor: COLORS.GREY,
+    fontWeight: 'bold',
+    // backgroundColor: COLORS.GREY,
   },
   pickerItemStyle: {
     color: 'rgba(0,0,0,0.7)',
-    // fontWeight: 'bold', // Customize the text color here
   },
   labeled: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 15,
-    paddingVertical: 10,
+    // paddingVertical: 10,
     color: COLORS.BLACK,
     marginTop: 10,
     marginBottom: 10,
     borderColor: COLORS.GREY,
     borderStyle: 'solid',
     borderWidth: 1,
-    borderRadius: 20,
-  },
-  label: {
-    flex: 2,
-    color: 'rgba(0,0,0,0.7)',
+    borderRadius: 10,
   },
   field: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
+    color: COLORS.BLACK,
   },
   submit: {
-    flexDirection: 'row',
-    padding: DIMENS.PADDING,
-    paddingHorizontal: 15,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: COLORS.PRIMARY,
-    borderRadius: 50,
+    backgroundColor: COLORS.BLACK,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginBottom: 10,
+    marginTop: 10,
   },
   submitText: {
-    color: COLORS.BLACK,
-    textAlign: 'center',
-    textTransform: 'uppercase',
+    color: '#fff',
+    fontSize: 18,
     fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  wrap: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: 70,
+    borderRadius: 20,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    backgroundColor: COLORS.GREY_LIGHTER,
+  },
+  pickerWrap: {
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    marginBottom: 10,
+    backgroundColor: COLORS.GREY_LIGHTER,
+  },
+  smallInput: {
+    width: 80,
+    height: 40,
+    textAlign: 'right',
+    color: COLORS.BLACK,
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    marginBottom: 10,
+    backgroundColor: COLORS.GREY_LIGHTER,
   },
   wrap: {
     flex: 1,
@@ -383,32 +455,30 @@ const STYLES = StyleSheet.create({
   },
   detail: {
     flex: 1,
-    height: 40,
-    marginHorizontal: 8,
-    paddingHorizontal: 10,
-    borderWidth: 1,
+    paddingHorizontal: 15,
+    // paddingVertical: 10,
+    color: COLORS.BLACK,
+    marginTop: 10,
+    marginBottom: 10,
     borderColor: COLORS.GREY,
-    borderRadius: 15,
-    backgroundColor: COLORS.GREY_LIGHTER,
-    color: 'rgba(0,0,0,0.7)',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 10,
+    height: 50,
+    marginHorizontal: 5,
   },
-  btn: {
-    backgroundColor: COLORS.BLACK,
-    padding: DIMENS.PADDING,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderRadius: 50,
-    marginTop: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  btnText: {
-    fontSize: 16,
-    alignItems: 'center',
-    fontWeight: '900',
-    justifyContent: 'center',
-    paddingLeft: 40,
-    color: COLORS.WHITE,
+  pickerStyle: {
+    flex: 1,
+    paddingHorizontal: 15,
+    // paddingVertical: 10,
+    color: COLORS.BLACK,
+    marginTop: 10,
+    marginBottom: 10,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 10,
+    height: 50,
+    marginHorizontal: 5,
   },
 });
