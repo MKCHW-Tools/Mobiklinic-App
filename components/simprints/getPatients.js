@@ -77,41 +77,71 @@ const GetPatients = ({navigation}) => {
 
   return (
     <View style={styles.container}>
+      
       {_header()}
-      <Text style={styles.label}>Simprints GUID</Text>
-      <TextInput style={styles.input} value={guid} onChangeText={setGuid} />
-
-      <TouchableOpacity style={styles.button} onPress={fetchData}>
-        <Text style={styles.buttonText}>Get Beneficiary Data</Text>
-      </TouchableOpacity>
-
-      {userData && (
-        <View style={styles.userData}>
-          <Text style={styles.userDataLabel}>
-            First Name {userData.firstName}
-          </Text>
-          <Text style={styles.userDataLabel}>
-            Last Name: {userData.lastName}
-          </Text>
-          <Text style={styles.userDataLabel}>Sex: {userData.sex}</Text>
-          <Text style={styles.userDataLabel}>
-            Phone Number: {userData.phoneNumber}
-          </Text>
-          <Text style={styles.userDataLabel}>Country: {userData.country}</Text>
-          <Text style={styles.userDataLabel}>
-            District: {userData.district}
-          </Text>
-          <Text style={styles.userDataLabel}>
-            Age Group: {userData.ageGroup}
-          </Text>
-          <Text style={styles.userDataLabel}>
-            Weight(Kgs): {userData.weight}
-          </Text>
-          <Text style={styles.userDataLabel}>
-            Height(Cms): {userData.height}
-          </Text>
+      <ScrollView style={styles.body}>
+        <View style={styles.logo}>
+          <Image
+            style={{width: 40, height: 40}}
+            source={require('../imgs/logo.png')}
+          />
+          {/* <Text style={styles.title}>Mobiklinic</Text> */}
         </View>
-      )}
+
+        <Text style={styles.label}>Simprints GUID</Text>
+        <TextInput style={styles.input} value={guid} onChangeText={setGuid} />
+
+        <TouchableOpacity style={styles.button} onPress={fetchData}>
+          <Text style={styles.buttonText}>Get Beneficiary Data</Text>
+        </TouchableOpacity>
+
+        {userData && (
+          <View style={styles.userData}>
+            <Text style={styles.userDataLabel}>
+              First Name {'\t'}
+              <Text style={{fontWeight: 'bold'}}>{userData.firstName}</Text>
+            </Text>
+            <Text style={styles.userDataLabel}>
+              Last Name:{' \t'}
+              <Text style={{fontWeight: 'bold'}}>{userData.lastName}</Text>
+            </Text>
+            <Text style={styles.userDataLabel}>
+              Sex{'\t'} {'\t'}
+              <Text style={{fontWeight: 'bold'}}>{userData.sex}</Text>
+            </Text>
+            <Text style={styles.userDataLabel}>
+              Phone Number {'\t'}
+              <Text style={{fontWeight: 'bold'}}>{userData.phoneNumber}</Text>
+            </Text>
+            <Text style={styles.userDataLabel}>
+              Country {'\t'}
+              {'\t'}
+              <Text style={{fontWeight: 'bold'}}>{userData.country}</Text>
+            </Text>
+            <Text style={styles.userDataLabel}>
+              District {'\t'}
+              <Text style={{fontWeight: 'bold'}}>{userData.district}</Text>
+            </Text>
+            <Text style={styles.userDataLabel}>
+              Age Group: {'\t'}
+              <Text style={{fontWeight: 'bold'}}>{userData.ageGroup}</Text>
+            </Text>
+            <Text style={styles.userDataLabel}>
+              Weight(Kgs): {'\t'}
+              <Text style={{fontWeight: 'bold'}}>{userData.weight}</Text>
+            </Text>
+            <Text style={styles.userDataLabel}>
+              Height(Cms) {'\t'}
+              <Text style={{fontWeight: 'bold'}}>{userData.height}</Text>
+            </Text>
+          </View>
+        )}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('SelectActivity')}>
+          <Text style={styles.buttonText}>Confirm Data</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 };
@@ -119,19 +149,24 @@ const GetPatients = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    // padding: 20,
     backgroundColor: '#fff',
   },
+  body: {
+    flex: 2,
+    paddingHorizontal: 30,
+  },
+
   label: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
     color: COLORS.BLACK,
     textAlign: 'center',
-    marginVertical: 20,
+    marginTop: 5,
   },
   centerHeader: {
-    flex: 2,
+    flex: 1,
     alignItems: 'center',
     color: COLORS.BLACK,
     fontWeight: 'bold',
@@ -151,8 +186,9 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.BLACK,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 5,
+    borderRadius: 10,
     marginBottom: 10,
+    marginTop: 10,
   },
   buttonText: {
     color: '#fff',
@@ -164,9 +200,27 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   userDataLabel: {
-    fontSize: 16,
+    fontSize: 14,
     marginBottom: 5,
     color: 'black',
+    borderBottomWidth: 1,
+    padding: DIMENS.PADDING,
+    borderBottomColor: '#000',
+    borderColor: COLORS.GREY,
+  },
+  logo: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+
+  title: {
+    color: COLORS.ACCENT_1,
+    fontSize: 16,
+    marginVertical: 10,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    padding: DIMENS.PADDING,
   },
 });
 
