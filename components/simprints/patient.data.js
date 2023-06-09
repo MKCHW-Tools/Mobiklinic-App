@@ -13,13 +13,9 @@ import {
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/Feather';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   _removeStorageItem,
-  generateRandomCode,
-  MyDate,
 } from '../helpers/functions';
-import {useNavigation} from '@react-navigation/native';
 import {DiagnosisContext} from '../providers/Diagnosis';
 import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';

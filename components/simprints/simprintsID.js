@@ -7,7 +7,6 @@
 
 import React, {useCallback, useEffect, useState,useContext} from 'react';
 import {DeviceEventEmitter, NativeEventEmitter, Text} from 'react-native';
-// import BeneficiarySelectionScreen from './BeneficiarySelectionScreen';
 
 import {
   Linking,
@@ -27,6 +26,7 @@ var OpenActivity = NativeModules.OpenActivity;
 
 const SimprintsID = ({navigation}) => {
   const {updateDataResults} = useContext(DataResultsContext);
+  const {updateBenData} = useContext(DataResultsContext);
 
   const [identificationPlusResults, setIdentificationPlusResults] = useState(
     [],
@@ -45,6 +45,7 @@ const SimprintsID = ({navigation}) => {
       results => {
         setIdentificationPlusResults(results);
         setDisplayMode('identificationPlus');
+        updateBenData(results);
       },
     );
 
@@ -53,6 +54,7 @@ const SimprintsID = ({navigation}) => {
       results => {
         setIdentificationResults(results);
         setDisplayMode('identification');
+         updateBenData(results);
         // updateDataResults(results);
       },
     );
@@ -72,7 +74,7 @@ const SimprintsID = ({navigation}) => {
       identificationSubscription.remove();
       registrationSuccessSubscription.remove();
     };
-  }, [updateDataResults]);
+  }, [updateDataResults, updateBenData]);
 
   const handleIdentificationPlus = () => {
     const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
@@ -98,6 +100,17 @@ const SimprintsID = ({navigation}) => {
       );
     }
     navigation.navigate('PatientData');
+    console.log('Beneficiary confirmed');
+  };
+
+  const confirmSelectedBeneficiaryy = () => {
+    if (sessionId && selectedUserUniqueId) {
+      IdentificationPlus.confirmSelectedBeneficiary(
+        sessionId,
+        selectedUserUniqueId,
+      );
+    }
+    navigation.navigate('PatientDatas');
     console.log('Beneficiary confirmed');
   };
 
@@ -162,7 +175,7 @@ const SimprintsID = ({navigation}) => {
             <>
               <Button
                 title="Confirm Beneficiary"
-                onPress={confirmSelectedBeneficiary}
+                onPress={confirmSelectedBeneficiaryy}
               />
               <View style={{height: 20}} />
               <Button
@@ -204,7 +217,7 @@ const SimprintsID = ({navigation}) => {
             <>
               <Button
                 title="Confirm Beneficiary"
-                onPress={confirmSelectedBeneficiary}
+                onPress={confirmSelectedBeneficiaryy}
               />
               <View style={{height: 20}} />
               <Button
