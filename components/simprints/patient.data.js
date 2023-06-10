@@ -70,9 +70,10 @@ const PatientData = ({navigation}) => {
       );
 
       if (response.ok) {
+        await AsyncStorage.setItem('PatientData', JSON.stringify(state));
+
         Alert.alert('Data posted successfully');
         navigation.navigate('SelectActivity');
-
       } else {
         console.error('Error posting data:', response.status);
         Alert.alert('Error', 'Failed to submit data. Please try again later.');
@@ -117,7 +118,6 @@ const PatientData = ({navigation}) => {
           <Text style={STYLES.label}>Simprints GUI</Text>
           <TextInput
             style={STYLES.guid}
-
             value={dataResults}
             onChangeText={text => setState({...state, simprintsGui: text})}
             placeholder="Enter simprints GUI"
@@ -401,8 +401,8 @@ const STYLES = StyleSheet.create({
   guid: {
     textAlign: 'left',
     color: COLORS.BLACK,
-    fontSize:11,
-    fontWeight:'bold '
+    fontSize: 11,
+    fontWeight: 'bold ',
   },
   submit: {
     backgroundColor: COLORS.BLACK,
