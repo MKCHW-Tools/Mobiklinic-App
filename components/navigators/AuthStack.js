@@ -17,6 +17,7 @@ import CovidData from '../simprints/vaccination';
 import SelectActivity from '../simprints/select.activity';
 import PatientSummary from '../simprints/patient.summary';
 import GetPatients from '../simprints/getPatients';
+import PatientLists from '../simprints/patient.lists';
 
 const Stack = createStackNavigator();
 
@@ -108,6 +109,11 @@ function AuthStack() {
         name="GetPatients"
         options={{headerShown: false}}
         component={GetPatients}
+      />
+      <Stack.Screen
+        name="PatientLists"
+        options={{headerShown: false}}
+        component={PatientLists}
       />
     </Stack.Navigator>
   );
