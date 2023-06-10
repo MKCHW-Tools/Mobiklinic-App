@@ -34,7 +34,11 @@ var OpenActivity = NativeModules.OpenActivity;
 const SimprintsID = ({navigation}) => {
   const {updateDataResults} = useContext(DataResultsContext);
   const {updateBenData} = useContext(DataResultsContext);
-
+  const {benData} = useContext(DataResultsContext);
+  const [userData, setUserData] = React.useState(null);
+  const [guid, setGuid] = React.useState(
+    benData.length > 0 ? benData[0].guid : '',
+  );
   const [identificationPlusResults, setIdentificationPlusResults] = useState(
     [],
   );
@@ -45,7 +49,32 @@ const SimprintsID = ({navigation}) => {
   const [selectedUserUniqueId, setSelectedUserUniqueId] = useState(null);
   const [noMatchButtonPressed, setNoMatchButtonPressed] = useState(false);
   const [showButtons, setShowButtons] = useState(true);
-
+  // fetch data function
+  const fetchData = async () => {
+    console.log('GUID:', guid);
+    try {
+      const response = await fetch(
+        `https://mobi-be-production.up.railway.app/patients/${guid}`,
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setUserData(data);
+      } else {
+        console.error('Error fetching user data:', response.status);
+        Alert.alert(
+          'Error',
+          'Failed to fetch user data. Please try again later.',
+        );
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      Alert.alert(
+        'Error',
+        'Failed to fetch user data. Please try again later.',
+      );
+    }
+    navigation.navigate('GetPatients');
+  };
   useEffect(() => {
     const identificationPlusSubscription = DeviceEventEmitter.addListener(
       'onIdentificationResult',
@@ -117,7 +146,7 @@ const SimprintsID = ({navigation}) => {
         selectedUserUniqueId,
       );
     }
-    navigation.navigate('GetPatients');
+    fetchData();
     console.log('Beneficiary confirmed');
   };
 
@@ -151,7 +180,7 @@ const SimprintsID = ({navigation}) => {
           <Icon name="arrow-left" size={25} color={COLORS.BLACK} />
         </TouchableOpacity>
       }
-      title={<Text style={[styles.centerHeader]}>Simprints Integration</Text>}
+      title={<Text style={[styles.centerHeader]}>Biometrics Integration</Text>}
     />
   );
 
@@ -171,18 +200,28 @@ const SimprintsID = ({navigation}) => {
             <>
               {enrollmentGuid && (
                 <>
-                  <Text style={styles.text}>Beneficiary Enrolled on ID:</Text>
-                  <Text style={styles.text}>{enrollmentGuid}</Text>
+                  <Text style={styles.text}>Beneficiary Enrolled on ID</Text>
+                  <View style={{height: 30}} />
+
+                  <TouchableOpacity
+                    onPress={confirmSelectedBeneficiary}
+                    style={styles.input}>
+                    <Text style={styles.label}>
+                      <Text style={{fontWeight: 'bold', fontSize: 15}}>
+                        {enrollmentGuid}
+                      </Text>
+                    </Text>
+                  </TouchableOpacity>
+
                   <View style={{height: 20}} />
                 </>
               )}
-              <View style={{height: 20}} />
 
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={styles.button}
                 onPress={confirmSelectedBeneficiary}>
                 <Text style={styles.buttonText}>Continue to Registration</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </>
           )}
 
@@ -203,27 +242,35 @@ const SimprintsID = ({navigation}) => {
                 )
                 .map((result, index) => (
                   <View key={index}>
-                    <Text style={styles.text}>
-                      <View style={{height: 20}} />
-                      Tier: {result.tier}, Confidence: {result.confidenceScore},
-                      Guid: {result.guid}
-                    </Text>
+                    <TouchableOpacity
+                      style={styles.input}
+                      onPress={confirmSelectedBeneficiaryy}>
+                      <Text style={styles.label}>
+                        <View style={{height: 20}} />
+                        Tier:{'\t'}
+                        {'\t'}
+                        <Text style={{fontWeight: 'bold'}}>{result.tier}</Text>
+                        {'\n'}
+                        Confidence Score:{'\t'}
+                        {'\t'}
+                        <Text style={{fontWeight: 'bold'}}>
+                          {result.confidenceScore}%
+                        </Text>
+                        {'\n'}
+                        Guid:
+                        <Text style={{fontWeight: 'bold'}}>{result.guid}</Text>
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                 ))}
               <View style={{height: 20}} />
               {showButtons ? (
                 <>
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={confirmSelectedBeneficiaryy}>
-                    <Text style={styles.buttonText}>Confirm Beneficiary</Text>
-                  </TouchableOpacity>
-
                   <View style={{height: 20}} />
 
                   <TouchableOpacity
                     style={styles.button}
-                    onPress={() => setNoMatchButtonPressed(true)}>
+                    onPress={handleIdentificationPlus}>
                     <Text style={styles.buttonText}>No Match</Text>
                   </TouchableOpacity>
                 </>
@@ -239,7 +286,7 @@ const SimprintsID = ({navigation}) => {
             <>
               {identificationResults.length > 0 && (
                 <React.Fragment key="identification-heading">
-                  <Text style={styles.text}>Identification Results:</Text>
+                  <Text style={styles.text}>Identification Results</Text>
                   <View style={{height: 20}} />
                 </React.Fragment>
               )}
@@ -252,27 +299,41 @@ const SimprintsID = ({navigation}) => {
                 )
                 .map((result, index) => (
                   <View key={index}>
-                    <Text style={styles.text}>
-                      <View style={{height: 20}} />
-                      Tier: {result.tier}, Confidence: {result.confidenceScore},
-                      Guid: {result.guid}
-                    </Text>
+                    <TouchableOpacity
+                      style={styles.input}
+                      onPress={confirmSelectedBeneficiaryy}>
+                      <Text style={styles.label}>
+                        <View style={{height: 20}} />
+                        Tier:{'\t'}
+                        {'\t'}
+                        <Text style={{fontWeight: 'bold'}}>{result.tier}</Text>
+                        {'\n'}
+                        Confidence Score:{'\t'}
+                        {'\t'}
+                        <Text style={{fontWeight: 'bold'}}>
+                          {result.confidenceScore}%
+                        </Text>
+                        {'\n'}
+                        Guid:
+                        <Text style={{fontWeight: 'bold'}}>{result.guid}</Text>
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                 ))}
               <View style={{height: 20}} />
               {showButtons ? (
                 <>
-                  <TouchableOpacity
+                  {/* <TouchableOpacity
                     style={styles.button}
                     onPress={confirmSelectedBeneficiaryy}>
                     <Text style={styles.buttonText}>Confirm Beneficiary</Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
 
                   <View style={{height: 20}} />
-                  
+
                   <TouchableOpacity
                     style={styles.button}
-                    onPress={() => setNoMatchButtonPressed(true)}>
+                    onPress={handleIdentificationPlus}>
                     <Text style={styles.buttonText}>No Match</Text>
                   </TouchableOpacity>
                 </>
@@ -315,7 +376,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    marginVertical: 140,
+    marginVertical: 40,
   },
   wrap: {
     flex: 2,
@@ -330,11 +391,32 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginVertical: 20,
   },
+  label: {
+    fontSize: 14,
+    fontWeight: 'medium',
+    marginBottom: 10,
+    color: COLORS.BLACK,
+    textAlign: 'left',
+    marginTop: 5,
+    paddingHorizontal: 10,
+  },
+  input: {
+    height: 110,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 20,
+    color: 'black',
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+  },
   text: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
     color: 'black',
+    textDecorationLine: 'underline',
   },
   centerHeader: {
     flex: 2,
