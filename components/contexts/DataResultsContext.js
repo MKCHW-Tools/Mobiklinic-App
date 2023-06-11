@@ -1,5 +1,3 @@
-
-
 import React, { createContext, useState } from 'react';
 
 const DataResultsContext = createContext();
@@ -7,6 +5,7 @@ const DataResultsContext = createContext();
 export const DataResultsProvider = ({ children }) => {
   const [dataResults, setDataResults] = useState('');
   const [benData, setBenData] = useState([]);
+  const [userLog, setUserLog] = useState('');
 
   const updateDataResults = newDataResults => {
     setDataResults(newDataResults);
@@ -16,6 +15,10 @@ export const DataResultsProvider = ({ children }) => {
     setBenData(newBenData);
   };
 
+  const updateUserLog = newUserLog => {
+    setUserLog(newUserLog);
+  };
+
   return (
     <DataResultsContext.Provider 
       value={{
@@ -23,6 +26,8 @@ export const DataResultsProvider = ({ children }) => {
         updateDataResults,
         benData,
         updateBenData,
+        userLog,
+        updateUserLog,
       }}
     >
       {children}

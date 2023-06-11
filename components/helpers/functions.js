@@ -1,10 +1,11 @@
-import * as React from 'react';
+import React, {useContext} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Alert} from 'react-native';
 import axios from 'axios';
 import {URLS} from '../constants/API';
 import uniqWith from 'lodash/uniqWith';
 import isEqual from 'lodash/isEqual';
+import DataResultsContext from '../contexts/DataResultsContext';
 
 export const _removeStorageItem = async key => {
   return await AsyncStorage.removeItem(key);
@@ -174,7 +175,11 @@ export const DOWNLOAD = async data => {
   }
 };
 
+
 export const signIn = async data => {
+ 
+
+
   clearStorage();
   let {user, setIsLoading, setMyUser: setUser} = data;
   if (typeof user === undefined) {
@@ -211,27 +216,7 @@ export const signIn = async data => {
       });
       setIsLoading(false);
       return;
-      //// It is possible that the user has changed the password, but it adheres to the past information stored on the device.
-      //// This, we need to ask the online server when the user fail to sign in with the stored information.
-      ////
-      // } else {
-      // 	Alert.alert(
-      // 		"Failed to login",
-      // 		"Check your login details",
-      // 		[
-      // 			{
-      // 				text: "Cancel",
-      // 				onPress: () => setIsLoading(false),
-      // 			},
-      // 		],
-      //
-      // 		{
-      // 			cancelable: true,
-      // 			onDismiss: () => {
-      // 				setIsLoading(false);
-      // 			},
-      // 		}
-      // 	);
+   
     }
   }
   // } else {
@@ -252,10 +237,16 @@ export const signIn = async data => {
       },
     );
 
+
     let json_data = await response.json();
     const {message, id, accessToken, refreshToken} = json_data;
+  
 
     if (message === 'Login successful') {
+      const userId = json_data.id;
+      // updateUserLog(userId);
+      console.log('User ID:', userId);
+
       await SAVE_LOCAL_USER({
         id,
         username,
@@ -324,30 +315,6 @@ export const signIn = async data => {
 };
 
 export const signUp = async data => {
-  // In a production app, we need to send user data to server and get a token
-  // We will also need to handle errors if sign up failed
-  // After getting token, we need to persist the token using `AsyncStorage`
-  // In the example, we'll use a dummy token
-  /* 	const {
-		firstname,
-		lastname,
-		theemail,
-		thephone,
-		thepassword,
-		thepassword2,
-	} = data.errors; */
-
-  /* 	if (
-		firstname ||
-		lastname ||
-		theemail ||
-		thephone ||
-		thepassword ||
-		thepassword2
-	) {
-		Alert.alert("Fail", "Errors, Fix errors in the form, and try again!");
-		return;
-	} */
   const {
     firstName,
     lastName,
@@ -393,10 +360,6 @@ export const signUp = async data => {
       .then(response => {
         setIsLoading(false);
         if (response.message == 'Signup successful') {
-          /* 					Alert.alert(
-						"Registered successfully",
-						"Press Okay to login!"
-					); */
           setRegistered(true);
         } else if (response.result == 'Failure') {
           Alert.alert(

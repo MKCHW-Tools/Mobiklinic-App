@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {
   View,
   Alert,
@@ -27,6 +27,10 @@ const PatientData = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
   const {diagnoses} = diagnosisContext;
   const {dataResults} = useContext(DataResultsContext);
+  const {userLog} = useContext(DataResultsContext);
+  // const [ id, setId ] = React.useState(userLog.length > 0 ? userLog[0].id : '');
+
+ 
 
   // const navigation = useNavigation();
   // date
@@ -44,12 +48,14 @@ const PatientData = ({navigation}) => {
     country: '',
     primaryLanguage: '',
     simprintsGui: '',
+    registeredById: '',
   });
 
   const handleSubmit = async () => {
     try {
+      console.log('User Id:', id);
       const response = await fetch(
-        'https://mobi-be-production.up.railway.app/patients',
+        `https://mobi-be-production.up.railway.app/${userLog}/patients`,
         {
           method: 'POST',
           body: JSON.stringify({
@@ -64,6 +70,7 @@ const PatientData = ({navigation}) => {
             country: state.country,
             primaryLanguage: state.primaryLanguage,
             simprintsGui: dataResults,
+            registeredById: userLog,
           }),
           headers: {
             'Content-type': 'application/json; charset=UTF-8',
@@ -73,8 +80,9 @@ const PatientData = ({navigation}) => {
       );
 
       if (response.ok) {
+        const data = await response.json();
+        // setId(data.id);
         console.log('Data posted successfully');
-        navigation.navigate('SelectActivity');
       } else {
         console.error('Error posting data:', response.status);
         Alert.alert('Error', 'Failed to submit data. Please try again later.');
@@ -230,6 +238,16 @@ const PatientData = ({navigation}) => {
             value={dataResults}
             onChangeText={text => setState({...state, simprintsGui: text})}
             placeholder="Enter simprints GUI"
+          />
+        </View>
+
+        {/* User id */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Registered By:</Text>
+          <TextInput
+            style={STYLES.field}
+            value={userLog}
+            onChangeText={text => setState({...state, registeredById: text})}
           />
         </View>
 
