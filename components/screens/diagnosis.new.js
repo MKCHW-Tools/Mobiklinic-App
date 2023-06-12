@@ -139,7 +139,6 @@ const NewDiagnosis = ({navigation}) => {
     <View style={STYLES.wrapper}>
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
 
-      {_header()}
 
       <ScrollView style={STYLES.body} keyboardDismissMode="on-drag">
         <Text style={STYLES.terms}>Enter patient details.</Text>

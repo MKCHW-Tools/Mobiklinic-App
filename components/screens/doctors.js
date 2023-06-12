@@ -98,20 +98,18 @@ const Doctors = ({navigation}) => {
     );
   };
 
-  const _header = () => (
-    <CustomHeader
-      left={
-        <TouchableOpacity
-          style={{paddingLeft: 10}}
-          onPress={() => navigation.openDrawer()}>
-          <Icon name="menu" size={25} color={COLORS.SECONDARY} />
-        </TouchableOpacity>
-      }
-      title={
-        <Text style={[STYLES.centerHeader, STYLES.title]}>Medical Experts</Text>
-      }
-    />
-  );
+  // const _header = () => (
+  //   <CustomHeader
+  //     left={
+  //       <TouchableOpacity
+  //         style={{paddingLeft: 10}}
+  //         onPress={() => navigation.openDrawer()}>
+  //         <Icon name="menu" size={25} color={COLORS.SECONDARY} />
+  //       </TouchableOpacity>
+  //     }
+      
+  //   />
+  // );
 
   const {doctors, isLoading, login} = state;
 
@@ -134,7 +132,6 @@ const Doctors = ({navigation}) => {
     <View style={STYLES.wrapper}>
       <StatusBar />
 
-      {_header()}
 
       <FlatList
         data={doctors}

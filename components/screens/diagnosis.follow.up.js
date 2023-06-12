@@ -100,7 +100,6 @@ const FollowUp = ({route, navigation}) => {
   return (
     <View style={STYLES.wrapper}>
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
-      {_header()}
       <ScrollView style={STYLES.body}>
         <View style={STYLES.terms}>
           <Text>Enter follow up details below.</Text>

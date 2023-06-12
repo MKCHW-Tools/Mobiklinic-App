@@ -122,7 +122,6 @@ const Diagnose = ({ navigation }) => {
 				<View style={STYLES.wrapper}>
 					<CustomStatusBar />
 
-					{_header()}
 
 					<View style={STYLES.body}>
 						<Icon name="smile" size={60} color={COLORS.GREY} />

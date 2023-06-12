@@ -23,22 +23,7 @@ const Dashboard = ({navigation}) => {
   return (
     <View style={STYLES.wrapper}>
       <CustomStatusBar />
-      <CustomHeader
-        style={STYLES.header}
-        left={
-          <TouchableOpacity style={STYLES.leftHeader}>
-            <Icon
-              name="menu"
-              size={32}
-              color={COLORS.SECONDARY}
-              onPress={() => navigation.openDrawer()}
-            />
-          </TouchableOpacity>
-        }
-        title={
-          <Text style={[STYLES.centerHeader, STYLES.title]}>Dashboard</Text>
-        }
-      />
+      
       <View style={STYLES.hero}>
         <Text style={STYLES.heroHeading}>Hey CHP,</Text>
         <Text style={STYLES.heroParagraph}>Welcome back!</Text>

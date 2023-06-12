@@ -28,7 +28,7 @@ const Profile = ({ navigation }) => {
 							name="menu"
 							size={32}
 							color={COLORS.SECONDARY}
-							onPress={() => navigation.openDrawer()}
+							onPress={() => navigation.goBack()}
 						/>
 					</TouchableOpacity>
 				}

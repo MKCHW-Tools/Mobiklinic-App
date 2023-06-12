@@ -113,7 +113,6 @@ const diagnosisContext = React.useContext(DiagnosisContext);
 		<View style={STYLES.wrapper}>
 			<StatusBar backgroundColor={COLORS.WHITE} barStyle="dark-content" />
 
-			{_header()}
 
 			<View style={STYLES.body}>
 				<Text style={STYLES.heading}>Diagnosis Info</Text>
