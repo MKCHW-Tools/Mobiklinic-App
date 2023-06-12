@@ -48,12 +48,12 @@ const PatientData = ({navigation}) => {
     country: '',
     primaryLanguage: '',
     simprintsGui: '',
-    registeredById: '',
+    // registeredById: '',
   });
 
   const handleSubmit = async () => {
     try {
-      console.log('User Id:', id);
+      console.log('User Id:', userLog);
       const response = await fetch(
         `https://mobi-be-production.up.railway.app/${userLog}/patients`,
         {
@@ -70,7 +70,7 @@ const PatientData = ({navigation}) => {
             country: state.country,
             primaryLanguage: state.primaryLanguage,
             simprintsGui: dataResults,
-            registeredById: userLog,
+            // registeredById: userLog,
           }),
           headers: {
             'Content-type': 'application/json; charset=UTF-8',
@@ -242,14 +242,14 @@ const PatientData = ({navigation}) => {
         </View>
 
         {/* User id */}
-        <View style={STYLES.labeled}>
+        {/* <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Registered By:</Text>
           <TextInput
             style={STYLES.field}
             value={userLog}
             onChangeText={text => setState({...state, registeredById: text})}
           />
-        </View>
+        </View> */}
 
         {/* Submit Button */}
         <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
