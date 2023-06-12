@@ -45,7 +45,7 @@ const Dashboard = ({navigation}) => {
                   color={COLORS.BLACK}
                 />
               </View>
-              <Text style={STYLES.cardTitle}>Beneficary Details</Text>
+              <Text style={STYLES.cardTitle}>Beneficiary</Text>
             </TouchableOpacity>
           </View>
           <View style={STYLES.row}>
