@@ -146,7 +146,7 @@ const SimprintsID = ({navigation}) => {
         selectedUserUniqueId,
       );
     }
-    fetchData();
+    navigation.navigate('GetPatients');
     console.log('Beneficiary confirmed');
   };
 
@@ -158,6 +158,11 @@ const SimprintsID = ({navigation}) => {
     }
   }, [noMatchButtonPressed]);
 
+  var OpenActivity = NativeModules.OpenActivity;
+
+  const openFunction = () => {
+    OpenActivity.open('WuDDHuqhcQ36P2U9rM7Y', 'test_user', 'mpower');
+  };
   const goBack = () => {
     setDisplayMode(null);
     setIdentificationPlusResults([]);
@@ -188,182 +193,192 @@ const SimprintsID = ({navigation}) => {
     <View style={styles.wrapper}>
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
       {_header()}
-      <View style={styles.wrap}>
-        <Image
-          style={{width: 70, height: 70}}
-          source={require('../imgs/logo.png')}
-        />
-        <Text style={styles.title}>Mobiklinic</Text>
+      <ScrollView style={styles.body}>
+        <View style={styles.wrap}>
+          <Image
+            style={{width: 70, height: 70}}
+            source={require('../imgs/logo.png')}
+          />
+          <Text style={styles.title}>Mobiklinic</Text>
 
-        <View style={styles.container}>
-          {displayMode === 'enrollment' && (
-            <>
-              {enrollmentGuid && (
-                <>
-                  <Text style={styles.text}>Beneficiary Enrolled on ID</Text>
-                  <View style={{height: 30}} />
+          <View style={styles.container}>
+            {displayMode === 'enrollment' && (
+              <>
+                {enrollmentGuid && (
+                  <>
+                    <Text style={styles.text}>Beneficiary Enrolled on ID</Text>
+                    <View style={{height: 30}} />
 
-                  <TouchableOpacity
-                    onPress={confirmSelectedBeneficiary}
-                    style={styles.input}>
-                    <Text style={styles.label}>
-                      <Text style={{fontWeight: 'bold', fontSize: 15}}>
-                        {enrollmentGuid}
+                    <TouchableOpacity
+                      onPress={confirmSelectedBeneficiary}
+                      style={styles.input}>
+                      <Text style={styles.label}>
+                        <Text style={{fontWeight: 'bold', fontSize: 15}}>
+                          {enrollmentGuid}
+                        </Text>
                       </Text>
-                    </Text>
-                  </TouchableOpacity>
+                    </TouchableOpacity>
 
-                  <View style={{height: 20}} />
-                </>
-              )}
+                    <View style={{height: 20}} />
+                  </>
+                )}
 
-              {/* <TouchableOpacity
+                {/* <TouchableOpacity
                 style={styles.button}
                 onPress={confirmSelectedBeneficiary}>
                 <Text style={styles.buttonText}>Continue to Registration</Text>
               </TouchableOpacity> */}
-            </>
-          )}
+              </>
+            )}
 
-          {displayMode === 'identificationPlus' && (
-            <>
-              {identificationPlusResults.length > 0 && (
-                <React.Fragment key="identification-plus-heading">
-                  <Text style={styles.text}>Beneficiary Identified:</Text>
-                  <View style={{height: 20}} />
-                </React.Fragment>
-              )}
+            {displayMode === 'identificationPlus' && (
+              <>
+                {identificationPlusResults.length > 0 && (
+                  <React.Fragment key="identification-plus-heading">
+                    <Text style={styles.text}>Beneficiary Identified:</Text>
+                    <View style={{height: 20}} />
+                  </React.Fragment>
+                )}
 
-              {identificationPlusResults
-                .filter(
-                  result =>
-                    result.confidenceScore >= 50 &&
-                    result.confidenceScore <= 99,
-                )
-                .map((result, index) => (
-                  <View key={index}>
-                    <TouchableOpacity
-                      style={styles.input}
-                      onPress={confirmSelectedBeneficiaryy}>
-                      <Text style={styles.label}>
-                        <View style={{height: 20}} />
-                        Tier:{'\t'}
-                        {'\t'}
-                        <Text style={{fontWeight: 'bold'}}>{result.tier}</Text>
-                        {'\n'}
-                        Confidence Score:{'\t'}
-                        {'\t'}
-                        <Text style={{fontWeight: 'bold'}}>
-                          {result.confidenceScore}%
+                {identificationPlusResults
+                  .filter(
+                    result =>
+                      result.confidenceScore >= 20 &&
+                      result.confidenceScore <= 99,
+                  )
+                  .map((result, index) => (
+                    <View key={index}>
+                      <TouchableOpacity
+                        style={styles.input}
+                        onPress={confirmSelectedBeneficiaryy}>
+                        <Text style={styles.label}>
+                          <View style={{height: 20}} />
+                          Tier:{'\t'}
+                          {'\t'}
+                          <Text style={{fontWeight: 'bold'}}>
+                            {result.tier}
+                          </Text>
+                          {'\n'}
+                          Confidence Score:{'\t'}
+                          {'\t'}
+                          <Text style={{fontWeight: 'bold'}}>
+                            {result.confidenceScore}%
+                          </Text>
+                          {'\n'}
+                          Guid:
+                          <Text style={{fontWeight: 'bold'}}>
+                            {result.guid}
+                          </Text>
                         </Text>
-                        {'\n'}
-                        Guid:
-                        <Text style={{fontWeight: 'bold'}}>{result.guid}</Text>
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                ))}
-              <View style={{height: 20}} />
-              {showButtons ? (
-                <>
-                  <View style={{height: 20}} />
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+                <View style={{height: 20}} />
+                {showButtons ? (
+                  <>
+                    <View style={{height: 20}} />
 
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={handleIdentificationPlus}>
-                    <Text style={styles.buttonText}>No Match</Text>
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={openFunction}>
+                      <Text style={styles.buttonText}>No Match</Text>
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <TouchableOpacity style={styles.button} onPress={goBack}>
+                    <Text style={styles.buttonText}>Go Back</Text>
                   </TouchableOpacity>
-                </>
-              ) : (
-                <TouchableOpacity style={styles.button} onPress={goBack}>
-                  <Text style={styles.buttonText}>Go Back</Text>
-                </TouchableOpacity>
-              )}
-            </>
-          )}
+                )}
+              </>
+            )}
 
-          {displayMode === 'identification' && (
-            <>
-              {identificationResults.length > 0 && (
-                <React.Fragment key="identification-heading">
-                  <Text style={styles.text}>Identification Results</Text>
-                  <View style={{height: 20}} />
-                </React.Fragment>
-              )}
+            {displayMode === 'identification' && (
+              <>
+                {identificationResults.length > 0 && (
+                  <React.Fragment key="identification-heading">
+                    <Text style={styles.text}>Identification Results</Text>
+                    <View style={{height: 20}} />
+                  </React.Fragment>
+                )}
 
-              {identificationResults
-                .filter(
-                  result =>
-                    result.confidenceScore >= 50 &&
-                    result.confidenceScore <= 99,
-                )
-                .map((result, index) => (
-                  <View key={index}>
-                    <TouchableOpacity
-                      style={styles.input}
-                      onPress={confirmSelectedBeneficiaryy}>
-                      <Text style={styles.label}>
-                        <View style={{height: 20}} />
-                        Tier:{'\t'}
-                        {'\t'}
-                        <Text style={{fontWeight: 'bold'}}>{result.tier}</Text>
-                        {'\n'}
-                        Confidence Score:{'\t'}
-                        {'\t'}
-                        <Text style={{fontWeight: 'bold'}}>
-                          {result.confidenceScore}%
+                {identificationResults
+                  .filter(
+                    result =>
+                      result.confidenceScore >= 20 &&
+                      result.confidenceScore <= 99,
+                  )
+                  .map((result, index) => (
+                    <View key={index}>
+                      <TouchableOpacity
+                        style={styles.input}
+                        onPress={confirmSelectedBeneficiaryy}>
+                        <Text style={styles.label}>
+                          <View style={{height: 20}} />
+                          Tier:{'\t'}
+                          {'\t'}
+                          <Text style={{fontWeight: 'bold'}}>
+                            {result.tier}
+                          </Text>
+                          {'\n'}
+                          Confidence Score:{'\t'}
+                          {'\t'}
+                          <Text style={{fontWeight: 'bold'}}>
+                            {result.confidenceScore}%
+                          </Text>
+                          {'\n'}
+                          Guid:
+                          <Text style={{fontWeight: 'bold'}}>
+                            {result.guid}
+                          </Text>
                         </Text>
-                        {'\n'}
-                        Guid:
-                        <Text style={{fontWeight: 'bold'}}>{result.guid}</Text>
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                ))}
-              <View style={{height: 20}} />
-              {showButtons ? (
-                <>
-                  {/* <TouchableOpacity
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+                <View style={{height: 20}} />
+                {showButtons ? (
+                  <>
+                    {/* <TouchableOpacity
                     style={styles.button}
                     onPress={confirmSelectedBeneficiaryy}>
                     <Text style={styles.buttonText}>Confirm Beneficiary</Text>
                   </TouchableOpacity> */}
 
-                  <View style={{height: 20}} />
+                    <View style={{height: 20}} />
 
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={handleIdentificationPlus}>
-                    <Text style={styles.buttonText}>No Match</Text>
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={openFunction}>
+                      <Text style={styles.buttonText}>No Match</Text>
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <TouchableOpacity style={styles.button} onPress={goBack}>
+                    <Text style={styles.buttonText}>Go Back</Text>
                   </TouchableOpacity>
-                </>
-              ) : (
-                <TouchableOpacity style={styles.button} onPress={goBack}>
-                  <Text style={styles.buttonText}>Go Back</Text>
+                )}
+              </>
+            )}
+
+            {!displayMode && (
+              <>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={handleIdentificationPlus}>
+                  <Text style={styles.buttonText}>Register Beneficiary</Text>
                 </TouchableOpacity>
-              )}
-            </>
-          )}
 
-          {!displayMode && (
-            <>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={handleIdentificationPlus}>
-                <Text style={styles.buttonText}>Launch Simprints</Text>
-              </TouchableOpacity>
+                <View style={{height: 10}} />
 
-              <View style={{height: 10}} />
-
-              <TouchableOpacity
-                style={styles.button}
-                onPress={handleIdentification}>
-                <Text style={styles.buttonText}>Identify Beneficiary</Text>
-              </TouchableOpacity>
-            </>
-          )}
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={handleIdentification}>
+                  <Text style={styles.buttonText}>Identify Beneficiary</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -372,6 +387,10 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     backgroundColor: COLORS.WHITE_LOW,
+  },
+  body: {
+    flex: 2,
+    paddingHorizontal: 20,
   },
   container: {
     flex: 1,
