@@ -1,10 +1,11 @@
-import React, {createContext, useState} from 'react';
+import React, { createContext, useState } from 'react';
 
 const DataResultsContext = createContext();
 
-export const DataResultsProvider = ({children}) => {
+export const DataResultsProvider = ({ children }) => {
   const [dataResults, setDataResults] = useState('');
   const [benData, setBenData] = useState([]);
+  const [userLog, setUserLog] = useState('');
 
   const updateDataResults = newDataResults => {
     setDataResults(newDataResults);
@@ -14,14 +15,21 @@ export const DataResultsProvider = ({children}) => {
     setBenData(newBenData);
   };
 
+  const updateUserLog = newUserLog => {
+    setUserLog(newUserLog);
+  };
+
   return (
-    <DataResultsContext.Provider
+    <DataResultsContext.Provider 
       value={{
         dataResults,
         updateDataResults,
         benData,
         updateBenData,
-      }}>
+        userLog,
+        updateUserLog,
+      }}
+    >
       {children}
     </DataResultsContext.Provider>
   );
