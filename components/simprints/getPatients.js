@@ -63,17 +63,17 @@ const GetPatients = ({navigation}) => {
         setUserData(data);
         setShowConfirmButton(true); // Show the "Confirm Data" button
       } else {
-        console.error('Error fetching user data:', response.status);
+        // console.error('Error fetching user data:', response.status);
         Alert.alert(
           'Error',
-          'Failed to fetch user data. Please try again later.',
+          'Beneficiary not found. Please check the GUID and try again.',
         );
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
       Alert.alert(
         'Error',
-        'Failed to fetch user data. Please try again later.',
+        'Beneficiary not found. Please check the GUID and try again.',
       );
     }
   };

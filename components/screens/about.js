@@ -17,15 +17,11 @@ const About = ({navigation}) => {
       left={
         <TouchableOpacity
           style={{paddingLeft: 10}}
-          onPress={() => navigation.openDrawer()}>
+          onPress={() => navigation.goBack()}>
           <Icon name="menu" size={25} color={COLORS.BLACK} />
         </TouchableOpacity>
       }
-      title={
-        <Text style={[STYLES.centerHeader, STYLES.textColor]}>
-          About the app
-        </Text>
-      }
+     
       right={
         <TouchableOpacity style={{paddingRight: 10}}>
           <Icon name="user" size={25} color={COLORS.BLACK} />

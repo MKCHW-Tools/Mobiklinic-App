@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState,useContext} from 'react';
 import {Text, View, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -6,9 +6,13 @@ import {COLORS, DIMENS} from '../constants/styles';
 import Icon from 'react-native-vector-icons/Feather';
 import Loader from '../ui/loader';
 import CustomHeader from '../ui/custom-header';
+import DataResultsContext from '../contexts/DataResultsContext';
+
 
 const PatientLists = ({navigation}) => {
   const [users, setUsers] = useState([]);
+  const { userLog } = useContext(DataResultsContext); // Get the logged-in user ID from the context
+
 
   const _header = () => (
     <CustomHeader
@@ -38,7 +42,8 @@ const PatientLists = ({navigation}) => {
           setUsers(JSON.parse(storedData));
         } else {
           const response = await axios.get(
-            'https://mobi-be-production.up.railway.app/patients/',
+            `https://mobi-be-production.up.railway.app/${userLog}/patients` // Use the logged-in user ID in the API URL
+            ,
           );
           setUsers(response.data);
           // Save the fetched data locally for offline access
@@ -53,7 +58,7 @@ const PatientLists = ({navigation}) => {
     };
 
     fetchUsers();
-  }, []);
+  }, [userLog]);
 
   const [expandedUserId, setExpandedUserId] = useState(null);
 
@@ -111,7 +116,7 @@ const PatientLists = ({navigation}) => {
     <View style={styles.wrapper}>
       <View style={styles.container}>
         {_header()}
-        <Text style={styles.header}>Patient List</Text>
+        <Text style={styles.header}>Beneficary List</Text>
         {users.length > 0 ? (
           <FlatList
             data={users}

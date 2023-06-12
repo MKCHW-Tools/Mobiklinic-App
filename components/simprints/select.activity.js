@@ -83,6 +83,13 @@ const SelectActivity = ({navigation}) => {
               color={COLORS.WHITE}
             />
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={STYLES.btn}
+            onPress={() => navigation.navigate('Dashboard')}>
+            <Text style={STYLES.btnText}>Back To Dashboard</Text>
+            
+          </TouchableOpacity>
         </View>
       </View>
     </View>

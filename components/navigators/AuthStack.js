@@ -15,7 +15,7 @@ import SimprintsConnect from '../simprints/simprintsID';
 import PatientMedical from '../simprints/patient.medical';
 import CovidData from '../simprints/vaccination';
 import SelectActivity from '../simprints/select.activity';
-import PatientSummary from '../simprints/patient.summary';
+// import PatientSummary from '../simprints/patient.summary';
 import GetPatients from '../simprints/getPatients';
 import PatientLists from '../simprints/patient.lists';
 
@@ -100,11 +100,6 @@ function AuthStack() {
         component={SelectActivity}
       />
 
-      <Stack.Screen
-        name="PatientSummary"
-        options={{headerShown: false}}
-        component={PatientSummary}
-      />
       <Stack.Screen
         name="GetPatients"
         options={{headerShown: false}}

@@ -93,9 +93,7 @@ const Ambulance = ({navigation}) => {
           <Icon name="menu" size={25} color={COLORS.SECONDARY} />
         </TouchableOpacity>
       }
-      title={
-        <Text style={[STYLES.centerHeader, STYLES.title]}>Ambulances</Text>
-      }
+     
     />
   );
 
@@ -108,7 +106,6 @@ const Ambulance = ({navigation}) => {
       <View style={STYLES.wrapper}>
         <CustomStatusBar />
 
-        {_header()}
 
         <View style={STYLES.body}>
           <Icon name="smile" size={60} color={COLORS.GREY} />

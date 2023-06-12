@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {
   View,
   Alert,
@@ -24,6 +24,8 @@ const PatientData = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
   const {diagnoses} = diagnosisContext;
   const {dataResults} = useContext(DataResultsContext);
+  const {userLog} = useContext(DataResultsContext);
+  // const [ id, setId ] = React.useState(userLog.length > 0 ? userLog[0].id : '');
 
   // const navigation = useNavigation();
   // date
@@ -41,12 +43,19 @@ const PatientData = ({navigation}) => {
     country: '',
     primaryLanguage: '',
     simprintsGui: '',
+    // registeredById: '',
   });
 
   const handleSubmit = async () => {
     try {
+      console.log('User Id:', userLog);
+      if (state.isLoading) {
+        // Prevent multiple submissions
+        return;
+      }
+      setState({...state, isLoading: true}); // Set isLoading state to true
       const response = await fetch(
-        'https://mobi-be-production.up.railway.app/patients',
+        `https://mobi-be-production.up.railway.app/${userLog}/patients`,
         {
           method: 'POST',
           body: JSON.stringify({
@@ -61,6 +70,7 @@ const PatientData = ({navigation}) => {
             country: state.country,
             primaryLanguage: state.primaryLanguage,
             simprintsGui: dataResults,
+            // registeredById: userLog,
           }),
           headers: {
             'Content-type': 'application/json; charset=UTF-8',
@@ -70,8 +80,8 @@ const PatientData = ({navigation}) => {
       );
 
       if (response.ok) {
-        await AsyncStorage.setItem('PatientData', JSON.stringify(state));
-
+        const data = await response.json();
+        // setId(data.id);
         Alert.alert('Data posted successfully');
         navigation.navigate('SelectActivity');
       } else {
@@ -81,6 +91,8 @@ const PatientData = ({navigation}) => {
     } catch (error) {
       console.error('Error posting data:', error);
       Alert.alert('Error', 'Failed to submit data. Please try again later.');
+    } finally {
+      setState({...state, isLoading: false}); // Reset isLoading state to false
     }
   };
 
@@ -109,10 +121,9 @@ const PatientData = ({navigation}) => {
 
   return (
     <View style={STYLES.wrapper}>
+      <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
       {_header()}
       <ScrollView style={STYLES.body}>
-        <Text style={STYLES.terms}>Patient Profile</Text>
-
         {/* Simprints GUI */}
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Simprints GUI</Text>
@@ -141,18 +152,16 @@ const PatientData = ({navigation}) => {
             style={STYLES.field}
             value={state.lastName}
             onChangeText={text => setState({...state, lastName: text})}
-            placeholder="Enter last name"
           />
         </View>
-        {/* Phone Number */}
+
+        {/* Last Name */}
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Phone Number:</Text>
           <TextInput
             style={STYLES.field}
             value={state.phoneNumber}
-            keyboardType="phone-pad"
             onChangeText={text => setState({...state, phoneNumber: text})}
-            placeholder="Enter phone number"
           />
         </View>
 
@@ -204,49 +213,30 @@ const PatientData = ({navigation}) => {
               placeholder="Weight (Kgs)"
             />
           </View>
-
           {/* Height */}
           <View style={STYLES.detail}>
             {/* <Text style={STYLES.label}>Height:</Text> */}
             <TextInput
               keyboardType="numeric"
               placeholderTextColor={COLORS.BLACK}
-              value={state.weight}
-              onChangeText={text => setState({...state, weight: text})}
+              value={state.height}
+              onChangeText={text => setState({...state, height: text})}
               placeholder="Height (cm)"
             />
           </View>
         </View>
+        {/* Country */}
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Country:</Text>
 
-        {/* District */}
-        <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
           <Picker
-            placeholder="District"
-            placeholderTextColor={COLORS.BLACK}
-            selectedValue={state.district}
-            onValueChange={(value, index) =>
-              setState({...state, district: value})
-            }
-            style={STYLES.pickerItemStyle}>
-            <Picker.Item label="District" value="District" />
-            <Picker.Item label="Kampala" value="Kampala" />
-            <Picker.Item label="Buikwe" value="Buikwe" />
-            <Picker.Item label="Jinja" value="Jinja" />
-            <Picker.Item label="Masaka" value="Masaka" />
-            <Picker.Item label="Mbarara" value="Mbarara" />
-          </Picker>
-        </View>
-        {/* country */}
-        <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Picker
-            placeholder="Country"
             placeholderTextColor={COLORS.BLACK}
             selectedValue={state.country}
             onValueChange={(value, index) =>
               setState({...state, country: value})
             }
-            style={STYLES.pickerItemStyle}>
-            <Picker.Item label="Country" value="Country" />
+            style={STYLES.field}>
+            <Picker.Item label="" value="" />
             <Picker.Item label="Uganda" value="Uganda" />
             <Picker.Item label="Kenya" value="Kenya" />
             <Picker.Item label="Rwanda" value="Rwanda" />
@@ -254,17 +244,39 @@ const PatientData = ({navigation}) => {
           </Picker>
         </View>
 
-        {/* Primary Language */}
-        <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
+        {/* District */}
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>District:</Text>
+
           <Picker
-            placeholder="Primary Language"
+            placeholderTextColor={COLORS.BLACK}
+            selectedValue={state.district}
+            onValueChange={(value, index) =>
+              setState({...state, district: value})
+            }
+            style={STYLES.field}>
+            <Picker.Item label="" value="" />
+            <Picker.Item label="Kampala" value="Kampala" />
+            <Picker.Item label="Buikwe" value="Buikwe" />
+            <Picker.Item label="Jinja" value="Jinja" />
+            <Picker.Item label="Masaka" value="Masaka" />
+            <Picker.Item label="Mbarara" value="Mbarara" />
+          </Picker>
+        </View>
+
+        {/* Country */}
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Primary Language:</Text>
+
+          <Picker
             placeholderTextColor={COLORS.BLACK}
             selectedValue={state.primaryLanguage}
             onValueChange={(value, index) =>
               setState({...state, primaryLanguage: value})
             }
-            style={STYLES.pickerItemStyle}>
-            <Picker.Item label="Primary Language" value="Language" />
+            style={STYLES.field}>
+            <Picker.Item label="" value="" />
+            <Picker.Item label="Uganda" value="Uganda" />
             <Picker.Item label="Luganda" value="Luganda" />
             <Picker.Item label="Lusoga" value="Lusoga" />
             <Picker.Item label="Runyakore" value="Runyakore" />
@@ -273,7 +285,6 @@ const PatientData = ({navigation}) => {
           </Picker>
         </View>
 
-        {/* Submit Button */}
         <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
           <Text style={STYLES.submitText}>Submit</Text>
         </TouchableOpacity>
@@ -397,6 +408,7 @@ const STYLES = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     color: COLORS.BLACK,
+    fontWeight: 'bold',
   },
   guid: {
     textAlign: 'left',
