@@ -31,6 +31,8 @@ const GetPatients = ({navigation}) => {
     benData.length > 0 ? benData[0].guid : '',
   );
   const [userData, setUserData] = React.useState(null);
+  const [showConfirmButton, setShowConfirmButton] = React.useState(false);
+
   const _header = () => (
     <CustomHeader
       left={
@@ -59,6 +61,7 @@ const GetPatients = ({navigation}) => {
       if (response.ok) {
         const data = await response.json();
         setUserData(data);
+        setShowConfirmButton(true); // Show the "Confirm Data" button
       } else {
         console.error('Error fetching user data:', response.status);
         Alert.alert(
@@ -77,7 +80,6 @@ const GetPatients = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      
       {_header()}
       <ScrollView style={styles.body}>
         <View style={styles.logo}>
@@ -136,11 +138,13 @@ const GetPatients = ({navigation}) => {
             </Text>
           </View>
         )}
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('SelectActivity')}>
-          <Text style={styles.buttonText}>Confirm Data</Text>
-        </TouchableOpacity>
+        {showConfirmButton && (
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate('SelectActivity')}>
+            <Text style={styles.buttonText}>Confirm Data</Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
     </View>
   );
