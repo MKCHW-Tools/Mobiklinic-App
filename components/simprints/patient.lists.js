@@ -111,7 +111,7 @@ const PatientLists = ({navigation}) => {
     <View style={styles.wrapper}>
       <View style={styles.container}>
         {_header()}
-        <Text style={styles.header}>Patient List</Text>
+        <Text style={styles.header}>Beneficary List</Text>
         {users.length > 0 ? (
           <FlatList
             data={users}
