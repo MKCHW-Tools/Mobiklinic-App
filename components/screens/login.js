@@ -52,7 +52,7 @@ export const tokensRefresh = async user => {
   const refresh = user.tokens.refresh;
 
   try {
-    const response = fetch(`${URLS.BASE}/tokens/refresh`, {
+    const response = await fetch(`${URLS.BASE}/tokens/refresh`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${refresh}`,
@@ -115,7 +115,8 @@ export const RETRIEVE_LOCAL_USER = async () => {
     let user = await AsyncStorage.getItem('@user');
     return JSON.parse(user) || null;
   } catch (err) {
-    new Error(err);
+    console.error(err);
+    
   }
 };
 export const SAVE_LOCAL_USER = async (user = {}) => {
@@ -329,6 +330,26 @@ const Login = ({ navigation }) => {
       console.log(err);
     }
   };
+
+  useEffect(() => {
+    const retrieveLocalUser = async () => {
+      try {
+        const user = await RETRIEVE_LOCAL_USER();
+        if (user !== null) {
+          setMyUser({
+            id: user.id,
+            username: user.username,
+            tokens: user.tokens,
+            offline: true,
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+  
+    retrieveLocalUser();
+  }, [setMyUser]);
 
   
 
