@@ -19,6 +19,9 @@ import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Formik} from 'formik';
+import {validationSchema} from '../helpers/validationSchema';
 
 const PatientData = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -43,23 +46,23 @@ const PatientData = ({navigation}) => {
     simprintsGui: '',
   });
 
-  const handleSubmit = async () => {
+  const handleSubmit = async values => {
     try {
       const response = await fetch(
         'https://mobi-be-production.up.railway.app/patients',
         {
           method: 'POST',
           body: JSON.stringify({
-            firstName: state.firstName,
-            lastName: state.lastName,
-            sex: state.sex,
-            ageGroup: state.ageGroup,
-            phoneNumber: state.phoneNumber,
-            weight: state.weight,
-            height: state.height,
-            district: state.district,
-            country: state.country,
-            primaryLanguage: state.primaryLanguage,
+            firstName: values.firstName,
+            lastName: values.lastName,
+            sex: values.sex,
+            ageGroup: values.ageGroup,
+            phoneNumber: values.phoneNumber,
+            weight: values.weight,
+            height: values.height,
+            district: values.district,
+            country: values.country,
+            primaryLanguage: values.primaryLanguage,
             simprintsGui: dataResults,
           }),
           headers: {
@@ -70,7 +73,7 @@ const PatientData = ({navigation}) => {
       );
 
       if (response.ok) {
-        await AsyncStorage.setItem('PatientData', JSON.stringify(state));
+        await AsyncStorage.setItem('PatientData', JSON.stringify(values));
 
         Alert.alert('Data posted successfully');
         navigation.navigate('SelectActivity');
@@ -82,6 +85,7 @@ const PatientData = ({navigation}) => {
       console.error('Error posting data:', error);
       Alert.alert('Error', 'Failed to submit data. Please try again later.');
     }
+    console.log(values);
   };
 
   const _header = () => (
@@ -100,185 +104,283 @@ const PatientData = ({navigation}) => {
         </TouchableOpacity>
       }
       title={
-        <Text style={[STYLES.centerHeader, STYLES.title]}>PATIENT PROFILE</Text>
+        <Text style={[STYLES.centerHeader, STYLES.title]}>
+          BENEFIARY INFORMATION
+        </Text>
       }
     />
   );
 
-  if (state.isLoading) return <Loader />;
+  // if (state.isLoading) return <Loader />;
 
   return (
-    <View style={STYLES.wrapper}>
-      {_header()}
-      <ScrollView style={STYLES.body}>
-        <Text style={STYLES.terms}>Patient Profile</Text>
+    <Formik
+      initialValues={{
+        firstName: '',
+        sex: '',
+        ageGroup: '',
+        phoneNumber: '',
+        lastName: '',
+        weight: '',
+        height: '',
+        district: '',
+        country: '',
+        primaryLanguage: '',
+        // simprintsGui: dataResults,
+      }}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}>
+      {formikProps => (
+        <View style={STYLES.wrapper}>
+          {_header()}
+          <ScrollView style={STYLES.body}>
 
-        {/* Simprints GUI */}
-        <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Simprints GUI</Text>
-          <TextInput
-            style={STYLES.guid}
-            value={dataResults}
-            onChangeText={text => setState({...state, simprintsGui: text})}
-            placeholder="Enter simprints GUI"
-          />
-        </View>
-        {/* First Name */}
-        <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>First Name:</Text>
-          <TextInput
-            style={STYLES.field}
-            value={state.firstName}
-            onChangeText={text => setState({...state, firstName: text})}
-            placeholder="Enter first name"
-          />
-        </View>
+            {/* Simprints GUI */}
+            <View style={STYLES.labeled}>
+              <Text style={STYLES.label}>Simprints GUI</Text>
+              <TextInput
+                style={STYLES.guid}
+                value={dataResults}
+                onChangeText={text => setState({...state, simprintsGui: text})}
+                placeholder="Enter simprints GUI"
+              />
+            </View>
+            {/* First Name */}
+            <View style={STYLES.labeled}>
+              <Text style={STYLES.label}>First Name:</Text>
+              <TextInput
+                style={STYLES.field}
+                // value={state.firstName}
+                // onChangeText={text => setState({...state, firstName: text})}
+                value={formikProps.values.firstName}
+                onChangeText={formikProps.handleChange('firstName')}
+                onBlur={formikProps.handleBlur('firstName')}
+                placeholder="Enter first name"
+              />
+              {formikProps.touched.firstName &&
+                formikProps.errors.firstName && (
+                  <Text style={STYLES.error}>
+                    {formikProps.errors.firstName}
+                  </Text>
+                )}
+            </View>
 
-        {/* Last Name */}
-        <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Last Name:</Text>
-          <TextInput
-            style={STYLES.field}
-            value={state.lastName}
-            onChangeText={text => setState({...state, lastName: text})}
-            placeholder="Enter last name"
-          />
-        </View>
-        {/* Phone Number */}
-        <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Phone Number:</Text>
-          <TextInput
-            style={STYLES.field}
-            value={state.phoneNumber}
-            keyboardType="phone-pad"
-            onChangeText={text => setState({...state, phoneNumber: text})}
-            placeholder="Enter phone number"
-          />
-        </View>
+            {/* Last Name */}
+            <View style={STYLES.labeled}>
+              <Text style={STYLES.label}>Last Name:</Text>
+              <TextInput
+                style={STYLES.field}
+                value={formikProps.values.lastName}
+                onChangeText={formikProps.handleChange('lastName')}
+                placeholder="Enter last name"
+                onBlur={formikProps.handleBlur('lastName')}
+              />
+              {formikProps.touched.lastName && formikProps.errors.lastName && (
+                <Text style={STYLES.error}>{formikProps.errors.lastName}</Text>
+              )}
+            </View>
+            {/* Phone Number */}
+            <View style={STYLES.labeled}>
+              <Text style={STYLES.label}>Phone Number:</Text>
+              <TextInput
+                style={STYLES.field}
+                // value={state.phoneNumber}
+                keyboardType="phone-pad"
+                value={formikProps.values.phoneNumber}
+                onChangeText={formikProps.handleChange('phoneNumber')}
+                onBlur={formikProps.handleBlur('phoneNumber')}
+                placeholder="Enter phone number"
+              />
+              {formikProps.touched.phoneNumber &&
+                formikProps.errors.phoneNumber && (
+                  <Text style={STYLES.error}>
+                    {formikProps.errors.phoneNumber}
+                  </Text>
+                )}
+            </View>
 
-        <View style={STYLES.wrap}>
-          {/* Sex */}
-          <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
-            <Picker
-              placeholder="Sex"
-              placeholderTextColor={COLORS.BLACK}
-              selectedValue={state.sex}
-              onValueChange={(value, index) => setState({...state, sex: value})}
-              style={STYLES.pickerItemStyle}>
-              <Picker.Item label="Sex" value="Gender" />
-              <Picker.Item label="Female" value="Female" />
-              <Picker.Item label="Male" value="Male" />
-              <Picker.Item label="Other" value="Other" />
-            </Picker>
-          </View>
-          {/* Age Group */}
-          <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
-            <Picker
-              placeholder="Age"
-              placeholderTextColor={COLORS.BLACK}
-              selectedValue={state.ageGroup}
-              onValueChange={(value, index) =>
-                setState({...state, ageGroup: value})
-              }
-              style={STYLES.pickerItemStyle}>
-              <Picker.Item label="Age" value="Age group" />
-              <Picker.Item label="0 - 3" value="0 - 3" />
-              <Picker.Item label="3 - 10" value="3 - 10" />
-              <Picker.Item label="10 - 17" value="10 - 17" />
-              <Picker.Item label="17 - 40" value="17 - 40" />
-              <Picker.Item label="40 - 60" value="40 - 60" />
-              <Picker.Item label="60 above" value="60 above" />
-            </Picker>
-          </View>
-        </View>
+            <View style={STYLES.wrap}>
+              {/* Sex */}
+              <View
+                style={STYLES.detail}
+                placeholderTextColor="rgba(0,0,0,0.7)">
+                <Picker
+                  placeholder="Sex"
+                  placeholderTextColor={COLORS.BLACK}
+                  style={STYLES.pickerItemStyle}
+                  selectedValue={formikProps.values.sex}
+                  onValueChange={formikProps.handleChange('sex')}
+                  onBlur={formikProps.handleBlur('sex')}>
+                  <Picker.Item label="Sex" value="Gender" />
+                  <Picker.Item label="Female" value="Female" />
+                  <Picker.Item label="Male" value="Male" />
+                  <Picker.Item label="Other" value="Other" />
+                </Picker>
+                {/* {formikProps.touched.sex && formikProps.errors.sex && (
+                  <Text style={STYLES.error}>{formikProps.errors.sex}</Text>
+                )} */}
+              </View>
+              {/* Age Group */}
+              <View
+                style={STYLES.detail}
+                placeholderTextColor="rgba(0,0,0,0.7)">
+                <Picker
+                  placeholder="Age"
+                  placeholderTextColor={COLORS.BLACK}
+                  // selectedValue={state.ageGroup}
+                  // onValueChange={(value, index) =>
+                  //   setState({...state, ageGroup: value})
+                  // }
+                  style={STYLES.pickerItemStyle}
+                  selectedValue={formikProps.values.ageGroup}
+                  onValueChange={formikProps.handleChange('ageGroup')}
+                  onBlur={formikProps.handleBlur('ageGroup')}>
+                  <Picker.Item label="Age" value="Age group" />
+                  <Picker.Item label="0 - 3" value="0 - 3" />
+                  <Picker.Item label="3 - 10" value="3 - 10" />
+                  <Picker.Item label="10 - 17" value="10 - 17" />
+                  <Picker.Item label="17 - 40" value="17 - 40" />
+                  <Picker.Item label="40 - 60" value="40 - 60" />
+                  <Picker.Item label="60 above" value="60 above" />
+                </Picker>
+                {/* {formikProps.touched.ageGroup &&
+                  formikProps.errors.ageGroup && (
+                    <Text style={STYLES.error}>
+                      {formikProps.errors.ageGroup}
+                    </Text>
+                  )} */}
+              </View>
+            </View>
 
-        <View style={STYLES.wrap}>
-          {/* Weight */}
-          <View style={STYLES.detail}>
-            {/* <Text style={STYLES.label}>Weight:</Text> */}
-            <TextInput
-              keyboardType="numeric"
-              value={state.weight}
-              placeholderTextColor={COLORS.BLACK}
-              onChangeText={text => setState({...state, weight: text})}
-              placeholder="Weight (Kgs)"
-            />
-          </View>
+            <View style={STYLES.wrap}>
+              {/* Weight */}
+              <View style={STYLES.detail}>
+                {/* <Text style={STYLES.label}>Weight:</Text> */}
+                <TextInput
+                  keyboardType="numeric"
+                  // value={state.weight}
+                  onBlur={formikProps.handleBlur('weight')}
+                  value={formikProps.values.weight}
+                  onChangeText={formikProps.handleChange('weight')}
+                  placeholderTextColor={COLORS.BLACK}
+                  // onChangeText={text => setState({...state, weight: text})}
+                  placeholder="Weight (Kgs)"
+                />
+                {/* {formikProps.touched.weight && formikProps.errors.weight && (
+                  <Text style={STYLES.error}>{formikProps.errors.weight}</Text>
+                )} */}
+              </View>
 
-          {/* Height */}
-          <View style={STYLES.detail}>
-            {/* <Text style={STYLES.label}>Height:</Text> */}
-            <TextInput
-              keyboardType="numeric"
-              placeholderTextColor={COLORS.BLACK}
-              value={state.weight}
-              onChangeText={text => setState({...state, weight: text})}
-              placeholder="Height (cm)"
-            />
-          </View>
-        </View>
+              {/* Height */}
+              <View style={STYLES.detail}>
+                {/* <Text style={STYLES.label}>Height:</Text> */}
+                <TextInput
+                  keyboardType="numeric"
+                  placeholderTextColor={COLORS.BLACK}
+                  onBlur={formikProps.handleBlur('height')}
+                  value={formikProps.values.height}
+                  onChangeText={formikProps.handleChange('height')}
+                  // value={state.weight}
+                  // onChangeText={text => setState({...state, weight: text})}
+                  placeholder="Height (cm)"
+                />
+                {/* {formikProps.touched.height && formikProps.errors.height && (
+                  <Text style={STYLES.error}>{formikProps.errors.height}</Text>
+                )} */}
+              </View>
+            </View>
 
-        {/* District */}
-        <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Picker
-            placeholder="District"
-            placeholderTextColor={COLORS.BLACK}
-            selectedValue={state.district}
-            onValueChange={(value, index) =>
-              setState({...state, district: value})
-            }
-            style={STYLES.pickerItemStyle}>
-            <Picker.Item label="District" value="District" />
-            <Picker.Item label="Kampala" value="Kampala" />
-            <Picker.Item label="Buikwe" value="Buikwe" />
-            <Picker.Item label="Jinja" value="Jinja" />
-            <Picker.Item label="Masaka" value="Masaka" />
-            <Picker.Item label="Mbarara" value="Mbarara" />
-          </Picker>
-        </View>
-        {/* country */}
-        <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Picker
-            placeholder="Country"
-            placeholderTextColor={COLORS.BLACK}
-            selectedValue={state.country}
-            onValueChange={(value, index) =>
-              setState({...state, country: value})
-            }
-            style={STYLES.pickerItemStyle}>
-            <Picker.Item label="Country" value="Country" />
-            <Picker.Item label="Uganda" value="Uganda" />
-            <Picker.Item label="Kenya" value="Kenya" />
-            <Picker.Item label="Rwanda" value="Rwanda" />
-            <Picker.Item label="Tanzania" value="Tanzania" />
-          </Picker>
-        </View>
+            {/* country */}
+            <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+              <Text style={STYLES.label}>Country:</Text>
 
-        {/* Primary Language */}
-        <View style={STYLES.pickers} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Picker
-            placeholder="Primary Language"
-            placeholderTextColor={COLORS.BLACK}
-            selectedValue={state.primaryLanguage}
-            onValueChange={(value, index) =>
-              setState({...state, primaryLanguage: value})
-            }
-            style={STYLES.pickerItemStyle}>
-            <Picker.Item label="Primary Language" value="Language" />
-            <Picker.Item label="Luganda" value="Luganda" />
-            <Picker.Item label="Lusoga" value="Lusoga" />
-            <Picker.Item label="Runyakore" value="Runyakore" />
-            <Picker.Item label="Rutoro" value="Rutoro" />
-            <Picker.Item label="English" value="English" />
-          </Picker>
-        </View>
+              <Picker
+                placeholder="Country"
+                placeholderTextColor={COLORS.BLACK}
+                // selectedValue={state.country}
+                // onValueChange={(value, index) =>
+                //   setState({...state, country: value})
+                // }
+                selectedValue={formikProps.values.country}
+                onValueChange={formikProps.handleChange('country')}
+                onBlur={formikProps.handleBlur('country')}
+                style={STYLES.pickers}>
+                <Picker.Item label="" value="" />
+                <Picker.Item label="Uganda" value="Uganda" />
+                <Picker.Item label="Kenya" value="Kenya" />
+                <Picker.Item label="Rwanda" value="Rwanda" />
+                <Picker.Item label="Tanzania" value="Tanzania" />
+              </Picker>
+              {formikProps.touched.country && formikProps.errors.country && (
+                <Text style={STYLES.error}>{formikProps.errors.country}</Text>
+              )}
+            </View>
+            {/* District */}
+            <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+              <Text style={STYLES.label}>District:</Text>
 
-        {/* Submit Button */}
-        <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
-          <Text style={STYLES.submitText}>Submit</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </View>
+              <Picker
+                placeholder="District"
+                placeholderTextColor={COLORS.BLACK}
+                // selectedValue={state.district}
+                // onValueChange={(value, index) =>
+                //   setState({...state, district: value})
+                // }
+                selectedValue={formikProps.values.district}
+                onValueChange={formikProps.handleChange('district')}
+                onBlur={formikProps.handleBlur('district')}
+                style={STYLES.pickers}>
+                <Picker.Item label="" value="" />
+                <Picker.Item label="Kampala" value="Kampala" />
+                <Picker.Item label="Buikwe" value="Buikwe" />
+                <Picker.Item label="Jinja" value="Jinja" />
+                <Picker.Item label="Masaka" value="Masaka" />
+                <Picker.Item label="Mbarara" value="Mbarara" />
+              </Picker>
+              {formikProps.touched.district && formikProps.errors.district && (
+                <Text style={STYLES.error}>{formikProps.errors.district}</Text>
+              )}
+            </View>
+
+            {/* Primary Language */}
+            <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+              <Text style={STYLES.label}>Primary Language:</Text>
+
+              <Picker
+                placeholder="Primary Language"
+                placeholderTextColor={COLORS.BLACK}
+                // selectedValue={state.primaryLanguage}
+                // onValueChange={(value, index) =>
+                //   setState({...state, primaryLanguage: value})
+                // }
+                selectedValue={formikProps.values.primaryLanguage}
+                onValueChange={formikProps.handleChange('primaryLanguage')}
+                onBlur={formikProps.handleBlur('primaryLanguage')}
+                style={STYLES.pickers}>
+                <Picker.Item label="" value="" />
+
+                <Picker.Item label="Luganda" value="Luganda" />
+                <Picker.Item label="Lusoga" value="Lusoga" />
+                <Picker.Item label="Runyakore" value="Runyakore" />
+                <Picker.Item label="Rutoro" value="Rutoro" />
+                <Picker.Item label="English" value="English" />
+              </Picker>
+              {formikProps.touched.primaryLanguage &&
+                formikProps.errors.primaryLanguage && (
+                  <Text style={STYLES.error}>
+                    {formikProps.errors.primaryLanguage}
+                  </Text>
+                )}
+            </View>
+
+            {/* Submit Button */}
+            <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
+              <Text style={STYLES.submitText}>Submit</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </View>
+      )}
+    </Formik>
   );
 };
 
@@ -295,11 +397,13 @@ const STYLES = StyleSheet.create({
   body: {
     flex: 2,
     paddingHorizontal: 20,
+    paddingVertical:25,
   },
   alert: {
-    color: COLORS.GREY,
+    color: COLORS.ACCENT_1,
     textAlign: 'center',
     marginTop: 15,
+    backgroundColor: COLORS.WHITE,
   },
   subtitle: {
     flexDirection: 'row',
@@ -311,7 +415,7 @@ const STYLES = StyleSheet.create({
     marginLeft: 5,
     marginRight: 5,
     color: COLORS.BLACK,
-    fontSize: 14,
+    fontSize: 16,
   },
   title: {
     fontWeight: 'bold',
@@ -368,12 +472,9 @@ const STYLES = StyleSheet.create({
     paddingVertical: 20,
   },
   pickers: {
-    borderColor: COLORS.GREY,
-    borderStyle: 'solid',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    marginBottom: 10,
+    flex: 1,
+    justifyContent: 'center',
+    color: COLORS.BLACK,
     fontWeight: 'bold',
     // backgroundColor: COLORS.GREY,
   },
@@ -397,12 +498,14 @@ const STYLES = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     color: COLORS.BLACK,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   guid: {
     textAlign: 'left',
     color: COLORS.BLACK,
     fontSize: 11,
-    fontWeight: 'bold ',
+    fontWeight: 'bold',
   },
   submit: {
     backgroundColor: COLORS.BLACK,
@@ -460,6 +563,11 @@ const STYLES = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     minHeight: 70,
+  },
+  error: {
+    color: 'red',
+    fontSize: 12,
+    marginTop:1,
   },
   detail: {
     flex: 1,
