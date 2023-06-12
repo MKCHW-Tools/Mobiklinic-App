@@ -142,7 +142,6 @@ const PatientData = ({navigation}) => {
                 style={STYLES.guid}
                 value={dataResults}
                 onChangeText={text => setState({...state, simprintsGui: text})}
-                placeholder="Enter simprints GUI"
               />
             </View>
             {/* First Name */}
@@ -155,7 +154,6 @@ const PatientData = ({navigation}) => {
                 value={formikProps.values.firstName}
                 onChangeText={formikProps.handleChange('firstName')}
                 onBlur={formikProps.handleBlur('firstName')}
-                placeholder="Enter first name"
               />
               {formikProps.touched.firstName &&
                 formikProps.errors.firstName && (
@@ -172,7 +170,6 @@ const PatientData = ({navigation}) => {
                 style={STYLES.field}
                 value={formikProps.values.lastName}
                 onChangeText={formikProps.handleChange('lastName')}
-                placeholder="Enter last name"
                 onBlur={formikProps.handleBlur('lastName')}
               />
               {formikProps.touched.lastName && formikProps.errors.lastName && (
@@ -189,7 +186,6 @@ const PatientData = ({navigation}) => {
                 value={formikProps.values.phoneNumber}
                 onChangeText={formikProps.handleChange('phoneNumber')}
                 onBlur={formikProps.handleBlur('phoneNumber')}
-                placeholder="Enter phone number"
               />
               {formikProps.touched.phoneNumber &&
                 formikProps.errors.phoneNumber && (
@@ -397,7 +393,7 @@ const STYLES = StyleSheet.create({
   body: {
     flex: 2,
     paddingHorizontal: 20,
-    paddingVertical:25,
+    paddingVertical:2,
   },
   alert: {
     color: COLORS.ACCENT_1,
