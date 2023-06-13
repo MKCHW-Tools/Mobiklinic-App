@@ -12,7 +12,6 @@ import {
 import Icon from 'react-native-vector-icons/Feather';
 import {useNavigation} from '@react-navigation/native';
 
-
 import {
   _removeStorageItem,
   generateRandomCode,
@@ -42,6 +41,8 @@ const GetPatients = () => {
         const data = await response.json();
         setUserData(data);
         setVaccinations(data.vaccinations); // Set the vaccination data
+        setDiagnosis(data.diagnosis); // Set the vaccination data
+
         setShowConfirmButton(true); // Show the "Confirm Data" button
       } else {
         Alert.alert(
@@ -50,10 +51,7 @@ const GetPatients = () => {
         );
       }
     } catch (error) {
-      Alert.alert(
-        'Error',
-        'Beneficiary not found. Please check the GUID and try again.',
-      );
+      Alert.alert('Error', 'Beneficiary not found. Please check the GUID ');
     }
   };
 
@@ -101,11 +99,6 @@ const GetPatients = () => {
               Phone Number:{'\t '}
               <Text style={styles.userDataValue}>{userData.phoneNumber}</Text>
             </Text>
-
-            <Text style={styles.userDataLabel}>
-              Height(Cms):{' '}
-              <Text style={styles.userDataValue}>{userData.height}</Text>
-            </Text>
             {userData.vaccinations && userData.vaccinations.length > 0 && (
               <View style={styles.vaccinationsContainer}>
                 <Text style={styles.userDataLabel}>Vaccinations:</Text>
@@ -147,6 +140,35 @@ const GetPatients = () => {
                         {vaccination.facility}
                       </Text>
                     </Text>
+                  </View>
+                ))}
+              </View>
+            )}
+
+            {userData.diagnoses && userData.diagnoses.length > 0 && (
+              <View style={styles.vaccinationsContainer}>
+                <Text style={styles.userDataLabel}>Diagnosis:</Text>
+                {userData.diagnoses.map((diagnosis, index) => (
+                  <View key={index}>
+                    <Text style={styles.userDataLabel}>
+                      Date of Vaccination:{' '}
+                      <Text style={styles.userDataValue}>
+                        {diagnosis.condition}
+                      </Text>
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      Date for Next Dose:{' '}
+                      <Text style={styles.userDataValue}>
+                        {diagnosis.dateForNextDose}
+                      </Text>
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      Impression:{' '}
+                      <Text style={styles.userDataValue}>
+                        {diagnosis.impression}
+                      </Text>
+                    </Text>
+                    
                   </View>
                 ))}
               </View>
@@ -233,8 +255,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 10,
     marginBottom: 20,
-    borderWidth:2,
-    borderColor:COLORS.PRIMARY
+    borderWidth: 2,
+    borderColor: COLORS.PRIMARY,
   },
   buttonStyle: {
     color: COLORS.PRIMARY,
