@@ -154,9 +154,9 @@ const GetPatients = () => {
         )}
 
         <TouchableOpacity
-          style={styles.button}
+          style={styles.buttonSec}
           onPress={() => navigation.navigate('SelectActivity')}>
-          <Text style={styles.buttonText}>Confirm Data</Text>
+          <Text style={styles.buttonStyle}>Confirm Data</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -195,9 +195,9 @@ const styles = StyleSheet.create({
     height: 40,
   },
   logoTitle: {
-    color: COLORS.ACCENT_1,
+    color: COLORS.PRIMARY,
     fontSize: 16,
-    marginVertical: 10,
+    marginVertical: 8,
     fontWeight: 'bold',
     textTransform: 'uppercase',
   },
@@ -206,6 +206,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
     color: COLORS.PRIMARY,
+    textAlign: 'center',
   },
   input: {
     height: 40,
@@ -214,6 +215,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 20,
+    color: COLORS.BLACK,
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
   button: {
     backgroundColor: COLORS.BLACK,
@@ -221,6 +225,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 10,
     marginBottom: 20,
+  },
+  buttonSec: {
+    backgroundColor: COLORS.WHITE,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginBottom: 20,
+    borderWidth:2,
+    borderColor:COLORS.PRIMARY
+  },
+  buttonStyle: {
+    color: COLORS.PRIMARY,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   buttonText: {
     color: COLORS.WHITE,
@@ -235,6 +254,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     marginBottom: 5,
+    color: COLORS.BLACK,
   },
   userDataValue: {
     fontWeight: 'normal',

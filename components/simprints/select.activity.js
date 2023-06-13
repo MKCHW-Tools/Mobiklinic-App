@@ -15,7 +15,7 @@ import {
 
 import {Picker} from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/Feather';
-import DateTimePicker from '@react-native-community/datetimepicker';
+// import DateTimePicker from '@react-native-community/datetimepicker';
 import {COLORS, DIMENS} from '../constants/styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -74,8 +74,8 @@ const SelectActivity = ({navigation}) => {
 
           <TouchableOpacity
             style={STYLES.btn}
-            onPress={() => navigation.navigate('CovidData')}>
-            <Text style={STYLES.btnText}>Covid Vaccine</Text>
+            onPress={() => navigation.navigate('Vaccination')}>
+            <Text style={STYLES.btnText}>Vaccination</Text>
             <Icon
               name="arrow-right"
               size={20}
