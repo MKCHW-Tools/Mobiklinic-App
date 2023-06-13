@@ -1,4 +1,4 @@
-import React, {useEffect, useState,useContext} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import {Text, View, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,11 +8,9 @@ import Loader from '../ui/loader';
 import CustomHeader from '../ui/custom-header';
 import DataResultsContext from '../contexts/DataResultsContext';
 
-
 const PatientLists = ({navigation}) => {
   const [users, setUsers] = useState([]);
-  const { userLog } = useContext(DataResultsContext); // Get the logged-in user ID from the context
-
+  const {userLog} = useContext(DataResultsContext); // Get the logged-in user ID from the context
 
   const _header = () => (
     <CustomHeader
@@ -42,8 +40,7 @@ const PatientLists = ({navigation}) => {
           setUsers(JSON.parse(storedData));
         } else {
           const response = await axios.get(
-            `https://mobi-be-production.up.railway.app/${userLog}/patients` // Use the logged-in user ID in the API URL
-            ,
+            `https://mobi-be-production.up.railway.app/${userLog}/patients`, // Use the logged-in user ID in the API URL
           );
           setUsers(response.data);
           // Save the fetched data locally for offline access
@@ -100,6 +97,26 @@ const PatientLists = ({navigation}) => {
               Primary Language: {item.primaryLanguage}
             </Text>
             <Text style={styles.label}>Simprints GUI: {item.simprintsGui}</Text>
+            <Text style={styles.userName}>VACCINATION {item.simprintsGui}</Text>
+            {item.vaccinations.map(vaccination => (
+              <View key={index} style={styles.vaccinationItem}>
+                <Text style={styles.label}>
+                  Date of Vaccination:
+                  {vaccination.dateOfVaccination.toDateString()}
+                </Text>
+                <Text style={styles.label}>
+                  Date for Next Dose: {vaccination.dateForNextDose.toDateString()}
+                </Text>
+                <Text style={styles.label}>
+                  Vaccine Name: {vaccination.vaccineName}
+                </Text>
+                <Text style={styles.label}>Units: {vaccination.units}</Text>
+                <Text style={styles.label}>
+                  Site Administered: {vaccination.siteAdministered}
+                </Text>
+                <Text style={styles.label}>Facility: {vaccination.facility}</Text>
+              </View>
+            ))}
           </View>
         )}
       </View>
@@ -107,8 +124,6 @@ const PatientLists = ({navigation}) => {
   };
 
   const formatPhoneNumber = phoneNumber => {
-    // Format the phone number as per your preference
-    // Example: Add dashes or parentheses for better readability
     return phoneNumber;
   };
 
