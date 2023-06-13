@@ -10,9 +10,7 @@ import DataResultsContext from '../contexts/DataResultsContext';
 
 const PatientLists = ({navigation}) => {
   const [users, setUsers] = useState([]);
-  const {userLog} = useContext(DataResultsContext);
-  const patientVac = useContext(DataResultsContext);
-  const [vaccinations, setVaccinations] = useState([]);
+  const {userLog} = useContext(DataResultsContext); // Get the logged-in user ID from the context
 
   const _header = () => (
     <CustomHeader
@@ -41,7 +39,7 @@ const PatientLists = ({navigation}) => {
           setUsers(JSON.parse(storedData));
         } else {
           const response = await axios.get(
-            `https://mobi-be-production.up.railway.app/${userLog}/patients`,
+            `https://mobi-be-production.up.railway.app/${userLog}/patients`, // Use the logged-in user ID in the API URL
           );
           const { data } = response;
           setUsers(data);
@@ -63,6 +61,7 @@ const PatientLists = ({navigation}) => {
   }, [userLog]);
 
   const [expandedUserId, setExpandedUserId] = useState(null);
+  const [vaccinationData, setVaccinationData] = useState(null);
 
   const renderUserCard = ({item}) => {
     const isExpanded = item.id === expandedUserId;
@@ -98,38 +97,32 @@ const PatientLists = ({navigation}) => {
             <Text style={styles.label}>
               Phone Number: {formatPhoneNumber(item.phoneNumber)}
             </Text>
-            <Text style={styles.label}>Weight: {item.weight} kg</Text>
-            <Text style={styles.label}>Height: {item.height} cm</Text>
-            <Text style={styles.label}>District: {item.district}</Text>
-            <Text style={styles.label}>Country: {item.country}</Text>
             <Text style={styles.label}>
               Primary Language: {item.primaryLanguage}
             </Text>
             <Text style={styles.label}>Simprints GUI: {item.simprintsGui}</Text>
-
-            <Text style={styles.label}>Vaccinations:</Text>
-            {userVaccinations.map((vaccination, index) => (
-              <View key={index} style={styles.vaccinationContainer}>
-                <Text style={styles.vaccinationLabel}>
-                  Date of Vaccination: {vaccination.dateOfVaccination}
-                </Text>
-                <Text style={styles.vaccinationLabel}>
-                  Date for Next Dose: {vaccination.dateForNextDose}
-                </Text>
-                <Text style={styles.vaccinationLabel}>
-                  Vaccine Name: {vaccination.vaccineName}
-                </Text>
-                <Text style={styles.vaccinationLabel}>
-                  Units: {vaccination.units}
-                </Text>
-                <Text style={styles.vaccinationLabel}>
-                  Site Administered: {vaccination.siteAdministered}
-                </Text>
-                <Text style={styles.vaccinationLabel}>
-                  Facility: {vaccination.facility}
-                </Text>
+            {item.vaccinations && item.vaccinations.length > 0 && (
+              <View>
+                {item.vaccinations.map((vaccination, index) => (
+                  <View key={index}>
+                    <Text style={styles.label}>
+                      Vaccination Name: {vaccination.vaccineName}
+                    </Text>
+                    <Text style={styles.label}>
+                      Vaccination Date: {vaccination.dateOfVaccination}
+                    </Text>
+                    <Text style={styles.label}>
+                      {' '}
+                      Dosage: {vaccination.dose}
+                    </Text>
+                    <Text style={styles.label}>
+                      {' '}
+                      Units: {vaccination.units}
+                    </Text>
+                  </View>
+                ))}
               </View>
-            ))}
+            )}
           </View>
         )}
       </View>
@@ -137,8 +130,6 @@ const PatientLists = ({navigation}) => {
   };
 
   const formatPhoneNumber = phoneNumber => {
-    // Format the phone number as per your preference
-    // Example: Add dashes or parentheses for better readability
     return phoneNumber;
   };
 
@@ -211,7 +202,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   userName: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     color: COLORS.BLACK,
   },
@@ -219,9 +210,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   label: {
-    fontSize: 16,
+    fontSize: 14,
     marginBottom: 5,
     color: COLORS.BLACK,
+  },
+  userDataValue: {
+    fontWeight: 'normal',
+    fontSize: 16,
   },
 });
 

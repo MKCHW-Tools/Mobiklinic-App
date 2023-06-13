@@ -25,7 +25,7 @@ const PatientData = ({navigation}) => {
   const {diagnoses} = diagnosisContext;
   const {dataResults} = useContext(DataResultsContext);
   const {userLog} = useContext(DataResultsContext);
-  const {updatePatientVac} = useContext(DataResultsContext);
+  const {patientId, setPatientId} = useContext(DataResultsContext);
   // const [ id, setId ] = React.useState(userLog.length > 0 ? userLog[0].id : '');
 
   // const navigation = useNavigation();
@@ -50,6 +50,7 @@ const PatientData = ({navigation}) => {
   const handleSubmit = async () => {
     try {
       console.log('User Id:', userLog);
+
       if (state.isLoading) {
         // Prevent multiple submissions
         return;
@@ -82,11 +83,13 @@ const PatientData = ({navigation}) => {
 
       if (response.ok) {
         const data = await response.json();
-       const patientId = data.id;
-       updatePatientVac(patientId);
-        console.log('Patient Id:', patientId);
+        // setId(data.id);
+        // Extract the patient ID from the response data
+        const patientId = data.id; // Access the patient ID from the response data
+        setPatientId(patientId);
+        console.log('Patient ID:', patientId);
         Alert.alert('Data posted successfully');
-        navigation.navigate('SelectActivity');
+        navigation.navigate('SelectActivity',{ patientId: patientId });
       } else {
         console.error('Error posting data:', response.status);
         Alert.alert('Error', 'Failed to submit data. Please try again later.');

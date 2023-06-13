@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {
   View,
   Alert,
@@ -11,45 +11,81 @@ import {
   StatusBar,
   Button,
 } from 'react-native';
-
 import {Picker} from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/Feather';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import {COLORS, DIMENS} from '../constants/styles';
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-import {
-  _removeStorageItem,
-  generateRandomCode,
-  MyDate,
-} from '../helpers/functions';
-
+import {_removeStorageItem} from '../helpers/functions';
 import {DiagnosisContext} from '../providers/Diagnosis';
 import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
+import DataResultsContext from '../contexts/DataResultsContext';
+import {COLORS, DIMENS} from '../constants/styles';
 
 const PatientMedical = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
   const {diagnoses} = diagnosisContext;
-
-  // date
+  const {dataResults} = useContext(DataResultsContext);
+  const {patientId, setPatientId} = useContext(DataResultsContext);
   const currentDate = new Date();
 
   const [state, setState] = React.useState({
-    isLoading: false,
-    patient: '',
     condition: '',
-    date_of_diagnosis: new Date(),
-    impression: [],
-    drugs_prescribed: '',
-    isPregnant: false,
+    dateOfDiagnosis: '',
+    impression: '',
+    drugsPrescribed: '',
     dosage: '',
     frequency: '',
-    duration:'',
+    duration: '',
+    followUpDate: '',
+    isPregnant: false,
+    // registeredById: '',
   });
 
- 
+  const handleSubmit = async () => {
+    try {
+      console.log('Patient ID :', patientId);
+      if (state.isLoading) {
+        // Prevent multiple submissions
+        return;
+      }
+      setState({...state, isLoading: true}); // Set isLoading state to true
+      const response = await fetch(
+        `https://mobi-be-production.up.railway.app/${patientId}/diagnosis`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            condition: state.condition,
+            dateOfDiagnosis: state.dateOfDiagnosis,
+            impression: state.impression,
+            drugsPrescribed: state.drugsPrescribed,
+            dosage: state.dosage,
+            frequency: state.frequency,
+            duration: state.duration,
+            followUpDate: state.followUpDate,
+            isPregnant: state.isPregnant,
+          }),
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+            Accept: 'application/json',
+          },
+        },
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        // setId(data.id);
+        Alert.alert('Data posted successfully');
+        navigation.navigate('Dashboard');
+      } else {
+        console.error('Error posting data:', response.status);
+        Alert.alert('Error', 'Failed to submit data. Please try again later.');
+      }
+    } catch (error) {
+      console.error('Error posting data:', error);
+      Alert.alert('Error', 'Failed to submit data. Please try again later.');
+    } finally {
+      setState({...state, isLoading: false}); // Reset isLoading state to false
+    }
+  };
 
   const _header = () => (
     <CustomHeader
@@ -68,10 +104,9 @@ const PatientMedical = ({navigation}) => {
       }
       title={
         <Text style={[STYLES.centerHeader, STYLES.title]}>
-          Enter Medical Details
+          VACCINATION DATA
         </Text>
       }
-      
     />
   );
 
@@ -80,41 +115,60 @@ const PatientMedical = ({navigation}) => {
   return (
     <View style={STYLES.wrapper}>
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
-
       {_header()}
+      <ScrollView style={STYLES.body}>
+        {/* condition */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Patient impression:</Text>
+          <TextInput
+            style={STYLES.field}
+            value={state.impression}
+            onChangeText={text => setState({...state, impression: text})}
+            placeholder='signs and symptoms e.g "Headache, Fever, Cough"'
+          />
+        </View>
 
-      <ScrollView style={STYLES.body} keyboardDismissMode="on-drag">
-        <Text style={STYLES.terms}>Enter Medical Details.</Text>
-        <TextInput
-          style={STYLES.input}
-          autoCorrect={false}
-          placeholderTextColor="rgba(0,0,0,0.7)"
-          selectionColor={COLORS.SECONDARY}
-          onChangeText={text => setState({...state, impression: text})}
-          value={state.impression}
-          placeholder="Condition/Disorder Name"
-        />
-        {/* date of diagnoses */}
-        <TextInput
-          style={STYLES.input}
-          autoCorrect={false}
-          placeholderTextColor="rgba(0,0,0,0.7)"
-          selectionColor={COLORS.SECONDARY}
-          onChangeText={text => setState({...state, date_of_diagnosis: text})}
-          value={state.date_of_diagnosis}
-          placeholder="Date of Diagnosis"
-        />
-        {/* drug adminstered */}
-        <TextInput
-          style={STYLES.input}
-          autoCorrect={false}
-          placeholderTextColor="rgba(0,0,0,0.7)"
-          selectionColor={COLORS.SECONDARY}
-          onChangeText={text => setState({...state, drugs_prescribed: text})}
-          value={state.drugs_prescribed}
-          placeholder="Name Of Drug Adminstered"
-        />
-        {/* is pregnant */}
+        {/* Date for diagnosis */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Date for Diagnosis:</Text>
+          <TextInput
+            style={STYLES.field}
+            value={state.dateOfDiagnosis}
+            onChangeText={text => setState({...state, dateOfDiagnosis: text})}
+          />
+        </View>
+
+        <View style={STYLES.wrap}>
+          {/* dose */}
+          <View style={STYLES.detail}>
+            <TextInput
+              value={state.dosage}
+              placeholderTextColor={COLORS.BLACK}
+              onChangeText={text => setState({...state, dosage: text})}
+              placeholder="dosage"
+            />
+          </View>
+          {/* units */}
+          <View style={STYLES.detail}>
+            <TextInput
+              value={state.frequency}
+              placeholderTextColor={COLORS.BLACK}
+              onChangeText={text => setState({...state, frequency: text})}
+              placeholder="frequency"
+            />
+          </View>
+
+          {/* duration */}
+          <View style={STYLES.detail}>
+            <TextInput
+              value={state.duration}
+              placeholderTextColor={COLORS.BLACK}
+              onChangeText={text => setState({...state, duration: text})}
+              placeholder="duration"
+            />
+          </View>
+        </View>
+
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>
             Is pregnant? {state.isPregnant == false ? 'No' : 'Yes'}
@@ -126,47 +180,40 @@ const PatientMedical = ({navigation}) => {
           />
         </View>
 
-        {/* dosage and frequency */}
-        <View style={STYLES.wrap}>
+        {/* Condition */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Condition:</Text>
           <TextInput
-            style={STYLES.detail}
-            autoCorrect={false}
-            placeholderTextColor="rgba(0,0,0,0.7)"
-            selectionColor={COLORS.SECONDARY}
-            onChangeText={text => setState({...state, dosage: text})}
-            value={state.dosage}
-            placeholder="Dosage"
-          />
-          <TextInput
-            style={STYLES.detail}
-            autoCorrect={false}
-            placeholderTextColor="rgba(0,0,0,0.7)"
-            selectionColor={COLORS.SECONDARY}
-            onChangeText={text => setState({...state, frequency: text})}
-            value={state.frequency}
-            placeholder="Frequency"
-          />
-          <TextInput
-            style={STYLES.detail}
-            autoCorrect={false}
-            placeholderTextColor="rgba(0,0,0,0.7)"
-            selectionColor={COLORS.SECONDARY}
-            onChangeText={text => setState({...state, duration: text})}
-            value={state.duration}
-            placeholder="Duration"
+            style={STYLES.field}
+            value={state.condition}
+            onChangeText={text => setState({...state, condition: text})}
+            placeholder='e.g "Left Arm"'
           />
         </View>
 
-        <TouchableOpacity
-          style={STYLES.btn}
-          onPress={() => navigation.navigate('Dashboard')}>
-          <Text style={STYLES.btnText}>Next</Text>
-          <Icon
-            name="arrow-right"
-            size={20}
-            strokeSize={3}
-            color={COLORS.WHITE}
+        {/* Drugs Adminstered */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Drugs Adminstered:</Text>
+          <TextInput
+            style={STYLES.field}
+            value={state.drugsPrescribed}
+            onChangeText={text => setState({...state, drugsPrescribed: text})}
+            placeholder='e.g "Left Arm"'
           />
+        </View>
+
+        {/* follow up date */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Follow Up Date:</Text>
+          <TextInput
+            style={STYLES.field}
+            value={state.followUpDate}
+            onChangeText={text => setState({...state, followUpDate: text})}
+          />
+        </View>
+
+        <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
+          <Text style={STYLES.submitText}>Submit</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -185,7 +232,7 @@ const STYLES = StyleSheet.create({
   },
   body: {
     flex: 2,
-    paddingHorizontal: 20,
+    padding: 30,
   },
   alert: {
     color: COLORS.GREY,
@@ -198,9 +245,11 @@ const STYLES = StyleSheet.create({
     color: COLORS.GREY,
   },
   label: {
-    fontWeight: 'bold',
+    fontWeight: 'medium',
     marginLeft: 5,
     marginRight: 5,
+    color: COLORS.BLACK,
+    fontSize: 14,
   },
   title: {
     fontWeight: 'bold',
@@ -252,59 +301,98 @@ const STYLES = StyleSheet.create({
     paddingVertical: 10,
     textAlign: 'center',
     color: 'grey',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     paddingVertical: 20,
   },
   pickers: {
-    // borderBottomColor: 'rgba(0,0,0,0.7)',
-    // borderBottomWidth:1,
     borderColor: COLORS.GREY,
     borderStyle: 'solid',
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: 10,
     paddingHorizontal: 15,
-    paddingVertical: -5,
     marginBottom: 10,
+    fontWeight: 'bold',
+    // backgroundColor: COLORS.GREY,
   },
   pickerItemStyle: {
-    color: 'red', // Customize the text color here
+    color: 'rgba(0,0,0,0.7)',
   },
   labeled: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 15,
-    paddingVertical: 10,
+    // paddingVertical: 10,
     color: COLORS.BLACK,
     marginTop: 10,
     marginBottom: 10,
     borderColor: COLORS.GREY,
     borderStyle: 'solid',
     borderWidth: 1,
-    borderRadius: 20,
-  },
-  label: {
-    flex: 2,
-    color: 'rgba(0,0,0,0.7)',
+    borderRadius: 10,
   },
   field: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
+    color: COLORS.BLACK,
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  guid: {
+    textAlign: 'left',
+    color: COLORS.BLACK,
+    fontSize: 11,
+    fontWeight: 'bold ',
   },
   submit: {
-    flexDirection: 'row',
-    padding: DIMENS.PADDING,
-    paddingHorizontal: 15,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: COLORS.PRIMARY,
-    borderRadius: 50,
+    backgroundColor: COLORS.BLACK,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginBottom: 10,
+    marginTop: 10,
   },
   submitText: {
-    color: COLORS.BLACK,
-    textAlign: 'center',
-    textTransform: 'uppercase',
+    color: '#fff',
+    fontSize: 18,
     fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  wrap: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: 70,
+    borderRadius: 20,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    backgroundColor: COLORS.GREY_LIGHTER,
+  },
+  pickerWrap: {
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    marginBottom: 10,
+    backgroundColor: COLORS.GREY_LIGHTER,
+  },
+  smallInput: {
+    width: 80,
+    height: 40,
+    textAlign: 'right',
+    color: COLORS.BLACK,
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    marginBottom: 10,
+    backgroundColor: COLORS.GREY_LIGHTER,
   },
   wrap: {
     flex: 1,
@@ -315,31 +403,30 @@ const STYLES = StyleSheet.create({
   },
   detail: {
     flex: 1,
-    height: 40,
-    marginHorizontal: 8,
-    paddingHorizontal: 10,
-    borderWidth: 1,
+    paddingHorizontal: 15,
+    // paddingVertical: 10,
+    color: COLORS.BLACK,
+    marginTop: 10,
+    marginBottom: 10,
     borderColor: COLORS.GREY,
-    borderRadius: 15,
-    backgroundColor: COLORS.GREY_LIGHTER,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 10,
+    height: 50,
+    marginHorizontal: 5,
   },
-  btn: {
-    backgroundColor: COLORS.BLACK,
-    padding: DIMENS.PADDING,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderRadius: 50,
-    marginTop: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  btnText: {
-    fontSize: 16,
-    alignItems: 'center',
-    fontWeight: '900',
-    justifyContent: 'center',
-    paddingLeft: 40,
-    color: COLORS.WHITE,
+  pickerStyle: {
+    flex: 1,
+    paddingHorizontal: 15,
+    // paddingVertical: 10,
+    color: COLORS.BLACK,
+    marginTop: 10,
+    marginBottom: 10,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 10,
+    height: 50,
+    marginHorizontal: 5,
   },
 });

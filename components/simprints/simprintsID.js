@@ -146,7 +146,7 @@ const SimprintsID = ({navigation}) => {
         selectedUserUniqueId,
       );
     }
-    fetchData();
+    navigation.navigate('GetPatients');
     console.log('Beneficiary confirmed');
   };
 
@@ -163,6 +163,12 @@ const SimprintsID = ({navigation}) => {
     setIdentificationPlusResults([]);
     setIdentificationResults([]);
     setEnrollmentGuid(null);
+  };
+
+  var OpenActivity = NativeModules.OpenActivity;
+
+  const openFunction = () => {
+    OpenActivity.open('WuDDHuqhcQ36P2U9rM7Y', 'test_user', 'mpower');
   };
 
   const _header = () => (
@@ -270,7 +276,7 @@ const SimprintsID = ({navigation}) => {
 
                   <TouchableOpacity
                     style={styles.button}
-                    onPress={handleIdentificationPlus}>
+                    onPress={openFunction}>
                     <Text style={styles.buttonText}>No Match</Text>
                   </TouchableOpacity>
                 </>
@@ -333,7 +339,7 @@ const SimprintsID = ({navigation}) => {
 
                   <TouchableOpacity
                     style={styles.button}
-                    onPress={handleIdentificationPlus}>
+                    onPress={openFunction}>
                     <Text style={styles.buttonText}>No Match</Text>
                   </TouchableOpacity>
                 </>
@@ -400,16 +406,20 @@ const styles = StyleSheet.create({
     marginTop: 5,
     paddingHorizontal: 10,
   },
+ 
   input: {
-    height: 110,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
+    backgroundColor: COLORS.WHITE,
+    borderRadius: 10,
+    padding: 15,
     marginBottom: 20,
-    color: 'black',
-    justifyContent: 'center',
-    paddingHorizontal: 10,
+    elevation: 4,
+    shadowColor: COLORS.GRAY,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
   },
   text: {
     fontSize: 20,
