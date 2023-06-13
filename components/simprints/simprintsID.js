@@ -146,7 +146,7 @@ const SimprintsID = ({navigation}) => {
         selectedUserUniqueId,
       );
     }
-    fetchData();
+    navigation.navigate('GetPatients');
     console.log('Beneficiary confirmed');
   };
 

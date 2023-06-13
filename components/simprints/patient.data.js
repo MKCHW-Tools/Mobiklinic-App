@@ -89,7 +89,7 @@ const PatientData = ({navigation}) => {
         setPatientId(patientId);
         console.log('Patient ID:', patientId);
         Alert.alert('Data posted successfully');
-        navigation.navigate('Vaccination',{ patientId: patientId });
+        navigation.navigate('SelectActivity',{ patientId: patientId });
       } else {
         console.error('Error posting data:', response.status);
         Alert.alert('Error', 'Failed to submit data. Please try again later.');
