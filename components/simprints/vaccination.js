@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {
   View,
   Alert,
@@ -11,95 +11,77 @@ import {
   StatusBar,
   Button,
 } from 'react-native';
-
 import {Picker} from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/Feather';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import {COLORS, DIMENS} from '../constants/styles';
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-import {
-  _removeStorageItem,
-  generateRandomCode,
-  MyDate,
-} from '../helpers/functions';
-
+import {_removeStorageItem} from '../helpers/functions';
 import {DiagnosisContext} from '../providers/Diagnosis';
 import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
+import DataResultsContext from '../contexts/DataResultsContext';
+import {COLORS, DIMENS} from '../constants/styles';
 
-const CovidData = ({navigation}) => {
+const PatientData = ({navigation,route}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
   const {diagnoses} = diagnosisContext;
-
-  // date
-  // const currentDate = new Date();
+  const {dataResults} = useContext(DataResultsContext);
+  const { patientId } = route.params;
+  const currentDate = new Date();
 
   const [state, setState] = React.useState({
-    isLoading: false,
-    patient: '',
-    date_of_vaccination: '',
-    units: '',
-    date_for_next_dose: '',
-    site_administered: '',
-    vaccine_name: '',
-    facilty: '',
+    vaccineName: '',
+    dose: '',
+    units: ' ',
+    dateOfVaccination: '',
+    dateForNextDose: '',
+    siteAdministered: '',
+    facility: '',
+
+    // registeredById: '',
   });
 
-  const save = async () => {
-    const {
-      patient,
-      date_of_vaccination,
-      units,
-      date_for_next_dose,
-      site_administered,
-      vaccine_name,
-      facilty,
-    } = state;
-    const code = generateRandomCode(5),
-      date = MyDate();
+  const handleSubmit = async () => {
+    try {
+      console.log('Patient ID :', patientId);
+      if (state.isLoading) {
+        // Prevent multiple submissions
+        return;
+      }
+      setState({...state, isLoading: true}); // Set isLoading state to true
+      const response = await fetch(
+        `https://mobi-be-production.up.railway.app/${patientId}/vaccinations`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            vaccineName: state.vaccineName,
+            dose: state.dose,
+            units: state.units,
+            dateOfVaccination: state.dateOfVaccination,
+            dateForNextDose: state.dateForNextDose,
+            siteAdministered: state.siteAdministered,
+            facility: state.facility,
 
-    const newstate = {
-      code,
-      date,
-      patient,
-      date_of_vaccination,
-      units,
-      date_for_next_dose,
-      site_administered,
-      vaccine_name,
-      facilty,
-      uploaded: false,
-    };
-
-    if (vaccine_name && facilty && date_of_vaccination) {
-      // const data = await AsyncStorage.getItem('@diagnosis')
-      // const prevstate = data !== null ? JSON.parse(data) : []
-      setState({...state, isLoading: true});
-
-      AsyncStorage.setItem(
-        '@diagnosis',
-        JSON.stringify([newstate, ...diagnoses]),
-        () => {
-          diagnosisContext.setDiagnoses([newstate, ...diagnoses]);
-
-          Alert.alert('Saved', `Diagnosis code: ${code}`, [{text: 'OK'}]);
-
-          setState({
-            isLoading: false,
-            patient: '',
-            date_of_vaccination: '',
-            units: '',
-            date_for_next_dose: '',
-            site_administered: '',
-            vaccine_name: '',
-            facilty: '',
-          });
+          }),
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+            Accept: 'application/json',
+          },
         },
       );
-    } else {
-      Alert.alert('Ooops!', 'Complete all fields', [{text: 'OK'}]);
+
+      if (response.ok) {
+        const data = await response.json();
+        // setId(data.id);
+        Alert.alert('Data posted successfully');
+        navigation.navigate('Dashboard');
+      } else {
+        console.error('Error posting data:', response.status);
+        Alert.alert('Error', 'Failed to submit data. Please try again later.');
+      }
+    } catch (error) {
+      console.error('Error posting data:', error);
+      Alert.alert('Error', 'Failed to submit data. Please try again later.');
+    } finally {
+      setState({...state, isLoading: false}); // Reset isLoading state to false
     }
   };
 
@@ -119,25 +101,9 @@ const CovidData = ({navigation}) => {
         </TouchableOpacity>
       }
       title={
-        <Text style={[STYLES.centerHeader, STYLES.title]}>Covid Vaccine</Text>
-      }
-      right={
-        <TouchableOpacity
-          onPress={() => save()}
-          style={{
-            marginHorizontal: 4,
-            width: 35,
-            height: 35,
-            borderRadius: 100,
-            backgroundColor: COLORS.BLACK,
-            borderColor: COLORS.BLACK,
-            borderStyle: 'solid',
-            borderWidth: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Icon name="check" size={25} color={COLORS.WHITE} />
-        </TouchableOpacity>
+        <Text style={[STYLES.centerHeader, STYLES.title]}>
+          VACCINATION DATA
+        </Text>
       }
     />
   );
@@ -147,89 +113,92 @@ const CovidData = ({navigation}) => {
   return (
     <View style={STYLES.wrapper}>
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
-
       {_header()}
-
-      <ScrollView style={STYLES.body} keyboardDismissMode="on-drag">
-        <Text style={STYLES.terms}>Covid Vaccine.</Text>
-        {/* vaccine type */}
-        <TextInput
-          style={STYLES.input}
-          autoCorrect={false}
-          placeholderTextColor="rgba(0,0,0,0.7)"
-          selectionColor={COLORS.BLACK}
-          onChangeText={text => setState({...state, vaccine_name: text})}
-          value={state.vaccine_name}
-          placeholder="Vaccine Name *"
-        />
-        {/* date of vaccination */}
-        <TextInput
-          style={STYLES.input}
-          autoCorrect={false}
-          placeholderTextColor="rgba(0,0,0,0.7)"
-          selectionColor={COLORS.BLACK}
-          onChangeText={text => setState({...state, date_of_vaccination: text})}
-          value={state.date_of_vaccination}
-          placeholder="Date of Vaccination*"
-        />
-        {/* facility */}
-        <TextInput
-          style={STYLES.input}
-          autoCorrect={false}
-          placeholderTextColor="rgba(0,0,0,0.7)"
-          selectionColor={COLORS.BLACK}
-          onChangeText={text => setState({...state, facilty: text})}
-          value={state.facilty}
-          placeholder="Facilty*"
-        />
-        {/* units of measurement */}
-        <TextInput
-          style={STYLES.input}
-          autoCorrect={false}
-          placeholderTextColor="rgba(0,0,0,0.7)"
-          selectionColor={COLORS.BLACK}
-          onChangeText={text => setState({...state, units: text})}
-          value={state.units}
-          placeholder="Units (mls)*"
-        />
-        {/* site for adminstration */}
-        <TextInput
-          style={STYLES.input}
-          autoCorrect={false}
-          placeholderTextColor="rgba(0,0,0,0.7)"
-          selectionColor={COLORS.BLACK}
-          onChangeText={text => setState({...state, site_administered: text})}
-          value={state.site_administered}
-          placeholder="Site of Adminstration"
-        />
-        {/* next dosage */}
-        <TextInput
-          style={STYLES.input}
-          autoCorrect={false}
-          placeholderTextColor="rgba(0,0,0,0.7)"
-          selectionColor={COLORS.BLACK}
-          onChangeText={text => setState({...state, date_for_next_dose: text})}
-          value={state.date_for_next_dose}
-          placeholder="Date for Next Dosage"
-        />
-
-        <TouchableOpacity
-          style={STYLES.btn}
-          onPress={() => navigation.navigate('Dashboard')}>
-          <Text style={STYLES.btnText}>Next</Text>
-          <Icon
-            name="arrow-right"
-            size={20}
-            strokeSize={3}
-            color={COLORS.WHITE}
+      <ScrollView style={STYLES.body}>
+       
+        {/* Vaccine Name */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Vaccine Name</Text>
+          <TextInput
+            style={STYLES.field}
+            value={state.vaccineName}
+            onChangeText={text => setState({...state, vaccineName: text})}
           />
+        </View>
+
+        {/* Date for vaccination */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Date for Vaccination:</Text>
+          <TextInput
+            style={STYLES.field}
+            value={state.dateOfVaccination}
+            onChangeText={text => setState({...state, dateOfVaccination: text})}
+          />
+        </View>
+
+        <View style={STYLES.wrap}>
+          {/* dose */}
+          <View style={STYLES.detail}>
+            <TextInput
+              keyboardType="numeric"
+              value={state.dose}
+              placeholderTextColor={COLORS.BLACK}
+              onChangeText={text => setState({...state, dose: text})}
+              placeholder="eg(1st, 2nd, 3rd)"
+            />
+          </View>
+          {/* units */}
+          <View style={STYLES.detail}>
+            {/* <Text style={STYLES.label}>Height:</Text> */}
+            <TextInput
+              keyboardType="numeric"
+              placeholderTextColor={COLORS.BLACK}
+              value={state.units}
+              onChangeText={text => setState({...state, units: text})}
+              placeholder="units(mls)"
+            />
+          </View>
+        </View>
+
+        {/* Site adminstered */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Site Adminstered:</Text>
+          <TextInput
+            style={STYLES.field}
+            value={state.siteAdministered}
+            onChangeText={text => setState({...state, siteAdministered: text})}
+            placeholder='e.g "Left Arm"'
+          />
+        </View>
+
+        {/* Facility */}
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Facility:</Text>
+
+          <Picker
+            placeholderTextColor={COLORS.BLACK}
+            selectedValue={state.facility}
+            onValueChange={(value, index) =>
+              setState({...state, facility: value})
+            }
+            style={STYLES.field}>
+            <Picker.Item label="" value="" />
+            <Picker.Item label="Buikwe Hospital" value="Buikwe Hospital" />
+            <Picker.Item label="Mulago" value="Mulago" />
+          </Picker>
+        </View>
+
+        
+
+        <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
+          <Text style={STYLES.submitText}>Submit</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
   );
 };
 
-export default CovidData;
+export default PatientData;
 
 const STYLES = StyleSheet.create({
   wrapper: {
@@ -254,10 +223,11 @@ const STYLES = StyleSheet.create({
     color: COLORS.GREY,
   },
   label: {
-    fontWeight: 'bold',
+    fontWeight: 'medium',
     marginLeft: 5,
     marginRight: 5,
-    marginVertical: 10,
+    color: COLORS.BLACK,
+    fontSize: 14,
   },
   title: {
     fontWeight: 'bold',
@@ -293,10 +263,6 @@ const STYLES = StyleSheet.create({
     marginBottom: 10,
     backgroundColor: COLORS.GREY_LIGHTER,
   },
-  pickerField: {
-    color: 'rgba(0,0,0,0.7)',
-    paddingHorizontal: -10,
-  },
   textarea: {
     color: 'rgba(0,0,0,0.7)',
     minHeight: 70,
@@ -313,61 +279,97 @@ const STYLES = StyleSheet.create({
     paddingVertical: 10,
     textAlign: 'center',
     color: 'grey',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     paddingVertical: 20,
   },
   pickers: {
-    flex: 1,
-    height: 40,
-    marginHorizontal: 10,
-    paddingHorizontal: 15,
-    paddingVertical: -10,
-    justifyContent: 'center',
-    borderWidth: 1,
     borderColor: COLORS.GREY,
-    borderRadius: 15,
-    backgroundColor: COLORS.GREY_LIGHTER,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    marginBottom: 10,
+    fontWeight: 'bold',
+    // backgroundColor: COLORS.GREY,
   },
   pickerItemStyle: {
-    color: 'red', // Customize the text color here
+    color: 'rgba(0,0,0,0.7)',
   },
   labeled: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 15,
-    paddingVertical: 10,
+    // paddingVertical: 10,
     color: COLORS.BLACK,
     marginTop: 10,
     marginBottom: 10,
     borderColor: COLORS.GREY,
     borderStyle: 'solid',
     borderWidth: 1,
-    borderRadius: 20,
-  },
-  label: {
-    flex: 2,
-    color: 'rgba(0,0,0,0.7)',
-    marginVertical: 10,
+    borderRadius: 10,
   },
   field: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
+    color: COLORS.BLACK,
+    fontWeight: 'bold',
+  },
+  guid: {
+    textAlign: 'left',
+    color: COLORS.BLACK,
+    fontSize: 11,
+    fontWeight: 'bold ',
   },
   submit: {
-    flexDirection: 'row',
-    padding: DIMENS.PADDING,
-    paddingHorizontal: 15,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: COLORS.PRIMARY,
-    borderRadius: 50,
+    backgroundColor: COLORS.BLACK,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginBottom: 10,
+    marginTop: 10,
   },
   submitText: {
-    color: COLORS.BLACK,
-    textAlign: 'center',
-    textTransform: 'uppercase',
+    color: '#fff',
+    fontSize: 18,
     fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  wrap: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: 70,
+    borderRadius: 20,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    backgroundColor: COLORS.GREY_LIGHTER,
+  },
+  pickerWrap: {
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    marginBottom: 10,
+    backgroundColor: COLORS.GREY_LIGHTER,
+  },
+  smallInput: {
+    width: 80,
+    height: 40,
+    textAlign: 'right',
+    color: COLORS.BLACK,
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    marginBottom: 10,
+    backgroundColor: COLORS.GREY_LIGHTER,
   },
   wrap: {
     flex: 1,
@@ -377,33 +379,31 @@ const STYLES = StyleSheet.create({
     minHeight: 70,
   },
   detail: {
-    color: 'rgba(0,0,0,0.7)',
     flex: 1,
-    height: 40,
-    marginHorizontal: 8,
-    paddingHorizontal: 10,
-    borderWidth: 1,
+    paddingHorizontal: 15,
+    // paddingVertical: 10,
+    color: COLORS.BLACK,
+    marginTop: 10,
+    marginBottom: 10,
     borderColor: COLORS.GREY,
-    borderRadius: 15,
-    backgroundColor: COLORS.GREY_LIGHTER,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 10,
+    height: 50,
+    marginHorizontal: 5,
   },
-  btn: {
-    backgroundColor: COLORS.BLACK,
-    padding: DIMENS.PADDING,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderRadius: 50,
-    marginTop: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  btnText: {
-    fontSize: 16,
-    alignItems: 'center',
-    fontWeight: '900',
-    justifyContent: 'center',
-    paddingLeft: 40,
-    color: COLORS.WHITE,
+  pickerStyle: {
+    flex: 1,
+    paddingHorizontal: 15,
+    // paddingVertical: 10,
+    color: COLORS.BLACK,
+    marginTop: 10,
+    marginBottom: 10,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 10,
+    height: 50,
+    marginHorizontal: 5,
   },
 });
