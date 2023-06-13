@@ -25,6 +25,7 @@ const PatientData = ({navigation}) => {
   const {diagnoses} = diagnosisContext;
   const {dataResults} = useContext(DataResultsContext);
   const {userLog} = useContext(DataResultsContext);
+  const {updatePatientVac} = useContext(DataResultsContext);
   // const [ id, setId ] = React.useState(userLog.length > 0 ? userLog[0].id : '');
 
   // const navigation = useNavigation();
@@ -81,7 +82,9 @@ const PatientData = ({navigation}) => {
 
       if (response.ok) {
         const data = await response.json();
-        // setId(data.id);
+       const patientId = data.id;
+       updatePatientVac(patientId);
+        console.log('Patient Id:', patientId);
         Alert.alert('Data posted successfully');
         navigation.navigate('SelectActivity');
       } else {

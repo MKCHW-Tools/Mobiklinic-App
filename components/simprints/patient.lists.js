@@ -1,4 +1,4 @@
-import React, {useEffect, useState,useContext} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import {Text, View, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,11 +8,11 @@ import Loader from '../ui/loader';
 import CustomHeader from '../ui/custom-header';
 import DataResultsContext from '../contexts/DataResultsContext';
 
-
 const PatientLists = ({navigation}) => {
   const [users, setUsers] = useState([]);
-  const { userLog } = useContext(DataResultsContext); // Get the logged-in user ID from the context
-
+  const {userLog} = useContext(DataResultsContext);
+  const patientVac = useContext(DataResultsContext);
+  const [vaccinations, setVaccinations] = useState([]);
 
   const _header = () => (
     <CustomHeader
@@ -36,26 +36,28 @@ const PatientLists = ({navigation}) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        // First, check if the data is stored locally
         const storedData = await AsyncStorage.getItem('patientList');
         if (storedData) {
           setUsers(JSON.parse(storedData));
         } else {
           const response = await axios.get(
-            `https://mobi-be-production.up.railway.app/${userLog}/patients` // Use the logged-in user ID in the API URL
-            ,
+            `https://mobi-be-production.up.railway.app/${userLog}/patients`,
           );
-          setUsers(response.data);
-          // Save the fetched data locally for offline access
-          await AsyncStorage.setItem(
-            'patientList',
-            JSON.stringify(response.data),
+          const { data } = response;
+          setUsers(data);
+          await AsyncStorage.setItem('patientList', JSON.stringify(data));
+    
+          const vaccinationsResponse = await axios.get(
+            `https://mobi-be-production.up.railway.app/${userLog}/vaccinations`,
           );
+          const { data: vaccinationData } = vaccinationsResponse;
+          setVaccinations(vaccinationData);
         }
       } catch (error) {
         console.error(error);
       }
     };
+    
 
     fetchUsers();
   }, [userLog]);
@@ -64,6 +66,10 @@ const PatientLists = ({navigation}) => {
 
   const renderUserCard = ({item}) => {
     const isExpanded = item.id === expandedUserId;
+
+    const userVaccinations = vaccinations.filter(
+      vaccination => vaccination.signUpId === item.signUpId,
+    );
 
     const toggleExpansion = () => {
       if (isExpanded) {
@@ -100,6 +106,30 @@ const PatientLists = ({navigation}) => {
               Primary Language: {item.primaryLanguage}
             </Text>
             <Text style={styles.label}>Simprints GUI: {item.simprintsGui}</Text>
+
+            <Text style={styles.label}>Vaccinations:</Text>
+            {userVaccinations.map((vaccination, index) => (
+              <View key={index} style={styles.vaccinationContainer}>
+                <Text style={styles.vaccinationLabel}>
+                  Date of Vaccination: {vaccination.dateOfVaccination}
+                </Text>
+                <Text style={styles.vaccinationLabel}>
+                  Date for Next Dose: {vaccination.dateForNextDose}
+                </Text>
+                <Text style={styles.vaccinationLabel}>
+                  Vaccine Name: {vaccination.vaccineName}
+                </Text>
+                <Text style={styles.vaccinationLabel}>
+                  Units: {vaccination.units}
+                </Text>
+                <Text style={styles.vaccinationLabel}>
+                  Site Administered: {vaccination.siteAdministered}
+                </Text>
+                <Text style={styles.vaccinationLabel}>
+                  Facility: {vaccination.facility}
+                </Text>
+              </View>
+            ))}
           </View>
         )}
       </View>

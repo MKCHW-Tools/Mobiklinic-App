@@ -61,6 +61,7 @@ const GetPatients = ({navigation}) => {
       if (response.ok) {
         const data = await response.json();
         setUserData(data);
+        setVaccinations(data.vaccinations); // Set the vaccination data
         setShowConfirmButton(true); // Show the "Confirm Data" button
       } else {
         // console.error('Error fetching user data:', response.status);
@@ -136,6 +137,38 @@ const GetPatients = ({navigation}) => {
               Height(Cms) {'\t'}
               <Text style={{fontWeight: 'bold'}}>{userData.height}</Text>
             </Text>
+            {userData && (
+              <View style={styles.userData}>
+                {/* ...other user data fields */}
+                {userData.vaccinations && userData.vaccinations.length > 0 && (
+                  <>
+                    <Text style={styles.userDataLabel}>Vaccinations:</Text>
+                    {userData.vaccinations.map((vaccination, index) => (
+                      <View key={index}>
+                        <Text style={styles.userDataLabel}>
+                          Date of Vaccination: {vaccination.dateOfVaccination}
+                        </Text>
+                        <Text style={styles.userDataLabel}>
+                          Date for Next Dose: {vaccination.dateForNextDose}
+                        </Text>
+                        <Text style={styles.userDataLabel}>
+                          Vaccine Name: {vaccination.vaccineName}
+                        </Text>
+                        <Text style={styles.userDataLabel}>
+                          Units: {vaccination.units}
+                        </Text>
+                        <Text style={styles.userDataLabel}>
+                          Site Administered: {vaccination.siteAdministered}
+                        </Text>
+                        <Text style={styles.userDataLabel}>
+                          Facility: {vaccination.facility}
+                        </Text>
+                      </View>
+                    ))}
+                  </>
+                )}
+              </View>
+            )}
           </View>
         )}
         {showConfirmButton && (
