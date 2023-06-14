@@ -262,6 +262,7 @@ const PatientData = ({navigation}) => {
           <TextInput
             style={STYLES.field}
             value={state.phoneNumber}
+            keyboardType="phone-pad"
             onChangeText={text => setState({...state, phoneNumber: text})}
             placeholder="eg. 0771234567"
           />
