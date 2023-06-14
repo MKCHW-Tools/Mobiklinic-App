@@ -75,6 +75,7 @@ const SimprintsID = ({navigation}) => {
         const {guid} = event;
         setEnrollmentGuid(guid);
         setDisplayMode('enrollment');
+        navigation.navigate('PatientData');
         updateDataResults(guid);
       },
     );
@@ -164,20 +165,6 @@ const SimprintsID = ({navigation}) => {
     />
   );
 
-  const renderIdentificationPlusResult = ({item}) => (
-    <TouchableOpacity style={styles.input} onPress={confirmSelectedBeneficiary}>
-      <Text style={styles.label}>
-        <View style={{height: 20}} />
-        Tier: <Text style={{fontWeight: 'bold'}}>{item.tier}</Text>
-        {'\n'}
-        Confidence Score:{' '}
-        <Text style={{fontWeight: 'bold'}}>{item.confidenceScore}%</Text>
-        {'\n'}
-        Guid:<Text style={{fontWeight: 'bold'}}>{item.guid}</Text>
-      </Text>
-    </TouchableOpacity>
-  );
-
   return (
     <View style={styles.wrapper}>
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
@@ -191,7 +178,7 @@ const SimprintsID = ({navigation}) => {
         <ScrollView contentContainerStyle={styles.wrapper}>
           <View style={styles.container}>
             {displayMode === 'enrollment' && (
-              <>
+              <View style={{display: 'none'}}>
                 {enrollmentGuid && (
                   <>
                     <Text style={styles.text}>Beneficiary Enrolled on ID</Text>
@@ -216,7 +203,7 @@ const SimprintsID = ({navigation}) => {
                 onPress={confirmSelectedBeneficiary}>
                 <Text style={styles.buttonText}>Continue to Registration</Text>
               </TouchableOpacity> */}
-              </>
+              </View>
             )}
 
             {displayMode === 'identificationPlus' && (
