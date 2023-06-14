@@ -99,6 +99,7 @@ const GetPatients = () => {
                 {userData.lastName}
               </Text>
             </Text>
+            
 
             <Text style={styles.userDataLabel}>
               Phone Number:{'\t '}

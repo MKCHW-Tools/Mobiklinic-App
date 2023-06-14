@@ -18,6 +18,7 @@ import {
   NativeModules,
   View,
   TouchableOpacity,
+  TextInput,
   ScrollView,
   Image,
   StatusBar,
@@ -73,7 +74,7 @@ const SimprintsID = ({navigation}) => {
         'Failed to fetch user data. Please try again later.',
       );
     }
-    navigation.navigate('GetPatients');
+    // navigation.navigate('GetPatients');
   };
   useEffect(() => {
     const identificationPlusSubscription = DeviceEventEmitter.addListener(
@@ -146,6 +147,7 @@ const SimprintsID = ({navigation}) => {
         selectedUserUniqueId,
       );
     }
+    fetchData();
     navigation.navigate('GetPatients');
     console.log('Beneficiary confirmed');
   };
@@ -266,6 +268,7 @@ const SimprintsID = ({navigation}) => {
                         Guid:
                         <Text style={{fontWeight: 'bold'}}>{result.guid}</Text>
                       </Text>
+                      
                     </TouchableOpacity>
                   </View>
                 ))}
@@ -294,6 +297,12 @@ const SimprintsID = ({navigation}) => {
                 <React.Fragment key="identification-heading">
                   <Text style={styles.text}>Identification Results</Text>
                   <View style={{height: 20}} />
+                  <Text style={styles.label}>Simprints GUID</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={guid}
+                    onChangeText={setGuid}
+                  />
                 </React.Fragment>
               )}
 
@@ -305,9 +314,26 @@ const SimprintsID = ({navigation}) => {
                 )
                 .map((result, index) => (
                   <View key={index}>
+                    <View style={{height: 20}}>
+                      <Text style={styles.label}>Simprints GUID</Text>
+                      <TextInput
+                        style={styles.input}
+                        value={guid}
+                        onChangeText={setGuid}
+                      />
+                    </View>
+                    <TouchableOpacity style={styles.button} onPress={fetchData}>
+                      <Text style={styles.buttonText}>
+                        Get Beneficiary Data
+                      </Text>
+                    </TouchableOpacity>
+
                     <TouchableOpacity
                       style={styles.input}
-                      onPress={confirmSelectedBeneficiaryy}>
+                      onPress={() => {
+                        confirmSelectedBeneficiaryy();
+                        fetchData();
+                      }}>
                       <Text style={styles.label}>
                         <View style={{height: 20}} />
                         Tier:{'\t'}
@@ -322,14 +348,25 @@ const SimprintsID = ({navigation}) => {
                         {'\n'}
                         Guid:
                         <Text style={{fontWeight: 'bold'}}>{result.guid}</Text>
+                        {'\n'}
                       </Text>
+                      {userData && (
+                        <View style={{height: 20}}>
+                          <Text style={styles.label}>User Data</Text>
+                          <Text style={styles.userDataValue}>
+                            {userData.firstName}{userData.lastName}
+                            {'\n'}
+                            {userData.lastName}
+                            {'\n'}
+                          </Text>
+                        </View>
+                      )}
                     </TouchableOpacity>
                   </View>
                 ))}
               <View style={{height: 20}} />
               {showButtons ? (
                 <>
-
                   <View style={{height: 20}} />
 
                   <TouchableOpacity
@@ -401,7 +438,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     paddingHorizontal: 10,
   },
- 
+
   input: {
     backgroundColor: COLORS.WHITE,
     borderRadius: 10,
