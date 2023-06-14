@@ -48,6 +48,15 @@ const PatientMedical = ({navigation}) => {
         return;
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
+      if (
+        state.condition === '' ||
+        state.dateOfDiagnosis === '' ||
+        state.impression === '' 
+       
+      ) {
+        Alert.alert('Error', 'Please fill in all required fields');
+        return;
+      }
       const response = await fetch(
         `https://mobi-be-production.up.railway.app/${patientId}/diagnosis`,
         {
@@ -104,7 +113,7 @@ const PatientMedical = ({navigation}) => {
       }
       title={
         <Text style={[STYLES.centerHeader, STYLES.title]}>
-          VACCINATION DATA
+          MEDICAL DIAGNOSIS
         </Text>
       }
     />
@@ -125,6 +134,8 @@ const PatientMedical = ({navigation}) => {
             value={state.impression}
             onChangeText={text => setState({...state, impression: text})}
             placeholder='signs and symptoms e.g "Headache, Fever, Cough"'
+            multiline={true}
+            numberOfLines={4}
           />
         </View>
 
@@ -174,7 +185,7 @@ const PatientMedical = ({navigation}) => {
             Is pregnant? {state.isPregnant == false ? 'No' : 'Yes'}
           </Text>
           <Switch
-            style={STYLES.field}
+            style={STYLES.switch}
             onValueChange={text => setState({...state, isPregnant: text})}
             value={state.isPregnant}
           />
@@ -187,7 +198,9 @@ const PatientMedical = ({navigation}) => {
             style={STYLES.field}
             value={state.condition}
             onChangeText={text => setState({...state, condition: text})}
-            placeholder='e.g "Left Arm"'
+            placeholder='e.g "Malaria"'
+            multiline={true}
+            numberOfLines={4}
           />
         </View>
 
@@ -245,7 +258,7 @@ const STYLES = StyleSheet.create({
     color: COLORS.GREY,
   },
   label: {
-    fontWeight: 'medium',
+    fontWeight: 'bold',
     marginLeft: 5,
     marginRight: 5,
     color: COLORS.BLACK,
@@ -335,8 +348,16 @@ const STYLES = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     color: COLORS.BLACK,
+    fontWeight: 'medium',
+    fontSize: 14,
+  },
+  switch: {
+    flex: 1,
+    justifyContent: 'center',
+    color: COLORS.BLACK,
     fontWeight: 'bold',
     fontSize: 16,
+    paddingVertical: 10,
   },
   guid: {
     textAlign: 'left',
