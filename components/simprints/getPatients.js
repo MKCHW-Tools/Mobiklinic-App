@@ -41,7 +41,12 @@ const GetPatients = () => {
         const data = await response.json();
         setUserData(data);
         setVaccinations(data.vaccinations); // Set the vaccination data
-        setDiagnosis(data.diagnosis); // Set the vaccination data
+        setDiagnosis(data.diagnosis); // Set the diagnosis data
+
+        // Save data to AsyncStorage
+      AsyncStorage.setItem('@userData', JSON.stringify(data));
+      AsyncStorage.setItem('@vaccinations', JSON.stringify(data.vaccinations));
+      AsyncStorage.setItem('@diagnosis', JSON.stringify(data.diagnosis));
 
         setShowConfirmButton(true); // Show the "Confirm Data" button
       } else {
