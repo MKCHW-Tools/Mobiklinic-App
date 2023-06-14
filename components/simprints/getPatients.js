@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import {useNavigation} from '@react-navigation/native';
+import Collapsible from 'react-native-collapsible';
 
 import {
   _removeStorageItem,
@@ -23,6 +24,8 @@ import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
 import CustomHeader from '../ui/custom-header';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const GetPatients = () => {
   const navigation = useNavigation();
@@ -30,6 +33,10 @@ const GetPatients = () => {
   const [guid, setGuid] = useState(benData.length > 0 ? benData[0].guid : '');
   const [userData, setUserData] = useState(null);
   const [showConfirmButton, setShowConfirmButton] = useState(false);
+  const [vaccinations, setVaccinations] = useState(null); 
+  const [diagnosis, setDiagnosis] = useState(null);
+  const [vaccinationsCollapsed, setVaccinationsCollapsed] = useState(true);
+  const [diagnosisCollapsed, setDiagnosisCollapsed] = useState(true);
 
   const fetchData = async () => {
     console.log('GUID:', guid);
@@ -38,15 +45,19 @@ const GetPatients = () => {
         `https://mobi-be-production.up.railway.app/patients/${guid}`,
       );
       if (response.ok) {
+        console.log('Response:', response);
         const data = await response.json();
         setUserData(data);
         setVaccinations(data.vaccinations); // Set the vaccination data
         setDiagnosis(data.diagnosis); // Set the diagnosis data
 
         // Save data to AsyncStorage
-      AsyncStorage.setItem('@userData', JSON.stringify(data));
-      AsyncStorage.setItem('@vaccinations', JSON.stringify(data.vaccinations));
-      AsyncStorage.setItem('@diagnosis', JSON.stringify(data.diagnosis));
+        AsyncStorage.setItem('@userData', JSON.stringify(data));
+        AsyncStorage.setItem(
+          '@vaccinations',
+          JSON.stringify(data.vaccinations),
+        );
+        AsyncStorage.setItem('@diagnosis', JSON.stringify(data.diagnosis));
 
         setShowConfirmButton(true); // Show the "Confirm Data" button
       } else {
@@ -56,6 +67,7 @@ const GetPatients = () => {
         );
       }
     } catch (error) {
+      console.error(error);
       Alert.alert('Error', 'Beneficiary not found. Please check the GUID ');
     }
   };
@@ -106,76 +118,114 @@ const GetPatients = () => {
             </Text>
             {userData.vaccinations && userData.vaccinations.length > 0 && (
               <View style={styles.vaccinationsContainer}>
-                <Text style={styles.userDataLabel}>Vaccinations:</Text>
-                {userData.vaccinations.map((vaccination, index) => (
-                  <View key={index}>
-                    <Text style={styles.userDataLabel}>
-                      Date of Vaccination:{' '}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.dateOfVaccination}
+                <TouchableOpacity
+                  style={styles.accordionHeader}
+                  onPress={() =>
+                    setVaccinationsCollapsed(!vaccinationsCollapsed)
+                  }>
+                  <Text style={styles.accordionHeaderText}>Vaccinations</Text>
+                  <Icon
+                    name={vaccinationsCollapsed ? 'chevron-down' : 'chevron-up'}
+                    size={20}
+                    color={COLORS.BLACK}
+                  />
+                </TouchableOpacity>
+                <Collapsible collapsed={vaccinationsCollapsed}>
+                  {userData.vaccinations.map((vaccination, index) => (
+                    <View key={index}>
+                      <Text style={styles.userDataLabel}>
+                        Date of Vaccination:{' '}
+                        <Text style={styles.userDataValue}>
+                          {vaccination.dateOfVaccination}
+                        </Text>
                       </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Date for Next Dose:{' '}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.dateForNextDose}
+                      <Text style={styles.userDataLabel}>
+                        Date for Next Dose:{' '}
+                        <Text style={styles.userDataValue}>
+                          {vaccination.dateForNextDose}
+                        </Text>
                       </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Vaccine Name:{' \t'}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.vaccineName}
+                      <Text style={styles.userDataLabel}>
+                        Vaccine Name:{' \t'}
+                        <Text style={styles.userDataValue}>
+                          {vaccination.vaccineName}
+                        </Text>
                       </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Units:{' '}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.units}
+                      <Text style={styles.userDataLabel}>
+                        Units:{' '}
+                        <Text style={styles.userDataValue}>
+                          {vaccination.units}
+                        </Text>
                       </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Site Administered:{' '}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.siteAdministered}
+                      <Text style={styles.userDataLabel}>
+                        Site Administered:{' '}
+                        <Text style={styles.userDataValue}>
+                          {vaccination.siteAdministered}
+                        </Text>
                       </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Facility:{' '}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.facility}
+                      <Text style={styles.userDataLabel}>
+                        Facility:{' '}
+                        <Text style={styles.userDataValue}>
+                          {vaccination.facility}
+                        </Text>
                       </Text>
-                    </Text>
-                  </View>
-                ))}
+                    </View>
+                  ))}
+                </Collapsible>
               </View>
             )}
-
             {userData.diagnoses && userData.diagnoses.length > 0 && (
               <View style={styles.vaccinationsContainer}>
-                <Text style={styles.userDataLabel}>Diagnosis:</Text>
-                {userData.diagnoses.map((diagnosis, index) => (
-                  <View key={index}>
-                    <Text style={styles.userDataLabel}>
-                      Date of Vaccination:{' '}
-                      <Text style={styles.userDataValue}>
-                        {diagnosis.condition}
+                <TouchableOpacity
+                  style={styles.accordionHeader}
+                  onPress={() => setDiagnosisCollapsed(!diagnosisCollapsed)}>
+                  <Text style={styles.accordionHeaderText}>Diagnosis</Text>
+                  <Icon
+                    name={diagnosisCollapsed ? 'chevron-down' : 'chevron-up'}
+                    size={20}
+                    color={COLORS.BLACK}
+                  />
+                </TouchableOpacity>
+                <Collapsible collapsed={diagnosisCollapsed}>
+                  {userData.diagnoses.map((diagnosis, index) => (
+                    <View key={index}>
+                      <Text style={styles.userDataLabel}>
+                        Impression:
+                        <Text style={styles.userDataValue}>
+                          {diagnosis.impression}
+                        </Text>
                       </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Date for Next Dose:{' '}
-                      <Text style={styles.userDataValue}>
-                        {diagnosis.dateForNextDose}
+
+                      <Text style={styles.userDataLabel}>
+                        Date Of Diagnosis:
+                        <Text style={styles.userDataValue}>
+                          {diagnosis.dateOfDiagnosis}
+                        </Text>
                       </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Impression:{' '}
-                      <Text style={styles.userDataValue}>
-                        {diagnosis.impression}
+
+                      <Text style={styles.userDataLabel}>
+                        Condition:
+                        <Text style={styles.userDataValue}>
+                          {diagnosis.condition}
+                        </Text>
                       </Text>
-                    </Text>
-                    
-                  </View>
-                ))}
+
+                      <Text style={styles.userDataLabel}>
+                        Drugs Prescribed:
+                        <Text style={styles.userDataValue}>
+                          {diagnosis.drugsPrescribed}
+                        </Text>
+                      </Text>
+
+                      <Text style={styles.userDataLabel}>
+                        Follow Up Date:
+                        <Text style={styles.userDataValue}>
+                          {diagnosis.followUpDate}
+                        </Text>
+                      </Text>
+                    </View>
+                  ))}
+                </Collapsible>
               </View>
             )}
           </View>
@@ -293,6 +343,17 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     borderLeftWidth: 1,
     borderLeftColor: COLORS.GRAY,
+  },
+  accordionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  accordionHeaderText: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: COLORS.BLACK,
   },
 });
 
