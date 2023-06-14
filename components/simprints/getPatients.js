@@ -26,14 +26,13 @@ import {COLORS, DIMENS} from '../constants/styles';
 import CustomHeader from '../ui/custom-header';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
 const GetPatients = () => {
   const navigation = useNavigation();
   const {benData} = useContext(DataResultsContext);
   const [guid, setGuid] = useState(benData.length > 0 ? benData[0].guid : '');
   const [userData, setUserData] = useState(null);
   const [showConfirmButton, setShowConfirmButton] = useState(false);
-  const [vaccinations, setVaccinations] = useState(null); 
+  const [vaccinations, setVaccinations] = useState(null);
   const [diagnosis, setDiagnosis] = useState(null);
   const [vaccinationsCollapsed, setVaccinationsCollapsed] = useState(true);
   const [diagnosisCollapsed, setDiagnosisCollapsed] = useState(true);
@@ -230,12 +229,13 @@ const GetPatients = () => {
             )}
           </View>
         )}
-
-        <TouchableOpacity
-          style={styles.buttonSec}
-          onPress={() => navigation.navigate('SelectActivity')}>
-          <Text style={styles.buttonStyle}>Confirm Data</Text>
-        </TouchableOpacity>
+        {showConfirmButton && (
+          <TouchableOpacity
+            style={styles.buttonSec}
+            onPress={() => navigation.navigate('SelectActivity')}>
+            <Text style={styles.buttonStyle}>Confirm Data</Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
     </View>
   );
