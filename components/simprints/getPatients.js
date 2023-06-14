@@ -30,6 +30,10 @@ const GetPatients = () => {
   const [guid, setGuid] = useState(benData.length > 0 ? benData[0].guid : '');
   const [userData, setUserData] = useState(null);
   const [showConfirmButton, setShowConfirmButton] = useState(false);
+  const [vaccinations, setVaccinations] = useState(null); 
+  const [diagnosis, setDiagnosis] = useState(null); 
+
+
 
   const fetchData = async () => {
     console.log('GUID:', guid);
@@ -37,6 +41,7 @@ const GetPatients = () => {
       const response = await fetch(
         `https://mobi-be-production.up.railway.app/patients/${guid}`,
       );
+      console.log('Response:', response);
       if (response.ok) {
         const data = await response.json();
         setUserData(data);

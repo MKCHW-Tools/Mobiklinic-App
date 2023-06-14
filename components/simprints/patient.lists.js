@@ -34,6 +34,7 @@ const PatientLists = ({navigation}) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
+        // First, check if the data is stored locally
         const storedData = await AsyncStorage.getItem('patientList');
         if (storedData) {
           setUsers(JSON.parse(storedData));
@@ -41,21 +42,17 @@ const PatientLists = ({navigation}) => {
           const response = await axios.get(
             `https://mobi-be-production.up.railway.app/${userLog}/patients`, // Use the logged-in user ID in the API URL
           );
-          const { data } = response;
-          setUsers(data);
-          await AsyncStorage.setItem('patientList', JSON.stringify(data));
-    
-          const vaccinationsResponse = await axios.get(
-            `https://mobi-be-production.up.railway.app/${userLog}/vaccinations`,
+          setUsers(response.data);
+          // Save the fetched data locally for offline access
+          await AsyncStorage.setItem(
+            'patientList',
+            JSON.stringify(response.data),
           );
-          const { data: vaccinationData } = vaccinationsResponse;
-          setVaccinations(vaccinationData);
         }
       } catch (error) {
         console.error(error);
       }
     };
-    
 
     fetchUsers();
   }, [userLog]);
@@ -65,10 +62,6 @@ const PatientLists = ({navigation}) => {
 
   const renderUserCard = ({item}) => {
     const isExpanded = item.id === expandedUserId;
-
-    const userVaccinations = vaccinations.filter(
-      vaccination => vaccination.signUpId === item.signUpId,
-    );
 
     const toggleExpansion = () => {
       if (isExpanded) {

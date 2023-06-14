@@ -243,7 +243,7 @@ const SimprintsID = ({navigation}) => {
               {identificationPlusResults
                 .filter(
                   result =>
-                    result.confidenceScore >= 50 &&
+                    result.confidenceScore >= 20 &&
                     result.confidenceScore <= 99,
                 )
                 .map((result, index) => (
@@ -300,7 +300,7 @@ const SimprintsID = ({navigation}) => {
               {identificationResults
                 .filter(
                   result =>
-                    result.confidenceScore >= 50 &&
+                    result.confidenceScore >= 20 &&
                     result.confidenceScore <= 99,
                 )
                 .map((result, index) => (
@@ -329,11 +329,6 @@ const SimprintsID = ({navigation}) => {
               <View style={{height: 20}} />
               {showButtons ? (
                 <>
-                  {/* <TouchableOpacity
-                    style={styles.button}
-                    onPress={confirmSelectedBeneficiaryy}>
-                    <Text style={styles.buttonText}>Confirm Beneficiary</Text>
-                  </TouchableOpacity> */}
 
                   <View style={{height: 20}} />
 
