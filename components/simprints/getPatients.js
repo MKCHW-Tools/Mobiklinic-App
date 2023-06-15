@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {
   View,
   Alert,
@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import {useNavigation} from '@react-navigation/native';
-import Collapsible from 'react-native-collapsible';
 
 import {
   _removeStorageItem,
@@ -24,7 +23,6 @@ import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
 import CustomHeader from '../ui/custom-header';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const GetPatients = () => {
   const navigation = useNavigation();
@@ -34,8 +32,6 @@ const GetPatients = () => {
   const [showConfirmButton, setShowConfirmButton] = useState(false);
   const [vaccinations, setVaccinations] = useState(null);
   const [diagnosis, setDiagnosis] = useState(null);
-  const [vaccinationsCollapsed, setVaccinationsCollapsed] = useState(true);
-  const [diagnosisCollapsed, setDiagnosisCollapsed] = useState(true);
 
   const fetchData = async () => {
     console.log('GUID:', guid);
@@ -43,20 +39,12 @@ const GetPatients = () => {
       const response = await fetch(
         `https://mobi-be-production.up.railway.app/patients/${guid}`,
       );
+      console.log('Response:', response);
       if (response.ok) {
-        console.log('Response:', response);
         const data = await response.json();
         setUserData(data);
         setVaccinations(data.vaccinations); // Set the vaccination data
-        setDiagnosis(data.diagnosis); // Set the diagnosis data
-
-        // Save data to AsyncStorage
-        AsyncStorage.setItem('@userData', JSON.stringify(data));
-        AsyncStorage.setItem(
-          '@vaccinations',
-          JSON.stringify(data.vaccinations),
-        );
-        AsyncStorage.setItem('@diagnosis', JSON.stringify(data.diagnosis));
+        setDiagnosis(data.diagnosis); // Set the vaccination data
 
         setShowConfirmButton(true); // Show the "Confirm Data" button
       } else {
@@ -66,14 +54,19 @@ const GetPatients = () => {
         );
       }
     } catch (error) {
-      console.error(error);
       Alert.alert('Error', 'Beneficiary not found. Please check the GUID ');
     }
   };
 
+  useEffect(() => {
+    if (guid) {
+      fetchData();
+    }
+  }, [guid]);
+
   return (
     <View style={styles.container}>
-      <CustomHeader
+      {/* <CustomHeader
         left={
           <TouchableOpacity
             style={styles.backButton}
@@ -82,23 +75,27 @@ const GetPatients = () => {
           </TouchableOpacity>
         }
         title={<Text style={styles.headerTitle}>Back</Text>}
-      />
+      /> */}
 
       <ScrollView style={styles.body}>
-        <View style={styles.logo}>
+        {/* <View style={styles.logo}>
           <Image
             style={styles.logoImage}
             source={require('../imgs/logo.png')}
           />
           <Text style={styles.logoTitle}>Mobiklinic</Text>
-        </View>
+        </View> */}
 
-        <Text style={styles.label}>Simprints GUID</Text>
-        <TextInput style={styles.input} value={guid} onChangeText={setGuid} />
-
-        <TouchableOpacity style={styles.button} onPress={fetchData}>
-          <Text style={styles.buttonText}>Get Beneficiary Data</Text>
-        </TouchableOpacity>
+        {!userData && !guid && (
+          <React.Fragment>
+            <Text style={styles.label}>Simprints GUID</Text>
+            <TextInput
+              style={styles.input}
+              value={guid}
+              onChangeText={setGuid}
+            />
+          </React.Fragment>
+        )}
 
         {userData && (
           <View style={styles.userData}>
@@ -117,119 +114,81 @@ const GetPatients = () => {
             </Text>
             {userData.vaccinations && userData.vaccinations.length > 0 && (
               <View style={styles.vaccinationsContainer}>
-                <TouchableOpacity
-                  style={styles.accordionHeader}
-                  onPress={() =>
-                    setVaccinationsCollapsed(!vaccinationsCollapsed)
-                  }>
-                  <Text style={styles.accordionHeaderText}>Vaccinations</Text>
-                  <Icon
-                    name={vaccinationsCollapsed ? 'chevron-down' : 'chevron-up'}
-                    size={20}
-                    color={COLORS.BLACK}
-                  />
-                </TouchableOpacity>
-                <Collapsible collapsed={vaccinationsCollapsed}>
-                  {userData.vaccinations.map((vaccination, index) => (
-                    <View key={index}>
-                      <Text style={styles.userDataLabel}>
-                        Date of Vaccination:{' '}
-                        <Text style={styles.userDataValue}>
-                          {vaccination.dateOfVaccination}
-                        </Text>
+                <Text style={styles.userDataLabel}>Vaccinations:</Text>
+                {userData.vaccinations.map((vaccination, index) => (
+                  <View key={index}>
+                    <Text style={styles.userDataLabel}>
+                      Date of Vaccination:{' '}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.dateOfVaccination}
                       </Text>
-                      <Text style={styles.userDataLabel}>
-                        Date for Next Dose:{' '}
-                        <Text style={styles.userDataValue}>
-                          {vaccination.dateForNextDose}
-                        </Text>
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      Date for Next Dose:{' '}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.dateForNextDose}
                       </Text>
-                      <Text style={styles.userDataLabel}>
-                        Vaccine Name:{' \t'}
-                        <Text style={styles.userDataValue}>
-                          {vaccination.vaccineName}
-                        </Text>
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      Vaccine Name:{' \t'}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.vaccineName}
                       </Text>
-                      <Text style={styles.userDataLabel}>
-                        Units:{' '}
-                        <Text style={styles.userDataValue}>
-                          {vaccination.units}
-                        </Text>
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      Units:{' '}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.units}
                       </Text>
-                      <Text style={styles.userDataLabel}>
-                        Site Administered:{' '}
-                        <Text style={styles.userDataValue}>
-                          {vaccination.siteAdministered}
-                        </Text>
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      Site Administered:{' '}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.siteAdministered}
                       </Text>
-                      <Text style={styles.userDataLabel}>
-                        Facility:{' '}
-                        <Text style={styles.userDataValue}>
-                          {vaccination.facility}
-                        </Text>
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      Facility:{' '}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.facility}
                       </Text>
-                    </View>
-                  ))}
-                </Collapsible>
+                    </Text>
+                  </View>
+                ))}
               </View>
             )}
+
             {userData.diagnoses && userData.diagnoses.length > 0 && (
               <View style={styles.vaccinationsContainer}>
-                <TouchableOpacity
-                  style={styles.accordionHeader}
-                  onPress={() => setDiagnosisCollapsed(!diagnosisCollapsed)}>
-                  <Text style={styles.accordionHeaderText}>Diagnosis</Text>
-                  <Icon
-                    name={diagnosisCollapsed ? 'chevron-down' : 'chevron-up'}
-                    size={20}
-                    color={COLORS.BLACK}
-                  />
-                </TouchableOpacity>
-                <Collapsible collapsed={diagnosisCollapsed}>
-                  {userData.diagnoses.map((diagnosis, index) => (
-                    <View key={index}>
-                      <Text style={styles.userDataLabel}>
-                        Impression:
-                        <Text style={styles.userDataValue}>
-                          {diagnosis.impression}
-                        </Text>
+                <Text style={styles.userDataLabel}>Diagnosis:</Text>
+                {userData.diagnoses.map((diagnosis, index) => (
+                  <View key={index}>
+                    <Text style={styles.userDataLabel}>
+                      Date of Vaccination:{' '}
+                      <Text style={styles.userDataValue}>
+                        {diagnosis.condition}
                       </Text>
-
-                      <Text style={styles.userDataLabel}>
-                        Date Of Diagnosis:
-                        <Text style={styles.userDataValue}>
-                          {diagnosis.dateOfDiagnosis}
-                        </Text>
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      Date for Next Dose:{' '}
+                      <Text style={styles.userDataValue}>
+                        {diagnosis.dateForNextDose}
                       </Text>
-
-                      <Text style={styles.userDataLabel}>
-                        Condition:
-                        <Text style={styles.userDataValue}>
-                          {diagnosis.condition}
-                        </Text>
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      Impression:{' '}
+                      <Text style={styles.userDataValue}>
+                        {diagnosis.impression}
                       </Text>
-
-                      <Text style={styles.userDataLabel}>
-                        Drugs Prescribed:
-                        <Text style={styles.userDataValue}>
-                          {diagnosis.drugsPrescribed}
-                        </Text>
-                      </Text>
-
-                      <Text style={styles.userDataLabel}>
-                        Follow Up Date:
-                        <Text style={styles.userDataValue}>
-                          {diagnosis.followUpDate}
-                        </Text>
-                      </Text>
-                    </View>
-                  ))}
-                </Collapsible>
+                    </Text>
+                  </View>
+                ))}
               </View>
             )}
           </View>
         )}
-        {showConfirmButton && (
+
+        {userData && (
           <TouchableOpacity
             style={styles.buttonSec}
             onPress={() => navigation.navigate('SelectActivity')}>
@@ -343,17 +302,6 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     borderLeftWidth: 1,
     borderLeftColor: COLORS.GRAY,
-  },
-  accordionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  accordionHeaderText: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    color: COLORS.BLACK,
   },
 });
 
