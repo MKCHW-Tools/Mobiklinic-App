@@ -48,61 +48,6 @@ const PatientData = ({navigation}) => {
     // registeredById: '',
   });
 
-  // const handleSubmit = async () => {
-  //   try {
-  //     console.log('User Id:', userLog);
-
-  //     if (state.isLoading) {
-  //       // Prevent multiple submissions
-  //       return;
-  //     }
-  //     setState({...state, isLoading: true}); // Set isLoading state to true
-  //     const response = await fetch(
-  //       `https://mobi-be-production.up.railway.app/${userLog}/patients`,
-  //       {
-  //         method: 'POST',
-  //         body: JSON.stringify({
-  //           firstName: state.firstName,
-  //           lastName: state.lastName,
-  //           sex: state.sex,
-  //           ageGroup: state.ageGroup,
-  //           phoneNumber: state.phoneNumber,
-  //           weight: state.weight,
-  //           height: state.height,
-  //           district: state.district,
-  //           country: state.country,
-  //           primaryLanguage: state.primaryLanguage,
-  //           simprintsGui: dataResults,
-  //           // registeredById: userLog,
-  //         }),
-  //         headers: {
-  //           'Content-type': 'application/json; charset=UTF-8',
-  //           Accept: 'application/json',
-  //         },
-  //       },
-  //     );
-
-  //     if (response.ok) {
-  //       const data = await response.json();
-  //       // setId(data.id);
-  //       // Extract the patient ID from the response data
-  //       const patientId = data.id; // Access the patient ID from the response data
-  //       setPatientId(patientId);
-  //       console.log('Patient ID:', patientId);
-  //       Alert.alert('Data posted successfully');
-  //       navigation.navigate('SelectActivity',{ patientId: patientId });
-  //     } else {
-  //       console.error('Error posting data:', response.status);
-  //       Alert.alert('Error', 'Failed to submit data. Please try again later.');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error posting data:', error);
-  //     Alert.alert('Error', 'Failed to submit data. Please try again later.');
-  //   } finally {
-  //     setState({...state, isLoading: false}); // Reset isLoading state to false
-  //   }
-  // };
-
   const handleSubmit = async () => {
     try {
       console.log('User Id:', userLog);
@@ -284,9 +229,9 @@ const PatientData = ({navigation}) => {
             </Picker>
           </View>
           {/* Age Group */}
-          <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
+          <View style={STYLES.detail} placeholderTextColor="#0000">
             <Picker
-              placeholder="Age"
+              placeholder="Age Group"
               placeholderTextColor={COLORS.BLACK}
               selectedValue={state.ageGroup}
               onValueChange={(value, index) =>
@@ -409,6 +354,7 @@ const STYLES = StyleSheet.create({
   body: {
     flex: 2,
     paddingHorizontal: 20,
+    paddingVertical: 35,
   },
   alert: {
     color: COLORS.GREY,
