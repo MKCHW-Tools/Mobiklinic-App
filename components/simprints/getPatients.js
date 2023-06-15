@@ -266,15 +266,15 @@ const styles = StyleSheet.create({
   buttonSec: {
     backgroundColor: COLORS.WHITE,
     paddingVertical: 12,
-    paddingHorizontal: 20,
+    // paddingHorizontal: 8,
     borderRadius: 10,
-    marginBottom: 20,
+    // marginBottom: 6,
     borderWidth: 2,
     borderColor: COLORS.PRIMARY,
   },
   buttonStyle: {
     color: COLORS.PRIMARY,
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
   },
   userDataLabel: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 14,
     marginBottom: 5,
     color: COLORS.BLACK,
   },

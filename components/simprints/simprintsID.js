@@ -330,12 +330,12 @@ const SimprintsID = ({navigation}) => {
                         : index === 1
                         ? 'Beneficiary 2 (Second Highest Confidence)'
                         : `Beneficiary ${index + 1}`}
+                      {'\t'}
                     </Text>
                     <Icon
                       name={
                         expandedIndex === index ? 'chevron-up' : 'chevron-down'
                       }
-                      alignItems={'center'}
                       style={styles.accordionHeaderIcon}
                     />
                   </Text>
@@ -446,19 +446,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   accordionItem: {
-    margin: 15,
+    marginHorizontal: 15,
+    marginTop: 10,
+    paddingLeft: 20,
   },
   accordionHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
   },
   accordionHeaderText: {
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 15,
     color: COLORS.BLACK,
-
   },
   accordionHeaderTitle: {
     marginRight: 5,
@@ -467,9 +466,6 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: 'bold',
     color: COLORS.ACCENT_1,
-    marginTop: 15,
-
-
   },
 });
 
