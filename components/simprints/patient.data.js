@@ -27,10 +27,16 @@ const PatientData = ({navigation}) => {
   const {dataResults} = useContext(DataResultsContext);
   const {userLog} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
-  // const [ id, setId ] = React.useState(userLog.length > 0 ? userLog[0].id : '');
-
-  // const navigation = useNavigation();
-  // date
+  
+  // Function to save user data locally
+  const SAVE_LOCAL_USER = async userData => {
+    try {
+      await AsyncStorage.setItem('@userData', JSON.stringify(userData));
+      console.log('User data saved successfully');
+    } catch (error) {
+      console.error('Error saving user data:', error);
+    }
+  };
   const currentDate = new Date();
 
   const [state, setState] = React.useState({
@@ -56,20 +62,6 @@ const PatientData = ({navigation}) => {
         // Prevent multiple submissions
         return;
       }
-
-      if (
-        state.firstName === '' ||
-        state.lastName === '' ||
-        state.phoneNumber === '' ||
-        state.country === '' ||
-        state.district === '' ||
-        state.sex === '' ||
-        state.ageGroup === ''
-      ) {
-        Alert.alert('Error', 'Please fill in all required fields');
-        return;
-      }
-
       setState({...state, isLoading: true}); // Set isLoading state to true
       const response = await fetch(
         `https://mobi-be-production.up.railway.app/${userLog}/patients`,
@@ -87,6 +79,7 @@ const PatientData = ({navigation}) => {
             country: state.country,
             primaryLanguage: state.primaryLanguage,
             simprintsGui: dataResults,
+            // registeredById: userLog,
           }),
           headers: {
             'Content-type': 'application/json; charset=UTF-8',
@@ -97,42 +90,18 @@ const PatientData = ({navigation}) => {
 
       if (response.ok) {
         const data = await response.json();
-        const patientId = data.id;
+        // setId(data.id);
+        // Extract the patient ID from the response data
+        const patientId = data.id; // Access the patient ID from the response data
         setPatientId(patientId);
         console.log('Patient ID:', patientId);
+        // Store the patient ID in AsyncStorage
+        // await AsyncStorage.setItem('@diagnosis', patientId);
         Alert.alert('Data posted successfully');
-        AsyncStorage.setItem('@patientId', patientId);
         navigation.navigate('SelectActivity', {patientId: patientId});
       } else {
         console.error('Error posting data:', response.status);
-        // Store patient data offline
-        const patientData = {
-          firstName: state.firstName,
-          lastName: state.lastName,
-          sex: state.sex,
-          ageGroup: state.ageGroup,
-          phoneNumber: state.phoneNumber,
-          weight: state.weight,
-          height: state.height,
-          district: state.district,
-          country: state.country,
-          primaryLanguage: state.primaryLanguage,
-          simprintsGui: dataResults,
-        };
-        const offlineData = await AsyncStorage.getItem('@offlineData');
-        const offlineDataArray = offlineData ? JSON.parse(offlineData) : [];
-        offlineDataArray.push(patientData);
-        await AsyncStorage.setItem(
-          '@offlineData',
-          JSON.stringify(offlineDataArray),
-        );
-
-        Alert.alert(
-          'Offline Submission',
-          'Data will be submitted when you have an internet connection.',
-        );
-
-        navigation.navigate('SelectActivity', {patientId: null});
+        Alert.alert('Error', 'Failed to submit data. Please try again later.');
       }
     } catch (error) {
       console.error('Error posting data:', error);
