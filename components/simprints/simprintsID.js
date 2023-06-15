@@ -52,6 +52,12 @@ const SimprintsID = ({navigation}) => {
   const [noMatchButtonPressed, setNoMatchButtonPressed] = useState(false);
   const [showButtons, setShowButtons] = useState(true);
   const [selectedBeneficiaryIndex, setSelectedBeneficiaryIndex] = useState(0);
+  const highestConfidenceScore = Math.max(...identificationResults.map(result => result.confidenceScore));
+const highestConfidenceResult = identificationResults.find(result => result.confidenceScore === highestConfidenceScore);
+const sortedResults = identificationResults
+  .filter(result => result.confidenceScore >= 20 && result.confidenceScore <= 99)
+  .sort((a, b) => b.confidenceScore - a.confidenceScore);
+
 
   // fetch data function
   const fetchData = async () => {
@@ -88,10 +94,6 @@ const SimprintsID = ({navigation}) => {
 
     
   }, [guid]);
-  
-  const handleRefresh = () => {
-    fetchData();
-  };
 
   useEffect(() => {
     
@@ -318,85 +320,28 @@ const SimprintsID = ({navigation}) => {
 
 
 
-{displayMode === 'identification' && (
-  <>
-    {userData && (
-      <>
-        {identificationResults.length > 0 && (
-          <React.Fragment key="identification-heading">
-            <Text style={styles.text}>Identification Results</Text>
-            <View style={{ height: 20 }} />
-          </React.Fragment>
-        )}
 
-        {identificationResults
-          .filter(
-            result =>
-              result.confidenceScore >= 20 &&
-              result.confidenceScore <= 99
-          )
-          .map((result, index) => (
-            <View key={index}>
-              <TouchableOpacity
-                style={styles.input}
-                onPress={() => {
-                  setGuid(result.guid);
-                  confirmSelectedBeneficiaryy(result.guid);
-                }}
-              >
-                {userData.firstName && userData.lastName ? (
-                  <View style={{ height: 20 }}>
-                    <Text style={styles.userDataValue}>
-                      {userData.firstName} {userData.lastName}
-                      {'\n'}
-                      {userData.phoneNumber}
-                    </Text>
-                  </View>
-                ) : (
-                  <Text style={styles.label}>
-                    <View style={{ height: 20 }} />
-                    Tier:{'\t'}
-                    {'\t'}
-                    <Text style={{ fontWeight: 'bold' }}>{result.tier}</Text>
-                    {'\n'}
-                    Confidence Score:{'\t'}
-                    {'\t'}
-                    <Text style={{ fontWeight: 'bold' }}>
-                      {result.confidenceScore}%
-                    </Text>
-                    {'\n'}
-                    Guid:
-                    <Text style={{ fontWeight: 'bold' }}>{result.guid}</Text>
-                    {'\n'}
-                  </Text>
-                )}
-              </TouchableOpacity>
-            </View>
-          ))}
+{sortedResults.map((result, index) => (
+  <View key={index}>
+    <TouchableOpacity
+      style={styles.input}
+      onPress={() => {
+        setGuid(result.guid);
+        confirmSelectedBeneficiaryy(result.guid);
+      }}
+    >
 
+      <Text style={styles.label}>
         <View style={{ height: 20 }} />
-        {showButtons ? (
-          <>
-            <View style={{ height: 20 }} />
-
-            <TouchableOpacity style={styles.button} onPress={openFunction}>
-              <Text style={styles.buttonText}>No Match</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleRefresh}>
-        <Text>Refresh</Text>
-      </TouchableOpacity>
-          </>
-        ) : (
-          <TouchableOpacity style={styles.button} onPress={goBack}>
-            <Text style={styles.buttonText}>Go Back</Text>
-          </TouchableOpacity>
-        )}
-      </>
-    )}
-  </>
-)}
-
-
+        {index === 0
+          ? 'Beneficiary 1 (Highest Confidence)'
+          : index === 1
+          ? 'Beneficiary 2 (Second Highest Confidence)'
+          : `Beneficiary ${index + 1}`}
+      </Text>
+    </TouchableOpacity>
+  </View>
+))}
 
 
             {!displayMode && (
@@ -404,7 +349,7 @@ const SimprintsID = ({navigation}) => {
                 <TouchableOpacity
                   style={styles.button}
                   onPress={handleIdentificationPlus}>
-                  <Text style={styles.buttonText}>Start Registration</Text>
+                  <Text style={styles.buttonText}>Launch Simprints</Text>
                 </TouchableOpacity>
 
                 <View style={{height: 10}} />
