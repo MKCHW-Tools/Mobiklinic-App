@@ -185,7 +185,7 @@ export const DOWNLOAD = async data => {
         AsyncStorage.setItem(`@${items[i]}`, JSON.stringify(all));
       }
     } catch (error) {
-      console.log('Downlod', error);
+      console.log('Download', error);
     }
 
     if (i >= items.length) {
@@ -211,7 +211,7 @@ const Login = ({ navigation }) => {
 
 
   const signIn = async () => {
-    clearStorage();
+    //clearStorage();
     let { username, password } = user;
 
     if (username === '' || password === '') {
@@ -224,15 +224,16 @@ const Login = ({ navigation }) => {
     let theUser = null;
 
     try {
-      theUser = await RETRIEVE_LOCAL_USER();
+      theUser = await RETRIEVE_LOCAL_USER();//I assume that the device has one CHW/CHP
+      // console.log(theUser)
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
 
     if (theUser !== null) {
       let myUser = theUser.username === username && theUser.hash === hash ? theUser : null;
-
-      if (myUser) {
+      // console.log(myUser)
+      if (myUser) { //Checking that myUser variable doesn't have any falsy values null, undefined, false, NaN, ""
         setMyUser({
           id: myUser.id,
           username: myUser.username,
@@ -264,7 +265,7 @@ const Login = ({ navigation }) => {
       if (message === 'Login successful') {
         const id = json_data.id;
         updateUserLog(id);
-        console.log(id);
+        console.log('API user id :', id);
 
         await SAVE_LOCAL_USER({
           id,
