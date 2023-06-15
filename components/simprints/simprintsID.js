@@ -1,3 +1,4 @@
+
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
@@ -38,7 +39,7 @@ const SimprintsID = ({navigation}) => {
   const {benData} = useContext(DataResultsContext);
   const [userData, setUserData] = React.useState(null);
   const [guid, setGuid] = React.useState(
-    benData.length > 0 ? benData[0].guid : '',
+    benData.length > 0 ? benData[0].guid : [],
   );
   const [identificationPlusResults, setIdentificationPlusResults] = useState(
     [],
@@ -50,9 +51,13 @@ const SimprintsID = ({navigation}) => {
   const [selectedUserUniqueId, setSelectedUserUniqueId] = useState(null);
   const [noMatchButtonPressed, setNoMatchButtonPressed] = useState(false);
   const [showButtons, setShowButtons] = useState(true);
+  const [selectedBeneficiaryIndex, setSelectedBeneficiaryIndex] = useState(0);
+
   // fetch data function
   const fetchData = async () => {
     console.log('GUID:', guid);
+    const selectedBeneficiary = benData[selectedBeneficiaryIndex];
+
     try {
       const response = await fetch(
         `https://mobi-be-production.up.railway.app/patients/${guid}`,
@@ -62,21 +67,30 @@ const SimprintsID = ({navigation}) => {
         setUserData(data);
       } else {
         console.error('Error fetching user data:', response.status);
-        Alert.alert(
-          'Error',
-          'Failed to fetch user data. Please try again later.',
-        );
+        // Alert.alert(
+        //   'Error',
+        //   'Failed to fetch user data. Please try again later.',
+        // );
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
-      Alert.alert(
-        'Error',
-        'Failed to fetch user data. Please try again later.',
-      );
+      // Alert.alert(
+      //   'Error',
+      //   'Failed to fetch user data. Please try again later.',
+      // );
     }
     // navigation.navigate('GetPatients');
   };
+
   useEffect(() => {
+
+    fetchData();
+
+    
+  }, [guid]);
+
+  useEffect(() => {
+    
     const identificationPlusSubscription = DeviceEventEmitter.addListener(
       'onIdentificationResult',
       results => {
@@ -136,17 +150,19 @@ const SimprintsID = ({navigation}) => {
         selectedUserUniqueId,
       );
     }
+    fetchData();
     navigation.navigate('PatientData');
     console.log('Beneficiary confirmed');
   };
 
-  const confirmSelectedBeneficiaryy = () => {
+  const confirmSelectedBeneficiaryy = (guid) => {
     if (sessionId && selectedUserUniqueId) {
       IdentificationPlus.confirmSelectedBeneficiary(
         sessionId,
         selectedUserUniqueId,
       );
     }
+    setGuid(guid);
     fetchData();
     navigation.navigate('GetPatients');
     console.log('Beneficiary confirmed');
@@ -204,202 +220,209 @@ const SimprintsID = ({navigation}) => {
         <Text style={styles.title}>Mobiklinic</Text>
 
         <View style={styles.container}>
-          {displayMode === 'enrollment' && (
-            <>
-              {enrollmentGuid && (
-                <>
-                  <Text style={styles.text}>Beneficiary Enrolled on ID</Text>
-                  <View style={{height: 30}} />
+          <ScrollView contentContainerStyle={styles.scrollContent}>
+            {displayMode === 'enrollment' && (
+              <>
+                {enrollmentGuid && (
+                  <>
+                    <Text style={styles.text}>Beneficiary Enrolled on ID</Text>
+                    <View style={{height: 30}} />
 
-                  <TouchableOpacity
-                    onPress={confirmSelectedBeneficiary}
-                    style={styles.input}>
-                    <Text style={styles.label}>
-                      <Text style={{fontWeight: 'bold', fontSize: 15}}>
-                        {enrollmentGuid}
+                    <TouchableOpacity
+                      onPress={confirmSelectedBeneficiary}
+                      style={styles.input}>
+                      <Text style={styles.label}>
+                        <Text style={{fontWeight: 'bold', fontSize: 15}}>
+                          {enrollmentGuid}
+                        </Text>
                       </Text>
-                    </Text>
-                  </TouchableOpacity>
+                    </TouchableOpacity>
 
-                  <View style={{height: 20}} />
-                </>
-              )}
+                    <View style={{height: 20}} />
+                  </>
+                )}
 
-              {/* <TouchableOpacity
+                {/* <TouchableOpacity
                 style={styles.button}
                 onPress={confirmSelectedBeneficiary}>
                 <Text style={styles.buttonText}>Continue to Registration</Text>
               </TouchableOpacity> */}
-            </>
-          )}
+              </>
+            )}
 
-          {displayMode === 'identificationPlus' && (
-            <>
-              {identificationPlusResults.length > 0 && (
-                <React.Fragment key="identification-plus-heading">
-                  <Text style={styles.text}>Beneficiary Identified:</Text>
-                  <View style={{height: 20}} />
-                </React.Fragment>
-              )}
+            {displayMode === 'identificationPlus' && (
+              <>
+                {identificationPlusResults.length > 0 && (
+                  <React.Fragment key="identification-plus-heading">
+                    <Text style={styles.text}>Beneficiary Identified:</Text>
+                    <View style={{height: 20}} />
+                  </React.Fragment>
+                )}
 
-              {identificationPlusResults
-                .filter(
-                  result =>
-                    result.confidenceScore >= 20 &&
-                    result.confidenceScore <= 99,
-                )
-                .map((result, index) => (
-                  <View key={index}>
-                    <TouchableOpacity
-                      style={styles.input}
-                      onPress={confirmSelectedBeneficiaryy}>
-                      <Text style={styles.label}>
-                        <View style={{height: 20}} />
-                        Tier:{'\t'}
-                        {'\t'}
-                        <Text style={{fontWeight: 'bold'}}>{result.tier}</Text>
-                        {'\n'}
-                        Confidence Score:{'\t'}
-                        {'\t'}
-                        <Text style={{fontWeight: 'bold'}}>
-                          {result.confidenceScore}%
-                        </Text>
-                        {'\n'}
-                        Guid:
-                        <Text style={{fontWeight: 'bold'}}>{result.guid}</Text>
-                      </Text>
-                      
-                    </TouchableOpacity>
-                  </View>
-                ))}
-              <View style={{height: 20}} />
-              {showButtons ? (
-                <>
-                  <View style={{height: 20}} />
-
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={openFunction}>
-                    <Text style={styles.buttonText}>No Match</Text>
-                  </TouchableOpacity>
-                </>
-              ) : (
-                <TouchableOpacity style={styles.button} onPress={goBack}>
-                  <Text style={styles.buttonText}>Go Back</Text>
-                </TouchableOpacity>
-              )}
-            </>
-          )}
-
-          {displayMode === 'identification' && (
-            <>
-              {identificationResults.length > 0 && (
-                <React.Fragment key="identification-heading">
-                  <Text style={styles.text}>Identification Results</Text>
-                  <View style={{height: 20}} />
-                  <Text style={styles.label}>Simprints GUID</Text>
-                  <TextInput
-                    style={styles.input}
-                    value={guid}
-                    onChangeText={setGuid}
-                  />
-                </React.Fragment>
-              )}
-
-              {identificationResults
-                .filter(
-                  result =>
-                    result.confidenceScore >= 20 &&
-                    result.confidenceScore <= 99,
-                )
-                .map((result, index) => (
-                  <View key={index}>
-                    <View style={{height: 20}}>
-                      <Text style={styles.label}>Simprints GUID</Text>
-                      <TextInput
+                {identificationPlusResults
+                  .filter(
+                    result =>
+                      result.confidenceScore >= 20 &&
+                      result.confidenceScore <= 99,
+                  )
+                  .map((result, index) => (
+                    <View key={index}>
+                      <TouchableOpacity
                         style={styles.input}
-                        value={guid}
-                        onChangeText={setGuid}
-                      />
+                        onPress={confirmSelectedBeneficiaryy}>
+                        <Text style={styles.label}>
+                          <View style={{height: 20}} />
+                          Tier:{'\t'}
+                          {'\t'}
+                          <Text style={{fontWeight: 'bold'}}>
+                            {result.tier}
+                          </Text>
+                          {'\n'}
+                          Confidence Score:{'\t'}
+                          {'\t'}
+                          <Text style={{fontWeight: 'bold'}}>
+                            {result.confidenceScore}%
+                          </Text>
+                          {'\n'}
+                          Guid:
+                          <Text style={{fontWeight: 'bold'}}>
+                            {result.guid}
+                          </Text>
+                        </Text>
+                      </TouchableOpacity>
                     </View>
-                    <TouchableOpacity style={styles.button} onPress={fetchData}>
-                      <Text style={styles.buttonText}>
-                        Get Beneficiary Data
-                      </Text>
-                    </TouchableOpacity>
+                  ))}
+                <View style={{height: 20}} />
+                {showButtons ? (
+                  <>
+                    <View style={{height: 20}} />
 
                     <TouchableOpacity
-                      style={styles.input}
-                      onPress={() => {
-                        confirmSelectedBeneficiaryy();
-                        fetchData();
-                      }}>
-                      <Text style={styles.label}>
-                        <View style={{height: 20}} />
-                        Tier:{'\t'}
-                        {'\t'}
-                        <Text style={{fontWeight: 'bold'}}>{result.tier}</Text>
-                        {'\n'}
-                        Confidence Score:{'\t'}
-                        {'\t'}
-                        <Text style={{fontWeight: 'bold'}}>
-                          {result.confidenceScore}%
-                        </Text>
-                        {'\n'}
-                        Guid:
-                        <Text style={{fontWeight: 'bold'}}>{result.guid}</Text>
-                        {'\n'}
-                      </Text>
-                      {userData && (
-                        <View style={{height: 20}}>
-                          <Text style={styles.label}>User Data</Text>
-                          <Text style={styles.userDataValue}>
-                            {userData.firstName}{userData.lastName}
-                            {'\n'}
-                            {userData.lastName}
-                            {'\n'}
-                          </Text>
-                        </View>
-                      )}
+                      style={styles.button}
+                      onPress={openFunction}>
+                      <Text style={styles.buttonText}>No Match</Text>
                     </TouchableOpacity>
-                  </View>
-                ))}
-              <View style={{height: 20}} />
-              {showButtons ? (
-                <>
-                  <View style={{height: 20}} />
-
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={openFunction}>
-                    <Text style={styles.buttonText}>No Match</Text>
+                  </>
+                ) : (
+                  <TouchableOpacity style={styles.button} onPress={goBack}>
+                    <Text style={styles.buttonText}>Go Back</Text>
                   </TouchableOpacity>
-                </>
-              ) : (
-                <TouchableOpacity style={styles.button} onPress={goBack}>
-                  <Text style={styles.buttonText}>Go Back</Text>
+                )}
+              </>
+            )}
+
+
+
+            {displayMode === 'identification' && (
+              <>
+                {identificationResults.length > 0 && (
+                  <React.Fragment key="identification-heading">
+                    <Text style={styles.text}>Identification Results</Text>
+                    <View style={{height: 20}} />
+                  </React.Fragment>
+                )}
+
+                {identificationResults
+                  .filter(
+                    result =>
+                      result.confidenceScore >= 20 &&
+                      result.confidenceScore <= 99,
+                  )
+                  .map((result, index) => (
+                    <View key={index}>
+                      <TouchableOpacity
+            style={styles.input}
+            onPress={() => {
+              setGuid(result.guid);
+              fetchData();
+            }}>
+                    
+                        <Text style={styles.label}>
+                          <View style={{height: 20}} />
+                          Tier:{'\t'}
+                          {'\t'}
+                          <Text style={{fontWeight: 'bold'}}>
+                            {result.tier}
+                          </Text>
+                          {'\n'}
+                          Confidence Score:{'\t'}
+                          {'\t'}
+                          <Text style={{fontWeight: 'bold'}}>
+                            {result.confidenceScore}%
+                          </Text>
+                          {'\n'}
+                          Guid:
+                          <Text style={{fontWeight: 'bold'}}>
+                            {result.guid}
+                          </Text>
+                          {'\n'}
+                          {/* {userData && (
+                            <View style={{height: 20}}>
+                              <Text style={styles.userDataValue}>
+                                {userData.firstName} {userData.lastName}
+                                {'\n'}
+                                {userData.lastName}
+                                {'\n'}
+                                {userData.phoneNumber}
+                              </Text>
+                              <Text style={styles.userDataValue}>
+                                {userData.phoneNumber}
+                              </Text>
+                            </View>
+                          )} */}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+
+                <View style={{height: 20}} />
+                {showButtons ? (
+                  <>
+                    <View style={{height: 20}} />
+
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={openFunction}>
+                      <Text style={styles.buttonText}>No Match</Text>
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <TouchableOpacity style={styles.button} onPress={goBack}>
+                    <Text style={styles.buttonText}>Go Back</Text>
+                  </TouchableOpacity>
+                )}
+
+                {userData && (
+                      <View style={{ height: 20 }}>
+                        <Text style={styles.userDataValue}>
+                          {userData.firstName} {userData.lastName}
+                          {'\n'}
+                          {userData.phoneNumber}
+                        </Text>
+                      </View>
+                    )}
+
+              </>
+            )}
+
+            {!displayMode && (
+              <>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={handleIdentificationPlus}>
+                  <Text style={styles.buttonText}>Launch Simprints</Text>
                 </TouchableOpacity>
-              )}
-            </>
-          )}
 
-          {!displayMode && (
-            <>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={handleIdentificationPlus}>
-                <Text style={styles.buttonText}>Launch Simprints</Text>
-              </TouchableOpacity>
+                <View style={{height: 10}} />
 
-              <View style={{height: 10}} />
-
-              <TouchableOpacity
-                style={styles.button}
-                onPress={handleIdentification}>
-                <Text style={styles.buttonText}>Identify Beneficiary</Text>
-              </TouchableOpacity>
-            </>
-          )}
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={handleIdentification}>
+                  <Text style={styles.buttonText}>Identify Beneficiary</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </ScrollView>
         </View>
       </View>
     </View>
