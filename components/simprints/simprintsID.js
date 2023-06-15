@@ -108,9 +108,10 @@ const SimprintsID = ({navigation}) => {
       IdentificationPlus.confirmSelectedBeneficiary(
         sessionId,
         selectedUserUniqueId,
+        navigation.navigate('PatientData'),
+
       );
     }
-    navigation.navigate('PatientData');
     console.log('Beneficiary confirmed');
   };
 
