@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {
   View,
   Alert,
@@ -30,10 +30,8 @@ const GetPatients = () => {
   const [guid, setGuid] = useState(benData.length > 0 ? benData[0].guid : '');
   const [userData, setUserData] = useState(null);
   const [showConfirmButton, setShowConfirmButton] = useState(false);
-  const [vaccinations, setVaccinations] = useState(null); 
-  const [diagnosis, setDiagnosis] = useState(null); 
-
-
+  const [vaccinations, setVaccinations] = useState(null);
+  const [diagnosis, setDiagnosis] = useState(null);
 
   const fetchData = async () => {
     console.log('GUID:', guid);
@@ -60,6 +58,12 @@ const GetPatients = () => {
     }
   };
 
+  useEffect(() => {
+    if (guid) {
+      fetchData();
+    }
+  }, [guid]);
+
   return (
     <View style={styles.container}>
       <CustomHeader
@@ -82,12 +86,16 @@ const GetPatients = () => {
           <Text style={styles.logoTitle}>Mobiklinic</Text>
         </View>
 
-        <Text style={styles.label}>Simprints GUID</Text>
-        <TextInput style={styles.input} value={guid} onChangeText={setGuid} />
-
-        <TouchableOpacity style={styles.button} onPress={fetchData}>
-          <Text style={styles.buttonText}>Get Beneficiary Data</Text>
-        </TouchableOpacity>
+        {!userData && !guid && (
+          <React.Fragment>
+            <Text style={styles.label}>Simprints GUID</Text>
+            <TextInput
+              style={styles.input}
+              value={guid}
+              onChangeText={setGuid}
+            />
+          </React.Fragment>
+        )}
 
         {userData && (
           <View style={styles.userData}>
@@ -99,7 +107,6 @@ const GetPatients = () => {
                 {userData.lastName}
               </Text>
             </Text>
-            
 
             <Text style={styles.userDataLabel}>
               Phone Number:{'\t '}
@@ -174,7 +181,6 @@ const GetPatients = () => {
                         {diagnosis.impression}
                       </Text>
                     </Text>
-                    
                   </View>
                 ))}
               </View>
@@ -182,11 +188,13 @@ const GetPatients = () => {
           </View>
         )}
 
-        <TouchableOpacity
-          style={styles.buttonSec}
-          onPress={() => navigation.navigate('SelectActivity')}>
-          <Text style={styles.buttonStyle}>Confirm Data</Text>
-        </TouchableOpacity>
+        {userData && (
+          <TouchableOpacity
+            style={styles.buttonSec}
+            onPress={() => navigation.navigate('SelectActivity')}>
+            <Text style={styles.buttonStyle}>Confirm Data</Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
     </View>
   );
