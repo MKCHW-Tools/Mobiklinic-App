@@ -52,11 +52,10 @@ const SimprintsID = ({navigation}) => {
   const [noMatchButtonPressed, setNoMatchButtonPressed] = useState(false);
   const [showButtons, setShowButtons] = useState(true);
   const [selectedBeneficiaryIndex, setSelectedBeneficiaryIndex] = useState(0);
-//   const highestConfidenceScore = Math.max(...identificationResults.map(result => result.confidenceScore));
-// const highestConfidenceResult = identificationResults.find(result => result.confidenceScore === highestConfidenceScore);
 const sortedResults = identificationResults
   .filter(result => result.confidenceScore >= 20 && result.confidenceScore <= 99)
   .sort((a, b) => b.confidenceScore - a.confidenceScore);
+  const [showResults, setShowResults] = useState(false);
 
 
 
@@ -71,6 +70,7 @@ const sortedResults = identificationResults
       if (response.ok) {
         const data = await response.json();
         setUserData(data);
+        setShowResults(true);
       } else {
         console.error('Error fetching user data:', response.status);
         // Alert.alert(
@@ -340,7 +340,7 @@ const sortedResults = identificationResults
                 <TouchableOpacity
                   style={styles.button}
                   onPress={handleIdentificationPlus}>
-                  <Text style={styles.buttonText}>Launch Simprints</Text>
+                  <Text style={styles.buttonText}>Start Registration</Text>
                 </TouchableOpacity>
 
                 <View style={{height: 10}} />
@@ -371,7 +371,7 @@ const sortedResults = identificationResults
           </React.Fragment>
         )}
 
-        {userData && (
+        {userData &&(
           <View style={styles.userData}>
             <Text style={styles.userDataLabel}>
               Full Name: {' \t'}
@@ -461,6 +461,7 @@ const sortedResults = identificationResults
             )}
           </View>
         )}
+   
 
         {userData && (
           <TouchableOpacity
