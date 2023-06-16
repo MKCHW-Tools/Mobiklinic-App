@@ -148,7 +148,7 @@ const SimprintsID = ({navigation}) => {
         selectedUserUniqueId,
       );
     }
-    fetchData();
+    // fetchData();
     navigation.navigate('PatientData');
     console.log('Beneficiary confirmed');
   };
@@ -328,7 +328,8 @@ const SimprintsID = ({navigation}) => {
                   </Text>
                 </TouchableOpacity>
                 <Collapsible collapsed={expandedIndex !== index}>
-                  <View style={styles.container}>
+                  <GetPatients/>
+                  {/* <View style={styles.container}>
                     <ScrollView style={styles.body}>
                       {!userData && !guid && (
                         <React.Fragment>
@@ -462,7 +463,7 @@ const SimprintsID = ({navigation}) => {
                         </TouchableOpacity>
                       )}
                     </ScrollView>
-                  </View>
+                  </View> */}
                 </Collapsible>
               </View>
             ))}
