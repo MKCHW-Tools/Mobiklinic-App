@@ -22,7 +22,6 @@ import {COLORS, DIMENS} from '../constants/styles';
 import CustomHeader from '../ui/custom-header';
 import GetPatients from './getPatients';
 import Collapsible from 'react-native-collapsible';
-
 const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
 var OpenActivity = NativeModules.OpenActivity;
@@ -40,7 +39,6 @@ const SimprintsID = ({navigation}) => {
   );
   const [collapsed, setCollapsed] = useState(true);
   const [expandedIndex, setExpandedIndex] = useState(null);
-
   const [identificationResults, setIdentificationResults] = useState([]);
   const [displayMode, setDisplayMode] = useState(null);
   const [enrollmentGuid, setEnrollmentGuid] = useState(null);
@@ -49,22 +47,16 @@ const SimprintsID = ({navigation}) => {
   const [noMatchButtonPressed, setNoMatchButtonPressed] = useState(false);
   const [showButtons, setShowButtons] = useState(true);
   const [selectedBeneficiaryIndex, setSelectedBeneficiaryIndex] = useState(0);
-  const highestConfidenceScore = Math.max(
-    ...identificationResults.map(result => result.confidenceScore),
-  );
-  const highestConfidenceResult = identificationResults.find(
-    result => result.confidenceScore === highestConfidenceScore,
-  );
   const sortedResults = identificationResults
     .filter(
       result => result.confidenceScore >= 20 && result.confidenceScore <= 99,
     )
     .sort((a, b) => b.confidenceScore - a.confidenceScore);
+  const [showResults, setShowResults] = useState(false);
 
   // fetch data function
   const fetchData = async () => {
     console.log('GUID:', guid);
-    const selectedBeneficiary = benData[selectedBeneficiaryIndex];
 
     try {
       const response = await fetch(
@@ -73,6 +65,7 @@ const SimprintsID = ({navigation}) => {
       if (response.ok) {
         const data = await response.json();
         setUserData(data);
+        setShowResults(true);
       } else {
         console.error('Error fetching user data:', response.status);
         // Alert.alert(
@@ -82,10 +75,10 @@ const SimprintsID = ({navigation}) => {
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
-      // Alert.alert(
-      //   'Error',
-      //   'Failed to fetch user data. Please try again later.',
-      // );
+      Alert.alert(
+        'Error',
+        'Failed to fetch user data. Please try again later.',
+      );
     }
     // navigation.navigate('GetPatients');
   };
@@ -169,7 +162,7 @@ const SimprintsID = ({navigation}) => {
     }
     setGuid(guid);
     fetchData();
-    // navigation.navigate('GetPatients');
+    navigation.navigate('GetPatients');
     console.log('Beneficiary confirmed');
   };
 
@@ -246,12 +239,6 @@ const SimprintsID = ({navigation}) => {
                     <View style={{height: 20}} />
                   </>
                 )}
-
-                {/* <TouchableOpacity
-                style={styles.button}
-                onPress={confirmSelectedBeneficiary}>
-                <Text style={styles.buttonText}>Continue to Registration</Text>
-              </TouchableOpacity> */}
               </>
             )}
 
@@ -317,12 +304,12 @@ const SimprintsID = ({navigation}) => {
             )}
 
             {sortedResults.map((result, index) => (
-              <View key={index} style={styles.accordionItem}>
+              <View key={index}>
                 <TouchableOpacity
                   style={styles.input}
                   onPress={() => {
-                    setExpandedIndex(index === expandedIndex ? null : index);
                     setGuid(result.guid);
+                    setExpandedIndex(index === expandedIndex ? null : index);
                   }}>
                   <Text style={styles.accordionHeaderText}>
                     <Text style={styles.accordionHeaderTitle}>
@@ -341,7 +328,6 @@ const SimprintsID = ({navigation}) => {
                   </Text>
                 </TouchableOpacity>
                 <Collapsible collapsed={expandedIndex !== index}>
-                  {/* <GetPatients /> */}
                   <View style={styles.container}>
                     <ScrollView style={styles.body}>
                       {!userData && !guid && (
@@ -455,10 +441,22 @@ const SimprintsID = ({navigation}) => {
                             )}
                         </View>
                       )}
+                      {!userData && (
+                        <View style={styles.userData}>
+                          <Text style={styles.userDataValue}>
+                            No data available for this beneficiary
+                          </Text>
+                          <TouchableOpacity
+                            style={styles.button}
+                            onPress={openFunction}>
+                            <Text style={styles.buttonText}>Register Here</Text>
+                          </TouchableOpacity>
+                        </View>
+                      )}
 
                       {userData && (
                         <TouchableOpacity
-                          style={styles.buttonStyle}
+                          style={styles.buttonSec}
                           onPress={() => navigation.navigate('SelectActivity')}>
                           <Text style={styles.buttonStyle}>Confirm Data</Text>
                         </TouchableOpacity>
@@ -474,7 +472,7 @@ const SimprintsID = ({navigation}) => {
                 <TouchableOpacity
                   style={styles.button}
                   onPress={handleIdentificationPlus}>
-                  <Text style={styles.buttonText}>Launch Simprints</Text>
+                  <Text style={styles.buttonText}>Start Registration</Text>
                 </TouchableOpacity>
 
                 <View style={{height: 10}} />
@@ -589,6 +587,36 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: 'bold',
     color: COLORS.ACCENT_1,
+  },
+  buttonSec: {
+    backgroundColor: COLORS.WHITE,
+    paddingVertical: 12,
+    // paddingHorizontal: 8,
+    borderRadius: 10,
+    marginBottom: 6,
+    borderWidth: 2,
+    borderColor: COLORS.PRIMARY,
+  },
+  buttonStyle: {
+    color: COLORS.PRIMARY,
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  userData: {
+    marginBottom: 20,
+  },
+  userDataLabel: {
+    fontWeight: 'bold',
+    fontSize: 15,
+    marginBottom: 5,
+  },
+  userDataValue: {
+    fontWeight: 'bold',
+    fontSize: 15,
+    color: COLORS.BLACK,
+
+
   },
 });
 
