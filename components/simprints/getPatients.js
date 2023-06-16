@@ -175,6 +175,12 @@ const GetPatients = () => {
                         {diagnosis.impression}
                       </Text>
                     </Text>
+                    <Text style={styles.userDataLabel}>
+                      Dose:
+                      <Text style={styles.userDataValue}>
+                        {diagnosis.dose}
+                      </Text>
+                    </Text>
                   </View>
                 ))}
               </View>
