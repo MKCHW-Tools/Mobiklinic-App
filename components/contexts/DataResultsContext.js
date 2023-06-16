@@ -21,9 +21,7 @@ export const DataResultsProvider = ({ children }) => {
     setUserLog(newUserLog);
   };
 
-  const updatePatientVac = newPatientVac => {
-    setPatientVac(newPatientVac);
-  };
+ 
 
   return (
     <DataResultsContext.Provider 

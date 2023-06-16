@@ -37,7 +37,6 @@ const GetStarted = ({navigation}) => {
   return (
     <View style={STYLES.wrapper}>
       <StatusBar backgroundColor={COLORS.PRIMARY} barStyle="light-content" />
-      {_header()}
       <View style={STYLES.body}>
         <View style={STYLES.logoContainer}>
           <Image

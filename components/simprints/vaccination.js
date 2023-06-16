@@ -30,7 +30,7 @@ const PatientData = ({navigation}) => {
   const [state, setState] = React.useState({
     vaccineName: '',
     dose: '',
-    units: ' ',
+    units: '',
     dateOfVaccination: '',
     dateForNextDose: '',
     siteAdministered: '',
@@ -44,6 +44,16 @@ const PatientData = ({navigation}) => {
       console.log('Patient ID :', patientId);
       if (state.isLoading) {
         // Prevent multiple submissions
+        return;
+      }
+      if (
+        state.vaccineName === '' ||
+        state.dose === '' ||
+        state.units === '' ||
+        state.dateOfVaccination === '' ||
+        state.siteAdministered === ''
+      ) {
+        Alert.alert('Error', 'Please fill in all required fields');
         return;
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
@@ -159,21 +169,28 @@ const PatientData = ({navigation}) => {
 
         <View style={STYLES.wrap}>
           {/* dose */}
-          <View style={STYLES.detail}>
-            <TextInput
-              keyboardType="numeric"
-              value={state.dose}
+          <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
+            <Picker
               placeholderTextColor={COLORS.BLACK}
-              onChangeText={text => setState({...state, dose: text})}
-              placeholder="Dose"
-            />
+              selectedValue={state.dose}
+              onValueChange={(value, index) =>
+                setState({...state, dose: value})
+              }
+              style={STYLES.pickerItemStyle}>
+              <Picker.Item label="Dose" value="Dose" />
+              <Picker.Item label="1st" value="1st" />
+              <Picker.Item label="2nd" value="2nd" />
+              <Picker.Item label="3rd" value="3rd" />
+              <Picker.Item label="4th" value="4th" />
+            </Picker>
           </View>
-          {/* units */}
+          {/* Height */}
           <View style={STYLES.detail}>
+            {/* <Text style={STYLES.label}>Height:</Text> */}
             <TextInput
               keyboardType="numeric"
-              value={state.units}
               placeholderTextColor={COLORS.BLACK}
+              value={state.units}
               onChangeText={text => setState({...state, units: text})}
               placeholder="Units(mls)"
             />
