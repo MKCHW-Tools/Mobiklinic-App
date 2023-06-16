@@ -19,6 +19,9 @@ import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext } from '../contexts/auth';
+
 
 const PatientData = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -26,10 +29,17 @@ const PatientData = ({navigation}) => {
   const {dataResults} = useContext(DataResultsContext);
   const {userLog} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
-  // const [ id, setId ] = React.useState(userLog.length > 0 ? userLog[0].id : '');
-
-  // const navigation = useNavigation();
-  // date
+  
+  
+  // Function to save user data locally
+  const SAVE_LOCAL_USER = async userData => {
+    try {
+      await AsyncStorage.setItem('@userData', JSON.stringify(userData));
+      console.log('User data saved successfully');
+    } catch (error) {
+      console.error('Error saving user data:', error);
+    }
+  };
   const currentDate = new Date();
 
   const [state, setState] = React.useState({
@@ -88,8 +98,10 @@ const PatientData = ({navigation}) => {
         const patientId = data.id; // Access the patient ID from the response data
         setPatientId(patientId);
         console.log('Patient ID:', patientId);
+        // Store the patient ID in AsyncStorage
+        // await AsyncStorage.setItem('@diagnosis', patientId);
         Alert.alert('Data posted successfully');
-        navigation.navigate('SelectActivity',{ patientId: patientId });
+        navigation.navigate('SelectActivity', {patientId: patientId});
       } else {
         console.error('Error posting data:', response.status);
         Alert.alert('Error', 'Failed to submit data. Please try again later.');
@@ -131,18 +143,17 @@ const PatientData = ({navigation}) => {
       {_header()}
       <ScrollView style={STYLES.body}>
         {/* Simprints GUI */}
-        <View style={STYLES.labeled}>
+        <View style={STYLES.guid}>
           <Text style={STYLES.label}>Simprints GUI</Text>
           <TextInput
             style={STYLES.guid}
             value={dataResults}
             onChangeText={text => setState({...state, simprintsGui: text})}
-            placeholder="Enter simprints GUI"
           />
         </View>
         {/* First Name */}
         <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>First Name:</Text>
+          <Text style={STYLES.label}>First Name*:</Text>
           <TextInput
             style={STYLES.field}
             value={state.firstName}
@@ -153,27 +164,30 @@ const PatientData = ({navigation}) => {
 
         {/* Last Name */}
         <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Last Name:</Text>
+          <Text style={STYLES.label}>Last Name*:</Text>
           <TextInput
             style={STYLES.field}
             value={state.lastName}
             onChangeText={text => setState({...state, lastName: text})}
+            placeholder="Enter last name"
           />
         </View>
 
-        {/* Last Name */}
+        {/* phone number */}
         <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Phone Number:</Text>
+          <Text style={STYLES.label}>Phone Number*:</Text>
           <TextInput
             style={STYLES.field}
             value={state.phoneNumber}
+            keyboardType="phone-pad"
             onChangeText={text => setState({...state, phoneNumber: text})}
+            placeholder="eg. 0771234567"
           />
         </View>
 
         <View style={STYLES.wrap}>
           {/* Sex */}
-          <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
+          <View style={STYLES.detail} placeholderTextColor="black">
             <Picker
               placeholder="Sex"
               placeholderTextColor={COLORS.BLACK}
@@ -187,9 +201,9 @@ const PatientData = ({navigation}) => {
             </Picker>
           </View>
           {/* Age Group */}
-          <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
+          <View style={STYLES.detail} placeholderTextColor="#0000">
             <Picker
-              placeholder="Age"
+              placeholder="Age Group"
               placeholderTextColor={COLORS.BLACK}
               selectedValue={state.ageGroup}
               onValueChange={(value, index) =>
@@ -312,6 +326,7 @@ const STYLES = StyleSheet.create({
   body: {
     flex: 2,
     paddingHorizontal: 20,
+    paddingVertical: 35,
   },
   alert: {
     color: COLORS.GREY,
@@ -421,6 +436,7 @@ const STYLES = StyleSheet.create({
     color: COLORS.BLACK,
     fontSize: 11,
     fontWeight: 'bold ',
+    display: 'none',
   },
   submit: {
     backgroundColor: COLORS.BLACK,

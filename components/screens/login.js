@@ -211,7 +211,7 @@ const Login = ({ navigation }) => {
 
 
   const signIn = async () => {
-    clearStorage();
+    // clearStorage();
     let { username, password } = user;
 
     if (username === '' || password === '') {
