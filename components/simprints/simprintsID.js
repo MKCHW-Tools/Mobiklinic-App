@@ -51,12 +51,12 @@ const SimprintsID = ({navigation}) => {
   const [selectedUserUniqueId, setSelectedUserUniqueId] = useState(null);
   const [noMatchButtonPressed, setNoMatchButtonPressed] = useState(false);
   const [showButtons, setShowButtons] = useState(true);
-  const [selectedBeneficiaryIndex, setSelectedBeneficiaryIndex] = useState(0);
 const sortedResults = identificationResults
   .filter(result => result.confidenceScore >= 20 && result.confidenceScore <= 99)
   .sort((a, b) => b.confidenceScore - a.confidenceScore);
   const [showResults, setShowResults] = useState(false);
   const [collapsedIndex, setCollapsedIndex] = useState(-1); // Add this line to define the collapsedIndex state variable
+  const [clickedResult, setClickedResult] = useState(null);
 
 
   const toggleCollapse = (index) => {
@@ -67,8 +67,6 @@ const sortedResults = identificationResults
     }
   };
   
-
-
 
   // fetch data function
   const fetchData = async () => {
@@ -328,7 +326,6 @@ const sortedResults = identificationResults
 
 
 
-
 {sortedResults.map((result, index) => (
   <View key={index}>
     <TouchableOpacity
@@ -336,6 +333,8 @@ const sortedResults = identificationResults
       onPress={() => {
         setGuid(result.guid);
         toggleCollapse(index);
+        setClickedResult(index);
+        setUserData(null); // Resetting userData
       }}
     >
       <Text style={styles.label}>
@@ -346,96 +345,108 @@ const sortedResults = identificationResults
 
     {collapsedIndex === index && guid === result.guid && (
       <>
-        <View style={styles.userData}>
-          <Text style={styles.userDataLabel}>
-            Full Name:{' '}
-            <Text style={styles.userDataValue}>
-              {userData.firstName} {userData.lastName}
+        {userData ? (
+          <View style={styles.userData}>
+            <Text style={styles.userDataLabel}>
+              Full Name:{' '}
+              <Text style={styles.userDataValue}>
+                {userData.firstName} {userData.lastName}
+              </Text>
             </Text>
-          </Text>
 
-          <Text style={styles.userDataLabel}>
-            Phone Number:{' '}
-            <Text style={styles.userDataValue}>{userData.phoneNumber}</Text>
-          </Text>
+            <Text style={styles.userDataLabel}>
+              Phone Number:{' '}
+              <Text style={styles.userDataValue}>{userData.phoneNumber}</Text>
+            </Text>
 
-          {userData.vaccinations && userData.vaccinations.length > 0 && (
-            <View style={styles.vaccinationsContainer}>
-              <Text style={styles.userDataLabel}>Vaccinations:</Text>
-              {userData.vaccinations.map((vaccination, index) => (
-                <View key={index}>
-                  <Text style={styles.userDataLabel}>
-                    Date of Vaccination:{' '}
-                    <Text style={styles.userDataValue}>
-                      {vaccination.dateOfVaccination}
+            {userData.vaccinations && userData.vaccinations.length > 0 && (
+              <View style={styles.vaccinationsContainer}>
+                <Text style={styles.userDataLabel}>Vaccinations:</Text>
+                {userData.vaccinations.map((vaccination, index) => (
+                  <View key={index}>
+                    <Text style={styles.userDataLabel}>
+                      Date of Vaccination:{' '}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.dateOfVaccination}
+                      </Text>
                     </Text>
-                  </Text>
-                  <Text style={styles.userDataLabel}>
-                    Date for Next Dose:{' '}
-                    <Text style={styles.userDataValue}>
-                      {vaccination.dateForNextDose}
+                    <Text style={styles.userDataLabel}>
+                      Date for Next Dose:{' '}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.dateForNextDose}
+                      </Text>
                     </Text>
-                  </Text>
-                  <Text style={styles.userDataLabel}>
-                    Vaccine Name:{' '}
-                    <Text style={styles.userDataValue}>
-                      {vaccination.vaccineName}
+                    <Text style={styles.userDataLabel}>
+                      Vaccine Name:{' '}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.vaccineName}
+                      </Text>
                     </Text>
-                  </Text>
-                  <Text style={styles.userDataLabel}>
-                    Units:{' '}
-                    <Text style={styles.userDataValue}>{vaccination.units}</Text>
-                  </Text>
-                  <Text style={styles.userDataLabel}>
-                    Site Administered:{' '}
-                    <Text style={styles.userDataValue}>
-                      {vaccination.siteAdministered}
+                    <Text style={styles.userDataLabel}>
+                      Units:{' '}
+                      <Text style={styles.userDataValue}>{vaccination.units}</Text>
                     </Text>
-                  </Text>
-                  <Text style={styles.userDataLabel}>
-                    Facility:{' '}
-                    <Text style={styles.userDataValue}>{vaccination.facility}</Text>
-                  </Text>
-                </View>
-              ))}
-            </View>
-          )}
+                    <Text style={styles.userDataLabel}>
+                      Site Administered:{' '}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.siteAdministered}
+                      </Text>
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      Facility:{' '}
+                      <Text style={styles.userDataValue}>{vaccination.facility}</Text>
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )}
 
-          {userData.diagnoses && userData.diagnoses.length > 0 && (
-            <View style={styles.vaccinationsContainer}>
-              <Text style={styles.userDataLabel}>Diagnosis:</Text>
-              {userData.diagnoses.map((diagnosis, index) => (
-                <View key={index}>
-                  <Text style={styles.userDataLabel}>
-                    Date of Vaccination:{' '}
-                    <Text style={styles.userDataValue}>{diagnosis.condition}</Text>
-                  </Text>
-                  <Text style={styles.userDataLabel}>
-                    Date for Next Dose:{' '}
-                    <Text style={styles.userDataValue}>
-                      {diagnosis.dateForNextDose}
+            {userData.diagnoses && userData.diagnoses.length > 0 && (
+              <View style={styles.vaccinationsContainer}>
+                <Text style={styles.userDataLabel}>Diagnosis:</Text>
+                {userData.diagnoses.map((diagnosis, index) => (
+                  <View key={index}>
+                    <Text style={styles.userDataLabel}>
+                      Date of Vaccination:{' '}
+                      <Text style={styles.userDataValue}>{diagnosis.condition}</Text>
                     </Text>
-                  </Text>
-                  <Text style={styles.userDataLabel}>
-                    Impression:{' '}
-                    <Text style={styles.userDataValue}>{diagnosis.impression}</Text>
-                  </Text>
-                </View>
-              ))}
-            </View>
-          )}
-        </View>
+                    <Text style={styles.userDataLabel}>
+                      Date for Next Dose:{' '}
+                      <Text style={styles.userDataValue}>
+                        {diagnosis.dateForNextDose}
+                      </Text>
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      Impression:{' '}
+                      <Text style={styles.userDataValue}>{diagnosis.impression}</Text>
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )}
 
-        <TouchableOpacity
-          style={styles.buttonSec}
-          onPress={() => navigation.navigate('SelectActivity')}
-        >
-          <Text style={styles.buttonStyle}>Confirm Data</Text>
-        </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonSec}
+              onPress={() => navigation.navigate('SelectActivity')}
+            >
+              <Text style={styles.buttonStyle}>Confirm Data</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={styles.userData}>
+            <Text style={styles.userDataLabel}>User does not exist.</Text>
+          </View>
+        )}
       </>
     )}
   </View>
 ))}
+
+
+
+
+
+
 
 
             {!displayMode && (
