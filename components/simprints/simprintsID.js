@@ -234,6 +234,7 @@ const sortedResults = identificationResults
       <View style={styles.wrap}>
         <Image style={{ width: 70, height: 70 }} source={require('../imgs/logo.png')} />
         <Text style={styles.title}>Mobiklinic</Text>
+        
         <ScrollView >
         <View style={styles.container}>
        
@@ -304,8 +305,18 @@ const sortedResults = identificationResults
           )}
   
           
-            {sortedResults.map((result, index) => (
-              <View key={index}>
+  
+ 
+
+  
+  {sortedResults.length > 0 && (
+            <React.Fragment>
+              {/* Render results */}
+              {sortedResults.map((result, index) => (
+                <React.Fragment key={index}>
+                  {index === 0 && ( // Display "RESULTS" heading only for the first result
+                    <Text style={styles.userDataLabel}>RESULTS</Text>
+                  )}
                 <TouchableOpacity
                   style={styles.input}
                   onPress={() => {
@@ -446,12 +457,15 @@ const sortedResults = identificationResults
                         <TouchableOpacity style={styles.buttonSec} onPress={openFunction}>
                           <Text style={styles.buttonStyle1}>Register Beneficiary</Text>
                         </TouchableOpacity>
-                      </View>
-                    )}
-                  </>
-                )}
-              </View>
-            ))}
+                        </View>
+                      )}
+                    </>
+                  )}
+                </React.Fragment>
+              ))}
+            </React.Fragment>
+          )}
+          
           
   
           {!displayMode && (
