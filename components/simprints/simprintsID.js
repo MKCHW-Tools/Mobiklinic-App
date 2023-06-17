@@ -54,38 +54,38 @@ const SimprintsID = ({navigation}) => {
     .sort((a, b) => b.confidenceScore - a.confidenceScore);
   const [showResults, setShowResults] = useState(false);
 
-  // fetch data function
-  const fetchData = async () => {
-    console.log('GUID:', guid);
+  // fetch data functio
+  // const fetchData = async () => {
+  //   console.log('GUID:', guid);
 
-    try {
-      const response = await fetch(
-        `https://mobi-be-production.up.railway.app/patients/${guid}`,
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setUserData(data);
-        setShowResults(true);
-      } else {
-        console.error('Error fetching user data:', response.status);
-        // Alert.alert(
-        //   'Error',
-        //   'Failed to fetch user data. Please try again later.',
-        // );
-      }
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-      Alert.alert(
-        'Error',
-        'Failed to fetch user data. Please try again later.',
-      );
-    }
-    // navigation.navigate('GetPatients');
-  };
+  //   try {
+  //     const response = await fetch(
+  //       `https://mobi-be-production.up.railway.app/patients/${guid}`,
+  //     );
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       setUserData(data);
+  //       setShowResults(true);
+  //     } else {
+  //       console.error('Error fetching user data:', response.status);
+  //       // Alert.alert(
+  //       //   'Error',
+  //       //   'Failed to fetch user data. Please try again later.',
+  //       // );
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching user data:', error);
+  //     Alert.alert(
+  //       'Error',
+  //       'Failed to fetch user data. Please try again later.',
+  //     );
+  //   }
+  //   // navigation.navigate('GetPatients');
+  // };
 
-  useEffect(() => {
-    fetchData();
-  }, [guid]);
+  // useEffect(() => {
+  //   fetchData();
+  // }, [guid]);
 
   useEffect(() => {
     const identificationPlusSubscription = DeviceEventEmitter.addListener(
@@ -353,40 +353,6 @@ const SimprintsID = ({navigation}) => {
                             </Text>
                           </Text>
 
-<<<<<<< HEAD
-              {identificationResults
-                .filter(
-                  result =>
-                    result.confidenceScore >= 20 &&
-                    result.confidenceScore <= 99,
-                )
-                .map((result, index) => (
-                  <View key={index}>
-                    <TouchableOpacity
-                      style={styles.input}
-                      onPress={confirmSelectedBeneficiaryy}>
-                      <Text style={styles.label}>
-                        <View style={{height: 20}} />
-                        Tier:{'\t'}
-                        {'\t'}
-                        <Text style={{fontWeight: 'bold'}}>{result.tier}</Text>
-                        {'\n'}
-                        Confidence Score:{'\t'}
-                        {'\t'}
-                        <Text style={{fontWeight: 'bold'}}>
-                          {result.confidenceScore}%
-                        </Text>
-                        {'\n'}
-                        Guid:
-                        <Text style={{fontWeight: 'bold'}}>{result.guid}</Text>
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                ))}
-              <View style={{height: 20}} />
-              {showButtons ? (
-                <>
-=======
                           <Text style={styles.userDataLabel}>
                             Phone Number:{'\t '}
                             <Text style={styles.userDataValue}>
@@ -443,7 +409,6 @@ const SimprintsID = ({navigation}) => {
                                 )}
                               </View>
                             )}
->>>>>>> 920bc35310515bca3e090a32ead394cabe78b6d0
 
                           {userData.diagnoses &&
                             userData.diagnoses.length > 0 && (
