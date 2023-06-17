@@ -110,6 +110,7 @@ function AuthStack() {
         options={{headerShown: false}}
         component={PatientLists}
       />
+     
     </Stack.Navigator>
   );
 }

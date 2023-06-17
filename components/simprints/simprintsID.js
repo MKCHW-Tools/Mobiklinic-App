@@ -82,17 +82,11 @@ const sortedResults = identificationResults
         setShowResults(true);
       } else {
         console.error('Error fetching user data:', response.status);
-        // Alert.alert(
-        //   'Error',
-        //   'Failed to fetch user data. Please try again later.',
-        // );
+       
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
-      Alert.alert(
-        'Error',
-        'Failed to fetch user data. Please try again later.',
-      );
+     
     }
     // navigation.navigate('GetPatients');
   };
