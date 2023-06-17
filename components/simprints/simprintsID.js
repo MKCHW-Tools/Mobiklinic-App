@@ -230,256 +230,246 @@ const sortedResults = identificationResults
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
       {_header()}
       <View style={styles.wrap}>
-        <Image
-          style={{width: 70, height: 70}}
-          source={require('../imgs/logo.png')}
-        />
+        <Image style={{ width: 70, height: 70 }} source={require('../imgs/logo.png')} />
         <Text style={styles.title}>Mobiklinic</Text>
-
+        <ScrollView >
         <View style={styles.container}>
-          <ScrollView contentContainerStyle={styles.scrollContent}>
-            {displayMode === 'enrollment' && (
-              <>
-                {enrollmentGuid && (
-                  <>
-                    <Text style={styles.text}>Beneficiary Enrolled on ID</Text>
-                    <View style={{height: 30}} />
-
-                    <TouchableOpacity
-                      onPress={confirmSelectedBeneficiary}
-                      style={styles.input}>
-                      <Text style={styles.label}>
-                        <Text style={{fontWeight: 'bold', fontSize: 15}}>
-                          {enrollmentGuid}
-                        </Text>
-                      </Text>
-                    </TouchableOpacity>
-
-                    <View style={{height: 20}} />
-                  </>
-                )}
-
-              </>
-            )}
-
-            {displayMode === 'identificationPlus' && (
-              <>
-                {identificationPlusResults.length > 0 && (
-                  <React.Fragment key="identification-plus-heading">
-                    <Text style={styles.text}>Beneficiary Identified:</Text>
-                    <View style={{height: 20}} />
-                  </React.Fragment>
-                )}
-
-                {identificationPlusResults
-                  .filter(
-                    result =>
-                      result.confidenceScore >= 20 &&
-                      result.confidenceScore <= 99,
-                  )
-                  .map((result, index) => (
-                    <View key={index}>
-                      <TouchableOpacity
-                        style={styles.input}
-                        onPress={confirmSelectedBeneficiaryy}>
-                        <Text style={styles.label}>
-                          <View style={{height: 20}} />
-                          Tier:{'\t'}
-                          {'\t'}
-                          <Text style={{fontWeight: 'bold'}}>
-                            {result.tier}
-                          </Text>
-                          {'\n'}
-                          Confidence Score:{'\t'}
-                          {'\t'}
-                          <Text style={{fontWeight: 'bold'}}>
-                            {result.confidenceScore}%
-                          </Text>
-                          {'\n'}
-                          Guid:
-                          <Text style={{fontWeight: 'bold'}}>
-                            {result.guid}
-                          </Text>
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  ))}
-                <View style={{height: 20}} />
-                {showButtons ? (
-                  <>
-                    <View style={{height: 20}} />
-
-                    <TouchableOpacity
-                      style={styles.button}
-                      onPress={openFunction}>
-                      <Text style={styles.buttonText}>No Match</Text>
-                    </TouchableOpacity>
-                  </>
-                ) : (
-                  <TouchableOpacity style={styles.button} onPress={goBack}>
-                    <Text style={styles.buttonText}>Go Back</Text>
+       
+          {displayMode === 'enrollment' && (
+            <>
+              {enrollmentGuid && (
+                <>
+                  <Text style={styles.text}>Beneficiary Enrolled on ID</Text>
+                  <View style={{ height: 30 }} />
+  
+                  <TouchableOpacity onPress={confirmSelectedBeneficiary} style={styles.input}>
+                    <Text style={styles.label}>
+                      <Text style={{ fontWeight: 'bold', fontSize: 15 }}>{enrollmentGuid}</Text>
+                    </Text>
                   </TouchableOpacity>
+  
+                  <View style={{ height: 20 }} />
+                </>
+              )}
+            </>
+          )}
+  
+          {displayMode === 'identificationPlus' && (
+            <>
+              {identificationPlusResults.length > 0 && (
+                <React.Fragment key="identification-plus-heading">
+                  <Text style={styles.text}>Beneficiary Identified:</Text>
+                  <View style={{ height: 20 }} />
+                </React.Fragment>
+              )}
+  
+              {identificationPlusResults
+                .filter(result => result.confidenceScore >= 20 && result.confidenceScore <= 99)
+                .map((result, index) => (
+                  <View key={index}>
+                    <TouchableOpacity style={styles.input} onPress={confirmSelectedBeneficiaryy}>
+                      <Text style={styles.label}>
+                        <View style={{ height: 20 }} />
+                        Tier:{'\t'}
+                        {'\t'}
+                        <Text style={{ fontWeight: 'bold' }}>{result.tier}</Text>
+                        {'\n'}
+                        Confidence Score:{'\t'}
+                        {'\t'}
+                        <Text style={{ fontWeight: 'bold' }}>{result.confidenceScore}%</Text>
+                        {'\n'}
+                        Guid:
+                        <Text style={{ fontWeight: 'bold' }}>{result.guid}</Text>
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              <View style={{ height: 20 }} />
+              {showButtons ? (
+                <>
+                  <View style={{ height: 20 }} />
+  
+                  <TouchableOpacity style={styles.button} onPress={openFunction}>
+                    <Text style={styles.buttonText}>No Match</Text>
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <TouchableOpacity style={styles.button} onPress={goBack}>
+                  <Text style={styles.buttonText}>Go Back</Text>
+                </TouchableOpacity>
+              )}
+            </>
+          )}
+  
+          
+            {sortedResults.map((result, index) => (
+              <View key={index}>
+                <TouchableOpacity
+                  style={styles.input}
+                  onPress={() => {
+                    setGuid(result.guid);
+                    toggleCollapse(index);
+                    setClickedResult(index);
+                    setUserData(null); // Resetting userData
+                  }}
+                >
+                  <Text style={styles.label}>
+                    <View style={{ height: 20 }} />
+                    {`Beneficiary ${index + 1} (Score: ${result.confidenceScore}%)`}
+                  </Text>
+                </TouchableOpacity>
+  
+                {collapsedIndex === index && guid === result.guid && (
+                  <>
+                    {userData ? (
+                      <View style={styles.userData}>
+                        <Text style={styles.userDataLabel}>
+                          Full Name:{' '}
+                          <Text style={styles.userDataValue}>
+                            {userData.firstName} {userData.lastName}
+                          </Text>
+                        </Text>
+  
+                        <Text style={styles.userDataLabel}>
+                          Phone Number:{' '}
+                          <Text style={styles.userDataValue}>{userData.phoneNumber}</Text>
+                        </Text>
+  
+                        {userData.vaccinations && userData.vaccinations.length > 0 && (
+                          <View style={styles.vaccinationsContainer}>
+                            <Text style={styles.userDataLabel1}>VACCINATION</Text>
+                            {userData.vaccinations.map((vaccination, index) => (
+                              <View key={index}>
+                                 <Text style={styles.userDataLabel}>
+                                  Vaccine Name:{' '}
+                                  <Text style={styles.userDataValue}>
+                                    {vaccination.vaccineName}
+                                  </Text>
+                                </Text>
+                                <Text style={styles.userDataLabel}>
+                                  Date of Vaccination:{' '}
+                                  <Text style={styles.userDataValue}>
+                                    {vaccination.dateOfVaccination}
+                                  </Text>
+                                </Text>
+                                
+
+                                <Text style={styles.userDataLabel}>
+                                  Dose:{' '}
+                                  <Text style={styles.userDataValue}>{vaccination.dose}</Text>
+                                </Text>
+
+                                <Text style={styles.userDataLabel}>
+                                  Units:{' '}
+                                  <Text style={styles.userDataValue}>{vaccination.units}</Text>
+                                </Text>
+                                <Text style={styles.userDataLabel}>
+                                  Date for Next Dose:{' '}
+                                  <Text style={styles.userDataValue}>
+                                    {vaccination.dateForNextDose}
+                                  </Text>
+                                </Text>
+                                <Text style={styles.userDataLabel}>
+                                  Site Administered:{' '}
+                                  <Text style={styles.userDataValue}>
+                                    {vaccination.siteAdministered}
+                                  </Text>
+                                </Text>
+                                <Text style={styles.userDataLabel}>
+                                  Facility:{' '}
+                                  <Text style={styles.userDataValue}>{vaccination.facility}</Text>
+                                </Text>
+                              </View>
+                            ))}
+                          </View>
+                        )}
+  
+                        {userData.diagnoses && userData.diagnoses.length > 0 && (
+                          <View style={styles.vaccinationsContainer}>
+                            <Text style={styles.userDataLabel1}>DIAGNOSIS</Text>
+                            {userData.diagnoses.map((diagnosis, index) => (
+                              <View key={index}>
+                                <Text style={styles.userDataLabel}>
+                                  Condition:{' '}
+                                  <Text style={styles.userDataValue}>{diagnosis.condition}</Text>
+                                </Text>
+                                <Text style={styles.userDataLabel}>
+                                  Prescribed drugs:{' '}
+                                  <Text style={styles.userDataValue}>{diagnosis.drugsPrescribed}</Text>
+                                </Text>
+                                <Text style={styles.userDataLabel}>
+                                  Dosage:{' '}
+                                  <Text style={styles.userDataValue}>{diagnosis.dosage}</Text>
+                                </Text>
+                               
+                                <Text style={styles.userDataLabel}>
+                                  Frequency:{' '}
+                                  <Text style={styles.userDataValue}>{diagnosis.frequency}</Text>
+                                </Text>
+                                <Text style={styles.userDataLabel}>
+                                  Duration:{' '}
+                                  <Text style={styles.userDataValue}>{diagnosis.duration}</Text>
+                                </Text>
+                                <Text style={styles.userDataLabel}>
+                                  Date of diagnosis:{' '}
+                                  <Text style={styles.userDataValue}>{diagnosis.dateOfDiagnosis}</Text>
+                                </Text>
+                                <Text style={styles.userDataLabel}>
+                                  Date for Next Dose:{' '}
+                                  <Text style={styles.userDataValue}>
+                                    {diagnosis.followUpDate}
+                                  </Text>
+                                </Text>
+                                <Text style={styles.userDataLabel}>
+                                  Impression:{' '}
+                                  <Text style={styles.userDataValue}>{diagnosis.impression}</Text>
+                                </Text>
+                                <View style={{ height: 20 }} />
+                              </View>
+                            ))}
+                          </View>
+                        )}
+  
+                        <TouchableOpacity
+                          style={styles.buttonSec}
+                          onPress={() => navigation.navigate('SelectActivity')}
+                        >
+                          <Text style={styles.buttonStyle}>Confirm Data</Text>
+                        </TouchableOpacity>
+                      </View>
+                    ) : (
+                      <View style={styles.userData}>
+                        <Text style={styles.userDataLabel}>Beneficiary does not exist.</Text>
+                        <TouchableOpacity style={styles.buttonSec} onPress={openFunction}>
+                          <Text style={styles.buttonStyle1}>Register Beneficiary</Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                  </>
                 )}
-              </>
-            )}
-
-
-
-
-{sortedResults.map((result, index) => (
-  <View key={index}>
-    <TouchableOpacity
-      style={styles.input}
-      onPress={() => {
-        setGuid(result.guid);
-        toggleCollapse(index);
-        setClickedResult(index);
-        setUserData(null); // Resetting userData
-      }}
-    >
-      <Text style={styles.label}>
-        <View style={{ height: 20 }} />
-        {`Beneficiary ${index + 1} (Score: ${result.confidenceScore}%)`}
-      </Text>
-    </TouchableOpacity>
-
-    {collapsedIndex === index && guid === result.guid && (
-      <>
-        {userData ? (
-          <View style={styles.userData}>
-            <Text style={styles.userDataLabel}>
-              Full Name:{' '}
-              <Text style={styles.userDataValue}>
-                {userData.firstName} {userData.lastName}
-              </Text>
-            </Text>
-
-            <Text style={styles.userDataLabel}>
-              Phone Number:{' '}
-              <Text style={styles.userDataValue}>{userData.phoneNumber}</Text>
-            </Text>
-
-            {userData.vaccinations && userData.vaccinations.length > 0 && (
-              <View style={styles.vaccinationsContainer}>
-                <Text style={styles.userDataLabel}>Vaccinations:</Text>
-                {userData.vaccinations.map((vaccination, index) => (
-                  <View key={index}>
-                    <Text style={styles.userDataLabel}>
-                      Date of Vaccination:{' '}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.dateOfVaccination}
-                      </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Date for Next Dose:{' '}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.dateForNextDose}
-                      </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Vaccine Name:{' '}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.vaccineName}
-                      </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Units:{' '}
-                      <Text style={styles.userDataValue}>{vaccination.units}</Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Site Administered:{' '}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.siteAdministered}
-                      </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Facility:{' '}
-                      <Text style={styles.userDataValue}>{vaccination.facility}</Text>
-                    </Text>
-                  </View>
-                ))}
               </View>
-            )}
-
-            {userData.diagnoses && userData.diagnoses.length > 0 && (
-              <View style={styles.vaccinationsContainer}>
-                <Text style={styles.userDataLabel}>Diagnosis:</Text>
-                {userData.diagnoses.map((diagnosis, index) => (
-                  <View key={index}>
-                    <Text style={styles.userDataLabel}>
-                      Date of Vaccination:{' '}
-                      <Text style={styles.userDataValue}>{diagnosis.condition}</Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Date for Next Dose:{' '}
-                      <Text style={styles.userDataValue}>
-                        {diagnosis.dateForNextDose}
-                      </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Impression:{' '}
-                      <Text style={styles.userDataValue}>{diagnosis.impression}</Text>
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            )}
-
-            <TouchableOpacity
-              style={styles.buttonSec}
-              onPress={() => navigation.navigate('SelectActivity')}
-            >
-              <Text style={styles.buttonStyle}>Confirm Data</Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View style={styles.userData}>
-            <Text style={styles.userDataLabel}>User does not exist.</Text>
-          </View>
-        )}
-      </>
-    )}
-  </View>
-))}
-
-
-
-
-
-
-
-
-            {!displayMode && (
-              <>
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={handleIdentificationPlus}>
-                  <Text style={styles.buttonText}>Start Registration</Text>
-                </TouchableOpacity>
-
-                <View style={{height: 10}} />
-
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={handleIdentification}>
-                  <Text style={styles.buttonText}>Identify Beneficiary</Text>
-                </TouchableOpacity>
-              </>
-            )}
-          </ScrollView>
+            ))}
+          
+  
+          {!displayMode && (
+            <>
+              <TouchableOpacity style={styles.button} onPress={handleIdentificationPlus}>
+                <Text style={styles.buttonText}>Start Registration</Text>
+              </TouchableOpacity>
+  
+              <View style={{ height: 10 }} />
+  
+              <TouchableOpacity style={styles.button} onPress={handleIdentification}>
+                <Text style={styles.buttonText}>Identify Beneficiary</Text>
+              </TouchableOpacity>
+            </>
+          )}
+          
         </View>
-        <View style={styles.container}>
-     
-
-      <ScrollView style={styles.body}>
-       
-
-       
+        </ScrollView>
+        <View style={styles.container}></View>
         
-      </ScrollView>
-    </View>
       </View>
-
     </View>
   );
 };
@@ -511,7 +501,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   label: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'medium',
     marginBottom: 10,
     color: COLORS.BLACK,
@@ -525,11 +515,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 15,
     marginBottom: 20,
-    elevation: 4,
+    elevation: 9,
     shadowColor: COLORS.GRAY,
+    borderWidth: 1,
     shadowOffset: {
-      width: 0,
-      height: 2,
+      width: 10,
+      height: 20,
     },
     shadowOpacity: 0.3,
     shadowRadius: 2,
@@ -561,6 +552,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  buttonStyle1: {
+    color: COLORS.PRIMARY,
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    
+  },
+ 
   buttonSec: {
     backgroundColor: COLORS.WHITE,
     paddingVertical: 12,
@@ -576,17 +575,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  input: {
-    height: 40,
-    borderColor: COLORS.GRAY,
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 20,
-    color: COLORS.BLACK,
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
+  // input: {
+  //   height: 40,
+  //   borderColor: COLORS.GRAY,
+  //   borderWidth: 1,
+  //   borderRadius: 5,
+  //   paddingHorizontal: 10,
+  //   marginBottom: 20,
+  //   color: COLORS.BLACK,
+  //   textAlign: 'center',
+  //   fontWeight: 'bold',
+  // },
   logo: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -600,6 +599,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
     color: COLORS.BLACK,
+  },
+  userDataLabel1: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginBottom: 5,
+    color: COLORS.PRIMARY,
   },
   userDataValue: {
     fontWeight: 'normal',
