@@ -57,6 +57,8 @@ const sortedResults = identificationResults
   const [showResults, setShowResults] = useState(false);
   const [collapsedIndex, setCollapsedIndex] = useState(-1); // Add this line to define the collapsedIndex state variable
   const [clickedResult, setClickedResult] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+
 
 
   const toggleCollapse = (index) => {
@@ -81,11 +83,10 @@ const sortedResults = identificationResults
         setUserData(data);
         setShowResults(true);
       } else {
-        console.error('Error fetching user data:', response.status);
-       
+        setUserData(null);
+        setShowResults(false);       
       }
     } catch (error) {
-      console.error('Error fetching user data:', error);
      
     }
     // navigation.navigate('GetPatients');
@@ -95,8 +96,15 @@ const sortedResults = identificationResults
 
     fetchData();
 
-    
   }, [guid]);
+
+  useEffect(() => {
+    if (refreshing) {
+      fetchData();
+      setRefreshing(false);
+    }
+  }, [refreshing]);
+  
 
   useEffect(() => {
     
@@ -304,7 +312,8 @@ const sortedResults = identificationResults
                     setGuid(result.guid);
                     toggleCollapse(index);
                     setClickedResult(index);
-                    setUserData(null); // Resetting userData
+                    setUserData(null); 
+                    setRefreshing(true); 
                   }}
                 >
                   <Text style={styles.label}>
