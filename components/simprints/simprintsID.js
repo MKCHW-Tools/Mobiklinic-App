@@ -395,6 +395,11 @@ const sortedResults = identificationResults
                                   Facility:{' '}
                                   <Text style={styles.userDataValue}>{vaccination.facility}</Text>
                                 </Text>
+                                <Text style={styles.userDataLabel}>
+                                  .................................................................{' '}
+                                  <Text style={styles.userDataValue}></Text>
+                                </Text>
+                                <View style={{ height: 20 }} />
                               </View>
                             ))}
                           </View>
@@ -439,6 +444,10 @@ const sortedResults = identificationResults
                                 <Text style={styles.userDataLabel}>
                                   Impression:{' '}
                                   <Text style={styles.userDataValue}>{diagnosis.impression}</Text>
+                                </Text>
+                                <Text style={styles.userDataLabel}>
+                                  .................................................................{' '}
+                                  <Text style={styles.userDataValue}></Text>
                                 </Text>
                                 <View style={{ height: 20 }} />
                               </View>
