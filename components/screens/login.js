@@ -483,9 +483,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   muteText: {
-    color: COLORS.WHITE_LOW,
+    color: COLORS.BLACK,
+    fontWeight: 'bold',
   },
   whiteText: {
-    color: COLORS.WHITE,
+    color: COLORS.BLACK,
   },
 });
