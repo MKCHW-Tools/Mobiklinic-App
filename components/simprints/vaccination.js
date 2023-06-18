@@ -20,12 +20,14 @@ import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
 
-const PatientData = ({navigation}) => {
+const PatientData = ({navigation, route}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
   const {diagnoses} = diagnosisContext;
   const {dataResults} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
   const currentDate = new Date();
+ 
+
 
   const [state, setState] = React.useState({
     vaccineName: '',
@@ -47,6 +49,7 @@ const PatientData = ({navigation}) => {
         return;
       }
       if (
+      
         state.vaccineName === '' ||
         state.dose === '' ||
         state.units === '' ||

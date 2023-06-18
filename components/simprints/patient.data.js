@@ -26,9 +26,7 @@ const PatientData = ({navigation}) => {
   const {dataResults} = useContext(DataResultsContext);
   const {userLog} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
-  // const [ id, setId ] = React.useState(userLog.length > 0 ? userLog[0].id : '');
-
-  // const navigation = useNavigation();
+  
   // date
   const currentDate = new Date();
 

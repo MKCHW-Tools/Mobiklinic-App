@@ -58,7 +58,7 @@ const sortedResults = identificationResults
   const [collapsedIndex, setCollapsedIndex] = useState(-1); // Add this line to define the collapsedIndex state variable
   const [clickedResult, setClickedResult] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
-
+  const {patientId, setPatientId} = useContext(DataResultsContext);
 
 
   const toggleCollapse = (index) => {
@@ -80,12 +80,18 @@ const sortedResults = identificationResults
       );
       if (response.ok) {
         const data = await response.json();
+        const patientId = data.id;
+        console.log('Patient id:', patientId);
+        setPatientId(patientId);
+
         setUserData(data);
         setShowResults(true);
       } else {
         setUserData(null);
         setShowResults(false);       
       }
+
+
     } catch (error) {
      
     }
@@ -304,10 +310,6 @@ const sortedResults = identificationResults
             </>
           )}
   
-          
-  
- 
-
   
   {sortedResults.length > 0 && (
             <React.Fragment>
@@ -446,8 +448,8 @@ const sortedResults = identificationResults
   
                         <TouchableOpacity
                           style={styles.buttonSec}
-                          onPress={() => navigation.navigate('SelectActivity')}
-                        >
+                          // onPress={() => navigation.navigate('SelectActivity')}
+                          onPress={() => navigation.navigate('SelectActivity')}                        >
                           <Text style={styles.buttonStyle}>Confirm Data</Text>
                         </TouchableOpacity>
                       </View>
