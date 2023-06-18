@@ -57,6 +57,9 @@ const PatientMedical = ({navigation}) => {
         Alert.alert('Error', 'Please fill in all required fields');
         return;
       }
+
+     
+    
       const response = await fetch(
         `https://mobi-be-production.up.railway.app/${patientId}/diagnosis`,
         {
@@ -211,7 +214,7 @@ const PatientMedical = ({navigation}) => {
             style={STYLES.field}
             value={state.drugsPrescribed}
             onChangeText={text => setState({...state, drugsPrescribed: text})}
-            placeholder='e.g "Left Arm"'
+            placeholder='e.g "Paracetamol"'
           />
         </View>
 

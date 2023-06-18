@@ -42,35 +42,61 @@ const Doctorss = ({ navigation }) => {
     const dummyData = [
       {
         _id: '1',
-        name: 'Dr. John Smith',
-        specialisation: 'Cardiology',
-        hospital: 'ABC Hospital',
-        district: 'New York',
-        languages: 'English, Spanish',
+        name: 'Dr. Miiro',
+        specialisation: 'Pharmacist',
+        hospital: 'Mobiklinic',
         status: 1,
-        phone: '1234567890',
+        phone: '+256 708422142',
       },
       {
         _id: '2',
-        name: 'Dr. Sarah Johnson',
-        specialisation: 'Dermatology',
-        hospital: 'XYZ Hospital',
-        district: 'Los Angeles',
-        languages: 'English',
-        status: 2,
-        phone: '9876543210',
+        name: 'Dr Faraday Kidandi ',
+        specialisation: 'General practitioner',
+        hospital: 'Nsambya Hospital ',
+        status: 1,
+        phone: '+256 789561800',
       },
       {
         _id: '3',
-        name: 'Dr. Michael Williams',
-        specialisation: 'Orthopedics',
-        hospital: 'PQR Hospital',
-        district: 'Chicago',
-        languages: 'English',
-        status: 3,
-        phone: '5555555555',
+        name: ' Dr Mirembe Joel',
+        specialisation: 'Maternal and child health ',
+        hospital: 'Yita Musawo Hospital ',
+        status: 1,
+        phone: '+256 705920614',
       },
-      // Add more dummy doctors here if needed
+      {
+        _id: '4',
+        name: 'Ibrahim Mutyaba ',
+        specialisation: 'Clinician',
+        hospital: 'Mobiklinic',
+        status: 1,
+        phone: '+256 701630936',
+      },
+      {
+        _id: '5',
+        name: 'Dr Bbosa Ronald',
+        specialisation: 'General practitioner',
+        hospital: 'Buikwe ',
+        status: 1,
+        phone: '256 772494393',
+      },
+      {
+        _id: '6',
+        name: ' Rodgers ',
+        specialisation: 'Clinician ',
+        hospital: 'Makonge health center ',
+        status: 1,
+        phone: '+256 774226171',
+      },
+      {
+        _id: '7',
+        name: 'Alimah Komuhangi ',
+        specialisation: 'Sexual reproductive health consultant',
+        hospital: '',
+        status: 1,
+        phone: '+256 782245238',
+      },
+      
     ];
 
     if (dummyData && dummyData.length > 0) {
@@ -115,14 +141,8 @@ const Doctorss = ({ navigation }) => {
                   <Text style={STYLES.label}>Hospital</Text>
                   <Text>{item.hospital}</Text>
                 </View>
-                <View style={STYLES.subtitle}>
-                  <Text style={STYLES.label}>District</Text>
-                  <Text>{item.district}</Text>
-                </View>
-                <View style={STYLES.subtitle}>
-                  <Text style={STYLES.label}>Languages</Text>
-                  <Text>{item.languages}</Text>
-                </View>
+                
+               
               </View>
             </ListItem.Subtitle>
           </ListItem.Content>
