@@ -191,7 +191,7 @@ const PatientData = ({navigation, route}) => {
             <DatePicker
               value={selectedDate}
               mode="date"
-              display="default"
+              display="spinner"
               onChange={handleDateChange}
             />
           )}
@@ -283,7 +283,7 @@ const PatientData = ({navigation, route}) => {
             <DatePicker
               value={followUp}
               mode="date"
-              display="default"
+              display="spinner"
               onChange={handleDateChangeFollow}
             />
           )}
