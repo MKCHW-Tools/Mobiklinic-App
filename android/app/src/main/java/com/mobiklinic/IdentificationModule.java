@@ -1,4 +1,4 @@
-package com.awesomeproject;
+package com.mobiklinic;
 
 import android.app.Activity;
 import android.content.Intent;

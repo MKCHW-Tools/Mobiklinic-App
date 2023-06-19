@@ -1,4 +1,4 @@
-package com.awesomeproject.ui.home;
+package com.mobiklinic.ui.home;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.awesomeproject.databinding.FragmentHomeBinding;
+import com.mobiklinic.databinding.FragmentHomeBinding;
 
 public class HomeFragment extends Fragment {
 

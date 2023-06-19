@@ -1,4 +1,4 @@
-package com.awesomeproject.ui.home;
+package com.mobiklinic.ui.home;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
