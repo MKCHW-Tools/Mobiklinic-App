@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState,useContext} from 'react';
+import React, {useCallback, useEffect, useState, useContext} from 'react';
 import {
   View,
   Image,
@@ -10,16 +10,15 @@ import {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
-import { COLORS, DIMENS } from '../constants/styles';
+import {COLORS, DIMENS} from '../constants/styles';
 
-import { AuthContext } from '../contexts/auth';
-import { CustomStatusBar } from '../ui/custom.status.bar';
+import {AuthContext} from '../contexts/auth';
+import {CustomStatusBar} from '../ui/custom.status.bar';
 import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import {URLS} from '../constants/API';
-
 
 export const clearStorage = async () => {
   await AsyncStorage.clear();
@@ -116,7 +115,6 @@ export const RETRIEVE_LOCAL_USER = async () => {
     return JSON.parse(user) || null;
   } catch (err) {
     console.error(err);
-    
   }
 };
 export const SAVE_LOCAL_USER = async (user = {}) => {
@@ -194,7 +192,7 @@ export const DOWNLOAD = async data => {
   }
 };
 
-const Login = ({ navigation }) => {
+const Login = ({navigation}) => {
   const {
     setUser: setMyUser,
     isLoading,
@@ -207,12 +205,11 @@ const Login = ({ navigation }) => {
     password: '',
   });
 
-  const { updateUserLog } = useContext(DataResultsContext);
-
+  const {updateUserLog} = useContext(DataResultsContext);
 
   const signIn = async () => {
     // clearStorage();
-    let { username, password } = user;
+    let {username, password} = user;
 
     if (username === '' || password === '') {
       Alert.alert('Error', 'Provide your phone number and password');
@@ -230,7 +227,8 @@ const Login = ({ navigation }) => {
     }
 
     if (theUser !== null) {
-      let myUser = theUser.username === username && theUser.hash === hash ? theUser : null;
+      let myUser =
+        theUser.username === username && theUser.hash === hash ? theUser : null;
 
       if (myUser) {
         setMyUser({
@@ -246,20 +244,23 @@ const Login = ({ navigation }) => {
 
     try {
       console.log('Starting network request');
-      let response = await fetch(`https://mobi-be-production.up.railway.app/auth/login`, {
-        method: 'POST',
-        body: JSON.stringify({
-          phone: username,
-          password: password,
-        }),
-        headers: {
-          'Content-type': 'application/json; charset=UTF-8',
-          Accept: 'application/json',
+      let response = await fetch(
+        `https://mobi-be-production.up.railway.app/auth/login`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            phone: username,
+            password: password,
+          }),
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+            Accept: 'application/json',
+          },
         },
-      });
+      );
 
       let json_data = await response.json();
-      const { message, id, accessToken, refreshToken } = json_data;
+      const {message, id, accessToken, refreshToken} = json_data;
 
       if (message === 'Login successful') {
         const id = json_data.id;
@@ -270,7 +271,7 @@ const Login = ({ navigation }) => {
           id,
           username,
           password,
-          tokens: { accessToken: accessToken, refreshToken: refreshToken },
+          tokens: {accessToken: accessToken, refreshToken: refreshToken},
         });
 
         const resources = ['ambulances', 'doctors', 'diagnosis'];
@@ -285,7 +286,7 @@ const Login = ({ navigation }) => {
           setMyUser({
             id,
             username,
-            tokens: { accessToken: accessToken, refreshToken: refreshToken },
+            tokens: {accessToken: accessToken, refreshToken: refreshToken},
             offline: false,
           });
           setIsLoading(false);
@@ -347,11 +348,9 @@ const Login = ({ navigation }) => {
   //       console.error(err);
   //     }
   //   };
-  
+
   //   retrieveLocalUser();
   // }, [setMyUser]);
-
-  
 
   if (isLoading) return <Loader />;
 
@@ -360,7 +359,10 @@ const Login = ({ navigation }) => {
       <CustomStatusBar />
 
       <View style={styles.logoContainer}>
-        <Image style={{ width: 80, height: 80 }} source={require('../imgs/logo.png')} />
+        <Image
+          style={{width: 80, height: 80}}
+          source={require('../imgs/logo.png')}
+        />
         <Text style={styles.title}>Sign in</Text>
       </View>
       <View style={styles.formContainer}>
@@ -370,7 +372,7 @@ const Login = ({ navigation }) => {
           placeholderTextColor="grey"
           // keyboardType={'phone-pad'}
           selectionColor={COLORS.SECONDARY}
-          onChangeText={(text) => setUser({ ...user, username: text })}
+          onChangeText={text => setUser({...user, username: text})}
           value={user.username}
           placeholder="Phone number e.g: 256778xxxxxx"
         />
@@ -382,23 +384,35 @@ const Login = ({ navigation }) => {
           autoCorrect={false}
           placeholderTextColor="grey"
           selectionColor={COLORS.SECONDARY}
-          onChangeText={(text) => setUser({ ...user, password: text })}
+          onChangeText={text => setUser({...user, password: text})}
           value={user.password}
           placeholder="Password"
         />
 
         {user.username != '' && user.password != '' ? (
-          <TouchableOpacity style={[styles.btn, styles.btnPrimary]} onPress={() => {
-            setIsLoading(true);
-            signIn();
-          }}>
-            <Text style={styles.whiteText}>Sign in</Text>
-            <Icon name="arrow-right" size={20} strokeSize={3} color={COLORS.WHITE} />
+          <TouchableOpacity
+            style={[styles.btn, styles.btnPrimary]}
+            onPress={() => {
+              setIsLoading(true);
+              signIn();
+            }}>
+            <Text style={styles.whiteText}>SIGN IN</Text>
+            <Icon
+              name="arrow-right"
+              size={20}
+              strokeSize={3}
+              color={COLORS.WHITE}
+            />
           </TouchableOpacity>
         ) : (
           <TouchableOpacity style={[styles.btn, styles.btnInfo]}>
-            <Text style={styles.muteText}>Sign in</Text>
-            <Icon name="arrow-right" size={20} strokeSize={5} color={COLORS.WHITE_LOW} />
+            <Text style={styles.muteText}>SIGN IN</Text>
+            <Icon
+              name="arrow-right"
+              size={23}
+              strokeSize={5}
+              color={COLORS.BLACK}
+            />
           </TouchableOpacity>
         )}
         <TouchableOpacity onPress={() => navigation.navigate('signUp')}>
@@ -417,17 +431,18 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.WHITE,
   },
   logoContainer: {
-    flexGrow: 2,
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: DIMENS.FORM.PADDING,
+    // padding: DIMENS.FORM.PADDING,
   },
   title: {
     color: COLORS.ACCENT_1,
-    fontSize: 14,
+    fontSize: 20,
     fontWeight: 'bold',
     textTransform: 'uppercase',
-    padding: DIMENS.PADDING,
+    paddingVertical: DIMENS.PADDING,
+    fontFamily: 'Roboto',
   },
   subTitle: {
     color: COLORS.SECONDARY,
@@ -440,6 +455,7 @@ const styles = StyleSheet.create({
   linkItem: {
     paddingTop: DIMENS.PADDING,
     textAlign: 'center',
+    textDecorationLine: 'underline',
   },
   formContainer: {
     flexGrow: 1,
@@ -451,12 +467,14 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: COLORS.WHITE_LOW,
-    borderColor: COLORS.WHITE_LOW,
-    borderRadius: 50,
-    paddingHorizontal: 15,
-    paddingVertical: 5,
+    // borderColor: COLORS.WHITE_LOW,
+    borderRadius: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
     marginBottom: 10,
     fontFamily: 'Roboto',
+    fontSize: 16,
+    color:COLORS.BLACK,
   },
   btn: {
     padding: DIMENS.PADDING,
@@ -469,8 +487,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderRadius: 50,
+    borderRadius: 10,
     paddingHorizontal: 15,
+    marginVertical: 10,
   },
   btnInfo: {
     backgroundColor: COLORS.WHITE_LOW,
@@ -485,8 +504,15 @@ const styles = StyleSheet.create({
   muteText: {
     color: COLORS.BLACK,
     fontWeight: 'bold',
+    paddingHorizontal: 15,
+    fontSize: 16,
+    fontFamily: 'Roboto',
   },
   whiteText: {
     color: COLORS.BLACK,
+    fontWeight: 'bold',
+    paddingHorizontal: 15,
+    fontSize: 16,
+    fontFamily: 'Roboto',
   },
 });
