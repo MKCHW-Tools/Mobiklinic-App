@@ -20,6 +20,7 @@ import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
 import DatePicker from '@react-native-community/datetimepicker';
+import {format} from 'date-fns';
 
 const PatientMedical = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -31,11 +32,27 @@ const PatientMedical = ({navigation}) => {
 
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const handleDateChange = (event, selectedDate) => {
+  // const handleDateChange = (event, selectedDate) => {
+  //   const currentDate = selectedDate || state.dateOfDiagnosis;
+  //   setShowDatePicker(false);
+  //   setSelectedDate(currentDate);
+  //   setState({...state, dateOfDiagnosis: currentDate.toISOString()});
+  // };
+
+  const handleDateChangeDiagnosis = (event, selectedDate) => {
     const currentDate = selectedDate || state.dateOfDiagnosis;
     setShowDatePicker(false);
     setSelectedDate(currentDate);
-    setState({...state, dateOfDiagnosis: currentDate.toISOString()});
+    const formattedDate = format(currentDate, 'yyyy-MM-dd');
+    setState({...state, dateOfDiagnosis: formattedDate});
+  };
+
+  const handleDateChangeFollow = (event, selectedDate) => {
+    const currentDate = selectedDate || state.dateOfDiagnosis;
+    setShowDatePicker(false);
+    setSelectedDate(currentDate);
+    const formattedDate = format(currentDate, 'yyyy-MM-dd');
+    setState({...state, dateOfDiagnosis: formattedDate});
   };
 
   const [state, setState] = React.useState({
@@ -149,13 +166,15 @@ const PatientMedical = ({navigation}) => {
           />
         </View>
 
+       
+        {/* date for diagnosis */}
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Date for Diagnosis:</Text>
           <TouchableOpacity
             style={STYLES.datePickerInput}
             onPress={() => setShowDatePicker(true)}>
             <Text style={STYLES.datePickerText}>
-              {selectedDate.toDateString()}
+              {format(selectedDate, 'dd/MM/yyyy')}
             </Text>
           </TouchableOpacity>
           {showDatePicker && (
@@ -163,8 +182,7 @@ const PatientMedical = ({navigation}) => {
               value={selectedDate}
               mode="date"
               display="default"
-              
-              onChange={handleDateChange}
+              onChange={handleDateChangeDiagnosis}
             />
           )}
         </View>
