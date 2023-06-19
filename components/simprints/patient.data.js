@@ -337,7 +337,6 @@ const PatientData = ({navigation}) => {
             }
             style={STYLES.field}>
             <Picker.Item label="" value="" />
-            <Picker.Item label="Uganda" value="Uganda" />
             <Picker.Item label="Luganda" value="Luganda" />
             <Picker.Item label="Lusoga" value="Lusoga" />
             <Picker.Item label="Runyakore" value="Runyakore" />
