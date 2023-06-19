@@ -19,6 +19,8 @@ import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 const PatientData = ({navigation, route}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -27,6 +29,35 @@ const PatientData = ({navigation, route}) => {
   const {patientId, setPatientId} = useContext(DataResultsContext);
   const currentDate = new Date();
  
+
+  const [dateOfVaccination, setDateOfVaccination] = useState(null); // Add state for date of vaccination
+  const [dateForNextDose, setDateForNextDose] = useState(null); // Add state for date for next dose
+  const [showDatePicker, setShowDatePicker] = useState(false); // Add state to toggle date picker visibility
+
+  const handleDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || dateOfVaccination;
+    setShowDatePicker(false);
+
+    // Update the respective state based on the selected date
+    if (showDatePicker === 'vaccination') {
+      setDateOfVaccination(currentDate);
+      console.log('Date for Vaccination:', currentDate);
+    } else {
+      setDateForNextDose(currentDate);
+      console.log('Date for Next Dose:', currentDate);
+    }
+  };
+
+  const formatDate = (date) => {
+    if (date) {
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+
+      return `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
+    }
+    return 'Click to add date';
+  };
 
 
   const [state, setState] = React.useState({
@@ -161,14 +192,23 @@ const PatientData = ({navigation, route}) => {
         </View>
 
         {/* Date for vaccination */}
-        <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Date for Vaccination:</Text>
-          <TextInput
-            style={STYLES.field}
-            value={state.dateOfVaccination}
-            onChangeText={text => setState({...state, dateOfVaccination: text})}
+       {/* Date for vaccination */}
+       <View style={STYLES.labeled}>
+       <Text style={STYLES.label}>Date for Vaccination:</Text>
+        <TouchableOpacity 
+        style={STYLES.datePickerInput}
+        onPress={() => setShowDatePicker('vaccination')}>
+          <Text style={STYLES.datePickerText}>{formatDate(dateOfVaccination)}</Text>
+        </TouchableOpacity>
+        {showDatePicker === 'vaccination' && (
+          <DateTimePicker
+            value={state.dateOfVaccination || new Date()} // Use null or fallback to current date
+            mode="date"
+            display="default"
+            onChange={handleDateChange}
           />
-        </View>
+        )}
+      </View>
 
         <View style={STYLES.wrap}>
           {/* dose */}
@@ -229,14 +269,31 @@ const PatientData = ({navigation, route}) => {
         </View>
 
         {/* Date for vaccination */}
-        <View style={STYLES.labeled}>
+        {/* <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Date for Next Dose:</Text>
           <TextInput
             style={STYLES.field}
             value={state.dateForNextDose}
             onChangeText={text => setState({...state, dateForNextDose: text})}
           />
-        </View>
+        </View> */}
+
+<View style={STYLES.labeled}>
+<Text style={STYLES.label}>Date for Next Dose:</Text>
+        <TouchableOpacity 
+        style={STYLES.datePickerInput}
+        onPress={() => setShowDatePicker('nextDose')}>
+           <Text style={STYLES.datePickerText}>{formatDate(dateForNextDose)}</Text>
+        </TouchableOpacity>
+        {showDatePicker === 'nextDose' && (
+          <DateTimePicker
+            value={state.dateForNextDose || new Date()} // Use null or fallback to current date
+            mode="date"
+            display="default"
+            onChange={handleDateChange}
+          />
+        )}
+      </View>
 
         <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
           <Text style={STYLES.submitText}>Submit</Text>
@@ -454,5 +511,28 @@ const STYLES = StyleSheet.create({
     borderRadius: 10,
     height: 50,
     marginHorizontal: 5,
+  },
+  datePickerText: {
+    paddingVertical: 10,
+    paddingLeft: 12,
+    fontSize: 15,
+    color: COLORS.BLACK,
+  },
+  datePickerInput: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderColor: COLORS.GREY,
+    // borderStyle: 'solid',
+    // borderWidth: 1,
+    // borderRadius: 10,
+  },
+  datePickerText: {
+    marginLeft: 5,
+    color: COLORS.BLACK,
+    fontSize: 16,
+    paddingVertical: 12,
+
   },
 });
