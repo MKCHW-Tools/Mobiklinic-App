@@ -33,11 +33,11 @@ const PatientData = ({navigation, route}) => {
   const [followUp, setFollowUp] = useState(currentDate);
 
   const handleDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || state.dateOfDiagnosis;
+    const currentDate = selectedDate || state.dateOfVaccination;
     setShowDatePicker(false);
     setSelectedDate(currentDate);
     const formattedDate = format(currentDate, 'dd-MM-yyyy');
-    setState({...state, dateOfDiagnosis: formattedDate});
+    setState({...state, dateOfVaccination: formattedDate});
   };
   const handleDateChangeFollow = (event, followUp) => {
     const currentDate = followUp || state.dateForNextDose;
@@ -179,12 +179,12 @@ const PatientData = ({navigation, route}) => {
         {/* Date for vaccination */}
 
         <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Date for Diagnosis:</Text>
+          <Text style={STYLES.label}>Date for Vaccination:</Text>
           <TouchableOpacity
             style={STYLES.datePickerInput}
             onPress={() => setShowDatePicker(true)}>
             <Text style={STYLES.datePickerText}>
-              {format(selectedDate, 'dd-MM-yyyy')}
+              {format(selectedDate, 'dd/MM/yyyy')}
             </Text>
           </TouchableOpacity>
           {showDatePicker && (
@@ -276,7 +276,7 @@ const PatientData = ({navigation, route}) => {
             style={STYLES.datePickerInput}
             onPress={() => setShowDatePicker(true)}>
             <Text style={STYLES.datePickerText}>
-              {format(followUp, 'dd-MM-yyyy')}
+              {format(followUp, 'dd/MM/yyyy')}
             </Text>
           </TouchableOpacity>
           {showDatePicker && (
