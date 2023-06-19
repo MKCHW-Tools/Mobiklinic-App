@@ -74,8 +74,9 @@ const SignUp = ({navigation}) => {
         />
         <Text style={styles.title}>Sign up to become A Mobiklinic CHP.</Text>
       </View>
+      <ScrollView style={styles.body}>
       <View style={styles.formContainer}>
-        <ScrollView style={styles.body}>
+       
           <View>
             <Text style={styles.errorMsg}>{msg}</Text>
           </View>
@@ -208,8 +209,8 @@ const SignUp = ({navigation}) => {
               Already have an account? Sign in
             </Text>
           </TouchableOpacity>
-        </ScrollView>
       </View>
+      </ScrollView>
     </View>
   );
 };
@@ -295,10 +296,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   muteText: {
-    color: COLORS.WHITE_LOW,
+    color: COLORS.BLACK,
+    fontWeight: 'bold',
   },
   whiteText: {
-    color: COLORS.WHITE,
+    color: COLORS.BLACK,
   },
 });
 
