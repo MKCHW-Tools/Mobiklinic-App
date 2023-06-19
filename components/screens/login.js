@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: COLORS.WHITE_LOW,
     // borderColor: COLORS.WHITE_LOW,
-    borderRadius: 10,
+    borderRadius: 18,
     paddingHorizontal: 20,
     paddingVertical: 14,
     marginBottom: 10,
@@ -487,7 +487,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderRadius: 10,
+    borderRadius: 15,
     paddingHorizontal: 15,
     marginVertical: 10,
   },

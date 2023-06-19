@@ -196,9 +196,9 @@ const SignUp = ({navigation}) => {
               <Text style={styles.muteText}>Sign up</Text>
               <Icon
                 name="arrow-right"
-                size={20}
+                size={25}
                 strokeSize={5}
-                color={COLORS.WHITE_LOW}
+                color={COLORS.BLACK}
               />
             </TouchableOpacity>
           )}
@@ -261,13 +261,13 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: COLORS.WHITE_LOW,
     // borderColor: COLORS.WHITE_LOW,
-    borderRadius: 10,
+    borderRadius: 18,
     paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingVertical: 14,
     marginBottom: 10,
     fontFamily: 'Roboto',
-    fontSize: 14,
-    color: COLORS.BLACK,
+    fontSize: 16,
+    color:COLORS.BLACK,
   },
   btn: {
     padding: DIMENS.PADDING,
