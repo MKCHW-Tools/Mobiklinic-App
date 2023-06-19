@@ -156,8 +156,11 @@ const PatientData = ({navigation}) => {
   return (
     <View style={STYLES.wrapper}>
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
-      {_header()}
+      {/* {_header()} */}
+
       <ScrollView style={STYLES.body}>
+        <Text style={STYLES.title}>Beneficiary Profile</Text>
+
         {/* Simprints GUI */}
         <View style={STYLES.guid}>
           <Text style={STYLES.label}>Simprints GUI</Text>
@@ -388,7 +391,9 @@ const STYLES = StyleSheet.create({
     color: COLORS.BLACK,
     textAlign: 'center',
     flexGrow: 1,
-    fontSize: 16,
+    fontSize: 18,
+    paddingVertical: 10,
+    textDecorationLine: 'underline',
   },
   leftHeader: {
     marginLeft: 10,
