@@ -19,6 +19,8 @@ import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
+import DatePicker from '@react-native-community/datetimepicker';
+import {format} from 'date-fns';
 
 const PatientData = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -26,9 +28,19 @@ const PatientData = ({navigation}) => {
   const {dataResults} = useContext(DataResultsContext);
   const {userLog} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
-  
+
   // date
   const currentDate = new Date();
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(currentDate);
+
+  const handleDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || state.ageGroup;
+    setShowDatePicker(false);
+    setSelectedDate(currentDate);
+    const formattedDate = format(currentDate, 'dd-MM-yyyy');
+    setState({...state, ageGroup: formattedDate});
+  };
 
   const [state, setState] = React.useState({
     firstName: '',
@@ -54,6 +66,25 @@ const PatientData = ({navigation}) => {
         return;
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
+
+      if (
+        state.firstName === '' ||
+        state.lastName === '' ||
+        state.phoneNumber === ''
+      ) {
+        Alert.alert('Error', 'Please fill in all required fields');
+        return;
+      }
+
+      // Remove any non-digit characters from the phone number
+      const phoneNumber = state.phoneNumber.replace(/\D/g, '');
+
+      // Check if the resulting phone number has exactly 10 digits
+      if (phoneNumber.length !== 10) {
+        Alert.alert('Error', 'Phone number must be 10 digits');
+        return;
+      }
+
       const response = await fetch(
         `https://mobi-be-production.up.railway.app/${userLog}/patients`,
         {
@@ -87,7 +118,7 @@ const PatientData = ({navigation}) => {
         setPatientId(patientId);
         console.log('Patient ID:', patientId);
         Alert.alert('Data posted successfully');
-        navigation.navigate('SelectActivity',{ patientId: patientId });
+        navigation.navigate('SelectActivity', {patientId: patientId});
       } else {
         console.error('Error posting data:', response.status);
         Alert.alert('Error', 'Failed to submit data. Please try again later.');
@@ -106,13 +137,12 @@ const PatientData = ({navigation}) => {
         <TouchableOpacity
           style={{
             marginHorizontal: 4,
-            width: 35,
-            height: 35,
+            // width: 45,
+            height: 45,
             justifyContent: 'center',
             alignItems: 'center',
-          }}
-          onPress={() => navigation.goBack()}>
-          <Icon name="arrow-left" size={25} color={COLORS.BLACK} />
+          }}>
+          {/* <Icon name="arrow-left" size={25} color={COLORS.BLACK} /> */}
         </TouchableOpacity>
       }
       title={
@@ -129,7 +159,7 @@ const PatientData = ({navigation}) => {
       {_header()}
       <ScrollView style={STYLES.body}>
         {/* Simprints GUI */}
-        <View style={STYLES.labeled}>
+        <View style={STYLES.guid}>
           <Text style={STYLES.label}>Simprints GUI</Text>
           <TextInput
             style={STYLES.guid}
@@ -156,6 +186,7 @@ const PatientData = ({navigation}) => {
             style={STYLES.field}
             value={state.lastName}
             onChangeText={text => setState({...state, lastName: text})}
+            placeholder="Enter last name"
           />
         </View>
 
@@ -166,26 +197,29 @@ const PatientData = ({navigation}) => {
             style={STYLES.field}
             value={state.phoneNumber}
             onChangeText={text => setState({...state, phoneNumber: text})}
+            keyboardType="numeric"
+            placeholder='eg:"0772700900'
           />
         </View>
 
-        <View style={STYLES.wrap}>
-          {/* Sex */}
-          <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
-            <Picker
-              placeholder="Sex"
-              placeholderTextColor={COLORS.BLACK}
-              selectedValue={state.sex}
-              onValueChange={(value, index) => setState({...state, sex: value})}
-              style={STYLES.pickerItemStyle}>
-              <Picker.Item label="Sex" value="Gender" />
-              <Picker.Item label="Female" value="Female" />
-              <Picker.Item label="Male" value="Male" />
-              <Picker.Item label="Other" value="Other" />
-            </Picker>
-          </View>
-          {/* Age Group */}
-          <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
+        {/* Sex */}
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Sex:</Text>
+
+          <Picker
+            placeholder="Sex"
+            placeholderTextColor={COLORS.BLACK}
+            selectedValue={state.sex}
+            onValueChange={(value, index) => setState({...state, sex: value})}
+            style={STYLES.field}>
+            <Picker.Item label="" value="" />
+            <Picker.Item label="Female" value="Female" />
+            <Picker.Item label="Male" value="Male" />
+            <Picker.Item label="Other" value="Other" />
+          </Picker>
+        </View>
+        {/* Age Group */}
+        {/* <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
             <Picker
               placeholder="Age"
               placeholderTextColor={COLORS.BLACK}
@@ -202,7 +236,27 @@ const PatientData = ({navigation}) => {
               <Picker.Item label="40 - 60" value="40 - 60" />
               <Picker.Item label="60 above" value="60 above" />
             </Picker>
-          </View>
+          </View> */}
+
+        {/* Date for diagnosis */}
+
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Date Of Birth:</Text>
+          <TouchableOpacity
+            style={STYLES.datePickerInput}
+            onPress={() => setShowDatePicker(true)}>
+            <Text style={STYLES.datePickerText}>
+              {format(selectedDate, 'dd/MM/yyyy')}
+            </Text>
+          </TouchableOpacity>
+          {showDatePicker && (
+            <DatePicker
+              value={selectedDate}
+              mode="date"
+              display="default"
+              onChange={handleDateChange}
+            />
+          )}
         </View>
 
         <View style={STYLES.wrap}>
@@ -310,6 +364,7 @@ const STYLES = StyleSheet.create({
   body: {
     flex: 2,
     paddingHorizontal: 20,
+    paddingVertical: 20,
   },
   alert: {
     color: COLORS.GREY,
@@ -331,8 +386,9 @@ const STYLES = StyleSheet.create({
   title: {
     fontWeight: 'bold',
     color: COLORS.BLACK,
-    alignItems: 'center',
+    textAlign: 'center',
     flexGrow: 1,
+    fontSize: 16,
   },
   leftHeader: {
     marginLeft: 10,
@@ -418,7 +474,8 @@ const STYLES = StyleSheet.create({
     textAlign: 'left',
     color: COLORS.BLACK,
     fontSize: 11,
-    fontWeight: 'bold ',
+    fontWeight: 'bold',
+    display: 'none',
   },
   submit: {
     backgroundColor: COLORS.BLACK,
@@ -504,5 +561,11 @@ const STYLES = StyleSheet.create({
     borderRadius: 10,
     height: 50,
     marginHorizontal: 5,
+  },
+  datePickerText: {
+    paddingVertical: 10,
+    paddingLeft: 12,
+    fontSize: 15,
+    color: COLORS.BLACK,
   },
 });
