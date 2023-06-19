@@ -1,4 +1,5 @@
 import React, {useContext, useState, useEffect} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {
   View,
   Alert,
@@ -27,7 +28,7 @@ import CustomHeader from '../ui/custom-header';
 const GetPatients = () => {
   const navigation = useNavigation();
   const {benData} = useContext(DataResultsContext);
-  const [guid, setGuid] = useState(benData.length > 0 ? benData[0].guid : '');
+  const [guid, setGuid] = useState(benData.length > 0 ? benData[0].guid : []);
   const [userData, setUserData] = useState(null);
   const [showConfirmButton, setShowConfirmButton] = useState(false);
   const [vaccinations, setVaccinations] = useState(null);
@@ -39,7 +40,7 @@ const GetPatients = () => {
       const response = await fetch(
         `https://mobi-be-production.up.railway.app/patients/${guid}`,
       );
-      console.log('Response:', response);
+      // console.log('Response:', response);
       if (response.ok) {
         const data = await response.json();
         setUserData(data);
@@ -47,14 +48,11 @@ const GetPatients = () => {
         setDiagnosis(data.diagnosis); // Set the vaccination data
 
         setShowConfirmButton(true); // Show the "Confirm Data" button
-      }
-      if (response.status === 404) {
-        // Handle 404 Not Found error
-        console.error('User data not found');
-        console.log(response.status);
       } else {
-        // Handle other errors
-        console.error('Error fetching user data:', response.status);
+        Alert.alert(
+          'Error',
+          'Beneficiary not found. Please check the GUID and try again.',
+        );
       }
     } catch (error) {
       Alert.alert('Error', 'Beneficiary not found. Please check the GUID ');
@@ -69,92 +67,101 @@ const GetPatients = () => {
 
   return (
     <View style={styles.container}>
-    <ScrollView style={styles.body}>
-      {!userData && !guid && (
-        <React.Fragment>
-          <Text style={styles.label}>Simprints GUID</Text>
-          <TextInput
-            style={styles.input}
-            value={guid}
-            onChangeText={setGuid}
+      <CustomHeader
+        left={
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}>
+            <Icon name="arrow-left" size={25} color={COLORS.BLACK} />
+          </TouchableOpacity>
+        }
+        title={<Text style={styles.headerTitle}>Back</Text>}
+      />
+
+      <ScrollView style={styles.body}>
+        <View style={styles.logo}>
+          <Image
+            style={styles.logoImage}
+            source={require('../imgs/logo.png')}
           />
-        </React.Fragment>
-      )}
+          <Text style={styles.logoTitle}>Mobiklinic</Text>
+        </View>
 
-      {userData && (
-        <View style={styles.userData}>
-          <Text style={styles.userDataLabel}>
-            Full Name: {' \t'}
-            <Text style={styles.userDataValue}>
-              {userData.firstName}
-              {' \t'}
-              {userData.lastName}
-            </Text>
-          </Text>
+        {!userData && !guid && (
+          <React.Fragment>
+            <Text style={styles.label}>Simprints GUID</Text>
+            <TextInput
+              style={styles.input}
+              value={guid}
+              onChangeText={setGuid}
+            />
+          </React.Fragment>
+        )}
 
-          <Text style={styles.userDataLabel}>
-            Phone Number:{'\t '}
-            <Text style={styles.userDataValue}>
-              {userData.phoneNumber}
+        {userData && (
+          <View style={styles.userData}>
+            <Text style={styles.userDataLabel}>
+              Full Name: {' \t'}
+              <Text style={styles.userDataValue}>
+                {userData.firstName}
+                {' \t'}
+                {userData.lastName}
+              </Text>
             </Text>
-          </Text>
-          {userData.vaccinations &&
-            userData.vaccinations.length > 0 && (
+
+            <Text style={styles.userDataLabel}>
+              Phone Number:{'\t '}
+              <Text style={styles.userDataValue}>{userData.phoneNumber}</Text>
+            </Text>
+            {userData.vaccinations && userData.vaccinations.length > 0 && (
               <View style={styles.vaccinationsContainer}>
-                <Text style={styles.userDataLabel}>
-                  Vaccinations:
-                </Text>
-                {userData.vaccinations.map(
-                  (vaccination, index) => (
-                    <View key={index}>
-                      <Text style={styles.userDataLabel}>
-                        Date of Vaccination:{' '}
-                        <Text style={styles.userDataValue}>
-                          {vaccination.dateOfVaccination}
-                        </Text>
+                <Text style={styles.userDataLabel}>Vaccinations:</Text>
+                {userData.vaccinations.map((vaccination, index) => (
+                  <View key={index}>
+                    <Text style={styles.userDataLabel}>
+                      Date of Vaccination:{' '}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.dateOfVaccination}
                       </Text>
-                      <Text style={styles.userDataLabel}>
-                        Date for Next Dose:{' '}
-                        <Text style={styles.userDataValue}>
-                          {vaccination.dateForNextDose}
-                        </Text>
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      Date for Next Dose:{' '}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.dateForNextDose}
                       </Text>
-                      <Text style={styles.userDataLabel}>
-                        Vaccine Name:{' \t'}
-                        <Text style={styles.userDataValue}>
-                          {vaccination.vaccineName}
-                        </Text>
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      Vaccine Name:{' \t'}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.vaccineName}
                       </Text>
-                      <Text style={styles.userDataLabel}>
-                        Units:{' '}
-                        <Text style={styles.userDataValue}>
-                          {vaccination.units}
-                        </Text>
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      Units:{' '}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.units}
                       </Text>
-                      <Text style={styles.userDataLabel}>
-                        Site Administered:{' '}
-                        <Text style={styles.userDataValue}>
-                          {vaccination.siteAdministered}
-                        </Text>
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      Site Administered:{' '}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.siteAdministered}
                       </Text>
-                      <Text style={styles.userDataLabel}>
-                        Facility:{' '}
-                        <Text style={styles.userDataValue}>
-                          {vaccination.facility}
-                        </Text>
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      Facility:{' '}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.facility}
                       </Text>
-                    </View>
-                  ),
-                )}
+                    </Text>
+                  </View>
+                ))}
               </View>
             )}
 
-          {userData.diagnoses &&
-            userData.diagnoses.length > 0 && (
+            {userData.diagnoses && userData.diagnoses.length > 0 && (
               <View style={styles.vaccinationsContainer}>
-                <Text style={styles.userDataLabel}>
-                  Diagnosis:
-                </Text>
+                <Text style={styles.userDataLabel}>Diagnosis:</Text>
                 {userData.diagnoses.map((diagnosis, index) => (
                   <View key={index}>
                     <Text style={styles.userDataLabel}>
@@ -175,40 +182,22 @@ const GetPatients = () => {
                         {diagnosis.impression}
                       </Text>
                     </Text>
-                    <Text style={styles.userDataLabel}>
-                      Dose:
-                      <Text style={styles.userDataValue}>
-                        {diagnosis.dose}
-                      </Text>
-                    </Text>
                   </View>
                 ))}
               </View>
             )}
-        </View>
-      )}
-      {!userData && (
-        <View style={styles.userData}>
-          <Text style={styles.userDataValue}>
-            No data available for this beneficiary
-          </Text>
-          {/* <TouchableOpacity
-            style={styles.button}
-            onPress={openFunction}>
-            <Text style={styles.buttonText}>Register Here</Text>
-          </TouchableOpacity> */}
-        </View>
-      )}
+          </View>
+        )}
 
-      {userData && (
-        <TouchableOpacity
-          style={styles.buttonSec}
-          onPress={() => navigation.navigate('SelectActivity')}>
-          <Text style={styles.buttonStyle}>Confirm Data</Text>
-        </TouchableOpacity>
-      )}
-    </ScrollView>
-  </View>
+        {userData && (
+          <TouchableOpacity
+            style={styles.buttonSec}
+            onPress={() => navigation.navigate('SelectActivity')}>
+            <Text style={styles.buttonStyle}>Confirm Data</Text>
+          </TouchableOpacity>
+        )}
+      </ScrollView>
+    </View>
   );
 };
 
@@ -278,15 +267,15 @@ const styles = StyleSheet.create({
   buttonSec: {
     backgroundColor: COLORS.WHITE,
     paddingVertical: 12,
-    // paddingHorizontal: 8,
+    paddingHorizontal: 20,
     borderRadius: 10,
-    marginBottom: 6,
+    marginBottom: 20,
     borderWidth: 2,
     borderColor: COLORS.PRIMARY,
   },
   buttonStyle: {
     color: COLORS.PRIMARY,
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -301,7 +290,7 @@ const styles = StyleSheet.create({
   },
   userDataLabel: {
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 16,
     marginBottom: 5,
     color: COLORS.BLACK,
   },

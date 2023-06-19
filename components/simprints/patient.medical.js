@@ -19,8 +19,6 @@ import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
-import DatePicker from '@react-native-community/datetimepicker';
-import {format} from 'date-fns';
 
 const PatientMedical = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -28,32 +26,6 @@ const PatientMedical = ({navigation}) => {
   const {dataResults} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
   const currentDate = new Date();
-  const [selectedDate, setSelectedDate] = useState(currentDate);
-
-  const [showDatePicker, setShowDatePicker] = useState(false);
-
-  // const handleDateChange = (event, selectedDate) => {
-  //   const currentDate = selectedDate || state.dateOfDiagnosis;
-  //   setShowDatePicker(false);
-  //   setSelectedDate(currentDate);
-  //   setState({...state, dateOfDiagnosis: currentDate.toISOString()});
-  // };
-
-  const handleDateChangeDiagnosis = (event, selectedDate) => {
-    const currentDate = selectedDate || state.dateOfDiagnosis;
-    setShowDatePicker(false);
-    setSelectedDate(currentDate);
-    const formattedDate = format(currentDate, 'yyyy-MM-dd');
-    setState({...state, dateOfDiagnosis: formattedDate});
-  };
-
-  const handleDateChangeFollow = (event, selectedDate) => {
-    const currentDate = selectedDate || state.dateOfDiagnosis;
-    setShowDatePicker(false);
-    setSelectedDate(currentDate);
-    const formattedDate = format(currentDate, 'yyyy-MM-dd');
-    setState({...state, dateOfDiagnosis: formattedDate});
-  };
 
   const [state, setState] = React.useState({
     condition: '',
@@ -79,11 +51,15 @@ const PatientMedical = ({navigation}) => {
       if (
         state.condition === '' ||
         state.dateOfDiagnosis === '' ||
-        state.impression === ''
+        state.impression === '' 
+       
       ) {
         Alert.alert('Error', 'Please fill in all required fields');
         return;
       }
+
+     
+    
       const response = await fetch(
         `https://mobi-be-production.up.railway.app/${patientId}/diagnosis`,
         {
@@ -166,25 +142,14 @@ const PatientMedical = ({navigation}) => {
           />
         </View>
 
-       
-        {/* date for diagnosis */}
+        {/* Date for diagnosis */}
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Date for Diagnosis:</Text>
-          <TouchableOpacity
-            style={STYLES.datePickerInput}
-            onPress={() => setShowDatePicker(true)}>
-            <Text style={STYLES.datePickerText}>
-              {format(selectedDate, 'dd/MM/yyyy')}
-            </Text>
-          </TouchableOpacity>
-          {showDatePicker && (
-            <DatePicker
-              value={selectedDate}
-              mode="date"
-              display="default"
-              onChange={handleDateChangeDiagnosis}
-            />
-          )}
+          <TextInput
+            style={STYLES.field}
+            value={state.dateOfDiagnosis}
+            onChangeText={text => setState({...state, dateOfDiagnosis: text})}
+          />
         </View>
 
         <View style={STYLES.wrap}>
@@ -249,7 +214,7 @@ const PatientMedical = ({navigation}) => {
             style={STYLES.field}
             value={state.drugsPrescribed}
             onChangeText={text => setState({...state, drugsPrescribed: text})}
-            placeholder='e.g "Left Arm"'
+            placeholder='e.g "Paracetamol"'
           />
         </View>
 
@@ -487,30 +452,5 @@ const STYLES = StyleSheet.create({
     borderRadius: 10,
     height: 50,
     marginHorizontal: 5,
-  },
-  datePicker: {
-    flex: 1,
-    justifyContent: 'center',
-    // paddingVertical: 10,
-    paddingHorizontal: 15,
-    // borderWidth: 1,
-    // borderColor: COLORS.GREY,
-    // borderRadius: 10,
-    // backgroundColor: COLORS.GREY_LIGHTER,
-  },
-  datePickerInput: {
-    borderWidth: 0, // Remove the border from the date picker input
-  },
-  datePickerText: {
-    color: COLORS.BLACK,
-    fontSize: 15,
-    fontWeight: 'medium',
-    paddingVertical: 12,
-    paddingLeft: 10,
-  },
-  datePickerPlaceholder: {
-    color: COLORS.BLACK,
-    fontSize: 15,
-    fontWeight: 'medium',
   },
 });

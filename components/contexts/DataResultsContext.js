@@ -21,8 +21,6 @@ export const DataResultsProvider = ({ children }) => {
     setUserLog(newUserLog);
   };
 
- 
-
   return (
     <DataResultsContext.Provider 
       value={{
