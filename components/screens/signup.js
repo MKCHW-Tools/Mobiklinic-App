@@ -75,8 +75,7 @@ const SignUp = ({navigation}) => {
         <Text style={styles.title}>Sign up to become A Mobiklinic CHP.</Text>
       </View>
       <ScrollView style={styles.body}>
-      <View style={styles.formContainer}>
-       
+        <View style={styles.formContainer}>
           <View>
             <Text style={styles.errorMsg}>{msg}</Text>
           </View>
@@ -209,7 +208,7 @@ const SignUp = ({navigation}) => {
               Already have an account? Sign in
             </Text>
           </TouchableOpacity>
-      </View>
+        </View>
       </ScrollView>
     </View>
   );
@@ -222,8 +221,8 @@ const styles = StyleSheet.create({
   },
   body: {
     // flex: 1,
-    paddingVertical: 20,
-	paddingHorizontal: 12,
+    paddingTop: 20,
+    // paddingHorizontal: 12,
   },
   logoContainer: {
     flexGrow: 2,
@@ -249,6 +248,7 @@ const styles = StyleSheet.create({
   linkItem: {
     paddingTop: DIMENS.PADDING,
     textAlign: 'center',
+    textDecorationLine: 'underline',
   },
   formContainer: {
     flexGrow: 1,
@@ -260,12 +260,14 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: COLORS.WHITE_LOW,
-    borderColor: COLORS.WHITE_LOW,
-    borderRadius: 50,
-    paddingHorizontal: 15,
-    paddingVertical: 5,
+    // borderColor: COLORS.WHITE_LOW,
+    borderRadius: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
     marginBottom: 10,
     fontFamily: 'Roboto',
+    fontSize: 14,
+    color: COLORS.BLACK,
   },
   btn: {
     padding: DIMENS.PADDING,
@@ -282,8 +284,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderRadius: 50,
+    borderRadius: 10,
     paddingHorizontal: 15,
+    marginVertical: 10,
   },
   btnInfo: {
     backgroundColor: COLORS.WHITE_LOW,
@@ -298,9 +301,16 @@ const styles = StyleSheet.create({
   muteText: {
     color: COLORS.BLACK,
     fontWeight: 'bold',
+    paddingHorizontal: 15,
+    fontSize: 16,
+    fontFamily: 'Roboto',
   },
   whiteText: {
     color: COLORS.BLACK,
+    fontWeight: 'bold',
+    paddingHorizontal: 15,
+    fontSize: 16,
+    fontFamily: 'Roboto',
   },
 });
 
