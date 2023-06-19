@@ -23,7 +23,7 @@ const Dashboard = ({navigation}) => {
   return (
     <View style={STYLES.wrapper}>
       <CustomStatusBar />
-      
+
       <View style={STYLES.hero}>
         <Text style={STYLES.heroHeading}>Hey CHP,</Text>
         <Text style={STYLES.heroParagraph}>Welcome back!</Text>
@@ -48,21 +48,22 @@ const Dashboard = ({navigation}) => {
               <Text style={STYLES.cardTitle}>Beneficiary</Text>
             </TouchableOpacity>
           </View>
+
           <View style={STYLES.row}>
-            <TouchableOpacity
-              style={STYLES.card}
-              onPress={() => navigation.navigate('PatientData')}>
-              <View style={STYLES.cardIcon}>
-                <Icon
-                  name="message-circle"
-                  size={40}
-                  strokeSize={3}
-                  color={COLORS.BLACK}
-                />
-              </View>
-              <Text style={STYLES.cardTitle}>Messages</Text>
-            </TouchableOpacity>
-          </View>
+						<TouchableOpacity
+							style={STYLES.card}
+							onPress={() => navigation.navigate("Ambulance")}>
+							<View style={STYLES.cardIcon}>
+								<MIcon
+									name="ambulance"
+									size={40}
+									strokeSize={3}
+									color={COLORS.BLACK}
+								/>
+							</View>
+							<Text style={STYLES.cardTitle}>Ambulances</Text>
+						</TouchableOpacity>
+					</View>
           <View style={STYLES.row}>
             <TouchableOpacity
               style={STYLES.card}
