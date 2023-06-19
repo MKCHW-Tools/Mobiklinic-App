@@ -19,6 +19,8 @@ import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
+import DatePicker from '@react-native-community/datetimepicker';
+import {format} from 'date-fns';
 
 const PatientMedical = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -26,6 +28,24 @@ const PatientMedical = ({navigation}) => {
   const {dataResults} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
   const currentDate = new Date();
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(currentDate);
+  const [followUp, setFollowUp] = useState(currentDate);
+
+  const handleDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || state.dateOfDiagnosis;
+    setShowDatePicker(false);
+    setSelectedDate(currentDate);
+    const formattedDate = format(currentDate, 'dd-MM-yyyy');
+    setState({...state, dateOfDiagnosis: formattedDate});
+  };
+  const handleDateChangeFollow = (event, followUp) => {
+    const currentDate = followUp || state.followUpDate;
+    setShowDatePicker(false);
+    setFollowUp(currentDate);
+    const formattedDate = format(currentDate, 'dd-MM-yyyy');
+    setState({...state, followUpDate: formattedDate});
+  };
 
   const [state, setState] = React.useState({
     condition: '',
@@ -51,15 +71,12 @@ const PatientMedical = ({navigation}) => {
       if (
         state.condition === '' ||
         state.dateOfDiagnosis === '' ||
-        state.impression === '' 
-       
+        state.impression === ''
       ) {
         Alert.alert('Error', 'Please fill in all required fields');
         return;
       }
 
-     
-    
       const response = await fetch(
         `https://mobi-be-production.up.railway.app/${patientId}/diagnosis`,
         {
@@ -143,13 +160,24 @@ const PatientMedical = ({navigation}) => {
         </View>
 
         {/* Date for diagnosis */}
+
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Date for Diagnosis:</Text>
-          <TextInput
-            style={STYLES.field}
-            value={state.dateOfDiagnosis}
-            onChangeText={text => setState({...state, dateOfDiagnosis: text})}
-          />
+          <TouchableOpacity
+            style={STYLES.datePickerInput}
+            onPress={() => setShowDatePicker(true)}>
+            <Text style={STYLES.datePickerText}>
+              {format(selectedDate, 'dd/MM/yyyy')}
+            </Text>
+          </TouchableOpacity>
+          {showDatePicker && (
+            <DatePicker
+              value={selectedDate}
+              mode="date"
+              display="default"
+              onChange={handleDateChange}
+            />
+          )}
         </View>
 
         <View style={STYLES.wrap}>
@@ -221,11 +249,21 @@ const PatientMedical = ({navigation}) => {
         {/* follow up date */}
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Follow Up Date:</Text>
-          <TextInput
-            style={STYLES.field}
-            value={state.followUpDate}
-            onChangeText={text => setState({...state, followUpDate: text})}
-          />
+          <TouchableOpacity
+            style={STYLES.datePickerInput}
+            onPress={() => setShowDatePicker(true)}>
+            <Text style={STYLES.datePickerText}>
+              {format(followUp, 'dd/MM/yyyy')}
+            </Text>
+          </TouchableOpacity>
+          {showDatePicker && (
+            <DatePicker
+              value={followUp}
+              mode="date"
+              display="default"
+              onChange={handleDateChangeFollow}
+            />
+          )}
         </View>
 
         <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
@@ -452,5 +490,11 @@ const STYLES = StyleSheet.create({
     borderRadius: 10,
     height: 50,
     marginHorizontal: 5,
+  },
+  datePickerText: {
+    paddingVertical: 10,
+    paddingLeft: 12,
+    fontSize: 15,
+    color: COLORS.BLACK,
   },
 });
