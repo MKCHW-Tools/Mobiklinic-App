@@ -19,6 +19,7 @@ import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
+import DatePicker from '@react-native-community/datetimepicker';
 
 const PatientMedical = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -26,6 +27,16 @@ const PatientMedical = ({navigation}) => {
   const {dataResults} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
   const currentDate = new Date();
+  const [selectedDate, setSelectedDate] = useState(currentDate);
+
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const handleDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || state.dateOfDiagnosis;
+    setShowDatePicker(false);
+    setSelectedDate(currentDate);
+    setState({...state, dateOfDiagnosis: currentDate.toISOString()});
+  };
 
   const [state, setState] = React.useState({
     condition: '',
@@ -51,8 +62,7 @@ const PatientMedical = ({navigation}) => {
       if (
         state.condition === '' ||
         state.dateOfDiagnosis === '' ||
-        state.impression === '' 
-       
+        state.impression === ''
       ) {
         Alert.alert('Error', 'Please fill in all required fields');
         return;
@@ -139,14 +149,24 @@ const PatientMedical = ({navigation}) => {
           />
         </View>
 
-        {/* Date for diagnosis */}
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Date for Diagnosis:</Text>
-          <TextInput
-            style={STYLES.field}
-            value={state.dateOfDiagnosis}
-            onChangeText={text => setState({...state, dateOfDiagnosis: text})}
-          />
+          <TouchableOpacity
+            style={STYLES.datePickerInput}
+            onPress={() => setShowDatePicker(true)}>
+            <Text style={STYLES.datePickerText}>
+              {selectedDate.toDateString()}
+            </Text>
+          </TouchableOpacity>
+          {showDatePicker && (
+            <DatePicker
+              value={selectedDate}
+              mode="date"
+              display="default"
+              
+              onChange={handleDateChange}
+            />
+          )}
         </View>
 
         <View style={STYLES.wrap}>
@@ -449,5 +469,30 @@ const STYLES = StyleSheet.create({
     borderRadius: 10,
     height: 50,
     marginHorizontal: 5,
+  },
+  datePicker: {
+    flex: 1,
+    justifyContent: 'center',
+    // paddingVertical: 10,
+    paddingHorizontal: 15,
+    // borderWidth: 1,
+    // borderColor: COLORS.GREY,
+    // borderRadius: 10,
+    // backgroundColor: COLORS.GREY_LIGHTER,
+  },
+  datePickerInput: {
+    borderWidth: 0, // Remove the border from the date picker input
+  },
+  datePickerText: {
+    color: COLORS.BLACK,
+    fontSize: 15,
+    fontWeight: 'medium',
+    paddingVertical: 12,
+    paddingLeft: 10,
+  },
+  datePickerPlaceholder: {
+    color: COLORS.BLACK,
+    fontSize: 15,
+    fontWeight: 'medium',
   },
 });
