@@ -30,8 +30,8 @@ const PatientMedical = ({navigation}) => {
   const currentDate = new Date();
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const [dateOfDiagnosis, setDateOfDiagnosis] = useState(null); // Add state for date of vaccination
-  const [followUpDate, setFollowUpDate] = useState(null); // Add state for date for next dose
+  const [dateOfDiagnosis, setDateOfDiagnosis] = useState(''); // Add state for date of vaccination
+  const [followUpDate, setFollowUpDate] = useState(''); // Add state for date for next dose
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || dateOfDiagnosis;
@@ -40,9 +40,11 @@ const PatientMedical = ({navigation}) => {
     // Update the respective state based on the selected date
     if (showDatePicker === 'diagnoses') {
       setDateOfDiagnosis(currentDate);
+      setState({...state, dateOfDiagnosis: currentDate}); // Update state
       console.log('Date for Diagnosis:', currentDate);
     } else if (showDatePicker === 'followUp') {
       setFollowUpDate(currentDate);
+      setState({...state, followUpDate: currentDate}); // Update state
       console.log('Date for Next Dose:', currentDate);
     }
   };
@@ -83,7 +85,7 @@ const PatientMedical = ({navigation}) => {
       setState({...state, isLoading: true}); // Set isLoading state to true
       if (
         state.condition === '' ||
-        dateOfDiagnosis === null || // Add check for dateOfVaccination
+        dateOfDiagnosis === '' || // Add check for dateOfVaccination
         state.impression === ''
       ) {
         Alert.alert('Error', 'Please fill in all required fields');
@@ -175,7 +177,7 @@ const PatientMedical = ({navigation}) => {
         {/* Date for diagnosis */}
 
         <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Date Of Diagnosis:</Text>
+          <Text style={STYLES.label}>Date for Diagnosis:</Text>
           <TouchableOpacity
             style={STYLES.datePickerInput}
             onPress={() => setShowDatePicker('diagnoses')}>
@@ -185,12 +187,47 @@ const PatientMedical = ({navigation}) => {
           </TouchableOpacity>
           {showDatePicker === 'diagnoses' && (
             <DateTimePicker
-              value={state.dateOfDiagnosis || new Date()} // Use null or fallback to current date
+              value={dateOfDiagnosis || new Date()} // Use null or fallback to current date
               mode="date"
               display="spinner"
               onChange={handleDateChange}
             />
           )}
+        </View>
+
+        {/* Condition */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Condition:</Text>
+          <TextInput
+            style={STYLES.field}
+            value={state.condition}
+            onChangeText={text => setState({...state, condition: text})}
+            placeholder='e.g "Malaria"'
+            multiline={true}
+            numberOfLines={4}
+          />
+        </View>
+
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>
+            Is pregnant? {state.isPregnant == false ? 'No' : 'Yes'}
+          </Text>
+          <Switch
+            style={STYLES.switch}
+            onValueChange={text => setState({...state, isPregnant: text})}
+            value={state.isPregnant}
+          />
+        </View>
+
+        {/* Drugs Adminstered */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Drugs Adminstered:</Text>
+          <TextInput
+            style={STYLES.field}
+            value={state.drugsPrescribed}
+            onChangeText={text => setState({...state, drugsPrescribed: text})}
+            placeholder='e.g "Paracetamol"'
+          />
         </View>
 
         <View style={STYLES.wrap}>
@@ -225,42 +262,7 @@ const PatientMedical = ({navigation}) => {
         </View>
 
         <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>
-            Is pregnant? {state.isPregnant == false ? 'No' : 'Yes'}
-          </Text>
-          <Switch
-            style={STYLES.switch}
-            onValueChange={text => setState({...state, isPregnant: text})}
-            value={state.isPregnant}
-          />
-        </View>
-
-        {/* Condition */}
-        <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Condition:</Text>
-          <TextInput
-            style={STYLES.field}
-            value={state.condition}
-            onChangeText={text => setState({...state, condition: text})}
-            placeholder='e.g "Malaria"'
-            multiline={true}
-            numberOfLines={4}
-          />
-        </View>
-
-        {/* Drugs Adminstered */}
-        <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Drugs Adminstered:</Text>
-          <TextInput
-            style={STYLES.field}
-            value={state.drugsPrescribed}
-            onChangeText={text => setState({...state, drugsPrescribed: text})}
-            placeholder='e.g "Paracetamol"'
-          />
-        </View>
-
-        <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Follow Up:</Text>
+          <Text style={STYLES.label}>Follow Up date:</Text>
           <TouchableOpacity
             style={STYLES.datePickerInput}
             onPress={() => setShowDatePicker('followUp')}>
@@ -270,7 +272,7 @@ const PatientMedical = ({navigation}) => {
           </TouchableOpacity>
           {showDatePicker === 'followUp' && (
             <DateTimePicker
-              value={state.followUpDate || new Date()} // Use null or fallback to current date
+              value={followUpDate || new Date()} // Use null or fallback to current date
               mode="date"
               display="spinner"
               onChange={handleDateChange}

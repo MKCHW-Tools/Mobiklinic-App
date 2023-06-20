@@ -33,7 +33,7 @@ const PatientData = ({navigation}) => {
   const currentDate = new Date();
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(currentDate);
-  const [ageGroup, setAgeGroup] = useState(null); // Add state for date of vaccination
+  const [ageGroup, setAgeGroup] = useState(''); // Add state for date of vaccination
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || ageGroup;
@@ -42,6 +42,7 @@ const PatientData = ({navigation}) => {
     // Update the respective state based on the selected date
     if (showDatePicker === 'patient') {
       setAgeGroup(currentDate);
+      setState({...state, ageGroup: currentDate});
       console.log('Date of birth:', currentDate);
     }
   };
@@ -87,7 +88,7 @@ const PatientData = ({navigation}) => {
       if (
         state.firstName === '' ||
         state.lastName === '' ||
-        ageGroup === null ||
+        ageGroup === '' ||
         state.phoneNumber === ''
       ) {
         Alert.alert('Error', 'Please fill in all required fields');
@@ -111,7 +112,7 @@ const PatientData = ({navigation}) => {
             firstName: state.firstName,
             lastName: state.lastName,
             sex: state.sex,
-            ageGroup: state.ageGroup,
+            ageGroup: ageGroup,
             phoneNumber: state.phoneNumber,
             weight: state.weight,
             height: state.height,
@@ -262,7 +263,7 @@ const PatientData = ({navigation}) => {
         {/* Date for birth */}
 
         <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Date Of Birth:</Text>
+          <Text style={STYLES.label}>Date of Birth:</Text>
           <TouchableOpacity
             style={STYLES.datePickerInput}
             onPress={() => setShowDatePicker('patient')}>
@@ -270,7 +271,7 @@ const PatientData = ({navigation}) => {
           </TouchableOpacity>
           {showDatePicker === 'patient' && (
             <DateTimePicker
-              value={state.ageGroup || new Date()} // Use null or fallback to current date
+              value={ageGroup || new Date()} // Use null or fallback to current date
               mode="date"
               display="spinner"
               onChange={handleDateChange}
@@ -339,6 +340,7 @@ const PatientData = ({navigation}) => {
             <Picker.Item label="Jinja" value="Jinja" />
             <Picker.Item label="Masaka" value="Masaka" />
             <Picker.Item label="Mbarara" value="Mbarara" />
+            <Picker.Item label="Other" value="Other" />
           </Picker>
         </View>
 
@@ -359,6 +361,7 @@ const PatientData = ({navigation}) => {
             <Picker.Item label="Runyakore" value="Runyakore" />
             <Picker.Item label="Rutoro" value="Rutoro" />
             <Picker.Item label="English" value="English" />
+            <Picker.Item label="Other" value="Other" />
           </Picker>
         </View>
 
