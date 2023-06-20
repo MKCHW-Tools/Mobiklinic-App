@@ -28,23 +28,26 @@ const PatientData = ({navigation, route}) => {
   const {patientId, setPatientId} = useContext(DataResultsContext);
   const currentDate = new Date();
 
-  const [dateOfVaccination, setDateOfVaccination] = useState(null); // Add state for date of vaccination
-  const [dateForNextDose, setDateForNextDose] = useState(null); // Add state for date for next dose
-  const [showDatePicker, setShowDatePicker] = useState(false); // Add state to toggle date picker visibility
+  const [dateOfVaccination, setDateOfVaccination] = useState(''); 
+  const [dateForNextDose, setDateForNextDose] = useState(''); 
+  const [showDatePicker, setShowDatePicker] = useState(false); 
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || dateOfVaccination;
     setShowDatePicker(false);
-
+  
     // Update the respective state based on the selected date
     if (showDatePicker === 'vaccination') {
       setDateOfVaccination(currentDate);
+      setState({...state, dateOfVaccination: currentDate}); // Update state
       console.log('Date for Vaccination:', currentDate);
     } else if (showDatePicker === 'nextDose') {
       setDateForNextDose(currentDate);
+      setState({...state, dateForNextDose: currentDate}); // Update state
       console.log('Date for Next Dose:', currentDate);
     }
   };
+  
 
   const formatDate = date => {
     if (date) {
@@ -82,7 +85,7 @@ const PatientData = ({navigation, route}) => {
         state.vaccineName === '' ||
         state.dose === '' ||
         state.units === '' ||
-        dateOfVaccination === null || // Add check for dateOfVaccination
+        dateOfVaccination === '' || // Add check for dateOfVaccination
         state.siteAdministered === ''
       ) {
         Alert.alert('Error', 'Please fill in all required fields');
@@ -202,7 +205,7 @@ const PatientData = ({navigation, route}) => {
           </TouchableOpacity>
           {showDatePicker === 'vaccination' && (
             <DateTimePicker
-              value={state.dateOfVaccination || new Date()} // Use null or fallback to current date
+              value={dateOfVaccination || new Date()} // Use null or fallback to current date
               mode="date"
               display="spinner"
               onChange={handleDateChange}
@@ -300,7 +303,7 @@ const PatientData = ({navigation, route}) => {
           </TouchableOpacity>
           {showDatePicker === 'nextDose' && (
             <DateTimePicker
-              value={state.dateForNextDose || new Date()} // Use null or fallback to current date
+              value={dateForNextDose || new Date()} // Use null or fallback to current date
               mode="date"
               display="spinner"
               onChange={handleDateChange}
