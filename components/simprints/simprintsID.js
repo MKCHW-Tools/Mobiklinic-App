@@ -486,15 +486,21 @@ const SimprintsID = ({navigation}) => {
                                           </Text>
                                         </Text>
                                         <Text style={styles.userDataLabel}>
-                                          Date of diagnosis:{' '}
+                                          Date of diagnosis:{'\t'}
                                           <Text style={styles.userDataValue}>
-                                            {diagnosis.dateOfDiagnosis}
+                                            {formatDate(
+                                              new Date(
+                                                diagnosis.dateOfDiagnosis,
+                                              ),
+                                            )}
                                           </Text>
                                         </Text>
                                         <Text style={styles.userDataLabel}>
                                           Follow Up Date:{' '}
                                           <Text style={styles.userDataValue}>
-                                            {diagnosis.followUpDate}
+                                            {formatDate(
+                                              new Date(diagnosis.followUpDate),
+                                            )}
                                           </Text>
                                         </Text>
                                         <Text style={styles.userDataLabel}>
