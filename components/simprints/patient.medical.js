@@ -19,7 +19,7 @@ import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
-import DatePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import {format} from 'date-fns';
 
 const PatientMedical = ({navigation}) => {
@@ -29,22 +29,35 @@ const PatientMedical = ({navigation}) => {
   const {patientId, setPatientId} = useContext(DataResultsContext);
   const currentDate = new Date();
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(currentDate);
-  const [followUp, setFollowUp] = useState(currentDate);
+
+  const [dateOfDiagnosis, setDateOfDiagnosis] = useState(null); // Add state for date of vaccination
+  const [followUpDate, setFollowUpDate] = useState(null); // Add state for date for next dose
 
   const handleDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || state.dateOfDiagnosis;
+    const currentDate = selectedDate || dateOfDiagnosis;
     setShowDatePicker(false);
-    setSelectedDate(currentDate);
-    const formattedDate = format(currentDate, 'dd-MM-yyyy');
-    setState({...state, dateOfDiagnosis: formattedDate});
+
+    // Update the respective state based on the selected date
+    if (showDatePicker === 'diagnoses') {
+      setDateOfDiagnosis(currentDate);
+      console.log('Date for Diagnosis:', currentDate);
+    } else if (showDatePicker === 'followUp') {
+      setFollowUpDate(currentDate);
+      console.log('Date for Next Dose:', currentDate);
+    }
   };
-  const handleDateChangeFollow = (event, followUp) => {
-    const currentDate = followUp || state.followUpDate;
-    setShowDatePicker(false);
-    setFollowUp(currentDate);
-    const formattedDate = format(currentDate, 'dd-MM-yyyy');
-    setState({...state, followUpDate: formattedDate});
+
+  const formatDate = date => {
+    if (date) {
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+
+      return `${day.toString().padStart(2, '0')}/${month
+        .toString()
+        .padStart(2, '0')}/${year}`;
+    }
+    return 'Click to add date';
   };
 
   const [state, setState] = React.useState({
@@ -70,7 +83,7 @@ const PatientMedical = ({navigation}) => {
       setState({...state, isLoading: true}); // Set isLoading state to true
       if (
         state.condition === '' ||
-        state.dateOfDiagnosis === '' ||
+        dateOfDiagnosis === null || // Add check for dateOfVaccination
         state.impression === ''
       ) {
         Alert.alert('Error', 'Please fill in all required fields');
@@ -162,19 +175,19 @@ const PatientMedical = ({navigation}) => {
         {/* Date for diagnosis */}
 
         <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Date for Diagnosis:</Text>
+          <Text style={STYLES.label}>Date Of Diagnosis:</Text>
           <TouchableOpacity
             style={STYLES.datePickerInput}
-            onPress={() => setShowDatePicker(true)}>
+            onPress={() => setShowDatePicker('diagnoses')}>
             <Text style={STYLES.datePickerText}>
-              {format(selectedDate, 'dd/MM/yyyy')}
+              {formatDate(dateOfDiagnosis)}
             </Text>
           </TouchableOpacity>
-          {showDatePicker && (
-            <DatePicker
-              value={selectedDate}
+          {showDatePicker === 'diagnoses' && (
+            <DateTimePicker
+              value={state.dateOfDiagnosis || new Date()} // Use null or fallback to current date
               mode="date"
-              display="default"
+              display="spinner"
               onChange={handleDateChange}
             />
           )}
@@ -246,22 +259,21 @@ const PatientMedical = ({navigation}) => {
           />
         </View>
 
-        {/* follow up date */}
         <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Follow Up Date:</Text>
+          <Text style={STYLES.label}>Follow Up:</Text>
           <TouchableOpacity
             style={STYLES.datePickerInput}
-            onPress={() => setShowDatePicker(true)}>
+            onPress={() => setShowDatePicker('followUp')}>
             <Text style={STYLES.datePickerText}>
-              {format(followUp, 'dd/MM/yyyy')}
+              {formatDate(followUpDate)}
             </Text>
           </TouchableOpacity>
-          {showDatePicker && (
-            <DatePicker
-              value={followUp}
+          {showDatePicker === 'followUp' && (
+            <DateTimePicker
+              value={state.followUpDate || new Date()} // Use null or fallback to current date
               mode="date"
-              display="default"
-              onChange={handleDateChangeFollow}
+              display="spinner"
+              onChange={handleDateChange}
             />
           )}
         </View>
