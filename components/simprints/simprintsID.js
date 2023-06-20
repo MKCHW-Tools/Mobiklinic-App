@@ -492,7 +492,7 @@ const SimprintsID = ({navigation}) => {
                                           </Text>
                                         </Text>
                                         <Text style={styles.userDataLabel}>
-                                          Date for Next Dose:{' '}
+                                          Follow Up Date:{' '}
                                           <Text style={styles.userDataValue}>
                                             {diagnosis.followUpDate}
                                           </Text>
