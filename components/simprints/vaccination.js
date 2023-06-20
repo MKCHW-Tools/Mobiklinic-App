@@ -21,44 +21,46 @@ import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-
 const PatientData = ({navigation, route}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
   const {diagnoses} = diagnosisContext;
   const {dataResults} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
   const currentDate = new Date();
- 
 
-  const [dateOfVaccination, setDateOfVaccination] = useState(null); // Add state for date of vaccination
-  const [dateForNextDose, setDateForNextDose] = useState(null); // Add state for date for next dose
-  const [showDatePicker, setShowDatePicker] = useState(false); // Add state to toggle date picker visibility
+  const [dateOfVaccination, setDateOfVaccination] = useState(''); 
+  const [dateForNextDose, setDateForNextDose] = useState(''); 
+  const [showDatePicker, setShowDatePicker] = useState(false); 
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || dateOfVaccination;
     setShowDatePicker(false);
-
+  
     // Update the respective state based on the selected date
     if (showDatePicker === 'vaccination') {
       setDateOfVaccination(currentDate);
+      setState({...state, dateOfVaccination: currentDate}); // Update state
       console.log('Date for Vaccination:', currentDate);
-    } else {
+    } else if (showDatePicker === 'nextDose') {
       setDateForNextDose(currentDate);
+      setState({...state, dateForNextDose: currentDate}); // Update state
       console.log('Date for Next Dose:', currentDate);
     }
   };
+  
 
-  const formatDate = (date) => {
+  const formatDate = date => {
     if (date) {
       const day = date.getDate();
       const month = date.getMonth() + 1;
       const year = date.getFullYear();
 
-      return `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
+      return `${day.toString().padStart(2, '0')}/${month
+        .toString()
+        .padStart(2, '0')}/${year}`;
     }
     return 'Click to add date';
   };
-
 
   const [state, setState] = React.useState({
     vaccineName: '',
@@ -80,11 +82,10 @@ const PatientData = ({navigation, route}) => {
         return;
       }
       if (
-      
         state.vaccineName === '' ||
         state.dose === '' ||
         state.units === '' ||
-        state.dateOfVaccination === '' ||
+        dateOfVaccination === '' || // Add check for dateOfVaccination
         state.siteAdministered === ''
       ) {
         Alert.alert('Error', 'Please fill in all required fields');
@@ -192,23 +193,25 @@ const PatientData = ({navigation, route}) => {
         </View>
 
         {/* Date for vaccination */}
-       {/* Date for vaccination */}
-       <View style={STYLES.labeled}>
-       <Text style={STYLES.label}>Date for Vaccination:</Text>
-        <TouchableOpacity 
-        style={STYLES.datePickerInput}
-        onPress={() => setShowDatePicker('vaccination')}>
-          <Text style={STYLES.datePickerText}>{formatDate(dateOfVaccination)}</Text>
-        </TouchableOpacity>
-        {showDatePicker === 'vaccination' && (
-          <DateTimePicker
-            value={state.dateOfVaccination || new Date()} // Use null or fallback to current date
-            mode="date"
-            display="default"
-            onChange={handleDateChange}
-          />
-        )}
-      </View>
+        {/* Date for vaccination */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Date for Vaccination:</Text>
+          <TouchableOpacity
+            style={STYLES.datePickerInput}
+            onPress={() => setShowDatePicker('vaccination')}>
+            <Text style={STYLES.datePickerText}>
+              {formatDate(dateOfVaccination)}
+            </Text>
+          </TouchableOpacity>
+          {showDatePicker === 'vaccination' && (
+            <DateTimePicker
+              value={dateOfVaccination || new Date()} // Use null or fallback to current date
+              mode="date"
+              display="spinner"
+              onChange={handleDateChange}
+            />
+          )}
+        </View>
 
         <View style={STYLES.wrap}>
           {/* dose */}
@@ -241,14 +244,25 @@ const PatientData = ({navigation, route}) => {
         </View>
 
         {/* Site adminstered */}
-        <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Site Adminstered:</Text>
-          <TextInput
-            style={STYLES.field}
-            value={state.siteAdministered}
-            onChangeText={text => setState({...state, siteAdministered: text})}
-            placeholder='e.g "Left Arm"'
-          />
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Site Administered:</Text>
+
+          <Picker
+            placeholderTextColor={COLORS.BLACK}
+            selectedValue={state.siteAdministered}
+            onValueChange={(value, index) =>
+              setState({...state, siteAdministered: value})
+            }
+            style={STYLES.field}>
+            <Picker.Item label="" value="" />
+            <Picker.Item label="Left Upper Arm" value="Left Upper Arm" />
+            <Picker.Item label="Right Upper Arm" value="Right Upper Arm" />
+            <Picker.Item label="Hip" value="Ventrogluteal Muscle (Hip)" />
+            <Picker.Item
+              label="Thigh"
+              value="Anterolateral Thigh (Front of the Thigh)"
+            />
+          </Picker>
         </View>
 
         {/* Facility */}
@@ -278,22 +292,24 @@ const PatientData = ({navigation, route}) => {
           />
         </View> */}
 
-<View style={STYLES.labeled}>
-<Text style={STYLES.label}>Date for Next Dose:</Text>
-        <TouchableOpacity 
-        style={STYLES.datePickerInput}
-        onPress={() => setShowDatePicker('nextDose')}>
-           <Text style={STYLES.datePickerText}>{formatDate(dateForNextDose)}</Text>
-        </TouchableOpacity>
-        {showDatePicker === 'nextDose' && (
-          <DateTimePicker
-            value={state.dateForNextDose || new Date()} // Use null or fallback to current date
-            mode="date"
-            display="default"
-            onChange={handleDateChange}
-          />
-        )}
-      </View>
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Date for Next Dose:</Text>
+          <TouchableOpacity
+            style={STYLES.datePickerInput}
+            onPress={() => setShowDatePicker('nextDose')}>
+            <Text style={STYLES.datePickerText}>
+              {formatDate(dateForNextDose)}
+            </Text>
+          </TouchableOpacity>
+          {showDatePicker === 'nextDose' && (
+            <DateTimePicker
+              value={dateForNextDose || new Date()} // Use null or fallback to current date
+              mode="date"
+              display="spinner"
+              onChange={handleDateChange}
+            />
+          )}
+        </View>
 
         <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
           <Text style={STYLES.submitText}>Submit</Text>
@@ -531,8 +547,7 @@ const STYLES = StyleSheet.create({
   datePickerText: {
     marginLeft: 5,
     color: COLORS.BLACK,
-    fontSize: 16,
+    fontSize: 14,
     paddingVertical: 12,
-
   },
 });
