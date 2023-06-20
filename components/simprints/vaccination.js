@@ -19,8 +19,7 @@ import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
-import DatePicker from '@react-native-community/datetimepicker';
-import {format} from 'date-fns';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const PatientData = ({navigation, route}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -28,24 +27,38 @@ const PatientData = ({navigation, route}) => {
   const {dataResults} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
   const currentDate = new Date();
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(currentDate);
-  const [followUp, setFollowUp] = useState(currentDate);
+
+  const [dateOfVaccination, setDateOfVaccination] = useState(null); // Add state for date of vaccination
+  const [dateForNextDose, setDateForNextDose] = useState(null); // Add state for date for next dose
+  const [showDatePicker, setShowDatePicker] = useState(false); // Add state to toggle date picker visibility
 
   const handleDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || state.dateOfVaccination;
+    const currentDate = selectedDate || dateOfVaccination;
     setShowDatePicker(false);
-    setSelectedDate(currentDate);
-    const formattedDate = format(currentDate, 'dd-MM-yyyy');
-    setState({...state, dateOfVaccination: formattedDate});
+
+    // Update the respective state based on the selected date
+    if (showDatePicker === 'vaccination') {
+      setDateOfVaccination(currentDate);
+      console.log('Date for Vaccination:', currentDate);
+    } else if (showDatePicker === 'nextDose') {
+      setDateForNextDose(currentDate);
+      console.log('Date for Next Dose:', currentDate);
+    }
   };
-  const handleDateChangeFollow = (event, followUp) => {
-    const currentDate = followUp || state.dateForNextDose;
-    setShowDatePicker(false);
-    setFollowUp(currentDate);
-    const formattedDate = format(currentDate, 'dd-MM-yyyy');
-    setState({...state, dateForNextDose: formattedDate});
+
+  const formatDate = date => {
+    if (date) {
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+
+      return `${day.toString().padStart(2, '0')}/${month
+        .toString()
+        .padStart(2, '0')}/${year}`;
+    }
+    return 'Click to add date';
   };
+
   const [state, setState] = React.useState({
     vaccineName: '',
     dose: '',
@@ -69,7 +82,7 @@ const PatientData = ({navigation, route}) => {
         state.vaccineName === '' ||
         state.dose === '' ||
         state.units === '' ||
-        state.dateOfVaccination === '' ||
+        dateOfVaccination === null || // Add check for dateOfVaccination
         state.siteAdministered === ''
       ) {
         Alert.alert('Error', 'Please fill in all required fields');
@@ -177,19 +190,19 @@ const PatientData = ({navigation, route}) => {
         </View>
 
         {/* Date for vaccination */}
-
+        {/* Date for vaccination */}
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Date for Vaccination:</Text>
           <TouchableOpacity
             style={STYLES.datePickerInput}
-            onPress={() => setShowDatePicker(true)}>
+            onPress={() => setShowDatePicker('vaccination')}>
             <Text style={STYLES.datePickerText}>
-              {format(selectedDate, 'dd/MM/yyyy')}
+              {formatDate(dateOfVaccination)}
             </Text>
           </TouchableOpacity>
-          {showDatePicker && (
-            <DatePicker
-              value={selectedDate}
+          {showDatePicker === 'vaccination' && (
+            <DateTimePicker
+              value={state.dateOfVaccination || new Date()} // Use null or fallback to current date
               mode="date"
               display="spinner"
               onChange={handleDateChange}
@@ -228,8 +241,6 @@ const PatientData = ({navigation, route}) => {
         </View>
 
         {/* Site adminstered */}
-
-        {/* Facility */}
         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
           <Text style={STYLES.label}>Site Administered:</Text>
 
@@ -268,23 +279,31 @@ const PatientData = ({navigation, route}) => {
           </Picker>
         </View>
 
-        {/* Date for next vaccination */}
+        {/* Date for vaccination */}
+        {/* <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Date for Next Dose:</Text>
+          <TextInput
+            style={STYLES.field}
+            value={state.dateForNextDose}
+            onChangeText={text => setState({...state, dateForNextDose: text})}
+          />
+        </View> */}
 
-      <View style={STYLES.labeled}>
+        <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Date for Next Dose:</Text>
           <TouchableOpacity
             style={STYLES.datePickerInput}
-            onPress={() => setShowDatePicker(true)}>
+            onPress={() => setShowDatePicker('nextDose')}>
             <Text style={STYLES.datePickerText}>
-              {format(followUp, 'dd/MM/yyyy')}
+              {formatDate(dateForNextDose)}
             </Text>
           </TouchableOpacity>
-          {showDatePicker && (
-            <DatePicker
-              value={followUp}
+          {showDatePicker === 'nextDose' && (
+            <DateTimePicker
+              value={state.dateForNextDose || new Date()} // Use null or fallback to current date
               mode="date"
               display="spinner"
-              onChange={handleDateChangeFollow}
+              onChange={handleDateChange}
             />
           )}
         </View>
@@ -511,5 +530,21 @@ const STYLES = StyleSheet.create({
     paddingLeft: 12,
     fontSize: 15,
     color: COLORS.BLACK,
+  },
+  datePickerInput: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderColor: COLORS.GREY,
+    // borderStyle: 'solid',
+    // borderWidth: 1,
+    // borderRadius: 10,
+  },
+  datePickerText: {
+    marginLeft: 5,
+    color: COLORS.BLACK,
+    fontSize: 14,
+    paddingVertical: 12,
   },
 });
