@@ -19,7 +19,7 @@ import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
-import DatePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import {format} from 'date-fns';
 
 const PatientData = ({navigation}) => {
@@ -33,13 +33,31 @@ const PatientData = ({navigation}) => {
   const currentDate = new Date();
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(currentDate);
+  const [ageGroup, setAgeGroup] = useState(''); // Add state for date of vaccination
 
   const handleDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || state.ageGroup;
+    const currentDate = selectedDate || ageGroup;
     setShowDatePicker(false);
-    setSelectedDate(currentDate);
-    const formattedDate = format(currentDate, 'dd-MM-yyyy');
-    setState({...state, ageGroup: formattedDate});
+
+    // Update the respective state based on the selected date
+    if (showDatePicker === 'patient') {
+      setAgeGroup(currentDate);
+      setState({...state, ageGroup: currentDate});
+      console.log('Date of birth:', currentDate);
+    }
+  };
+
+  const formatDate = date => {
+    if (date) {
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+
+      return `${day.toString().padStart(2, '0')}/${month
+        .toString()
+        .padStart(2, '0')}/${year}`;
+    }
+    return 'Click to add date';
   };
 
   const [state, setState] = React.useState({
@@ -70,6 +88,7 @@ const PatientData = ({navigation}) => {
       if (
         state.firstName === '' ||
         state.lastName === '' ||
+        ageGroup === '' ||
         state.phoneNumber === ''
       ) {
         Alert.alert('Error', 'Please fill in all required fields');
@@ -93,7 +112,7 @@ const PatientData = ({navigation}) => {
             firstName: state.firstName,
             lastName: state.lastName,
             sex: state.sex,
-            ageGroup: state.ageGroup,
+            ageGroup: ageGroup,
             phoneNumber: state.phoneNumber,
             weight: state.weight,
             height: state.height,
@@ -156,8 +175,11 @@ const PatientData = ({navigation}) => {
   return (
     <View style={STYLES.wrapper}>
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
-      {_header()}
+      {/* {_header()} */}
+
       <ScrollView style={STYLES.body}>
+        <Text style={STYLES.title}>Beneficiary Profile</Text>
+
         {/* Simprints GUI */}
         <View style={STYLES.guid}>
           <Text style={STYLES.label}>Simprints GUI</Text>
@@ -238,22 +260,20 @@ const PatientData = ({navigation}) => {
             </Picker>
           </View> */}
 
-        {/* Date for diagnosis */}
+        {/* Date for birth */}
 
         <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Date Of Birth:</Text>
+          <Text style={STYLES.label}>Date of Birth:</Text>
           <TouchableOpacity
             style={STYLES.datePickerInput}
-            onPress={() => setShowDatePicker(true)}>
-            <Text style={STYLES.datePickerText}>
-              {format(selectedDate, 'dd/MM/yyyy')}
-            </Text>
+            onPress={() => setShowDatePicker('patient')}>
+            <Text style={STYLES.datePickerText}>{formatDate(ageGroup)}</Text>
           </TouchableOpacity>
-          {showDatePicker && (
-            <DatePicker
-              value={selectedDate}
+          {showDatePicker === 'patient' && (
+            <DateTimePicker
+              value={ageGroup || new Date()} // Use null or fallback to current date
               mode="date"
-              display="default"
+              display="spinner"
               onChange={handleDateChange}
             />
           )}
@@ -299,6 +319,7 @@ const PatientData = ({navigation}) => {
             <Picker.Item label="Kenya" value="Kenya" />
             <Picker.Item label="Rwanda" value="Rwanda" />
             <Picker.Item label="Tanzania" value="Tanzania" />
+            <Picker.Item label="Other" value="Other" />
           </Picker>
         </View>
 
@@ -319,6 +340,7 @@ const PatientData = ({navigation}) => {
             <Picker.Item label="Jinja" value="Jinja" />
             <Picker.Item label="Masaka" value="Masaka" />
             <Picker.Item label="Mbarara" value="Mbarara" />
+            <Picker.Item label="Other" value="Other" />
           </Picker>
         </View>
 
@@ -334,12 +356,12 @@ const PatientData = ({navigation}) => {
             }
             style={STYLES.field}>
             <Picker.Item label="" value="" />
-            <Picker.Item label="Uganda" value="Uganda" />
             <Picker.Item label="Luganda" value="Luganda" />
             <Picker.Item label="Lusoga" value="Lusoga" />
             <Picker.Item label="Runyakore" value="Runyakore" />
             <Picker.Item label="Rutoro" value="Rutoro" />
             <Picker.Item label="English" value="English" />
+            <Picker.Item label="Other" value="Other" />
           </Picker>
         </View>
 
@@ -388,7 +410,9 @@ const STYLES = StyleSheet.create({
     color: COLORS.BLACK,
     textAlign: 'center',
     flexGrow: 1,
-    fontSize: 16,
+    fontSize: 18,
+    paddingVertical: 10,
+    textDecorationLine: 'underline',
   },
   leftHeader: {
     marginLeft: 10,
@@ -566,6 +590,12 @@ const STYLES = StyleSheet.create({
     paddingVertical: 10,
     paddingLeft: 12,
     fontSize: 15,
+    color: COLORS.BLACK,
+  },
+  datePickerText: {
+    paddingVertical: 10,
+    paddingLeft: 12,
+    fontSize: 14,
     color: COLORS.BLACK,
   },
 });

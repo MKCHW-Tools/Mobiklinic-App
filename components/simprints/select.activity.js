@@ -50,7 +50,7 @@ const SelectActivity = ({navigation}) => {
   return (
     <View style={STYLES.wrapper}>
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
-      {_header()}
+      {/* {_header()} */}
 
       <View style={STYLES.wrap}>
         <Image
@@ -102,6 +102,7 @@ const STYLES = StyleSheet.create({
   wrapper: {
     flex: 1,
     backgroundColor: COLORS.WHITE_LOW,
+    paddingTop:50,
   },
   header: {
     flex: 1,
