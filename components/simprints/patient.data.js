@@ -194,8 +194,11 @@ const PatientData = ({navigation}) => {
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>First Name:</Text>
           <TextInput
-            style={STYLES.field}
-            value={state.firstName}
+            style={[
+              STYLES.field,
+              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+            ]} // Add color and placeholderTextColor styles
+            placeholderTextColor={COLORS.BLACK} //             value={state.firstName}
             onChangeText={text => setState({...state, firstName: text})}
             placeholder="Enter first name"
           />
@@ -205,7 +208,11 @@ const PatientData = ({navigation}) => {
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Last Name:</Text>
           <TextInput
-            style={STYLES.field}
+            style={[
+              STYLES.field,
+              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+            ]} // Add color and placeholderTextColor styles
+            placeholderTextColor={COLORS.BLACK}
             value={state.lastName}
             onChangeText={text => setState({...state, lastName: text})}
             placeholder="Enter last name"
@@ -216,7 +223,11 @@ const PatientData = ({navigation}) => {
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Phone Number:</Text>
           <TextInput
-            style={STYLES.field}
+            style={[
+              STYLES.field,
+              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+            ]} // Add color and placeholderTextColor styles
+            placeholderTextColor={COLORS.BLACK} // Set the placeholder text color
             value={state.phoneNumber}
             onChangeText={text => setState({...state, phoneNumber: text})}
             keyboardType="numeric"
@@ -233,7 +244,8 @@ const PatientData = ({navigation}) => {
             placeholderTextColor={COLORS.BLACK}
             selectedValue={state.sex}
             onValueChange={(value, index) => setState({...state, sex: value})}
-            style={STYLES.field}>
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            dropdownIconColor={COLORS.GREY_LIGHTER}>
             <Picker.Item label="" value="" />
             <Picker.Item label="Female" value="Female" />
             <Picker.Item label="Male" value="Male" />
@@ -599,7 +611,7 @@ const STYLES = StyleSheet.create({
   },
   datePickerText: {
     paddingVertical: 10,
-    paddingLeft: 12,
+    paddingLeft: 30,
     fontSize: 14,
     color: COLORS.BLACK,
   },
