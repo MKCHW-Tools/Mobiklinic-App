@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import {
   Text,
   View,
@@ -9,16 +9,16 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { COLORS, DIMENS } from '../constants/styles';
+import {COLORS, DIMENS} from '../constants/styles';
 import Icon from 'react-native-vector-icons/Feather';
 import Loader from '../ui/loader';
 import CustomHeader from '../ui/custom-header';
 import DataResultsContext from '../contexts/DataResultsContext';
 
-const PatientLists = ({ navigation }) => {
+const PatientLists = ({navigation}) => {
   const [users, setUsers] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const { userLog } = useContext(DataResultsContext); // Get the logged-in user ID from the context
+  const {userLog} = useContext(DataResultsContext); // Get the logged-in user ID from the context
 
   const _header = () => (
     <CustomHeader
@@ -31,8 +31,7 @@ const PatientLists = ({ navigation }) => {
             justifyContent: 'center',
             alignItems: 'center',
           }}
-          onPress={() => navigation.goBack()}
-        >
+          onPress={() => navigation.goBack()}>
           <Icon name="arrow-left" size={25} color={COLORS.BLACK} />
         </TouchableOpacity>
       }
@@ -52,7 +51,10 @@ const PatientLists = ({ navigation }) => {
         );
         setUsers(response.data);
         // Save the fetched data locally for offline access
-        await AsyncStorage.setItem('patientList', JSON.stringify(response.data));
+        await AsyncStorage.setItem(
+          'patientList',
+          JSON.stringify(response.data),
+        );
       }
     } catch (error) {
       console.error(error);
@@ -73,7 +75,7 @@ const PatientLists = ({ navigation }) => {
   const [expandedUserId, setExpandedUserId] = useState(null);
   const [vaccinationData, setVaccinationData] = useState(null);
 
-  const renderUserCard = ({ item }) => {
+  const renderUserCard = ({item}) => {
     const isExpanded = item.id === expandedUserId;
 
     const toggleExpansion = () => {
@@ -117,8 +119,14 @@ const PatientLists = ({ navigation }) => {
                     <Text style={styles.label}>
                       Vaccination Date: {vaccination.dateOfVaccination}
                     </Text>
-                    <Text style={styles.label}> Dosage: {vaccination.dose}</Text>
-                    <Text style={styles.label}> Units: {vaccination.units}</Text>
+                    <Text style={styles.label}>
+                      {' '}
+                      Dosage: {vaccination.dose}
+                    </Text>
+                    <Text style={styles.label}>
+                      {' '}
+                      Units: {vaccination.units}
+                    </Text>
                   </View>
                 ))}
               </View>
@@ -129,19 +137,20 @@ const PatientLists = ({ navigation }) => {
     );
   };
 
-  const formatPhoneNumber = (phoneNumber) => {
+  const formatPhoneNumber = phoneNumber => {
     return phoneNumber;
   };
 
   return (
     <View style={styles.wrapper}>
+      {_header()}
+
       <View style={styles.container}>
-        {_header()}
         <Text style={styles.header}>Beneficiary List</Text>
         {users.length > 0 ? (
           <FlatList
             data={users}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={item => item.id.toString()}
             renderItem={renderUserCard}
             contentContainerStyle={styles.flatListContent}
             refreshControl={
