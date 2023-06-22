@@ -289,6 +289,8 @@ const PatientData = ({navigation}) => {
               placeholderTextColor={COLORS.BLACK}
               onChangeText={text => setState({...state, weight: text})}
               placeholder="Weight (Kgs)"
+              style={STYLES.field}
+
             />
           </View>
           {/* Height */}
@@ -298,6 +300,7 @@ const PatientData = ({navigation}) => {
               keyboardType="numeric"
               placeholderTextColor={COLORS.BLACK}
               value={state.height}
+              style={STYLES.field}
               onChangeText={text => setState({...state, height: text})}
               placeholder="Height (cm)"
             />
@@ -492,7 +495,7 @@ const STYLES = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     color: COLORS.BLACK,
-    fontWeight: 'bold',
+    fontWeight: 'medium',
   },
   guid: {
     textAlign: 'left',
