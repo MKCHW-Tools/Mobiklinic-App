@@ -290,7 +290,6 @@ const PatientData = ({navigation}) => {
               onChangeText={text => setState({...state, weight: text})}
               placeholder="Weight (Kgs)"
               style={STYLES.field}
-
             />
           </View>
           {/* Height */}
@@ -316,7 +315,8 @@ const PatientData = ({navigation}) => {
             onValueChange={(value, index) =>
               setState({...state, country: value})
             }
-            style={STYLES.field}>
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            dropdownIconColor={COLORS.GREY_LIGHTER}>
             <Picker.Item label="" value="" />
             <Picker.Item label="Uganda" value="Uganda" />
             <Picker.Item label="Kenya" value="Kenya" />
@@ -336,7 +336,8 @@ const PatientData = ({navigation}) => {
             onValueChange={(value, index) =>
               setState({...state, district: value})
             }
-            style={STYLES.field}>
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            dropdownIconColor={COLORS.GREY_LIGHTER}>
             <Picker.Item label="" value="" />
             <Picker.Item label="Kampala" value="Kampala" />
             <Picker.Item label="Buikwe" value="Buikwe" />
@@ -357,7 +358,8 @@ const PatientData = ({navigation}) => {
             onValueChange={(value, index) =>
               setState({...state, primaryLanguage: value})
             }
-            style={STYLES.field}>
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            dropdownIconColor={COLORS.GREY_LIGHTER}>
             <Picker.Item label="" value="" />
             <Picker.Item label="Luganda" value="Luganda" />
             <Picker.Item label="Lusoga" value="Lusoga" />
