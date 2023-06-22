@@ -190,6 +190,20 @@ const PatientData = ({navigation, route}) => {
             <Picker.Item label="Influenza Vaccine" value="influenza" />
           </Picker>
         </View>
+
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Card number:</Text>
+          <TextInput
+            style={[
+              STYLES.field,
+              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+            ]} // Add color and placeholderTextColor styles
+            placeholderTextColor={COLORS.BLACK}
+            value={state.units}
+            onChangeText={text => setState({...state, units: text})}
+            placeholder="Enter vaccine card number"
+          />
+        </View>
         {/* Date for vaccination */}
         {/* Date for vaccination */}
         <View style={STYLES.labeled}>
@@ -242,9 +256,13 @@ const PatientData = ({navigation, route}) => {
             <Picker.Item label="" value="" />
             <Picker.Item label="Left Upper Arm" value="Left Upper Arm" />
             <Picker.Item label="Right Upper Arm" value="Right Upper Arm" />
-            <Picker.Item label="Hip" value="Ventrogluteal Muscle (Hip)" />
+            <Picker.Item label="Left Upper Thigh" value="Ventrogluteal Muscle (Hip)" />
+            <Picker.Item label="Mouth" value="Mouth" />
+            <Picker.Item label="Buttocks" value="Buttocks" />
+
+
             <Picker.Item
-              label="Thigh"
+              label="Right Upper Thigh"
               value="Anterolateral Thigh (Front of the Thigh)"
             />
           </Picker>
@@ -437,8 +455,8 @@ const STYLES = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     color: COLORS.BLACK,
-    fontWeight: 'bold',
-    fontSize: 16,
+    fontWeight: 'medium',
+    fontSize: 13,
   },
   guid: {
     textAlign: 'left',
