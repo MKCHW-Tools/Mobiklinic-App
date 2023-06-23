@@ -72,6 +72,7 @@ const PatientMedical = ({navigation}) => {
     duration: '',
     followUpDate: '',
     isPregnant: false,
+    labTests: '',
     // registeredById: '',
   });
 
@@ -106,6 +107,7 @@ const PatientMedical = ({navigation}) => {
             duration: state.duration,
             followUpDate: state.followUpDate,
             isPregnant: state.isPregnant,
+            labTests: state.labTests,
           }),
           headers: {
             'Content-type': 'application/json; charset=UTF-8',
@@ -165,12 +167,16 @@ const PatientMedical = ({navigation}) => {
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Patient impression:</Text>
           <TextInput
-            style={STYLES.field}
+            style={[
+              STYLES.field,
+              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+            ]} // Add color and placeholderTextColor styles
+            placeholderTextColor={COLORS.BLACK}
             value={state.impression}
             onChangeText={text => setState({...state, impression: text})}
             placeholder='signs and symptoms e.g "Headache, Fever, Cough"'
             multiline={true}
-            numberOfLines={4}
+            numberOfLines={3}
           />
         </View>
 
@@ -195,16 +201,37 @@ const PatientMedical = ({navigation}) => {
           )}
         </View>
 
+        {/* LAB TESTS */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Lab Tests and Results:</Text>
+          <TextInput
+            style={[
+              STYLES.field,
+              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+            ]} // Add color and placeholderTextColor styles
+            placeholderTextColor={COLORS.BLACK}
+            value={state.labTests}
+            onChangeText={text => setState({...state, labTests: text})}
+            placeholder='Lab tests and results e.g "Malaria positive"'
+            multiline={true}
+            numberOfLines={3}
+          />
+        </View>
+
         {/* Condition */}
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Condition:</Text>
           <TextInput
-            style={STYLES.field}
+            style={[
+              STYLES.field,
+              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+            ]} // Add color and placeholderTextColor styles
+            placeholderTextColor={COLORS.BLACK}
             value={state.condition}
             onChangeText={text => setState({...state, condition: text})}
             placeholder='e.g "Malaria"'
             multiline={true}
-            numberOfLines={4}
+            numberOfLines={3}
           />
         </View>
 
@@ -223,32 +250,53 @@ const PatientMedical = ({navigation}) => {
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Drugs Adminstered:</Text>
           <TextInput
-            style={STYLES.field}
+            style={[
+              STYLES.field,
+              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+            ]} // Add color and placeholderTextColor styles
+            placeholderTextColor={COLORS.BLACK}
             value={state.drugsPrescribed}
             onChangeText={text => setState({...state, drugsPrescribed: text})}
             placeholder='e.g "Paracetamol"'
+            multiline={true}
+            numberOfLines={3}
           />
         </View>
 
         <View style={STYLES.wrap}>
+          <Text style={STYLES.label}>Dosage</Text>
+
           {/* dose */}
           <View style={STYLES.detail}>
             <TextInput
               value={state.dosage}
               placeholderTextColor={COLORS.BLACK}
               onChangeText={text => setState({...state, dosage: text})}
-              placeholder="dosage"
+              placeholder="1"
+              keyboardType="numeric"
+              style={[
+                STYLES.field,
+                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              ]}
             />
           </View>
+          <Text style={STYLES.label}>X</Text>
           {/* units */}
-          <View style={STYLES.detail}>
+          <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
             <TextInput
               value={state.frequency}
               placeholderTextColor={COLORS.BLACK}
               onChangeText={text => setState({...state, frequency: text})}
-              placeholder="frequency"
+              placeholder="1"
+              keyboardType="numeric"
+              style={[
+                STYLES.field,
+                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              ]}
             />
           </View>
+
+          <Text style={STYLES.label}>for</Text>
 
           {/* duration */}
           <View style={STYLES.detail}>
@@ -256,9 +304,14 @@ const PatientMedical = ({navigation}) => {
               value={state.duration}
               placeholderTextColor={COLORS.BLACK}
               onChangeText={text => setState({...state, duration: text})}
-              placeholder="duration"
+              placeholder="1"
+              style={[
+                STYLES.field,
+                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              ]}
             />
           </View>
+          <Text style={STYLES.label}>days</Text>
         </View>
 
         <View style={STYLES.labeled}>
@@ -300,7 +353,8 @@ const STYLES = StyleSheet.create({
   },
   body: {
     flex: 2,
-    padding: 30,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
   },
   alert: {
     color: COLORS.GREY,
@@ -404,7 +458,7 @@ const STYLES = StyleSheet.create({
     justifyContent: 'center',
     color: COLORS.BLACK,
     fontWeight: 'medium',
-    fontSize: 14,
+    fontSize: 13,
   },
   switch: {
     flex: 1,

@@ -28,14 +28,13 @@ const PatientData = ({navigation, route}) => {
   const {patientId, setPatientId} = useContext(DataResultsContext);
   const currentDate = new Date();
 
-  const [dateOfVaccination, setDateOfVaccination] = useState(''); 
-  const [dateForNextDose, setDateForNextDose] = useState(''); 
-  const [showDatePicker, setShowDatePicker] = useState(false); 
+  const [dateOfVaccination, setDateOfVaccination] = useState('');
+  const [dateForNextDose, setDateForNextDose] = useState('');
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || dateOfVaccination;
     setShowDatePicker(false);
-  
     // Update the respective state based on the selected date
     if (showDatePicker === 'vaccination') {
       setDateOfVaccination(currentDate);
@@ -47,7 +46,6 @@ const PatientData = ({navigation, route}) => {
       console.log('Date for Next Dose:', currentDate);
     }
   };
-  
 
   const formatDate = date => {
     if (date) {
@@ -84,7 +82,6 @@ const PatientData = ({navigation, route}) => {
       if (
         state.vaccineName === '' ||
         state.dose === '' ||
-        state.units === '' ||
         dateOfVaccination === '' || // Add check for dateOfVaccination
         state.siteAdministered === ''
       ) {
@@ -169,7 +166,8 @@ const PatientData = ({navigation, route}) => {
             onValueChange={(value, index) =>
               setState({...state, vaccineName: value})
             }
-            style={STYLES.field}>
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            dropdownIconColor={COLORS.GREY_LIGHTER}>
             <Picker.Item label="" value="" />
             <Picker.Item label="Pfizer-BioNTech" value="pfizer" />
             <Picker.Item label="Moderna" value="moderna" />
@@ -192,6 +190,20 @@ const PatientData = ({navigation, route}) => {
           </Picker>
         </View>
 
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Card number:</Text>
+          <TextInput
+            style={[
+              STYLES.field,
+              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+            ]} // Add color and placeholderTextColor styles
+            placeholderTextColor={COLORS.BLACK}
+            value={state.units}
+            onChangeText={text => setState({...state, units: text})}
+            placeholder="Enter vaccine card number"
+          />
+        </View>
+        {/* Date for vaccination */}
         {/* Date for vaccination */}
         {/* Date for vaccination */}
         <View style={STYLES.labeled}>
@@ -213,34 +225,21 @@ const PatientData = ({navigation, route}) => {
           )}
         </View>
 
-        <View style={STYLES.wrap}>
-          {/* dose */}
-          <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
-            <Picker
-              placeholderTextColor={COLORS.BLACK}
-              selectedValue={state.dose}
-              onValueChange={(value, index) =>
-                setState({...state, dose: value})
-              }
-              style={STYLES.pickerItemStyle}>
-              <Picker.Item label="Dose" value="Dose" />
-              <Picker.Item label="1st" value="1st" />
-              <Picker.Item label="2nd" value="2nd" />
-              <Picker.Item label="3rd" value="3rd" />
-              <Picker.Item label="4th" value="4th" />
-            </Picker>
-          </View>
-          {/* Height */}
-          <View style={STYLES.detail}>
-            {/* <Text style={STYLES.label}>Height:</Text> */}
-            <TextInput
-              keyboardType="numeric"
-              placeholderTextColor={COLORS.BLACK}
-              value={state.units}
-              onChangeText={text => setState({...state, units: text})}
-              placeholder="Units(mls)"
-            />
-          </View>
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Dose:</Text>
+
+          <Picker
+            placeholderTextColor={COLORS.BLACK}
+            selectedValue={state.dose}
+            onValueChange={(value, index) => setState({...state, dose: value})}
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            dropdownIconColor={COLORS.GREY_LIGHTER}>
+            <Picker.Item label="" value="" />
+            <Picker.Item label="1st" value="1st" />
+            <Picker.Item label="2nd" value="2nd" />
+            <Picker.Item label="3rd" value="3rd" />
+            <Picker.Item label="4th" value="4th" />
+          </Picker>
         </View>
 
         {/* Site adminstered */}
@@ -257,14 +256,17 @@ const PatientData = ({navigation, route}) => {
             <Picker.Item label="" value="" />
             <Picker.Item label="Left Upper Arm" value="Left Upper Arm" />
             <Picker.Item label="Right Upper Arm" value="Right Upper Arm" />
-            <Picker.Item label="Hip" value="Ventrogluteal Muscle (Hip)" />
+            <Picker.Item label="Left Upper Thigh" value="Ventrogluteal Muscle (Hip)" />
+            <Picker.Item label="Mouth" value="Mouth" />
+            <Picker.Item label="Buttocks" value="Buttocks" />
+
+
             <Picker.Item
-              label="Thigh"
+              label="Right Upper Thigh"
               value="Anterolateral Thigh (Front of the Thigh)"
             />
           </Picker>
         </View>
-
         {/* Facility */}
         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
           <Text style={STYLES.label}>Facility:</Text>
@@ -275,13 +277,34 @@ const PatientData = ({navigation, route}) => {
             onValueChange={(value, index) =>
               setState({...state, facility: value})
             }
-            style={STYLES.field}>
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            dropdownIconColor={COLORS.GREY_LIGHTER}>
             <Picker.Item label="" value="" />
             <Picker.Item label="Buikwe Hospital" value="Buikwe Hospital" />
-            <Picker.Item label="Mulago" value="Mulago" />
+            <Picker.Item label="Mulago Hospital" value="Mulago Hospital" />
+            <Picker.Item
+              label="Makonge Health Center III"
+              value="Makonge Health Center III"
+            />
+            <Picker.Item
+              label="Makonge Health Center III"
+              value="Makonge Health Center III"
+            />
+            <Picker.Item
+              label="Makindu Health Center III"
+              value="Makindu Health Center III"
+            />
+            <Picker.Item
+              label="Kisungu Health Center III"
+              value="Kisungu Health Center III"
+            />
+            <Picker.Item
+              label="Najjembe Health Center III"
+              value="Najjemebe Health Center III"
+            />
+            <Picker.Item label="Kawolo Hospital" value="Kawolo Hospital" />
           </Picker>
         </View>
-
         {/* Date for vaccination */}
         {/* <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Date for Next Dose:</Text>
@@ -291,7 +314,6 @@ const PatientData = ({navigation, route}) => {
             onChangeText={text => setState({...state, dateForNextDose: text})}
           />
         </View> */}
-
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Date for Next Dose:</Text>
           <TouchableOpacity
@@ -310,7 +332,6 @@ const PatientData = ({navigation, route}) => {
             />
           )}
         </View>
-
         <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
           <Text style={STYLES.submitText}>Submit</Text>
         </TouchableOpacity>
@@ -434,8 +455,8 @@ const STYLES = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     color: COLORS.BLACK,
-    fontWeight: 'bold',
-    fontSize: 16,
+    fontWeight: 'medium',
+    fontSize: 13,
   },
   guid: {
     textAlign: 'left',

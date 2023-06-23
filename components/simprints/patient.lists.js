@@ -18,6 +18,7 @@ import DataResultsContext from '../contexts/DataResultsContext';
 const PatientLists = ({navigation}) => {
   const [users, setUsers] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const {userLog} = useContext(DataResultsContext); // Get the logged-in user ID from the context
 
   const _header = () => (
@@ -40,31 +41,45 @@ const PatientLists = ({navigation}) => {
   );
 
   const fetchUsers = async () => {
+setIsLoading(true)
     try {
-      // First, check if the data is stored locally
+
+      const response = await axios.get(
+        `https://mobi-be-production.up.railway.app/${userLog}/patients`,
+        // Use the logged-in user ID in the API URL
+      );
+      if(response.status === 200){
+        setUsers(response.data);
+        await AsyncStorage.setItem('patientList', JSON.stringify(response.data));
+        setIsLoading(false)
+        return response.data;
+      }else{
+        setIsLoading(false)
+        if (storedData) {
+          setUsers(JSON.parse(storedData));
+        }
+
+        return null;
+      }
+    } catch (error) {
+      setIsLoading(false)
+
+      console.error(error);
       const storedData = await AsyncStorage.getItem('patientList');
       if (storedData) {
         setUsers(JSON.parse(storedData));
-      } else {
-        const response = await axios.get(
-          `https://mobi-be-production.up.railway.app/${userLog}/patients`, // Use the logged-in user ID in the API URL
-        );
-        setUsers(response.data);
-        // Save the fetched data locally for offline access
-        await AsyncStorage.setItem(
-          'patientList',
-          JSON.stringify(response.data),
-        );
       }
-    } catch (error) {
-      console.error(error);
     } finally {
       setRefreshing(false);
     }
   };
 
   useEffect(() => {
-    fetchUsers();
+    const fetchData = async () => {
+      await fetchUsers();
+    };
+
+    fetchData();
   }, [userLog]);
 
   const onRefresh = () => {
@@ -125,26 +140,7 @@ const PatientLists = ({navigation}) => {
                     </Text>
                     <Text style={styles.label}>
                       {' '}
-                      Units: {vaccination.units}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            )}
-
-            {item.diagnoses && item.diagnoses.length > 0 && (
-              <View>
-                {item.diagnoses.map((vaccination, index) => (
-                  <View key={index}>
-                    <Text style={styles.label}>
-                      Date of Diagnosis: {vaccination.dateOfDiagnosis}
-                    </Text>
-                    <Text style={styles.label}>
-                      Impression: {vaccination.impression}
-                    </Text>
-                    <Text style={styles.label}>
-                      {' '}
-                      Condition: {vaccination.condition}
+                      Card Number: {vaccination.units}
                     </Text>
                   </View>
                 ))}
@@ -162,10 +158,11 @@ const PatientLists = ({navigation}) => {
 
   return (
     <View style={styles.wrapper}>
+      {_header()}
+
       <View style={styles.container}>
-        {_header()}
         <Text style={styles.header}>Beneficiary List</Text>
-        {users.length > 0 ? (
+        {!isLoading ? (
           <FlatList
             data={users}
             keyExtractor={item => item.id.toString()}
@@ -177,8 +174,6 @@ const PatientLists = ({navigation}) => {
           />
         ) : (
           <View>
-            <Text style={styles.userName}>No Data Available</Text>
-
             <Loader />
           </View>
         )}

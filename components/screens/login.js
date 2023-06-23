@@ -208,7 +208,7 @@ const Login = ({navigation}) => {
   const {updateUserLog} = useContext(DataResultsContext);
 
   const signIn = async () => {
-    // clearStorage();
+    clearStorage();
     let {username, password} = user;
 
     if (username === '' || password === '') {
