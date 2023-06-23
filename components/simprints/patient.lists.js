@@ -1,12 +1,5 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  RefreshControl,
-} from 'react-native';
+import {Text, View, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS, DIMENS} from '../constants/styles';
@@ -17,7 +10,6 @@ import DataResultsContext from '../contexts/DataResultsContext';
 
 const PatientLists = ({navigation}) => {
   const [users, setUsers] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
   const {userLog} = useContext(DataResultsContext); // Get the logged-in user ID from the context
 
   const _header = () => (
@@ -39,41 +31,31 @@ const PatientLists = ({navigation}) => {
     />
   );
 
-  const fetchUsers = async () => {
-    try {
-      const storedData = await AsyncStorage.getItem('patientList');
-      if (storedData) {
-        setUsers(JSON.parse(storedData));
-      } else {
-        const response = await axios.get(
-          `https://mobi-be-production.up.railway.app/${userLog}/patients`,
-          // Use the logged-in user ID in the API URL
-        );
-        setUsers(response.data);
-        await AsyncStorage.setItem(
-          'patientList',
-          JSON.stringify(response.data),
-        );
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchUsers();
+    const fetchUsers = async () => {
+      try {
+        // First, check if the data is stored locally
+        const storedData = await AsyncStorage.getItem('patientList');
+        if (storedData) {
+          setUsers(JSON.parse(storedData));
+        } else {
+          const response = await axios.get(
+            `https://mobi-be-production.up.railway.app/${userLog}/patients`, // Use the logged-in user ID in the API URL
+          );
+          setUsers(response.data);
+          // Save the fetched data locally for offline access
+          await AsyncStorage.setItem(
+            'patientList',
+            JSON.stringify(response.data),
+          );
+        }
+      } catch (error) {
+        console.error(error);
+      }
     };
 
-    fetchData();
-  }, [userLog]);
-
-  const onRefresh = () => {
-    setRefreshing(true);
     fetchUsers();
-  };
+  }, [userLog]);
 
   const [expandedUserId, setExpandedUserId] = useState(null);
   const [vaccinationData, setVaccinationData] = useState(null);
@@ -111,7 +93,7 @@ const PatientLists = ({navigation}) => {
             <Text style={styles.label}>
               Primary Language: {item.primaryLanguage}
             </Text>
-
+            <Text style={styles.label}>Simprints GUI: {item.simprintsGui}</Text>
             {item.vaccinations && item.vaccinations.length > 0 && (
               <View>
                 {item.vaccinations.map((vaccination, index) => (
@@ -128,7 +110,7 @@ const PatientLists = ({navigation}) => {
                     </Text>
                     <Text style={styles.label}>
                       {' '}
-                      Card Number: {vaccination.units}
+                      Units: {vaccination.units}
                     </Text>
                   </View>
                 ))}
@@ -149,19 +131,19 @@ const PatientLists = ({navigation}) => {
       {_header()}
 
       <View style={styles.container}>
-        <Text style={styles.header}>Beneficiary List</Text>
+        {_header()}
+        <Text style={styles.header}>Beneficary List</Text>
         {users.length > 0 ? (
           <FlatList
             data={users}
             keyExtractor={item => item.id.toString()}
             renderItem={renderUserCard}
             contentContainerStyle={styles.flatListContent}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
           />
         ) : (
           <View>
+            <Text style={styles.userName}>No Data Available</Text>
+
             <Loader />
           </View>
         )}

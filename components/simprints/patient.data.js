@@ -19,8 +19,6 @@ import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import {format} from 'date-fns';
 
 const PatientData = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -28,37 +26,9 @@ const PatientData = ({navigation}) => {
   const {dataResults} = useContext(DataResultsContext);
   const {userLog} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
-
+  
   // date
   const currentDate = new Date();
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(currentDate);
-  const [ageGroup, setAgeGroup] = useState(''); // Add state for date of vaccination
-
-  const handleDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || ageGroup;
-    setShowDatePicker(false);
-
-    // Update the respective state based on the selected date
-    if (showDatePicker === 'patient') {
-      setAgeGroup(currentDate);
-      setState({...state, ageGroup: currentDate});
-      console.log('Date of birth:', currentDate);
-    }
-  };
-
-  const formatDate = date => {
-    if (date) {
-      const day = date.getDate();
-      const month = date.getMonth() + 1;
-      const year = date.getFullYear();
-
-      return `${day.toString().padStart(2, '0')}/${month
-        .toString()
-        .padStart(2, '0')}/${year}`;
-    }
-    return 'Click to add date';
-  };
 
   const [state, setState] = React.useState({
     firstName: '',
@@ -84,26 +54,6 @@ const PatientData = ({navigation}) => {
         return;
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
-
-      if (
-        state.firstName === '' ||
-        state.lastName === '' ||
-        ageGroup === '' ||
-        state.phoneNumber === ''
-      ) {
-        Alert.alert('Error', 'Please fill in all required fields');
-        return;
-      }
-
-      // Remove any non-digit characters from the phone number
-      const phoneNumber = state.phoneNumber.replace(/\D/g, '');
-
-      // Check if the resulting phone number has exactly 10 digits
-      if (phoneNumber.length !== 10) {
-        Alert.alert('Error', 'Phone number must be 10 digits');
-        return;
-      }
-
       const response = await fetch(
         `https://mobi-be-production.up.railway.app/${userLog}/patients`,
         {
@@ -112,7 +62,7 @@ const PatientData = ({navigation}) => {
             firstName: state.firstName,
             lastName: state.lastName,
             sex: state.sex,
-            ageGroup: ageGroup,
+            ageGroup: state.ageGroup,
             phoneNumber: state.phoneNumber,
             weight: state.weight,
             height: state.height,
@@ -137,7 +87,7 @@ const PatientData = ({navigation}) => {
         setPatientId(patientId);
         console.log('Patient ID:', patientId);
         Alert.alert('Data posted successfully');
-        navigation.navigate('SelectActivity', {patientId: patientId});
+        navigation.navigate('SelectActivity',{ patientId: patientId });
       } else {
         console.error('Error posting data:', response.status);
         Alert.alert('Error', 'Failed to submit data. Please try again later.');
@@ -156,12 +106,13 @@ const PatientData = ({navigation}) => {
         <TouchableOpacity
           style={{
             marginHorizontal: 4,
-            // width: 45,
-            height: 45,
+            width: 35,
+            height: 35,
             justifyContent: 'center',
             alignItems: 'center',
-          }}>
-          {/* <Icon name="arrow-left" size={25} color={COLORS.BLACK} /> */}
+          }}
+          onPress={() => navigation.goBack()}>
+          <Icon name="arrow-left" size={25} color={COLORS.BLACK} />
         </TouchableOpacity>
       }
       title={
@@ -175,13 +126,10 @@ const PatientData = ({navigation}) => {
   return (
     <View style={STYLES.wrapper}>
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
-      {/* {_header()} */}
-
+      {_header()}
       <ScrollView style={STYLES.body}>
-        <Text style={STYLES.title}>Beneficiary Profile</Text>
-
         {/* Simprints GUI */}
-        <View style={STYLES.guid}>
+        <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Simprints GUI</Text>
           <TextInput
             style={STYLES.guid}
@@ -216,7 +164,6 @@ const PatientData = ({navigation}) => {
             placeholderTextColor={COLORS.BLACK}
             value={state.lastName}
             onChangeText={text => setState({...state, lastName: text})}
-            placeholder="Enter last name"
           />
         </View>
 
@@ -231,30 +178,26 @@ const PatientData = ({navigation}) => {
             placeholderTextColor={COLORS.BLACK} // Set the placeholder text color
             value={state.phoneNumber}
             onChangeText={text => setState({...state, phoneNumber: text})}
-            keyboardType="numeric"
-            placeholder='eg:"0772700900'
           />
         </View>
 
-        {/* Sex */}
-        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Text style={STYLES.label}>Sex:</Text>
-
-          <Picker
-            placeholder="Sex"
-            placeholderTextColor={COLORS.BLACK}
-            selectedValue={state.sex}
-            onValueChange={(value, index) => setState({...state, sex: value})}
-            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
-            dropdownIconColor={COLORS.GREY_LIGHTER}>
-            <Picker.Item label="" value="" />
-            <Picker.Item label="Female" value="Female" />
-            <Picker.Item label="Male" value="Male" />
-            <Picker.Item label="Other" value="Other" />
-          </Picker>
-        </View>
-        {/* Age Group */}
-        {/* <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
+        <View style={STYLES.wrap}>
+          {/* Sex */}
+          <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
+            <Picker
+              placeholder="Sex"
+              placeholderTextColor={COLORS.BLACK}
+              selectedValue={state.sex}
+              onValueChange={(value, index) => setState({...state, sex: value})}
+              style={STYLES.pickerItemStyle}>
+              <Picker.Item label="Sex" value="Gender" />
+              <Picker.Item label="Female" value="Female" />
+              <Picker.Item label="Male" value="Male" />
+              <Picker.Item label="Other" value="Other" />
+            </Picker>
+          </View>
+          {/* Age Group */}
+          <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
             <Picker
               placeholder="Age"
               placeholderTextColor={COLORS.BLACK}
@@ -271,25 +214,7 @@ const PatientData = ({navigation}) => {
               <Picker.Item label="40 - 60" value="40 - 60" />
               <Picker.Item label="60 above" value="60 above" />
             </Picker>
-          </View> */}
-
-        {/* Date for birth */}
-
-        <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Date of Birth:</Text>
-          <TouchableOpacity
-            style={STYLES.datePickerInput}
-            onPress={() => setShowDatePicker('patient')}>
-            <Text style={STYLES.datePickerText}>{formatDate(ageGroup)}</Text>
-          </TouchableOpacity>
-          {showDatePicker === 'patient' && (
-            <DateTimePicker
-              value={ageGroup || new Date()} // Use null or fallback to current date
-              mode="date"
-              display="spinner"
-              onChange={handleDateChange}
-            />
-          )}
+          </View>
         </View>
 
         <View style={STYLES.wrap}>
@@ -335,7 +260,6 @@ const PatientData = ({navigation}) => {
             <Picker.Item label="Kenya" value="Kenya" />
             <Picker.Item label="Rwanda" value="Rwanda" />
             <Picker.Item label="Tanzania" value="Tanzania" />
-            <Picker.Item label="Other" value="Other" />
           </Picker>
         </View>
 
@@ -357,7 +281,6 @@ const PatientData = ({navigation}) => {
             <Picker.Item label="Jinja" value="Jinja" />
             <Picker.Item label="Masaka" value="Masaka" />
             <Picker.Item label="Mbarara" value="Mbarara" />
-            <Picker.Item label="Other" value="Other" />
           </Picker>
         </View>
 
@@ -374,12 +297,12 @@ const PatientData = ({navigation}) => {
             style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
             dropdownIconColor={COLORS.GREY_LIGHTER}>
             <Picker.Item label="" value="" />
+            <Picker.Item label="Uganda" value="Uganda" />
             <Picker.Item label="Luganda" value="Luganda" />
             <Picker.Item label="Lusoga" value="Lusoga" />
             <Picker.Item label="Runyakore" value="Runyakore" />
             <Picker.Item label="Rutoro" value="Rutoro" />
             <Picker.Item label="English" value="English" />
-            <Picker.Item label="Other" value="Other" />
           </Picker>
         </View>
 
@@ -404,7 +327,6 @@ const STYLES = StyleSheet.create({
   body: {
     flex: 2,
     paddingHorizontal: 20,
-    paddingVertical: 20,
   },
   alert: {
     color: COLORS.GREY,
@@ -426,11 +348,8 @@ const STYLES = StyleSheet.create({
   title: {
     fontWeight: 'bold',
     color: COLORS.BLACK,
-    textAlign: 'center',
+    alignItems: 'center',
     flexGrow: 1,
-    fontSize: 18,
-    paddingVertical: 10,
-    textDecorationLine: 'underline',
   },
   leftHeader: {
     marginLeft: 10,
@@ -516,8 +435,7 @@ const STYLES = StyleSheet.create({
     textAlign: 'left',
     color: COLORS.BLACK,
     fontSize: 11,
-    fontWeight: 'bold',
-    display: 'none',
+    fontWeight: 'bold ',
   },
   submit: {
     backgroundColor: COLORS.BLACK,
@@ -603,17 +521,5 @@ const STYLES = StyleSheet.create({
     borderRadius: 10,
     height: 50,
     marginHorizontal: 5,
-  },
-  datePickerText: {
-    paddingVertical: 10,
-    paddingLeft: 12,
-    fontSize: 15,
-    color: COLORS.BLACK,
-  },
-  datePickerText: {
-    paddingVertical: 10,
-    paddingLeft: 30,
-    fontSize: 14,
-    color: COLORS.BLACK,
   },
 });

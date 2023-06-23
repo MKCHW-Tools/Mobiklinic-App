@@ -35,7 +35,6 @@ const PatientData = ({navigation, route}) => {
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || dateOfVaccination;
     setShowDatePicker(false);
-
     // Update the respective state based on the selected date
     if (showDatePicker === 'vaccination') {
       setDateOfVaccination(currentDate);
@@ -204,6 +203,7 @@ const PatientData = ({navigation, route}) => {
             placeholder="Enter vaccine card number"
           />
         </View>
+        {/* Date for vaccination */}
         {/* Date for vaccination */}
         {/* Date for vaccination */}
         <View style={STYLES.labeled}>

@@ -1,10 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React, {useCallback, useEffect, useState, useContext} from 'react';
 import {DeviceEventEmitter, NativeEventEmitter, Text} from 'react-native';
 
@@ -441,7 +434,7 @@ const SimprintsID = ({navigation}) => {
                                           </Text>
                                         </Text>
                                         <Text style={styles.userDataLabel}>
-                                          .................................................................
+                                          .................................................................{' '}
                                           <Text
                                             style={styles.userDataValue}></Text>
                                         </Text>
@@ -492,21 +485,24 @@ const SimprintsID = ({navigation}) => {
                                             {diagnosis.duration}
                                           </Text>
                                         </Text>
-                                        
                                         <Text style={styles.userDataLabel}>
-                                          Date of diagnosis:{' '}
+                                          Date of diagnosis:{'\t'}
                                           <Text style={styles.userDataValue}>
-                                            {diagnosis.dateOfDiagnosis}
+                                            {formatDate(
+                                              new Date(
+                                                diagnosis.dateOfDiagnosis,
+                                              ),
+                                            )}
                                           </Text>
                                         </Text>
-
                                         <Text style={styles.userDataLabel}>
-                                          Date for Next Dose:{' '}
+                                          Follow Up Date:{' '}
                                           <Text style={styles.userDataValue}>
-                                            {diagnosis.followUpDate}
+                                            {formatDate(
+                                              new Date(diagnosis.followUpDate),
+                                            )}
                                           </Text>
                                         </Text>
-
                                         <Text style={styles.userDataLabel}>
                                           Impression:{' '}
                                           <Text style={styles.userDataValue}>
@@ -514,7 +510,7 @@ const SimprintsID = ({navigation}) => {
                                           </Text>
                                         </Text>
                                         <Text style={styles.userDataLabel}>
-                                          .................................................................
+                                          .................................................................{' '}
                                           <Text
                                             style={styles.userDataValue}></Text>
                                         </Text>

@@ -180,7 +180,7 @@ export const signIn = async data => {
  
 
 
-  clearStorage();
+  // clearStorage();
   let {user, setIsLoading, setMyUser: setUser} = data;
   if (typeof user === undefined) {
     Alert.alert('Error', 'Provide your phone number and password');
