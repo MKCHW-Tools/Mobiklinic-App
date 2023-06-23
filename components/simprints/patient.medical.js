@@ -72,6 +72,7 @@ const PatientMedical = ({navigation}) => {
     duration: '',
     followUpDate: '',
     isPregnant: false,
+    labTests: '',
     // registeredById: '',
   });
 
@@ -106,6 +107,7 @@ const PatientMedical = ({navigation}) => {
             duration: state.duration,
             followUpDate: state.followUpDate,
             isPregnant: state.isPregnant,
+            labTests: state.labTests,
           }),
           headers: {
             'Content-type': 'application/json; charset=UTF-8',
@@ -174,7 +176,7 @@ const PatientMedical = ({navigation}) => {
             onChangeText={text => setState({...state, impression: text})}
             placeholder='signs and symptoms e.g "Headache, Fever, Cough"'
             multiline={true}
-            numberOfLines={4}
+            numberOfLines={3}
           />
         </View>
 
@@ -199,6 +201,23 @@ const PatientMedical = ({navigation}) => {
           )}
         </View>
 
+        {/* LAB TESTS */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Lab Tests and Results:</Text>
+          <TextInput
+            style={[
+              STYLES.field,
+              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+            ]} // Add color and placeholderTextColor styles
+            placeholderTextColor={COLORS.BLACK}
+            value={state.labTests}
+            onChangeText={text => setState({...state, labTests: text})}
+            placeholder='Lab tests and results e.g "Malaria positive"'
+            multiline={true}
+            numberOfLines={3}
+          />
+        </View>
+
         {/* Condition */}
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Condition:</Text>
@@ -212,7 +231,7 @@ const PatientMedical = ({navigation}) => {
             onChangeText={text => setState({...state, condition: text})}
             placeholder='e.g "Malaria"'
             multiline={true}
-            numberOfLines={4}
+            numberOfLines={3}
           />
         </View>
 
@@ -334,7 +353,8 @@ const STYLES = StyleSheet.create({
   },
   body: {
     flex: 2,
-    padding: 30,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
   },
   alert: {
     color: COLORS.GREY,
@@ -438,7 +458,7 @@ const STYLES = StyleSheet.create({
     justifyContent: 'center',
     color: COLORS.BLACK,
     fontWeight: 'medium',
-    fontSize: 15,
+    fontSize: 13,
   },
   switch: {
     flex: 1,
