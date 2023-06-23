@@ -18,6 +18,7 @@ import DataResultsContext from '../contexts/DataResultsContext';
 const PatientLists = ({navigation}) => {
   const [users, setUsers] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const {userLog} = useContext(DataResultsContext); // Get the logged-in user ID from the context
 
   const _header = () => (
@@ -40,23 +41,34 @@ const PatientLists = ({navigation}) => {
   );
 
   const fetchUsers = async () => {
+setIsLoading(true)
     try {
+
+      const response = await axios.get(
+        `https://mobi-be-production.up.railway.app/${userLog}/patients`,
+        // Use the logged-in user ID in the API URL
+      );
+      if(response.status === 200){
+        setUsers(response.data);
+        await AsyncStorage.setItem('patientList', JSON.stringify(response.data));
+        setIsLoading(false)
+        return response.data;
+      }else{
+        setIsLoading(false)
+        if (storedData) {
+          setUsers(JSON.parse(storedData));
+        }
+
+        return null;
+      }
+    } catch (error) {
+      setIsLoading(false)
+
+      console.error(error);
       const storedData = await AsyncStorage.getItem('patientList');
       if (storedData) {
         setUsers(JSON.parse(storedData));
-      } else {
-        const response = await axios.get(
-          `https://mobi-be-production.up.railway.app/${userLog}/patients`,
-          // Use the logged-in user ID in the API URL
-        );
-        setUsers(response.data);
-        await AsyncStorage.setItem(
-          'patientList',
-          JSON.stringify(response.data),
-        );
       }
-    } catch (error) {
-      console.error(error);
     } finally {
       setRefreshing(false);
     }
@@ -150,7 +162,7 @@ const PatientLists = ({navigation}) => {
 
       <View style={styles.container}>
         <Text style={styles.header}>Beneficiary List</Text>
-        {users.length > 0 ? (
+        {!isLoading ? (
           <FlatList
             data={users}
             keyExtractor={item => item.id.toString()}
