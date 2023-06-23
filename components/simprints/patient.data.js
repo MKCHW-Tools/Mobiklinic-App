@@ -198,7 +198,8 @@ const PatientData = ({navigation}) => {
               STYLES.field,
               {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
             ]} // Add color and placeholderTextColor styles
-            placeholderTextColor={COLORS.BLACK} //             value={state.firstName}
+            placeholderTextColor={COLORS.BLACK} //             
+            value={state.firstName}
             onChangeText={text => setState({...state, firstName: text})}
             placeholder="Enter first name"
           />

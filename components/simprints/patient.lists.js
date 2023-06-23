@@ -41,16 +41,15 @@ const PatientLists = ({navigation}) => {
 
   const fetchUsers = async () => {
     try {
-      // First, check if the data is stored locally
       const storedData = await AsyncStorage.getItem('patientList');
       if (storedData) {
         setUsers(JSON.parse(storedData));
       } else {
         const response = await axios.get(
-          `https://mobi-be-production.up.railway.app/${userLog}/patients`, // Use the logged-in user ID in the API URL
+          `https://mobi-be-production.up.railway.app/${userLog}/patients`,
+          // Use the logged-in user ID in the API URL
         );
         setUsers(response.data);
-        // Save the fetched data locally for offline access
         await AsyncStorage.setItem(
           'patientList',
           JSON.stringify(response.data),
@@ -64,7 +63,11 @@ const PatientLists = ({navigation}) => {
   };
 
   useEffect(() => {
-    fetchUsers();
+    const fetchData = async () => {
+      await fetchUsers();
+    };
+
+    fetchData();
   }, [userLog]);
 
   const onRefresh = () => {
@@ -125,7 +128,7 @@ const PatientLists = ({navigation}) => {
                     </Text>
                     <Text style={styles.label}>
                       {' '}
-                      Units: {vaccination.units}
+                      Card Number: {vaccination.units}
                     </Text>
                   </View>
                 ))}

@@ -45,7 +45,6 @@ const GetPatients = () => {
         setUserData(data);
         setVaccinations(data.vaccinations); // Set the vaccination data
         setDiagnosis(data.diagnosis); // Set the vaccination data
-
         setShowConfirmButton(true); // Show the "Confirm Data" button
       } else {
         Alert.alert(
