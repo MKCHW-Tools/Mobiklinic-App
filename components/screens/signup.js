@@ -202,7 +202,7 @@ const SignUp = ({navigation}) => {
             placeholder="Enter Password again"
           /> */}
 
-          {state.username != '' &&
+          {/* {state.username != '' &&
           state.firstName != '' &&
           state.lastName != '' &&
           state.phoneNumber != '' &&
@@ -237,7 +237,27 @@ const SignUp = ({navigation}) => {
                 color={COLORS.BLACK}
               />
             </TouchableOpacity>
-          )}
+          )} */}
+
+          <TouchableOpacity
+            style={[styles.btn, styles.btnPrimary]}
+            onPress={() => {
+              setIsLoading(true);
+              signUp({
+                ...state,
+                setIsLoading,
+                setProcess,
+                setRegistered,
+              });
+            }}>
+            <Text style={styles.whiteText}>Sign Up</Text>
+            <Icon
+              name="arrow-right"
+              size={20}
+              strokeSize={3}
+              color={COLORS.BLACK}
+            />
+          </TouchableOpacity>
 
           <TouchableOpacity onPress={() => navigation.navigate('Login')}>
             <Text style={[styles.linkItem]}>
@@ -322,12 +342,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     color: COLORS.BLACK,
     fontWeight: 'medium',
-    paddingLeft:10,
-    fontSize:15,
+    paddingLeft: 10,
+    fontSize: 15,
   },
   btn: {
     padding: DIMENS.PADDING,
-    
   },
   errorMsg: {
     color: COLORS.ERRORS,
@@ -345,7 +364,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginVertical: 10,
     marginHorizontal: 15,
-
   },
   btnInfo: {
     backgroundColor: COLORS.WHITE_LOW,
