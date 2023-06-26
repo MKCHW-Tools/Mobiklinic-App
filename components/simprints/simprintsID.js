@@ -128,6 +128,8 @@ const SimprintsID = ({navigation}) => {
         setIdentificationPlusResults(results);
         setDisplayMode('identificationPlus');
         updateBenData(results);
+        const {guid} = results[0];
+        updateDataResults(guid);
       },
     );
 
@@ -137,6 +139,8 @@ const SimprintsID = ({navigation}) => {
         setIdentificationResults(results);
         setDisplayMode('identification');
         updateBenData(results);
+        const {guid} = results[0];
+        updateDataResults(guid);
         // updateDataResults(results);
       },
     );
