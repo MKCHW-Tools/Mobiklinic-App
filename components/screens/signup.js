@@ -79,71 +79,111 @@ const SignUp = ({navigation}) => {
           <View>
             <Text style={styles.errorMsg}>{msg}</Text>
           </View>
-
-          <TextInput
-            style={styles.input}
-            autoCorrect={false}
-            placeholderTextColor="grey"
-            selectionColor={COLORS.SECONDARY}
-            onChangeText={firstName => setState({...state, firstName})}
-            value={firstName}
-            placeholder="First name"
-          />
-
-          <TextInput
-            style={styles.input}
-            autoCorrect={false}
-            placeholderTextColor="grey"
-            selectionColor={COLORS.SECONDARY}
-            onChangeText={lastName => setState({...state, lastName})}
-            value={lastName}
-            placeholder="Last name"
-          />
-
-          <TextInput
-            style={styles.input}
-            autoCorrect={false}
-            placeholderTextColor="grey"
-            selectionColor={COLORS.SECONDARY}
-            onChangeText={eMail => setState({...state, eMail})}
-            value={eMail}
-            placeholder="E-mail"
-          />
-
-          <TextInput
-            style={styles.input}
-            autoCorrect={false}
-            placeholderTextColor="grey"
-            selectionColor={COLORS.SECONDARY}
-            onChangeText={phoneNumber => {
-              setState({...state, phoneNumber});
-              if (!validateUgandaPhoneNumber(phoneNumber)) {
-                setPhoneError('Provide valid phone number. e.g: 2567xxx...');
-              } else {
-                setPhoneError('');
-              }
-            }}
-            value={phoneNumber}
-            placeholder="Phone number"
-          />
+          <View style={styles.labeled}>
+            <Text style={styles.label}>First Name:</Text>
+            <TextInput
+              style={styles.input}
+              autoCorrect={false}
+              placeholderTextColor="grey"
+              selectionColor={COLORS.SECONDARY}
+              onChangeText={firstName => setState({...state, firstName})}
+              value={firstName}
+              placeholder="Enter First name"
+            />
+          </View>
+          <View style={styles.labeled}>
+            <Text style={styles.label}>Last Name:</Text>
+            <TextInput
+              style={styles.input}
+              autoCorrect={false}
+              placeholderTextColor="grey"
+              selectionColor={COLORS.SECONDARY}
+              onChangeText={lastName => setState({...state, lastName})}
+              value={lastName}
+              placeholder="Enter Last name"
+            />
+          </View>
+          <View style={styles.labeled}>
+            <Text style={styles.label}>Email Address:</Text>
+            <TextInput
+              style={styles.input}
+              autoCorrect={false}
+              placeholderTextColor="grey"
+              selectionColor={COLORS.SECONDARY}
+              onChangeText={eMail => setState({...state, eMail})}
+              value={eMail}
+              keyboardType="email-address"
+              placeholder="Enter Email"
+            />
+          </View>
+          <View style={styles.labeled}>
+            <Text style={styles.label}>Phone Number:</Text>
+            <TextInput
+              style={styles.input}
+              autoCorrect={false}
+              placeholderTextColor="grey"
+              keyboardType="numeric"
+              selectionColor={COLORS.SECONDARY}
+              onChangeText={phoneNumber => {
+                setState({...state, phoneNumber});
+                if (!validateUgandaPhoneNumber(phoneNumber)) {
+                  setPhoneError('Provide valid phone number. e.g: 2567xxx...');
+                } else {
+                  setPhoneError('');
+                }
+              }}
+              value={phoneNumber}
+              placeholder="eg '256754XXXXXXX'"
+            />
+          </View>
           {phoneError != '' && (
             <Text style={[styles.alignError, styles.errorMsg]}>
               {phoneError}
             </Text>
           )}
-          <TextInput
-            style={styles.input}
-            password={true}
-            secureTextEntry={true}
-            autoCorrect={false}
-            placeholderTextColor="grey"
-            selectionColor={COLORS.SECONDARY}
-            onChangeText={password => setState({...state, password})}
-            value={password}
-            placeholder="Password"
-          />
+          <View style={styles.labeled}>
+            <Text style={styles.label}>Password:</Text>
 
-          <TextInput
+            <TextInput
+              style={styles.input}
+              password={true}
+              secureTextEntry={true}
+              autoCorrect={false}
+              placeholderTextColor="grey"
+              selectionColor={COLORS.SECONDARY}
+              onChangeText={password => setState({...state, password})}
+              value={password}
+              placeholder="Enter Password"
+            />
+          </View>
+
+          <View style={styles.labeled}>
+            <Text style={styles.label}>Confirm :</Text>
+            <TextInput
+              style={styles.input}
+              password={true}
+              secureTextEntry={true}
+              autoCorrect={false}
+              placeholderTextColor="grey"
+              selectionColor={COLORS.SECONDARY}
+              onChangeText={cPassword => {
+                setState({...state, cPassword});
+                if (password != cPassword) {
+                  setPasswordError('Make sure passwords are not different.');
+                } else {
+                  setPasswordError('');
+                }
+              }}
+              value={cPassword}
+              placeholder="Enter Password again"
+            />
+          </View>
+          {passwordError != '' && (
+            <Text style={[styles.alignError, styles.errorMsg]}>
+              {passwordError}
+            </Text>
+          )}
+          {/* <TextInput
             style={styles.input}
             password={true}
             secureTextEntry={true}
@@ -160,13 +200,9 @@ const SignUp = ({navigation}) => {
             }}
             value={cPassword}
             placeholder="Enter Password again"
-          />
-          {passwordError != '' && (
-            <Text style={[styles.alignError, styles.errorMsg]}>
-              {passwordError}
-            </Text>
-          )}
-          {state.username != '' &&
+          /> */}
+
+          {/* {state.username != '' &&
           state.firstName != '' &&
           state.lastName != '' &&
           state.phoneNumber != '' &&
@@ -183,17 +219,17 @@ const SignUp = ({navigation}) => {
                   setRegistered,
                 });
               }}>
-              <Text style={styles.whiteText}>Sign up</Text>
+              <Text style={styles.whiteText}>Sign Up</Text>
               <Icon
                 name="arrow-right"
                 size={20}
                 strokeSize={3}
-                color={COLORS.WHITE}
+                color={COLORS.BLACK}
               />
             </TouchableOpacity>
           ) : (
             <TouchableOpacity style={[styles.btn, styles.btnInfo]}>
-              <Text style={styles.muteText}>Sign up</Text>
+              <Text style={styles.muteText}>Sign Up</Text>
               <Icon
                 name="arrow-right"
                 size={25}
@@ -201,7 +237,27 @@ const SignUp = ({navigation}) => {
                 color={COLORS.BLACK}
               />
             </TouchableOpacity>
-          )}
+          )} */}
+
+          <TouchableOpacity
+            style={[styles.btn, styles.btnPrimary]}
+            onPress={() => {
+              setIsLoading(true);
+              signUp({
+                ...state,
+                setIsLoading,
+                setProcess,
+                setRegistered,
+              });
+            }}>
+            <Text style={styles.whiteText}>Sign Up</Text>
+            <Icon
+              name="arrow-right"
+              size={20}
+              strokeSize={3}
+              color={COLORS.BLACK}
+            />
+          </TouchableOpacity>
 
           <TouchableOpacity onPress={() => navigation.navigate('Login')}>
             <Text style={[styles.linkItem]}>
@@ -216,12 +272,12 @@ const SignUp = ({navigation}) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 2,
+    flex: 3,
     backgroundColor: COLORS.WHITE,
   },
   body: {
     // flex: 1,
-    paddingTop: 20,
+    paddingTop: 50,
     // paddingHorizontal: 12,
   },
   logoContainer: {
@@ -245,6 +301,28 @@ const styles = StyleSheet.create({
   textColor: {
     color: COLORS.WHITE_LOW,
   },
+  label: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    color: COLORS.BLACK,
+  },
+  labeled: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    // marginTop: 10,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    backgroundColor: COLORS.WHITE_LOW,
+    borderRadius: 18,
+    paddingHorizontal: 20,
+    marginBottom: 15,
+    fontFamily: 'Roboto',
+    fontSize: 15,
+    color: COLORS.BLACK,
+    marginHorizontal: 15,
+  },
   linkItem: {
     paddingTop: DIMENS.PADDING,
     textAlign: 'center',
@@ -259,15 +337,13 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.PRIMARY,
   },
   input: {
-    backgroundColor: COLORS.WHITE_LOW,
     // borderColor: COLORS.WHITE_LOW,
-    borderRadius: 18,
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    marginBottom: 10,
-    fontFamily: 'Roboto',
-    fontSize: 16,
-    color:COLORS.BLACK,
+    flex: 1,
+    justifyContent: 'center',
+    color: COLORS.BLACK,
+    fontWeight: 'medium',
+    paddingLeft: 10,
+    fontSize: 15,
   },
   btn: {
     padding: DIMENS.PADDING,
@@ -287,6 +363,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 15,
     marginVertical: 10,
+    marginHorizontal: 15,
   },
   btnInfo: {
     backgroundColor: COLORS.WHITE_LOW,

@@ -28,7 +28,7 @@ import {DiagnosisContext} from '../providers/Diagnosis';
 import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 
-const SelectActivity = ({navigation}) => {
+const SelectActivity = ({navigation, route}) => {
   const _header = () => (
     <CustomHeader
       left={
@@ -44,7 +44,7 @@ const SelectActivity = ({navigation}) => {
           <Icon name="arrow-left" size={25} color={COLORS.BLACK} />
         </TouchableOpacity>
       }
-      title={<Text style={[STYLES.centerHeader, ]}>Back</Text>}
+      title={<Text style={[STYLES.centerHeader]}>Back</Text>}
     />
   );
   return (
@@ -58,6 +58,11 @@ const SelectActivity = ({navigation}) => {
           source={require('../imgs/logo.png')}
         />
         <Text style={STYLES.title}>Mobiklinic</Text>
+        <Text style={STYLES.text}>
+          {route.params.paramKey.firstName}
+          {'\t'}
+          {route.params.paramKey.lastName}
+        </Text>
 
         <View style={STYLES.btnContainer}>
           <TouchableOpacity
@@ -88,7 +93,6 @@ const SelectActivity = ({navigation}) => {
             style={STYLES.btn}
             onPress={() => navigation.navigate('Dashboard')}>
             <Text style={STYLES.btnText}>Back To Dashboard</Text>
-            
           </TouchableOpacity>
         </View>
       </View>
@@ -102,7 +106,7 @@ const STYLES = StyleSheet.create({
   wrapper: {
     flex: 1,
     backgroundColor: COLORS.WHITE_LOW,
-    paddingTop:50,
+    paddingTop: 50,
   },
   header: {
     flex: 1,
@@ -132,9 +136,7 @@ const STYLES = StyleSheet.create({
     flex: 2,
     alignItems: 'center',
     color: COLORS.BLACK,
-    fontWeight:'bold',
-    
-
+    fontWeight: 'bold',
   },
   rightHeader: {
     paddingRight: 10,
@@ -171,7 +173,7 @@ const STYLES = StyleSheet.create({
   },
   btnContainer: {
     flex: 1,
-    marginVertical:80,
+    marginVertical: 80,
     // justifyContent: 'center',
     // alignItems: 'center',
   },
@@ -206,5 +208,12 @@ const STYLES = StyleSheet.create({
     fontWeight: 'bold',
     textTransform: 'uppercase',
     padding: DIMENS.PADDING,
+  },
+  text: {
+    fontWeight: 'bold',
+    color: COLORS.BLACK,
+    textAlign: 'center',
+    // flexGrow: 1,
+    fontSize: 18,
   },
 });

@@ -366,28 +366,31 @@ const Login = ({navigation}) => {
         <Text style={styles.title}>Sign in</Text>
       </View>
       <View style={styles.formContainer}>
-        <TextInput
-          style={styles.input}
-          autoCorrect={false}
-          placeholderTextColor="grey"
-          // keyboardType={'phone-pad'}
-          selectionColor={COLORS.SECONDARY}
-          onChangeText={text => setUser({...user, username: text})}
-          value={user.username}
-          placeholder="Phone number e.g: 256778xxxxxx"
-        />
-
-        <TextInput
-          style={styles.input}
-          password={true}
-          secureTextEntry={true}
-          autoCorrect={false}
-          placeholderTextColor="grey"
-          selectionColor={COLORS.SECONDARY}
-          onChangeText={text => setUser({...user, password: text})}
-          value={user.password}
-          placeholder="Password"
-        />
+        <View style={styles.labeled}>
+          <TextInput
+            style={styles.input}
+            autoCorrect={false}
+            placeholderTextColor="grey"
+            // keyboardType={'phone-pad'}
+            selectionColor={COLORS.SECONDARY}
+            onChangeText={text => setUser({...user, username: text})}
+            value={user.username}
+            placeholder="Phone number e.g: 256778xxxxxx"
+          />
+        </View>
+        <View style={styles.labeled}>
+          <TextInput
+            style={styles.input}
+            password={true}
+            secureTextEntry={true}
+            autoCorrect={false}
+            placeholderTextColor="grey"
+            selectionColor={COLORS.SECONDARY}
+            onChangeText={text => setUser({...user, password: text})}
+            value={user.password}
+            placeholder="Password"
+          />
+        </View>
 
         {user.username != '' && user.password != '' ? (
           <TouchableOpacity
@@ -465,16 +468,30 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     backgroundColor: COLORS.PRIMARY,
   },
-  input: {
+ 
+  labeled: {
+    flexDirection: 'row',
+    // marginTop: 10,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
     backgroundColor: COLORS.WHITE_LOW,
-    // borderColor: COLORS.WHITE_LOW,
     borderRadius: 18,
     paddingHorizontal: 20,
-    paddingVertical: 14,
-    marginBottom: 10,
+    marginBottom: 15,
     fontFamily: 'Roboto',
-    fontSize: 16,
-    color:COLORS.BLACK,
+    fontSize: 15,
+    color: COLORS.BLACK,
+    // marginHorizontal: 15,
+  },
+  input: {
+    // borderColor: COLORS.WHITE_LOW,
+    flex: 1,
+    justifyContent: 'center',
+    color: COLORS.BLACK,
+    fontWeight: 'medium',
+    paddingLeft: 10,
+    fontSize: 15,
   },
   btn: {
     padding: DIMENS.PADDING,

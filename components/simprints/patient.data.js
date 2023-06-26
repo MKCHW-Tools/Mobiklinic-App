@@ -137,7 +137,10 @@ const PatientData = ({navigation}) => {
         setPatientId(patientId);
         console.log('Patient ID:', patientId);
         Alert.alert('Data posted successfully');
-        navigation.navigate('SelectActivity', {patientId: patientId});
+        navigation.navigate('SelectActivity', {
+          patientId: patientId,
+          paramKey: state,
+        });
       } else {
         console.error('Error posting data:', response.status);
         Alert.alert('Error', 'Failed to submit data. Please try again later.');
@@ -198,7 +201,7 @@ const PatientData = ({navigation}) => {
               STYLES.field,
               {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
             ]} // Add color and placeholderTextColor styles
-            placeholderTextColor={COLORS.BLACK} //             
+            placeholderTextColor={COLORS.BLACK} //
             value={state.firstName}
             onChangeText={text => setState({...state, firstName: text})}
             placeholder="Enter first name"

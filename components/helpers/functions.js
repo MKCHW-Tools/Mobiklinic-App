@@ -175,11 +175,7 @@ export const DOWNLOAD = async data => {
   }
 };
 
-
 export const signIn = async data => {
- 
-
-
   // clearStorage();
   let {user, setIsLoading, setMyUser: setUser} = data;
   if (typeof user === undefined) {
@@ -216,7 +212,6 @@ export const signIn = async data => {
       });
       setIsLoading(false);
       return;
-   
     }
   }
   // } else {
@@ -237,10 +232,8 @@ export const signIn = async data => {
       },
     );
 
-
     let json_data = await response.json();
     const {message, id, accessToken, refreshToken} = json_data;
-  
 
     if (message === 'Login successful') {
       const userId = json_data.id;
@@ -336,7 +329,12 @@ export const signUp = async data => {
     password == '' ||
     cPassword == ''
   ) {
-    Alert.alert('Fail', 'Fix errors in the form, and try again!');
+    Alert.alert('Error', 'Please fill in the required fields correctly !', [
+      {
+        text: 'OK',
+        onPress: () => setIsLoading(false),
+      },
+    ]);
     console.log(firstName, lastName, phoneNumber, eMail, password, cPassword);
     return;
   }
@@ -364,7 +362,13 @@ export const signUp = async data => {
         } else if (response.result == 'Failure') {
           Alert.alert(
             'Sign up failure.',
-            'Check Phone number and E-mail. Press Ok to try again.',
+            'Please Fill In the Required Fields Correctly.',
+            [
+              {
+                text: 'OK',
+                onPress: () => setIsLoading(false),
+              },
+            ],
           );
 
           console.log(response);
@@ -377,6 +381,12 @@ export const signUp = async data => {
         Alert.alert(
           'Failure',
           'Something wrong happened. Check your internet and try again!',
+          [
+            {
+              text: 'OK',
+              onPress: () => setIsLoading(false),
+            },
+          ],
         );
       });
   } catch (err) {
