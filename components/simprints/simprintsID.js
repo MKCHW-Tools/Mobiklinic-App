@@ -345,6 +345,7 @@ const SimprintsID = ({navigation}) => {
                     {index === 0 && ( // Display "RESULTS" heading only for the first result
                       <Text style={styles.userDataLabel}>RESULTS</Text>
                     )}
+
                     <TouchableOpacity
                       style={styles.input}
                       onPress={() => {
@@ -364,6 +365,13 @@ const SimprintsID = ({navigation}) => {
 
                     {collapsedIndex === index && guid === result.guid && (
                       <>
+                       {!userData && result.confidenceScore >= 70 && result.confidenceScore <= 99 && (
+      <TouchableOpacity
+        style={styles.buttonSec}
+        onPress={() => navigation.navigate('PatientData')}>
+        <Text style={styles.buttonStyle}>Proceed to register</Text>
+      </TouchableOpacity>
+    )}
                         {userData ? (
                           <View style={styles.userData}>
                             <Text style={styles.userDataLabel}>
@@ -541,6 +549,8 @@ const SimprintsID = ({navigation}) => {
                             </TouchableOpacity>
                           </View>
                         ) : (
+                          !(!userData && result.confidenceScore >= 70 && result.confidenceScore <= 99) && (
+
                           <View style={styles.userData}>
                             <Text style={styles.userDataLabel}>
                               Beneficiary does not exist.
@@ -553,6 +563,7 @@ const SimprintsID = ({navigation}) => {
                               </Text>
                             </TouchableOpacity>
                           </View>
+                          )
                         )}
                       </>
                     )}
