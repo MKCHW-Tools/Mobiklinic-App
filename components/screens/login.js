@@ -208,6 +208,7 @@ const Login = ({ navigation }) => {
   });
 
   const { updateUserLog } = useContext(DataResultsContext);
+  const {updateUserNames} = useContext(DataResultsContext);
 
 
   const signIn = async () => {
@@ -259,12 +260,15 @@ const Login = ({ navigation }) => {
       });
 
       let json_data = await response.json();
-      const { message, id, accessToken, refreshToken } = json_data;
+      const { message, id, accessToken, refreshToken, firstName, lastName } = json_data;
 
       if (message === 'Login successful') {
         const id = json_data.id;
+        const name = json_data.firstName + ' ' + json_data.lastName;
         updateUserLog(id);
+        updateUserNames(name)
         console.log(id);
+        console.log(name);
 
         await SAVE_LOCAL_USER({
           id,

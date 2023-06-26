@@ -36,6 +36,7 @@ const SimprintsID = ({navigation}) => {
   const {updateDataResults} = useContext(DataResultsContext);
   const {updateBenData} = useContext(DataResultsContext);
   const {benData} = useContext(DataResultsContext);
+  const {userNames} = useContext(DataResultsContext);
   const [userData, setUserData] = React.useState(null);
   const [guid, setGuid] = React.useState(
     benData.length > 0 ? benData[0].guid : [],
@@ -60,6 +61,9 @@ const SimprintsID = ({navigation}) => {
   const [clickedResult, setClickedResult] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const {patientId, setPatientId} = useContext(DataResultsContext);
+
+  // console.log('Logged User from simprints is', userNames);
+
 
   const toggleCollapse = index => {
     if (collapsedIndex === index) {
@@ -158,7 +162,7 @@ const SimprintsID = ({navigation}) => {
   const handleIdentificationPlus = () => {
     const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
     const moduleID = 'test_user';
-    const userID = 'mpower';
+    const userID = userNames;
 
     IdentificationPlus.registerOrIdentify(projectID, moduleID, userID);
   };
@@ -166,7 +170,7 @@ const SimprintsID = ({navigation}) => {
   const handleIdentification = () => {
     const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
     const moduleID = 'test_user';
-    const userID = 'mpower';
+    const userID = userNames;
 
     IdentificationModule.triggerIdentification(projectID, moduleID, userID);
   };
@@ -214,7 +218,7 @@ const SimprintsID = ({navigation}) => {
   var OpenActivity = NativeModules.OpenActivity;
 
   const openFunction = () => {
-    OpenActivity.open('WuDDHuqhcQ36P2U9rM7Y', 'test_user', 'mpower');
+    OpenActivity.open('WuDDHuqhcQ36P2U9rM7Y', 'test_user', userNames);
   };
 
   const _header = () => (
