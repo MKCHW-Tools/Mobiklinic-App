@@ -336,10 +336,12 @@ export const signUp = async data => {
     password == '' ||
     cPassword == ''
   ) {
-    Alert.alert('Fail', 'Fix errors in the form, and try again!');
+    Alert.alert('Error', 'Please fill in the required fields correctly !');
     console.log(firstName, lastName, phoneNumber, eMail, password, cPassword);
     return;
   }
+
+  
 
   try {
     await fetch(`https://mobi-be-production.up.railway.app/auth/signup`, {
@@ -364,7 +366,7 @@ export const signUp = async data => {
         } else if (response.result == 'Failure') {
           Alert.alert(
             'Sign up failure.',
-            'Check Phone number and E-mail. Press Ok to try again.',
+            'Please Fill In the Required Fields Correctly.',
           );
 
           console.log(response);
