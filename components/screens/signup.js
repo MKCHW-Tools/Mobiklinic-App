@@ -272,12 +272,12 @@ const SignUp = ({navigation}) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 2,
+    flex: 3,
     backgroundColor: COLORS.WHITE,
   },
   body: {
     // flex: 1,
-    paddingTop: 20,
+    paddingTop: 50,
     // paddingHorizontal: 12,
   },
   logoContainer: {
