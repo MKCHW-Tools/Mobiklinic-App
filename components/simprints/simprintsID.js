@@ -225,7 +225,9 @@ const SimprintsID = ({navigation}) => {
           <Icon name="arrow-left" size={25} color={COLORS.BLACK} />
         </TouchableOpacity>
       }
-      title={<Text style={[styles.centerHeader]}>Biometrics Identification</Text>}
+      title={
+        <Text style={[styles.centerHeader]}>Biometrics Identification</Text>
+      }
     />
   );
 
@@ -525,7 +527,9 @@ const SimprintsID = ({navigation}) => {
                               style={styles.buttonSec}
                               // onPress={() => navigation.navigate('SelectActivity')}
                               onPress={() =>
-                                navigation.navigate('SelectActivity')
+                                navigation.navigate('SelectActivity', {
+                                  paramKey: userData,
+                                })
                               }>
                               <Text style={styles.buttonStyle}>
                                 Confirm Data
