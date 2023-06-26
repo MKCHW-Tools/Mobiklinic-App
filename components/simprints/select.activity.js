@@ -59,9 +59,12 @@ const SelectActivity = ({navigation, route}) => {
         />
         <Text style={STYLES.title}>Mobiklinic</Text>
         <Text style={STYLES.text}>
-          {route.params.paramKey.firstName}
-          {'\t'}
-          {route.params.paramKey.lastName}
+          Beneficary Name: {'\t'}
+          <Text style={{textDecorationLine: 'underline'}}>
+            {route.params.paramKey.firstName}
+            {'\t'}
+            {route.params.paramKey.lastName}
+          </Text>
         </Text>
 
         <View style={STYLES.btnContainer}>
@@ -173,7 +176,7 @@ const STYLES = StyleSheet.create({
   },
   btnContainer: {
     flex: 1,
-    marginVertical: 80,
+    marginVertical: 60,
     // justifyContent: 'center',
     // alignItems: 'center',
   },
@@ -214,6 +217,6 @@ const STYLES = StyleSheet.create({
     color: COLORS.BLACK,
     textAlign: 'center',
     // flexGrow: 1,
-    fontSize: 18,
+    fontSize: 16,
   },
 });

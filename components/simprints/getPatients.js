@@ -33,6 +33,18 @@ const GetPatients = () => {
   const [vaccinations, setVaccinations] = useState(null);
   const [diagnosis, setDiagnosis] = useState(null);
 
+  const formatDate = date => {
+    if (date) {
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+
+      return `${day.toString().padStart(2, '0')}/${month
+        .toString()
+        .padStart(2, '0')}/${year}`;
+    }
+    return 'Click to add date';
+  };
   const fetchData = async () => {
     console.log('GUID:', guid);
     try {
@@ -85,7 +97,7 @@ const GetPatients = () => {
           <Text style={styles.logoTitle}>Mobiklinic</Text>
         </View>
 
-        {!userData && !guid && (
+        {/* {!userData && !guid && (
           <React.Fragment>
             <Text style={styles.label}>Simprints GUID</Text>
             <TextInput
@@ -94,106 +106,174 @@ const GetPatients = () => {
               onChangeText={setGuid}
             />
           </React.Fragment>
-        )}
+        )} */}
 
-        {userData && (
-          <View style={styles.userData}>
-            <Text style={styles.userDataLabel}>
-              Full Name: {' \t'}
-              <Text style={styles.userDataValue}>
-                {userData.firstName}
-                {' \t'}
-                {userData.lastName}
+        <>
+          {userData ? (
+            <View style={styles.userData}>
+              <Text style={styles.userDataLabel}>
+                Full Name:{' '}
+                <Text style={styles.userDataValue}>
+                  {userData.firstName} {userData.lastName}
+                </Text>
               </Text>
-            </Text>
 
-            <Text style={styles.userDataLabel}>
-              Phone Number:{'\t '}
-              <Text style={styles.userDataValue}>{userData.phoneNumber}</Text>
-            </Text>
-            {userData.vaccinations && userData.vaccinations.length > 0 && (
-              <View style={styles.vaccinationsContainer}>
-                <Text style={styles.userDataLabel}>Vaccinations:</Text>
-                {userData.vaccinations.map((vaccination, index) => (
-                  <View key={index}>
-                    <Text style={styles.userDataLabel}>
-                      Date of Vaccination:{' '}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.dateOfVaccination}
-                      </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Date for Next Dose:{' '}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.dateForNextDose}
-                      </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Vaccine Name:{' \t'}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.vaccineName}
-                      </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Units:{' '}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.units}
-                      </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Site Administered:{' '}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.siteAdministered}
-                      </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Facility:{' '}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.facility}
-                      </Text>
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            )}
+              <Text style={styles.userDataLabel}>
+                Phone Number:{' '}
+                <Text style={styles.userDataValue}>{userData.phoneNumber}</Text>
+              </Text>
 
-            {userData.diagnoses && userData.diagnoses.length > 0 && (
-              <View style={styles.vaccinationsContainer}>
-                <Text style={styles.userDataLabel}>Diagnosis:</Text>
-                {userData.diagnoses.map((diagnosis, index) => (
-                  <View key={index}>
-                    <Text style={styles.userDataLabel}>
-                      Date of Vaccination:{' '}
-                      <Text style={styles.userDataValue}>
-                        {diagnosis.condition}
+              {userData.vaccinations && userData.vaccinations.length > 0 && (
+                <View style={styles.vaccinationsContainer}>
+                  <Text style={styles.userDataLabel1}>VACCINATION</Text>
+                  {userData.vaccinations.map((vaccination, index) => (
+                    <View key={index}>
+                      <Text style={styles.userDataLabel}>
+                        Vaccine Name:{' '}
+                        <Text style={styles.userDataValue}>
+                          {vaccination.vaccineName}
+                        </Text>
                       </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Date for Next Dose:{' '}
-                      <Text style={styles.userDataValue}>
-                        {diagnosis.dateForNextDose}
-                      </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Impression:{' '}
-                      <Text style={styles.userDataValue}>
-                        {diagnosis.impression}
-                      </Text>
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            )}
-          </View>
-        )}
 
-        {userData && (
+                      <Text style={styles.userDataLabel}>
+                        Date of Vaccination:{' '}
+                        <Text style={styles.userDataValue}>
+                          {formatDate(new Date(vaccination.dateOfVaccination))}
+                        </Text>
+                      </Text>
+
+                      <Text style={styles.userDataLabel}>
+                        Dose:{' '}
+                        <Text style={styles.userDataValue}>
+                          {vaccination.dose}
+                        </Text>
+                      </Text>
+
+                      <Text style={styles.userDataLabel}>
+                        Units:{' '}
+                        <Text style={styles.userDataValue}>
+                          {vaccination.units}
+                        </Text>
+                      </Text>
+
+                      <Text style={styles.userDataLabel}>
+                        Date for Next Dose:{' '}
+                        <Text style={styles.userDataValue}>
+                          {formatDate(new Date(vaccination.dateForNextDose))}
+                        </Text>
+                      </Text>
+
+                      <Text style={styles.userDataLabel}>
+                        Site Administered:{' '}
+                        <Text style={styles.userDataValue}>
+                          {vaccination.siteAdministered}
+                        </Text>
+                      </Text>
+                      <Text style={styles.userDataLabel}>
+                        Facility:{' '}
+                        <Text style={styles.userDataValue}>
+                          {vaccination.facility}
+                        </Text>
+                      </Text>
+                      <Text style={styles.userDataLabel}>
+                        .................................................................{' '}
+                        <Text style={styles.userDataValue}></Text>
+                      </Text>
+                      <View style={{height: 20}} />
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              {userData.diagnoses && userData.diagnoses.length > 0 && (
+                <View style={styles.vaccinationsContainer}>
+                  <Text style={styles.userDataLabel1}>DIAGNOSIS</Text>
+                  {userData.diagnoses.map((diagnosis, index) => (
+                    <View key={index}>
+                      <Text style={styles.userDataLabel}>
+                        Condition:{' '}
+                        <Text style={styles.userDataValue}>
+                          {diagnosis.condition}
+                        </Text>
+                      </Text>
+                      <Text style={styles.userDataLabel}>
+                        Prescribed drugs:{' '}
+                        <Text style={styles.userDataValue}>
+                          {diagnosis.drugsPrescribed}
+                        </Text>
+                      </Text>
+                      <Text style={styles.userDataLabel}>
+                        Dosage:{' '}
+                        <Text style={styles.userDataValue}>
+                          {diagnosis.dosage}
+                        </Text>
+                      </Text>
+
+                      <Text style={styles.userDataLabel}>
+                        Frequency:{' '}
+                        <Text style={styles.userDataValue}>
+                          {diagnosis.frequency}
+                        </Text>
+                      </Text>
+                      <Text style={styles.userDataLabel}>
+                        Duration:{' '}
+                        <Text style={styles.userDataValue}>
+                          {diagnosis.duration}
+                        </Text>
+                      </Text>
+                      <Text style={styles.userDataLabel}>
+                        Date of diagnosis:{'\t'}
+                        <Text style={styles.userDataValue}>
+                          {formatDate(new Date(diagnosis.dateOfDiagnosis))}
+                        </Text>
+                      </Text>
+                      <Text style={styles.userDataLabel}>
+                        Follow Up Date:{' '}
+                        <Text style={styles.userDataValue}>
+                          {formatDate(new Date(diagnosis.followUpDate))}
+                        </Text>
+                      </Text>
+                      <Text style={styles.userDataLabel}>
+                        Impression:{' '}
+                        <Text style={styles.userDataValue}>
+                          {diagnosis.impression}
+                        </Text>
+                      </Text>
+                      <Text style={styles.userDataLabel}>
+                        .................................................................{' '}
+                        <Text style={styles.userDataValue}></Text>
+                      </Text>
+                      <View style={{height: 20}} />
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              <TouchableOpacity
+                style={styles.buttonSec}
+                // onPress={() => navigation.navigate('SelectActivity')}
+                onPress={() =>
+                  navigation.navigate('SelectActivity', {
+                    paramKey: userData,
+                  })
+                }>
+                <Text style={styles.buttonStyle}>Confirm Data</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View>
+              <Loader />
+            </View>
+          )}
+        </>
+
+        {/* {userData && (
           <TouchableOpacity
             style={styles.buttonSec}
             onPress={() => navigation.navigate('SelectActivity')}>
             <Text style={styles.buttonStyle}>Confirm Data</Text>
           </TouchableOpacity>
-        )}
+        )} */}
       </ScrollView>
     </View>
   );
