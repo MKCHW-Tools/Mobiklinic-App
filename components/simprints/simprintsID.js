@@ -434,7 +434,7 @@ const SimprintsID = ({navigation}) => {
                                         </Text>
 
                                         <Text style={styles.userDataLabel}>
-                                          Units:{' '}
+                                          Card Number:{' '}
                                           <Text style={styles.userDataValue}>
                                             {vaccination.units}
                                           </Text>
@@ -552,7 +552,7 @@ const SimprintsID = ({navigation}) => {
                               style={styles.buttonSec}
                               // onPress={() => navigation.navigate('SelectActivity')}
                               onPress={() =>
-                                navigation.navigate('SelectActivity', {
+                                navigation.navigate('GetPatients', {
                                   paramKey: userData,
                                 })
                               }>
