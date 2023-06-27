@@ -135,18 +135,30 @@ const PatientLists = ({navigation}) => {
       }
     };
 
+    const fullName = `${item.firstName} ${item.lastName}`;
+    const fullNameChars = fullName.split('');
+
     return (
       <View style={styles.userCard}>
-        <TouchableOpacity onPress={toggleExpansion} style={styles.cardHeader}>
-          <Text style={styles.userName}>
-            {item.firstName} {item.lastName}
-          </Text>
-          <Icon
-            name={isExpanded ? 'chevron-up' : 'chevron-down'}
-            size={25}
-            color={COLORS.PRIMARY}
-          />
-        </TouchableOpacity>
+         <TouchableOpacity onPress={toggleExpansion} style={styles.cardHeader}>
+        <Text style={styles.userName}>
+          {fullNameChars.map((char, index) => {
+            const isMatchingChar = searchQuery.toLowerCase().includes(char.toLowerCase());
+            const highlightStyle = isMatchingChar ? { backgroundColor: COLORS.PRIMARY } : {};
+
+            return (
+              <Text key={index} style={[styles.userName, highlightStyle]}>
+                {char}
+              </Text>
+            );
+          })}
+        </Text>
+        <Icon
+          name={isExpanded ? 'chevron-up' : 'chevron-down'}
+          size={25}
+          color={COLORS.PRIMARY}
+        />
+      </TouchableOpacity>
         {isExpanded && (
           <View style={styles.cardDetails}>
             <Text style={styles.label}>Sex: {item.sex}</Text>
