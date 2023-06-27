@@ -239,7 +239,7 @@ const SimprintsID = ({navigation}) => {
           <Icon name="arrow-left" size={25} color={COLORS.BLACK} />
         </TouchableOpacity>
       }
-      title={<Text style={[styles.centerHeader]}>Biometrics Integration</Text>}
+      title={<Text style={[styles.centerHeader]}>Biometrics Identification</Text>}
     />
   );
 
@@ -672,6 +672,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     color: COLORS.BLACK,
     fontWeight: 'bold',
+    fontSize: 16,
   },
   button: {
     backgroundColor: COLORS.BLACK,
