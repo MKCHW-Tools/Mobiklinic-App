@@ -58,11 +58,20 @@ const PatientLists = ({navigation}) => {
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
         );
 
-        const filteredData = sortedData.filter(
-          item =>
-            item.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.lastName.toLowerCase().includes(searchQuery.toLowerCase()),
-        );
+        const filteredData = sortedData.filter(item => {
+          const fullName = `${item.firstName} ${item.lastName}`;
+          const fullNameLower = fullName.toLowerCase();
+          const searchQueryLower = searchQuery.toLowerCase();
+
+          for (let i = 0; i < searchQueryLower.length; i++) {
+            const letter = searchQueryLower[i];
+            if (!fullNameLower.includes(letter)) {
+              return false;
+            }
+          }
+
+          return true;
+        });
 
         setUsers(filteredData);
         await AsyncStorage.setItem('patientList', JSON.stringify(filteredData));
