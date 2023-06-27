@@ -394,83 +394,9 @@ const SimprintsID = ({navigation}) => {
                               </Text>
                             </Text>
 
-                            {userData.vaccinations &&
-                              userData.vaccinations.length > 0 && (
-                                <View style={styles.vaccinationsContainer}>
-                                  <Text style={styles.userDataLabel1}>
-                                    VACCINATION
-                                  </Text>
-                                  {userData.vaccinations.map(
-                                    (vaccination, index) => (
-                                      <View key={index}>
-                                        <Text style={styles.userDataLabel}>
-                                          Vaccine Name:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {vaccination.vaccineName}
-                                          </Text>
-                                        </Text>
+                           
 
-                                        <Text style={styles.userDataLabel}>
-                                          Date of Vaccination:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {formatDate(
-                                              new Date(
-                                                vaccination.dateOfVaccination,
-                                              ),
-                                            )}
-                                          </Text>
-                                        </Text>
-
-                                        <Text style={styles.userDataLabel}>
-                                          Dose:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {vaccination.dose}
-                                          </Text>
-                                        </Text>
-
-                                        <Text style={styles.userDataLabel}>
-                                          Card Number:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {vaccination.units}
-                                          </Text>
-                                        </Text>
-
-                                        <Text style={styles.userDataLabel}>
-                                          Date for Next Dose:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {formatDate(
-                                              new Date(
-                                                vaccination.dateForNextDose,
-                                              ),
-                                            )}
-                                          </Text>
-                                        </Text>
-
-                                        <Text style={styles.userDataLabel}>
-                                          Site Administered:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {vaccination.siteAdministered}
-                                          </Text>
-                                        </Text>
-                                        <Text style={styles.userDataLabel}>
-                                          Facility:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {vaccination.facility}
-                                          </Text>
-                                        </Text>
-                                        <Text style={styles.userDataLabel}>
-                                          .................................................................{' '}
-                                          <Text
-                                            style={styles.userDataValue}></Text>
-                                        </Text>
-                                        <View style={{height: 20}} />
-                                      </View>
-                                    ),
-                                  )}
-                                </View>
-                              )}
-
-                            {userData.diagnoses &&
+                            {/* {userData.diagnoses &&
                               userData.diagnoses.length > 0 && (
                                 <View style={styles.vaccinationsContainer}>
                                   <Text style={styles.userDataLabel1}>
@@ -541,7 +467,7 @@ const SimprintsID = ({navigation}) => {
                                     ),
                                   )}
                                 </View>
-                              )}
+                              )} */}
 
                             <TouchableOpacity
                               style={styles.buttonSec}
