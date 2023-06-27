@@ -225,14 +225,14 @@ const GetPatients = () => {
                       <Text style={styles.userDataLabel}>
                         Date of diagnosis:{' '}
                         <Text style={styles.userDataValue}>
-                          {diagnosis.dateOfDiagnosis}
+                          {formatDate(new Date(diagnosis.dateOfDiagnosis))}
                         </Text>
                       </Text>
 
                       <Text style={styles.userDataLabel}>
                         Date for Next Dose:{' '}
                         <Text style={styles.userDataValue}>
-                          {diagnosis.followUpDate}
+                          {formatDate(new Date(diagnosis.followUpDate))}
                         </Text>
                       </Text>
 
@@ -384,6 +384,12 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     borderLeftWidth: 1,
     borderLeftColor: COLORS.GRAY,
+  },
+  userDataLabel1: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginBottom: 5,
+    color: COLORS.PRIMARY,
   },
 });
 
