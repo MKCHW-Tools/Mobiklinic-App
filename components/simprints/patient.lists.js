@@ -23,6 +23,7 @@ const PatientLists = ({navigation}) => {
   // searching users by name
   const [searchQuery, setSearchQuery] = useState('');
   const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const [isNoUserFound, setIsNoUserFound] = useState(false);
 
   const {userLog} = useContext(DataResultsContext);
 
@@ -65,6 +66,7 @@ const PatientLists = ({navigation}) => {
 
         setUsers(filteredData);
         await AsyncStorage.setItem('patientList', JSON.stringify(filteredData));
+        setIsNoUserFound(filteredData.length === 0);
       } else {
         const storedData = await AsyncStorage.getItem('patientList');
 
@@ -215,19 +217,22 @@ const PatientLists = ({navigation}) => {
           </View>
         )}
         {!isLoading ? (
-          <FlatList
-            data={users}
-            keyExtractor={item => item.id.toString()}
-            renderItem={renderUserCard}
-            contentContainerStyle={styles.flatListContent}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-          />
+          users.length > 0 ? (
+            <FlatList
+              data={users}
+              keyExtractor={item => item.id.toString()}
+              renderItem={renderUserCard}
+              contentContainerStyle={styles.flatListContent}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+            />
+          ) : (
+            <Text style={styles.noUserFoundText}>No user found</Text>
+          )
         ) : (
           <View>
             <Loader />
-
           </View>
         )}
       </View>
@@ -340,6 +345,13 @@ const styles = StyleSheet.create({
   searchSuggestionText: {
     color: COLORS.BLACK,
     fontSize: 16,
+  },
+  noUserFoundText: {
+    textAlign: 'center',
+    fontSize: 18,
+    color: COLORS.BLACK,
+    marginTop: 20,
+    fontWeight: 'bold',
   },
 });
 
