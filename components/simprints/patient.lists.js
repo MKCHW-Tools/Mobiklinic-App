@@ -41,20 +41,26 @@ const PatientLists = ({navigation}) => {
   );
 
   const fetchUsers = async () => {
-setIsLoading(true)
+    setIsLoading(true);
     try {
-
       const response = await axios.get(
         `https://mobi-be-production.up.railway.app/${userLog}/patients`,
         // Use the logged-in user ID in the API URL
       );
-      if(response.status === 200){
+      if (response.status === 200) {
+        // Sort the response data based on the creation date in descending order
+        const sortedData = response.data.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+        );
         setUsers(response.data);
-        await AsyncStorage.setItem('patientList', JSON.stringify(response.data));
-        setIsLoading(false)
+        await AsyncStorage.setItem(
+          'patientList',
+          JSON.stringify(response.data),
+        );
+        setIsLoading(false);
         return response.data;
-      }else{
-        setIsLoading(false)
+      } else {
+        setIsLoading(false);
         if (storedData) {
           setUsers(JSON.parse(storedData));
         }
@@ -62,7 +68,7 @@ setIsLoading(true)
         return null;
       }
     } catch (error) {
-      setIsLoading(false)
+      setIsLoading(false);
 
       console.error(error);
       const storedData = await AsyncStorage.getItem('patientList');
