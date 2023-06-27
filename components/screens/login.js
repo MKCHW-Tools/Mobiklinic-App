@@ -206,6 +206,7 @@ const Login = ({navigation}) => {
   });
 
   const {updateUserLog} = useContext(DataResultsContext);
+  const {updateUserNames} = useContext(DataResultsContext);
 
   const signIn = async () => {
     clearStorage();
@@ -260,12 +261,16 @@ const Login = ({navigation}) => {
       );
 
       let json_data = await response.json();
-      const {message, id, accessToken, refreshToken} = json_data;
+      const {message, id, accessToken, refreshToken, firstName, lastName} =
+        json_data;
 
       if (message === 'Login successful') {
         const id = json_data.id;
         updateUserLog(id);
+        const name = json_data.firstName + ' ' + json_data.lastName;
+        updateUserNames(name);
         console.log(id);
+        console.log(name);
 
         await SAVE_LOCAL_USER({
           id,
@@ -331,26 +336,6 @@ const Login = ({navigation}) => {
       console.log(err);
     }
   };
-
-  // useEffect(() => {
-  //   const retrieveLocalUser = async () => {
-  //     try {
-  //       const user = await RETRIEVE_LOCAL_USER();
-  //       if (user !== null) {
-  //         setMyUser({
-  //           id: user.id,
-  //           username: user.username,
-  //           tokens: user.tokens,
-  //           offline: true,
-  //         });
-  //       }
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   };
-
-  //   retrieveLocalUser();
-  // }, [setMyUser]);
 
   if (isLoading) return <Loader />;
 
@@ -468,7 +453,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     backgroundColor: COLORS.PRIMARY,
   },
- 
+
   labeled: {
     flexDirection: 'row',
     // marginTop: 10,
