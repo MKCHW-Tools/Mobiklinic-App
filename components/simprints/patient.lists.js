@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   RefreshControl,
+  TextInput,
 } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -19,7 +20,11 @@ const PatientLists = ({navigation}) => {
   const [users, setUsers] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const {userLog} = useContext(DataResultsContext); // Get the logged-in user ID from the context
+  // searching users by name
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+
+  const {userLog} = useContext(DataResultsContext);
 
   const _header = () => (
     <CustomHeader
@@ -45,37 +50,38 @@ const PatientLists = ({navigation}) => {
     try {
       const response = await axios.get(
         `https://mobi-be-production.up.railway.app/${userLog}/patients`,
-        // Use the logged-in user ID in the API URL
       );
+
       if (response.status === 200) {
-        // Sort the response data based on the creation date in descending order
         const sortedData = response.data.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
         );
-        setUsers(response.data);
-        await AsyncStorage.setItem(
-          'patientList',
-          JSON.stringify(response.data),
+
+        const filteredData = sortedData.filter(
+          item =>
+            item.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.lastName.toLowerCase().includes(searchQuery.toLowerCase()),
         );
-        setIsLoading(false);
-        return response.data;
+
+        setUsers(filteredData);
+        await AsyncStorage.setItem('patientList', JSON.stringify(filteredData));
       } else {
-        setIsLoading(false);
+        const storedData = await AsyncStorage.getItem('patientList');
+
         if (storedData) {
           setUsers(JSON.parse(storedData));
         }
-
-        return null;
       }
     } catch (error) {
-      setIsLoading(false);
-
       console.error(error);
+
       const storedData = await AsyncStorage.getItem('patientList');
+
       if (storedData) {
         setUsers(JSON.parse(storedData));
       }
     } finally {
+      setIsLoading(false);
       setRefreshing(false);
     }
   };
@@ -93,8 +99,19 @@ const PatientLists = ({navigation}) => {
     fetchUsers();
   };
 
+  const handleSearch = async query => {
+    setSearchQuery(query);
+    try {
+      const response = await axios.get(
+        `https://mobi-be-production.up.railway.app/search?query=${query}`,
+      );
+      setSearchSuggestions(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const [expandedUserId, setExpandedUserId] = useState(null);
-  const [vaccinationData, setVaccinationData] = useState(null);
 
   const renderUserCard = ({item}) => {
     const isExpanded = item.id === expandedUserId;
@@ -168,6 +185,35 @@ const PatientLists = ({navigation}) => {
 
       <View style={styles.container}>
         <Text style={styles.header}>Beneficiary List</Text>
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search patients..."
+            placeholderTextColor={COLORS.BLACK}
+            value={searchQuery}
+            onChangeText={handleSearch}
+          />
+          <TouchableOpacity onPress={fetchUsers}>
+            <Icon
+              name="search"
+              size={20}
+              color={COLORS.BLACK}
+              style={styles.searchIcon}
+            />
+          </TouchableOpacity>
+        </View>
+        {searchSuggestions.length > 0 && (
+          <View style={styles.searchSuggestionsContainer}>
+            {searchSuggestions.map((suggestion, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.searchSuggestion}
+                onPress={() => handleSearch(suggestion)}>
+                <Text style={styles.searchSuggestionText}>{suggestion}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
         {!isLoading ? (
           <FlatList
             data={users}
@@ -181,6 +227,7 @@ const PatientLists = ({navigation}) => {
         ) : (
           <View>
             <Loader />
+
           </View>
         )}
       </View>
@@ -194,7 +241,6 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     flex: 1,
-    // padding: DIMENS.PADDING,
     backgroundColor: COLORS.BACKGROUND,
   },
   header: {
@@ -249,6 +295,50 @@ const styles = StyleSheet.create({
   },
   userDataValue: {
     fontWeight: 'normal',
+    fontSize: 16,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderColor: COLORS.BLACK,
+    borderRadius: 5,
+    marginBottom: 20,
+    backgroundColor: COLORS.WHITE,
+    elevation: 3,
+    marginBottom: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginBottom: 15,
+    borderRadius: 10,
+  },
+  searchInput: {
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    color: COLORS.BLACK,
+    fontSize: 16,
+  },
+  searchIcon: {
+    marginHorizontal: 10,
+    fontSize: 20,
+    color: COLORS.PRIMARY,
+  },
+  searchSuggestionsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 15,
+  },
+  searchSuggestion: {
+    backgroundColor: COLORS.PRIMARY,
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    marginRight: 10,
+    marginBottom: 10,
+  },
+  searchSuggestionText: {
+    color: COLORS.BLACK,
     fontSize: 16,
   },
 });
