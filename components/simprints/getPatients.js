@@ -260,7 +260,7 @@ const GetPatients = () => {
                     paramKey: userData,
                   })
                 }>
-                <Text style={styles.buttonStyle}>Confirm Data</Text>
+                <Text style={styles.buttonStyle}>Confirm Details</Text>
               </TouchableOpacity>
             </View>
           ) : (

@@ -119,15 +119,15 @@ const PatientMedical = ({navigation}) => {
       if (response.ok) {
         const data = await response.json();
         // setId(data.id);
-        Alert.alert('Data posted successfully');
+        Alert.alert('Diagnosis Registered successfully');
         navigation.navigate('Dashboard');
       } else {
         console.error('Error posting data:', response.status);
-        Alert.alert('Error', 'Failed to submit data. Please try again later.');
+        Alert.alert('Error', 'Failed to Register Diagnosis. Please try again later.');
       }
     } catch (error) {
       console.error('Error posting data:', error);
-      Alert.alert('Error', 'Failed to submit data. Please try again later.');
+      Alert.alert('Error', 'Failed to Register Diagnosis. Please try again later.');
     } finally {
       setState({...state, isLoading: false}); // Reset isLoading state to false
     }
