@@ -127,7 +127,7 @@ const SignUp = ({navigation}) => {
               onChangeText={phoneNumber => {
                 setState({...state, phoneNumber});
                 if (!validateUgandaPhoneNumber(phoneNumber)) {
-                  setPhoneError('Provide valid phone number. e.g: 2567xxx...');
+                  setPhoneError('Phone Number should begin with area code. e.g: 2567xxx...');
                 } else {
                   setPhoneError('');
                 }
