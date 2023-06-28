@@ -25,8 +25,23 @@ const PatientLists = ({navigation}) => {
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [isNoUserFound, setIsNoUserFound] = useState(false);
 
+  // user context
   const {userLog} = useContext(DataResultsContext);
 
+  // formate date
+  const formatDate = date => {
+    if (date) {
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+
+      return `${day.toString().padStart(2, '0')}/${month
+        .toString()
+        .padStart(2, '0')}/${year}`;
+    }
+    return 'Click to add date';
+  };
+  // header
   const _header = () => (
     <CustomHeader
       left={
@@ -46,6 +61,7 @@ const PatientLists = ({navigation}) => {
     />
   );
 
+  // fetch users from api
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
@@ -109,7 +125,7 @@ const PatientLists = ({navigation}) => {
     setRefreshing(true);
     fetchUsers();
   };
-
+  // handle search results
   const handleSearch = async query => {
     setSearchQuery(query);
     try {
@@ -140,34 +156,45 @@ const PatientLists = ({navigation}) => {
 
     return (
       <View style={styles.userCard}>
-         <TouchableOpacity onPress={toggleExpansion} style={styles.cardHeader}>
-        <Text style={styles.userName}>
-          {fullNameChars.map((char, index) => {
-            const isMatchingChar = searchQuery.toLowerCase().includes(char.toLowerCase());
-            const highlightStyle = isMatchingChar ? { backgroundColor: COLORS.PRIMARY } : {};
+        <TouchableOpacity onPress={toggleExpansion} style={styles.cardHeader}>
+          <Text style={styles.userName}>
+            {fullNameChars.map((char, index) => {
+              const isMatchingChar = searchQuery
+                .toLowerCase()
+                .includes(char.toLowerCase());
+              const highlightStyle = isMatchingChar
+                ? {backgroundColor: COLORS.PRIMARY}
+                : {};
 
-            return (
-              <Text key={index} style={[styles.userName, highlightStyle]}>
-                {char}
-              </Text>
-            );
-          })}
-        </Text>
-        <Icon
-          name={isExpanded ? 'chevron-up' : 'chevron-down'}
-          size={25}
-          color={COLORS.PRIMARY}
-        />
-      </TouchableOpacity>
+              return (
+                <Text key={index} style={[styles.userName, highlightStyle]}>
+                  {char}
+                </Text>
+              );
+            })}
+          </Text>
+          <Icon
+            name={isExpanded ? 'chevron-up' : 'chevron-down'}
+            size={25}
+            color={COLORS.PRIMARY}
+          />
+        </TouchableOpacity>
         {isExpanded && (
           <View style={styles.cardDetails}>
             <Text style={styles.label}>Sex: {item.sex}</Text>
-            <Text style={styles.label}>Age Group: {item.ageGroup}</Text>
+            <Text style={styles.label}>
+              Date Of Birth:
+              {formatDate(new Date(item.ageGroup))}
+            </Text>
             <Text style={styles.label}>
               Phone Number: {formatPhoneNumber(item.phoneNumber)}
             </Text>
             <Text style={styles.label}>
               Primary Language: {item.primaryLanguage}
+            </Text>
+            <Text style={styles.userDataLabel}>
+              ................................................................
+              <Text style={styles.userDataValue}></Text>
             </Text>
 
             {item.vaccinations && item.vaccinations.length > 0 && (
@@ -178,15 +205,54 @@ const PatientLists = ({navigation}) => {
                       Vaccination Name: {vaccination.vaccineName}
                     </Text>
                     <Text style={styles.label}>
-                      Vaccination Date: {vaccination.dateOfVaccination}
+                      Vaccination Date:
+                      {formatDate(new Date(vaccination.dateOfVaccination))}
                     </Text>
                     <Text style={styles.label}>
-                      {' '}
-                      Dosage: {vaccination.dose}
+                      Next Dose Date:
+                      {formatDate(new Date(vaccination.dateForNextDose))}
+                    </Text>
+                    <Text style={styles.label}>
+                      Site Administered:{vaccination.siteAdministered}
+                    </Text>
+                    <Text style={styles.label}>
+                      Facility: {vaccination.facility}
                     </Text>
                     <Text style={styles.label}>
                       {' '}
                       Card Number: {vaccination.units}
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      ................................................................
+                      <Text style={styles.userDataValue}></Text>
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )}
+            {item.diagnoses && item.diagnoses.length > 0 && (
+              <View>
+                {item.diagnoses.map((diagnosis, index) => (
+                  <View key={index}>
+                    <Text style={styles.label}>
+                      Condition: {diagnosis.condition}
+                    </Text>
+                    <Text style={styles.label}>
+                      Date Of Diagnosis:
+                      {formatDate(new Date(diagnosis.dateOfDiagnosis))}
+                    </Text>
+                    <Text style={styles.label}>
+                      Impression: {diagnosis.impression}
+                    </Text>
+                    <Text style={styles.label}>
+                      Drugs Prescribed: {diagnosis.drugsPrescribed}
+                    </Text>
+                    <Text style={styles.label}>
+                      Follow Up Date:
+                      {formatDate(new Date(diagnosis.followUpDate))}
+                    </Text>
+                    <Text style={styles.label}>
+                      Lab Tests: {diagnosis.labTests}
                     </Text>
                   </View>
                 ))}
@@ -373,6 +439,22 @@ const styles = StyleSheet.create({
     color: COLORS.BLACK,
     marginTop: 20,
     fontWeight: 'bold',
+  },
+  userDataLabel: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginBottom: 5,
+    color: COLORS.BLACK,
+  },
+  userDataValue: {
+    fontWeight: 'normal',
+    fontSize: 16,
+  },
+  userDataLabel1: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginBottom: 5,
+    color: COLORS.PRIMARY,
   },
 });
 

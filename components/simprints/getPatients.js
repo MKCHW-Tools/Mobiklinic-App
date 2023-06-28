@@ -150,7 +150,7 @@ const GetPatients = () => {
                       </Text>
 
                       <Text style={styles.userDataLabel}>
-                        Units:{' '}
+                        Card Number:{' '}
                         <Text style={styles.userDataValue}>
                           {vaccination.units}
                         </Text>
@@ -176,7 +176,7 @@ const GetPatients = () => {
                         </Text>
                       </Text>
                       <Text style={styles.userDataLabel}>
-                        .................................................................{' '}
+                        ................................................................
                         <Text style={styles.userDataValue}></Text>
                       </Text>
                       <View style={{height: 20}} />
@@ -221,18 +221,21 @@ const GetPatients = () => {
                           {diagnosis.duration}
                         </Text>
                       </Text>
+
                       <Text style={styles.userDataLabel}>
-                        Date of diagnosis:{'\t'}
+                        Date of diagnosis:{' '}
                         <Text style={styles.userDataValue}>
                           {formatDate(new Date(diagnosis.dateOfDiagnosis))}
                         </Text>
                       </Text>
+
                       <Text style={styles.userDataLabel}>
-                        Follow Up Date:{' '}
+                        Date for Next Dose:{' '}
                         <Text style={styles.userDataValue}>
                           {formatDate(new Date(diagnosis.followUpDate))}
                         </Text>
                       </Text>
+
                       <Text style={styles.userDataLabel}>
                         Impression:{' '}
                         <Text style={styles.userDataValue}>
@@ -240,7 +243,7 @@ const GetPatients = () => {
                         </Text>
                       </Text>
                       <Text style={styles.userDataLabel}>
-                        .................................................................{' '}
+                        ................................................................
                         <Text style={styles.userDataValue}></Text>
                       </Text>
                       <View style={{height: 20}} />
@@ -381,6 +384,12 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     borderLeftWidth: 1,
     borderLeftColor: COLORS.GRAY,
+  },
+  userDataLabel1: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginBottom: 5,
+    color: COLORS.PRIMARY,
   },
 });
 
