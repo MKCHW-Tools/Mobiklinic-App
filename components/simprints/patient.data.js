@@ -136,18 +136,24 @@ const PatientData = ({navigation}) => {
         const patientId = data.id; // Access the patient ID from the response data
         setPatientId(patientId);
         console.log('Patient ID:', patientId);
-        Alert.alert('Data posted successfully');
+        Alert.alert('Beneficiary Registered Successfully');
         navigation.navigate('SelectActivity', {
           patientId: patientId,
           paramKey: state,
         });
       } else {
         console.error('Error posting data:', response.status);
-        Alert.alert('Error', 'Failed to submit data. Please try again later.');
+        Alert.alert(
+          'Error',
+          'Failed to register Beneficiary. Please try again later.',
+        );
       }
     } catch (error) {
       console.error('Error posting data:', error);
-      Alert.alert('Error', 'Failed to submit data. Please try again later.');
+      Alert.alert(
+        'Error',
+        'Failed to register Beneficiary. Please try again later.',
+      );
     } finally {
       setState({...state, isLoading: false}); // Reset isLoading state to false
     }

@@ -478,7 +478,7 @@ const SimprintsID = ({navigation}) => {
                                 })
                               }>
                               <Text style={styles.buttonStyle}>
-                                Confirm Data
+                                Confirm Beneficiary
                               </Text>
                             </TouchableOpacity>
                           </View>
