@@ -24,6 +24,7 @@ const PatientLists = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [isNoUserFound, setIsNoUserFound] = useState(false);
+  const {patientId, setPatientId} = useContext(DataResultsContext);
 
   // user context
   const {userLog} = useContext(DataResultsContext);
@@ -154,6 +155,18 @@ const PatientLists = ({navigation}) => {
     const fullName = `${item.firstName} ${item.lastName}`;
     const fullNameChars = fullName.split('');
 
+    // ADD DATA
+    const addData = () => {
+      // Add your logic here to handle adding data based on the patient ID
+      console.log('Adding data for patient ID:', patientId.id);
+      setPatientId(item.id); // Set the patientId using setPatientId
+
+      navigation.navigate('SelectActivity', {
+        patientId: patientId,
+        paramKey: {firstName: item.firstName, lastName: item.lastName},
+      });
+    };
+
     return (
       <View style={styles.userCard}>
         <TouchableOpacity onPress={toggleExpansion} style={styles.cardHeader}>
@@ -258,6 +271,10 @@ const PatientLists = ({navigation}) => {
                 ))}
               </View>
             )}
+            {/* Add the button to add data */}
+            <TouchableOpacity onPress={addData} style={styles.buttonSec}>
+              <Text style={styles.buttonText}>Add Data</Text>
+            </TouchableOpacity>
           </View>
         )}
       </View>
@@ -455,6 +472,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
     color: COLORS.PRIMARY,
+  },
+  buttonSec: {
+    backgroundColor: COLORS.WHITE,
+    paddingVertical: 10,
+    // paddingHorizontal: 15,
+    borderRadius: 10,
+    marginVertical: 20,
+    borderWidth: 2,
+    borderColor: COLORS.PRIMARY,
+  },
+  buttonText: {
+    color: COLORS.PRIMARY,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
