@@ -24,6 +24,7 @@ const PatientLists = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [isNoUserFound, setIsNoUserFound] = useState(false);
+  const {patientId, setPatientId} = useContext(DataResultsContext);
 
   // user context
   const {userLog} = useContext(DataResultsContext);
@@ -154,6 +155,17 @@ const PatientLists = ({navigation}) => {
     const fullName = `${item.firstName} ${item.lastName}`;
     const fullNameChars = fullName.split('');
 
+    // ADD DATA
+    const addData = () => {
+      setPatientId(item.id); // Set the patientId using setPatientId
+      console.log('Adding data for patient ID:', patientId.id);
+
+      navigation.navigate('SelectActivity', {
+        patientId: patientId,
+        paramKey: {firstName: item.firstName, lastName: item.lastName},
+      });
+    };
+
     return (
       <View style={styles.userCard}>
         <TouchableOpacity onPress={toggleExpansion} style={styles.cardHeader}>
@@ -192,17 +204,33 @@ const PatientLists = ({navigation}) => {
             <Text style={styles.label}>
               Primary Language: {item.primaryLanguage}
             </Text>
-            <Text style={styles.userDataLabel}>
-              ................................................................
-              <Text style={styles.userDataValue}></Text>
+            <Text style={styles.label}>
+              Country: {item.country}
             </Text>
+            <Text style={styles.label}>
+              District: {item.district}
+            </Text>
+            <Text style={styles.label}>
+              Sex: {item.sex}
+            </Text>
+            <Text style={styles.label}>
+              Weight: {item.weight}
+            </Text>
+            <Text style={styles.label}>
+              Height: {item.height}
+            </Text>
+            <View style={styles.line} />
 
             {item.vaccinations && item.vaccinations.length > 0 && (
               <View>
+                <Text style={styles.userDataLabel1}>VACCINATION</Text>
                 {item.vaccinations.map((vaccination, index) => (
                   <View key={index}>
                     <Text style={styles.label}>
                       Vaccination Name: {vaccination.vaccineName}
+                    </Text>
+                    <Text style={styles.label}>
+                      Dosage: {vaccination.dose}
                     </Text>
                     <Text style={styles.label}>
                       Vaccination Date:
@@ -222,16 +250,15 @@ const PatientLists = ({navigation}) => {
                       {' '}
                       Card Number: {vaccination.units}
                     </Text>
-                    <Text style={styles.userDataLabel}>
-                      ................................................................
-                      <Text style={styles.userDataValue}></Text>
-                    </Text>
+                    <View style={styles.line} />
                   </View>
                 ))}
               </View>
             )}
             {item.diagnoses && item.diagnoses.length > 0 && (
               <View>
+                <Text style={styles.userDataLabel1}>DIAGNOSIS</Text>
+
                 {item.diagnoses.map((diagnosis, index) => (
                   <View key={index}>
                     <Text style={styles.label}>
@@ -248,16 +275,27 @@ const PatientLists = ({navigation}) => {
                       Drugs Prescribed: {diagnosis.drugsPrescribed}
                     </Text>
                     <Text style={styles.label}>
+                      Dosage: {diagnosis.dosage} X {diagnosis.frequency} for {diagnosis.duration}
+                    </Text>
+                    <Text style={styles.label}>
+                      Is Pregnant: {diagnosis.isPregnant} 
+                    </Text>
+                    <Text style={styles.label}>
                       Follow Up Date:
                       {formatDate(new Date(diagnosis.followUpDate))}
                     </Text>
                     <Text style={styles.label}>
                       Lab Tests: {diagnosis.labTests}
                     </Text>
+                    <View style={styles.line} />
                   </View>
                 ))}
               </View>
             )}
+            {/* Add the button to add data */}
+            <TouchableOpacity onPress={addData} style={styles.buttonSec}>
+              <Text style={styles.buttonText}>Add Data</Text>
+            </TouchableOpacity>
           </View>
         )}
       </View>
@@ -455,6 +493,32 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
     color: COLORS.PRIMARY,
+  },
+  buttonSec: {
+    backgroundColor: COLORS.WHITE,
+    paddingVertical: 10,
+    // paddingHorizontal: 15,
+    borderRadius: 10,
+    marginVertical: 20,
+    borderWidth: 2,
+    borderColor: COLORS.PRIMARY,
+  },
+  buttonText: {
+    color: COLORS.PRIMARY,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  userDataLabel1: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginBottom: 5,
+    color: COLORS.PRIMARY,
+  },
+  line: {
+    borderBottomColor: 'black',
+    borderBottomWidth: 1,
+    marginVertical: 10,
   },
 });
 
