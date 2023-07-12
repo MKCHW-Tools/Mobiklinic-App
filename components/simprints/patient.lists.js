@@ -157,9 +157,8 @@ const PatientLists = ({navigation}) => {
 
     // ADD DATA
     const addData = () => {
-      // Add your logic here to handle adding data based on the patient ID
-      console.log('Adding data for patient ID:', patientId.id);
       setPatientId(item.id); // Set the patientId using setPatientId
+      console.log('Adding data for patient ID:', patientId.id);
 
       navigation.navigate('SelectActivity', {
         patientId: patientId,
@@ -205,17 +204,33 @@ const PatientLists = ({navigation}) => {
             <Text style={styles.label}>
               Primary Language: {item.primaryLanguage}
             </Text>
-            <Text style={styles.userDataLabel}>
-              ................................................................
-              <Text style={styles.userDataValue}></Text>
+            <Text style={styles.label}>
+              Country: {item.country}
             </Text>
+            <Text style={styles.label}>
+              District: {item.district}
+            </Text>
+            <Text style={styles.label}>
+              Sex: {item.sex}
+            </Text>
+            <Text style={styles.label}>
+              Weight: {item.weight}
+            </Text>
+            <Text style={styles.label}>
+              Height: {item.height}
+            </Text>
+            <View style={styles.line} />
 
             {item.vaccinations && item.vaccinations.length > 0 && (
               <View>
+                <Text style={styles.userDataLabel1}>VACCINATION</Text>
                 {item.vaccinations.map((vaccination, index) => (
                   <View key={index}>
                     <Text style={styles.label}>
                       Vaccination Name: {vaccination.vaccineName}
+                    </Text>
+                    <Text style={styles.label}>
+                      Dosage: {vaccination.dose}
                     </Text>
                     <Text style={styles.label}>
                       Vaccination Date:
@@ -235,16 +250,15 @@ const PatientLists = ({navigation}) => {
                       {' '}
                       Card Number: {vaccination.units}
                     </Text>
-                    <Text style={styles.userDataLabel}>
-                      ................................................................
-                      <Text style={styles.userDataValue}></Text>
-                    </Text>
+                    <View style={styles.line} />
                   </View>
                 ))}
               </View>
             )}
             {item.diagnoses && item.diagnoses.length > 0 && (
               <View>
+                <Text style={styles.userDataLabel1}>DIAGNOSIS</Text>
+
                 {item.diagnoses.map((diagnosis, index) => (
                   <View key={index}>
                     <Text style={styles.label}>
@@ -261,12 +275,19 @@ const PatientLists = ({navigation}) => {
                       Drugs Prescribed: {diagnosis.drugsPrescribed}
                     </Text>
                     <Text style={styles.label}>
+                      Dosage: {diagnosis.dosage} X {diagnosis.frequency} for {diagnosis.duration}
+                    </Text>
+                    <Text style={styles.label}>
+                      Is Pregnant: {diagnosis.isPregnant} 
+                    </Text>
+                    <Text style={styles.label}>
                       Follow Up Date:
                       {formatDate(new Date(diagnosis.followUpDate))}
                     </Text>
                     <Text style={styles.label}>
                       Lab Tests: {diagnosis.labTests}
                     </Text>
+                    <View style={styles.line} />
                   </View>
                 ))}
               </View>
@@ -487,6 +508,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  userDataLabel1: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginBottom: 5,
+    color: COLORS.PRIMARY,
+  },
+  line: {
+    borderBottomColor: 'black',
+    borderBottomWidth: 1,
+    marginVertical: 10,
   },
 });
 

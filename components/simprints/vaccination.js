@@ -195,9 +195,9 @@ const PatientData = ({navigation, route}) => {
           <TextInput
             style={[
               STYLES.field,
-              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              {color: COLORS.BLACK},
             ]} // Add color and placeholderTextColor styles
-            placeholderTextColor={COLORS.BLACK}
+            placeholderTextColor={COLORS.GREY}
             value={state.units}
             onChangeText={text => setState({...state, units: text})}
             placeholder="Enter vaccine card number"

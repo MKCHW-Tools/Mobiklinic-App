@@ -165,13 +165,13 @@ const PatientMedical = ({navigation}) => {
       <ScrollView style={STYLES.body}>
         {/* condition */}
         <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Patient impression:</Text>
+          <Text style={STYLES.label}>Signs and Symptoms:</Text>
           <TextInput
             style={[
               STYLES.field,
               {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
             ]} // Add color and placeholderTextColor styles
-            placeholderTextColor={COLORS.BLACK}
+            placeholderTextColor={COLORS.GREY}
             value={state.impression}
             onChangeText={text => setState({...state, impression: text})}
             placeholder='signs and symptoms e.g "Headache, Fever, Cough"'
@@ -209,7 +209,7 @@ const PatientMedical = ({navigation}) => {
               STYLES.field,
               {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
             ]} // Add color and placeholderTextColor styles
-            placeholderTextColor={COLORS.BLACK}
+            placeholderTextColor={COLORS.GREY}
             value={state.labTests}
             onChangeText={text => setState({...state, labTests: text})}
             placeholder='Lab tests and results e.g "Malaria positive"'
@@ -226,7 +226,7 @@ const PatientMedical = ({navigation}) => {
               STYLES.field,
               {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
             ]} // Add color and placeholderTextColor styles
-            placeholderTextColor={COLORS.BLACK}
+            placeholderTextColor={COLORS.GREY}
             value={state.condition}
             onChangeText={text => setState({...state, condition: text})}
             placeholder='e.g "Malaria"'
@@ -254,7 +254,7 @@ const PatientMedical = ({navigation}) => {
               STYLES.field,
               {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
             ]} // Add color and placeholderTextColor styles
-            placeholderTextColor={COLORS.BLACK}
+            placeholderTextColor={COLORS.GREY}
             value={state.drugsPrescribed}
             onChangeText={text => setState({...state, drugsPrescribed: text})}
             placeholder='e.g "Paracetamol"'
@@ -270,7 +270,7 @@ const PatientMedical = ({navigation}) => {
           <View style={STYLES.detail}>
             <TextInput
               value={state.dosage}
-              placeholderTextColor={COLORS.BLACK}
+              placeholderTextColor={COLORS.GREY}
               onChangeText={text => setState({...state, dosage: text})}
               placeholder="1"
               keyboardType="numeric"
@@ -285,7 +285,7 @@ const PatientMedical = ({navigation}) => {
           <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
             <TextInput
               value={state.frequency}
-              placeholderTextColor={COLORS.BLACK}
+              placeholderTextColor={COLORS.GREY}
               onChangeText={text => setState({...state, frequency: text})}
               placeholder="1"
               keyboardType="numeric"
@@ -302,9 +302,10 @@ const PatientMedical = ({navigation}) => {
           <View style={STYLES.detail}>
             <TextInput
               value={state.duration}
-              placeholderTextColor={COLORS.BLACK}
+              placeholderTextColor={COLORS.GREY}
               onChangeText={text => setState({...state, duration: text})}
               placeholder="1"
+              keyboardType="numeric"
               style={[
                 STYLES.field,
                 {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
@@ -318,6 +319,8 @@ const PatientMedical = ({navigation}) => {
           <Text style={STYLES.label}>Follow Up date:</Text>
           <TouchableOpacity
             style={STYLES.datePickerInput}
+            placeholderTextColor={COLORS.GREY}
+
             onPress={() => setShowDatePicker('followUp')}>
             <Text style={STYLES.datePickerText}>
               {formatDate(followUpDate)}
@@ -329,6 +332,7 @@ const PatientMedical = ({navigation}) => {
               mode="date"
               display="spinner"
               onChange={handleDateChange}
+              
             />
           )}
         </View>
