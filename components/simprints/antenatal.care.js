@@ -68,7 +68,10 @@ const AntenatalCare = ({navigation}) => {
     routineVisitDate: '',
     expectedDateOfDelivery: '',
     bloodGroup: '',
-    prescriptions: [],
+    prescriptions: '',
+    nextOfKin: '',
+    nextOfKinContact: '',
+    drugNotes: '',
 
     // registeredById: '',
   });
@@ -83,7 +86,8 @@ const AntenatalCare = ({navigation}) => {
       if (
         state.pregnancyStatus === '' ||
         state.expectedDateOfDelivery === '' ||
-        routineVisitDate === '' || // Add check for dateOfVaccination
+        routineVisitDate === '' ||
+        drugNotes === '' ||
         state.bloodGroup === ''
       ) {
         Alert.alert('Error', 'Please fill in all required fields');
@@ -91,17 +95,19 @@ const AntenatalCare = ({navigation}) => {
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
       const response = await fetch(
-        `https://mobi-be-production.up.railway.app/${patientId}/vaccinations`,
+        `https://mobi-be-production.up.railway.app/${patientId}/antenantals`,
         {
           method: 'POST',
           body: JSON.stringify({
             pregnancyStatus: state.pregnancyStatus,
             expectedDateOfDelivery: state.expectedDateOfDelivery,
-            units: state.units,
-            dateOfVaccination: state.dateOfVaccination,
+            nextOfKinContact: state.nextOfKinContact,
+            routineVisitDate: state.routineVisitDate,
             expectedDateOfDelivery: state.expectedDateOfDelivery,
             bloodGroup: state.bloodGroup,
             prescriptions: state.prescriptions,
+            nextOfKin: state.nextOfKin,
+            drugNotes: state.drugNotes,
           }),
           headers: {
             'Content-type': 'application/json; charset=UTF-8',
@@ -135,16 +141,11 @@ const AntenatalCare = ({navigation}) => {
 
   // Define your list of medications
   const medications = [
-    'Prenatal Vitamins',
     'Folic Acid Supplements',
     'Iron Supplements',
     'Calcium Supplements',
-    'Vitamin D Supplements',
     'Antiemeitics',
-    'Antacids',
     'Antihistamines',
-    'Laxatives or Stool Softeners',
-    'Progesterone Supplements',
   ];
 
   const _header = () => (
@@ -181,14 +182,15 @@ const AntenatalCare = ({navigation}) => {
           <TextInput
             style={[STYLES.field, {color: COLORS.BLACK}]} // Add color and placeholderTextColor styles
             placeholderTextColor={COLORS.GREY}
-            value={state.units}
-            onChangeText={text => setState({...state, units: text})}
+            value={state.pregnancyStatus}
+            onChangeText={text => setState({...state, pregnancyStatus: text})}
             placeholder="Enter Pregnancy Status e.g 'lower back pain'"
             multiline={true}
             numberOfLines={4}
           />
         </View>
 
+        {/* date for checkup */}
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Date for Check Up:</Text>
           <TouchableOpacity
@@ -198,7 +200,7 @@ const AntenatalCare = ({navigation}) => {
               {formatDate(routineVisitDate)}
             </Text>
           </TouchableOpacity>
-          {showDatePicker === 'vaccination' && (
+          {showDatePicker === 'antenatal' && (
             <DateTimePicker
               value={routineVisitDate || new Date()} // Use null or fallback to current date
               mode="date"
@@ -249,50 +251,45 @@ const AntenatalCare = ({navigation}) => {
         </View>
 
         {/* prescriptions */}
-        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Text style={STYLES.label}>Prescriptions:</Text>
+        <View style={STYLES.labeledItem} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.prescribe}>Prescriptions:</Text>
+          <View style={STYLES.select}>
+            <MultiSelectView
+              data={medications}
+              onSelectionChanged={selectedItems =>
+                setSelectedPrescriptions(selectedItems)
+              }
+              style={STYLES.multiSelect}
+              itemStyle={STYLES.item}
+              selectedTextStyle={[
+                STYLES.selectedItemText,
+                {color: COLORS.BLACK},
+              ]}
+              selectedItemStyle={[
+                STYLES.selectedItem,
+                {backgroundColor: COLORS.PRIMARY},
+              ]}
+              checkboxStyle={STYLES.checkbox}
+            />
+          </View>
+        </View>
 
-          {/* <Picker
-            placeholderTextColor={COLORS.BLACK}
-            selectedValue={state.prescriptions}
-            onValueChange={(value, index) =>
-              setState({...state, prescriptions: value})
-            }
-            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
-            dropdownIconColor={COLORS.GREY_LIGHTER}>
-            <Picker.Item label="" value="" />
-            <Picker.Item label="Buikwe Hospital" value="Buikwe Hospital" />
-            <Picker.Item label="Mulago Hospital" value="Mulago Hospital" />
-            <Picker.Item
-              label="Makonge Health Center III"
-              value="Makonge Health Center III"
-            />
-            <Picker.Item
-              label="Makonge Health Center III"
-              value="Makonge Health Center III"
-            />
-            <Picker.Item
-              label="Makindu Health Center III"
-              value="Makindu Health Center III"
-            />
-            <Picker.Item
-              label="Kisungu Health Center III"
-              value="Kisungu Health Center III"
-            />
-            <Picker.Item
-              label="Najjembe Health Center III"
-              value="Najjemebe Health Center III"
-            />
-            <Picker.Item label="Kawolo Hospital" value="Kawolo Hospital" />
-          </Picker> */}
-          <MultiSelectView
-            data={medications}
-            onSelectionChanged={selectedItems =>
-              setSelectedPrescriptions(selectedItems)
-            }
+        {/* drug note*/}
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Drug Notes*:</Text>
+
+          <TextInput
+            value={state.drugNotes}
+            placeholderTextColor={COLORS.GREY}
+            onChangeText={text => setState({...state, drugNotes: text})}
+            placeholder="Add Drug Note"
+            style={[STYLES.field, {paddingHorizontal: 30}]}
+            multiline={true}
+            numberOfLines={2}
           />
         </View>
 
+        {/* expected date of delivery */}
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Expected Date of Delivery:</Text>
           <TouchableOpacity
@@ -311,6 +308,34 @@ const AntenatalCare = ({navigation}) => {
             />
           )}
         </View>
+
+        {/* next of kin */}
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Next of Kin:</Text>
+
+          <TextInput
+            value={state.nextOfKin}
+            placeholderTextColor={COLORS.GREY}
+            onChangeText={text => setState({...state, nextOfKin: text})}
+            placeholder="Next of Kin"
+            style={[STYLES.field, {paddingHorizontal: 30}]}
+          />
+        </View>
+
+        {/* next of kin */}
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Next of Kin Contact:</Text>
+
+          <TextInput
+            value={state.nextOfKinContact}
+            placeholderTextColor={COLORS.GREY}
+            onChangeText={text => setState({...state, nextOfKinContact: text})}
+            placeholder="Add Contact"
+            keyboardType="numeric"
+            style={[STYLES.field, {paddingHorizontal: 30}]}
+          />
+        </View>
+
         <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
           <Text style={STYLES.submitText}>Submit</Text>
         </TouchableOpacity>
@@ -331,7 +356,7 @@ const STYLES = StyleSheet.create({
   },
   body: {
     flex: 2,
-    padding: 30,
+    paddingHorizontal: 20,
   },
   alert: {
     color: COLORS.GREY,
@@ -450,6 +475,14 @@ const STYLES = StyleSheet.create({
     color: COLORS.BLACK,
     fontSize: 14,
   },
+  prescribe: {
+    fontWeight: 'bold',
+    marginLeft: 5,
+    marginRight: 5,
+    color: COLORS.BLACK,
+    fontSize: 14,
+    paddingVertical:8, 
+  },
   submit: {
     backgroundColor: COLORS.BLACK,
     paddingVertical: 10,
@@ -558,5 +591,45 @@ const STYLES = StyleSheet.create({
     color: COLORS.BLACK,
     fontSize: 14,
     paddingVertical: 12,
+  },
+  multiSelect: {
+    width: '80%',
+    maxHeight: 200,
+    borderWidth: 1,
+    borderColor: COLORS.GREY_LIGHTER,
+    borderRadius: 10,
+    padding: 8,
+  },
+  item: {
+    padding: 8,
+  },
+  selectedItem: {
+    backgroundColor: COLORS.PRIMARY,
+  },
+  selectedItemText: {
+    color: COLORS.BLACK,
+  },
+  checkbox: {
+    marginRight: 8,
+  },
+  select: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: 70,
+    alignItems: 'center',
+  },
+  labeledItem: {
+    // flexDirection: 'row',
+    paddingHorizontal: 15,
+    // paddingVertical: 10,
+    color: COLORS.BLACK,
+    marginTop: 10,
+    marginBottom: 10,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 10,
   },
 });

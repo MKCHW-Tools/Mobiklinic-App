@@ -94,6 +94,18 @@ const SelectActivity = ({navigation, route}) => {
 
           <TouchableOpacity
             style={STYLES.btn}
+            onPress={() => navigation.navigate('AntenatalCare')}>
+            <Text style={STYLES.btnText}>Antenatal Care</Text>
+            <Icon
+              name="arrow-right"
+              size={20}
+              strokeSize={3}
+              color={COLORS.WHITE}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={STYLES.btn}
             onPress={() => navigation.navigate('Dashboard')}>
             <Text style={STYLES.btnText}>Back To Dashboard</Text>
           </TouchableOpacity>
