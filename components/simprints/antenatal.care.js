@@ -20,7 +20,7 @@ import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import MultiSelect from 'react-native-multiple-select';
+import MultiSelectView from 'react-native-multiselect-view';
 import {format} from 'date-fns';
 
 const AntenatalCare = ({navigation}) => {
@@ -33,6 +33,7 @@ const AntenatalCare = ({navigation}) => {
   const [routineVisitDate, setRoutineVisitDate] = useState('');
   const [expectedDateOfDelivery, setExpectedDateOfDelivery] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [prescriptions, setSelectedPrescriptions] = useState([]);
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || routineVisitDate;
@@ -67,7 +68,7 @@ const AntenatalCare = ({navigation}) => {
     routineVisitDate: '',
     expectedDateOfDelivery: '',
     bloodGroup: '',
-    prescriptions: '',
+    prescriptions: [],
 
     // registeredById: '',
   });
@@ -132,6 +133,20 @@ const AntenatalCare = ({navigation}) => {
     }
   };
 
+  // Define your list of medications
+  const medications = [
+    'Prenatal Vitamins',
+    'Folic Acid Supplements',
+    'Iron Supplements',
+    'Calcium Supplements',
+    'Vitamin D Supplements',
+    'Antiemeitics',
+    'Antacids',
+    'Antihistamines',
+    'Laxatives or Stool Softeners',
+    'Progesterone Supplements',
+  ];
+
   const _header = () => (
     <CustomHeader
       left={
@@ -193,22 +208,6 @@ const AntenatalCare = ({navigation}) => {
           )}
         </View>
 
-        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Text style={STYLES.label}>Dose:</Text>
-
-          <Picker
-            placeholderTextColor={COLORS.BLACK}
-            selectedValue={state.dose}
-            onValueChange={(value, index) => setState({...state, dose: value})}
-            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
-            dropdownIconColor={COLORS.GREY_LIGHTER}>
-            <Picker.Item label="" value="" />
-            <Picker.Item label="1st" value="1st" />
-            <Picker.Item label="2nd" value="2nd" />
-            <Picker.Item label="3rd" value="3rd" />
-            <Picker.Item label="4th" value="4th" />
-          </Picker>
-        </View>
         {/* Blood Group */}
         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
           <Text style={STYLES.label}>Blood Group:</Text>
@@ -219,6 +218,7 @@ const AntenatalCare = ({navigation}) => {
             onValueChange={(value, index) =>
               setState({...state, bloodGroup: value})
             }
+            dropdownIconColor={COLORS.GREY_LIGHTER}
             style={STYLES.field}
             itemStyle={{fontSize: 8}}>
             <Picker.Item label="" value="" />
@@ -252,7 +252,7 @@ const AntenatalCare = ({navigation}) => {
         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
           <Text style={STYLES.label}>Prescriptions:</Text>
 
-          <Picker
+          {/* <Picker
             placeholderTextColor={COLORS.BLACK}
             selectedValue={state.prescriptions}
             onValueChange={(value, index) =>
@@ -284,7 +284,13 @@ const AntenatalCare = ({navigation}) => {
               value="Najjemebe Health Center III"
             />
             <Picker.Item label="Kawolo Hospital" value="Kawolo Hospital" />
-          </Picker>
+          </Picker> */}
+          <MultiSelectView
+            data={medications}
+            onSelectionChanged={selectedItems =>
+              setSelectedPrescriptions(selectedItems)
+            }
+          />
         </View>
 
         <View style={STYLES.labeled}>
@@ -436,6 +442,13 @@ const STYLES = StyleSheet.create({
     color: COLORS.BLACK,
     fontSize: 11,
     fontWeight: 'bold ',
+  },
+  label: {
+    fontWeight: 'bold',
+    marginLeft: 5,
+    marginRight: 5,
+    color: COLORS.BLACK,
+    fontSize: 14,
   },
   submit: {
     backgroundColor: COLORS.BLACK,
