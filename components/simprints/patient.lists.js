@@ -204,21 +204,11 @@ const PatientLists = ({navigation}) => {
             <Text style={styles.label}>
               Primary Language: {item.primaryLanguage}
             </Text>
-            <Text style={styles.label}>
-              Country: {item.country}
-            </Text>
-            <Text style={styles.label}>
-              District: {item.district}
-            </Text>
-            <Text style={styles.label}>
-              Sex: {item.sex}
-            </Text>
-            <Text style={styles.label}>
-              Weight: {item.weight}
-            </Text>
-            <Text style={styles.label}>
-              Height: {item.height}
-            </Text>
+            <Text style={styles.label}>Country: {item.country}</Text>
+            <Text style={styles.label}>District: {item.district}</Text>
+            <Text style={styles.label}>Sex: {item.sex}</Text>
+            <Text style={styles.label}>Weight: {item.weight}</Text>
+            <Text style={styles.label}>Height: {item.height}</Text>
             <View style={styles.line} />
 
             {item.vaccinations && item.vaccinations.length > 0 && (
@@ -229,9 +219,7 @@ const PatientLists = ({navigation}) => {
                     <Text style={styles.label}>
                       Vaccination Name: {vaccination.vaccineName}
                     </Text>
-                    <Text style={styles.label}>
-                      Dosage: {vaccination.dose}
-                    </Text>
+                    <Text style={styles.label}>Dosage: {vaccination.dose}</Text>
                     <Text style={styles.label}>
                       Vaccination Date:
                       {formatDate(new Date(vaccination.dateOfVaccination))}
@@ -250,6 +238,55 @@ const PatientLists = ({navigation}) => {
                       {' '}
                       Card Number: {vaccination.units}
                     </Text>
+                    <View style={styles.line} />
+                  </View>
+                ))}
+              </View>
+            )}
+            {item.antenantals && item.antenantals.length > 0 && (
+              <View>
+                <Text style={styles.userDataLabel1}>ANTENATAL CARE</Text>
+                {item.antenantals.map((antenantal, index) => (
+                  <View key={index}>
+                    <Text style={styles.label}>
+                      Pregnacy Status: {antenantal.pregnancyStatus}
+                    </Text>
+
+                    <Text style={styles.label}>
+                      Expected Date for Delivery:{' '}
+                      {antenantal.expectedDateOfDelivery}
+                    </Text>
+
+                    <Text style={styles.label}>
+                      Date for routine visit:
+                      {antenantal.routineVisitDate}
+                    </Text>
+
+                    <Text style={styles.label}>
+                      Blood Group:
+                      {antenantal.bloodGroup}
+                    </Text>
+
+                    <Text style={styles.label}>
+                      Prescriptions:
+                      {antenantal.prescriptions}
+                    </Text>
+
+                    <Text style={styles.label}>
+                      Next of Kin:
+                      {antenantal.nextOfKin}
+                    </Text>
+
+                    <Text style={styles.label}>
+                      Next of Kin Contact:
+                      {antenantal.nextOfKinContact}
+                    </Text>
+
+                    <Text style={styles.label}>
+                      Additional Notes:
+                      {antenantal.drugNotes}
+                    </Text>
+
                     <View style={styles.line} />
                   </View>
                 ))}
@@ -275,10 +312,11 @@ const PatientLists = ({navigation}) => {
                       Drugs Prescribed: {diagnosis.drugsPrescribed}
                     </Text>
                     <Text style={styles.label}>
-                      Dosage: {diagnosis.dosage} X {diagnosis.frequency} for {diagnosis.duration}
+                      Dosage: {diagnosis.dosage} X {diagnosis.frequency} for{' '}
+                      {diagnosis.duration}
                     </Text>
                     <Text style={styles.label}>
-                      Is Pregnant: {diagnosis.isPregnant} 
+                      Is Pregnant: {diagnosis.isPregnant}
                     </Text>
                     <Text style={styles.label}>
                       Follow Up Date:
