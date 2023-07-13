@@ -19,6 +19,8 @@ import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import {format} from 'date-fns';
 
 const PatientMedical = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -26,6 +28,39 @@ const PatientMedical = ({navigation}) => {
   const {dataResults} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
   const currentDate = new Date();
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const [dateOfDiagnosis, setDateOfDiagnosis] = useState(''); // Add state for date of vaccination
+  const [followUpDate, setFollowUpDate] = useState(''); // Add state for date for next dose
+
+  const handleDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || dateOfDiagnosis;
+    setShowDatePicker(false);
+
+    // Update the respective state based on the selected date
+    if (showDatePicker === 'diagnoses') {
+      setDateOfDiagnosis(currentDate);
+      setState({...state, dateOfDiagnosis: currentDate}); // Update state
+      console.log('Date for Diagnosis:', currentDate);
+    } else if (showDatePicker === 'followUp') {
+      setFollowUpDate(currentDate);
+      setState({...state, followUpDate: currentDate}); // Update state
+      console.log('Date for Next Dose:', currentDate);
+    }
+  };
+
+  const formatDate = date => {
+    if (date) {
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+
+      return `${day.toString().padStart(2, '0')}/${month
+        .toString()
+        .padStart(2, '0')}/${year}`;
+    }
+    return 'Click to add date';
+  };
 
   const [state, setState] = React.useState({
     condition: '',
@@ -37,6 +72,7 @@ const PatientMedical = ({navigation}) => {
     duration: '',
     followUpDate: '',
     isPregnant: false,
+    labTests: '',
     // registeredById: '',
   });
 
@@ -50,13 +86,13 @@ const PatientMedical = ({navigation}) => {
       setState({...state, isLoading: true}); // Set isLoading state to true
       if (
         state.condition === '' ||
-        state.dateOfDiagnosis === '' ||
-        state.impression === '' 
-       
+        dateOfDiagnosis === '' || // Add check for dateOfVaccination
+        state.impression === ''
       ) {
         Alert.alert('Error', 'Please fill in all required fields');
         return;
       }
+
       const response = await fetch(
         `https://mobi-be-production.up.railway.app/${patientId}/diagnosis`,
         {
@@ -71,6 +107,7 @@ const PatientMedical = ({navigation}) => {
             duration: state.duration,
             followUpDate: state.followUpDate,
             isPregnant: state.isPregnant,
+            labTests: state.labTests,
           }),
           headers: {
             'Content-type': 'application/json; charset=UTF-8',
@@ -82,15 +119,15 @@ const PatientMedical = ({navigation}) => {
       if (response.ok) {
         const data = await response.json();
         // setId(data.id);
-        Alert.alert('Data posted successfully');
+        Alert.alert('Diagnosis Registered successfully');
         navigation.navigate('Dashboard');
       } else {
         console.error('Error posting data:', response.status);
-        Alert.alert('Error', 'Failed to submit data. Please try again later.');
+        Alert.alert('Error', 'Failed to Register Diagnosis. Please try again later.');
       }
     } catch (error) {
       console.error('Error posting data:', error);
-      Alert.alert('Error', 'Failed to submit data. Please try again later.');
+      Alert.alert('Error', 'Failed to Register Diagnosis. Please try again later.');
     } finally {
       setState({...state, isLoading: false}); // Reset isLoading state to false
     }
@@ -128,56 +165,74 @@ const PatientMedical = ({navigation}) => {
       <ScrollView style={STYLES.body}>
         {/* condition */}
         <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Patient impression:</Text>
+          <Text style={STYLES.label}>Signs and Symptoms:</Text>
           <TextInput
-            style={STYLES.field}
+            style={[
+              STYLES.field,
+              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+            ]} // Add color and placeholderTextColor styles
+            placeholderTextColor={COLORS.GREY}
             value={state.impression}
             onChangeText={text => setState({...state, impression: text})}
             placeholder='signs and symptoms e.g "Headache, Fever, Cough"'
             multiline={true}
-            numberOfLines={4}
+            numberOfLines={3}
           />
         </View>
 
         {/* Date for diagnosis */}
+
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Date for Diagnosis:</Text>
+          <TouchableOpacity
+            style={STYLES.datePickerInput}
+            onPress={() => setShowDatePicker('diagnoses')}>
+            <Text style={STYLES.datePickerText}>
+              {formatDate(dateOfDiagnosis)}
+            </Text>
+          </TouchableOpacity>
+          {showDatePicker === 'diagnoses' && (
+            <DateTimePicker
+              value={dateOfDiagnosis || new Date()} // Use null or fallback to current date
+              mode="date"
+              display="spinner"
+              onChange={handleDateChange}
+            />
+          )}
+        </View>
+
+        {/* LAB TESTS */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Lab Tests and Results:</Text>
           <TextInput
-            style={STYLES.field}
-            value={state.dateOfDiagnosis}
-            onChangeText={text => setState({...state, dateOfDiagnosis: text})}
+            style={[
+              STYLES.field,
+              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+            ]} // Add color and placeholderTextColor styles
+            placeholderTextColor={COLORS.GREY}
+            value={state.labTests}
+            onChangeText={text => setState({...state, labTests: text})}
+            placeholder='Lab tests and results e.g "Malaria positive"'
+            multiline={true}
+            numberOfLines={3}
           />
         </View>
 
-        <View style={STYLES.wrap}>
-          {/* dose */}
-          <View style={STYLES.detail}>
-            <TextInput
-              value={state.dosage}
-              placeholderTextColor={COLORS.BLACK}
-              onChangeText={text => setState({...state, dosage: text})}
-              placeholder="dosage"
-            />
-          </View>
-          {/* units */}
-          <View style={STYLES.detail}>
-            <TextInput
-              value={state.frequency}
-              placeholderTextColor={COLORS.BLACK}
-              onChangeText={text => setState({...state, frequency: text})}
-              placeholder="frequency"
-            />
-          </View>
-
-          {/* duration */}
-          <View style={STYLES.detail}>
-            <TextInput
-              value={state.duration}
-              placeholderTextColor={COLORS.BLACK}
-              onChangeText={text => setState({...state, duration: text})}
-              placeholder="duration"
-            />
-          </View>
+        {/* Condition */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Condition:</Text>
+          <TextInput
+            style={[
+              STYLES.field,
+              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+            ]} // Add color and placeholderTextColor styles
+            placeholderTextColor={COLORS.GREY}
+            value={state.condition}
+            onChangeText={text => setState({...state, condition: text})}
+            placeholder='e.g "Malaria"'
+            multiline={true}
+            numberOfLines={3}
+          />
         </View>
 
         <View style={STYLES.labeled}>
@@ -191,38 +246,95 @@ const PatientMedical = ({navigation}) => {
           />
         </View>
 
-        {/* Condition */}
-        <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Condition:</Text>
-          <TextInput
-            style={STYLES.field}
-            value={state.condition}
-            onChangeText={text => setState({...state, condition: text})}
-            placeholder='e.g "Malaria"'
-            multiline={true}
-            numberOfLines={4}
-          />
-        </View>
-
         {/* Drugs Adminstered */}
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Drugs Adminstered:</Text>
           <TextInput
-            style={STYLES.field}
+            style={[
+              STYLES.field,
+              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+            ]} // Add color and placeholderTextColor styles
+            placeholderTextColor={COLORS.GREY}
             value={state.drugsPrescribed}
             onChangeText={text => setState({...state, drugsPrescribed: text})}
-            placeholder='e.g "Left Arm"'
+            placeholder='e.g "Paracetamol"'
+            multiline={true}
+            numberOfLines={3}
           />
         </View>
 
-        {/* follow up date */}
+        <View style={STYLES.wrap}>
+          <Text style={STYLES.label}>Dosage</Text>
+
+          {/* dose */}
+          <View style={STYLES.detail}>
+            <TextInput
+              value={state.dosage}
+              placeholderTextColor={COLORS.GREY}
+              onChangeText={text => setState({...state, dosage: text})}
+              placeholder="1"
+              keyboardType="numeric"
+              style={[
+                STYLES.field,
+                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              ]}
+            />
+          </View>
+          <Text style={STYLES.label}>X</Text>
+          {/* units */}
+          <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
+            <TextInput
+              value={state.frequency}
+              placeholderTextColor={COLORS.GREY}
+              onChangeText={text => setState({...state, frequency: text})}
+              placeholder="1"
+              keyboardType="numeric"
+              style={[
+                STYLES.field,
+                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              ]}
+            />
+          </View>
+
+          <Text style={STYLES.label}>for</Text>
+
+          {/* duration */}
+          <View style={STYLES.detail}>
+            <TextInput
+              value={state.duration}
+              placeholderTextColor={COLORS.GREY}
+              onChangeText={text => setState({...state, duration: text})}
+              placeholder="1"
+              keyboardType="numeric"
+              style={[
+                STYLES.field,
+                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              ]}
+            />
+          </View>
+          <Text style={STYLES.label}>days</Text>
+        </View>
+
         <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Follow Up Date:</Text>
-          <TextInput
-            style={STYLES.field}
-            value={state.followUpDate}
-            onChangeText={text => setState({...state, followUpDate: text})}
-          />
+          <Text style={STYLES.label}>Follow Up date:</Text>
+          <TouchableOpacity
+            style={STYLES.datePickerInput}
+            placeholderTextColor={COLORS.GREY}
+
+            onPress={() => setShowDatePicker('followUp')}>
+            <Text style={STYLES.datePickerText}>
+              {formatDate(followUpDate)}
+            </Text>
+          </TouchableOpacity>
+          {showDatePicker === 'followUp' && (
+            <DateTimePicker
+              value={followUpDate || new Date()} // Use null or fallback to current date
+              mode="date"
+              display="spinner"
+              onChange={handleDateChange}
+              
+            />
+          )}
         </View>
 
         <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
@@ -245,7 +357,8 @@ const STYLES = StyleSheet.create({
   },
   body: {
     flex: 2,
-    padding: 30,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
   },
   alert: {
     color: COLORS.GREY,
@@ -349,7 +462,7 @@ const STYLES = StyleSheet.create({
     justifyContent: 'center',
     color: COLORS.BLACK,
     fontWeight: 'medium',
-    fontSize: 14,
+    fontSize: 13,
   },
   switch: {
     flex: 1,
@@ -449,5 +562,11 @@ const STYLES = StyleSheet.create({
     borderRadius: 10,
     height: 50,
     marginHorizontal: 5,
+  },
+  datePickerText: {
+    paddingVertical: 10,
+    paddingLeft: 12,
+    fontSize: 15,
+    color: COLORS.BLACK,
   },
 });

@@ -1,80 +1,125 @@
-import * as React from 'react';
+import React, {useEffect, useContext, useState} from 'react';
 import {
-  View,
   Alert,
+  View,
   Linking,
   FlatList,
   TouchableOpacity,
   Text,
   StyleSheet,
+  StatusBar,
 } from 'react-native';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {ListItem} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Feather';
+import {COLORS} from '../constants/styles';
 
-import {COLORS, DIMENS} from '../constants/styles';
-import AuthContext from '../contexts/auth';
-import {UserContext} from '../providers/User';
-import {tokensRefresh} from '../helpers/functions';
+import {AuthContext} from '../contexts/auth';
+import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
-import {URLS} from '../constants/API';
-
-import CustomHeader from '../parts/custom-header';
-import {CustomStatusBar} from '../ui/custom.status.bar';
 
 const Ambulance = ({navigation}) => {
-  const [state, setState] = React.useState({
+  const [state, setState] = useState({
     isLoading: true,
-    ambulances: [],
+    doctors: [],
+    login: false,
   });
 
-  React.useEffect(() => {
-    _getAmbulances();
+  const {signOut} = useContext(AuthContext);
+
+  useEffect(() => {
+    _getDoctors();
+
+    return () => {};
   }, []);
 
-  const _getAmbulances = async () => {
-    let ambulancesOnDevice = await AsyncStorage.getItem('@ambulances');
-    ambulancesOnDevice = JSON.parse(ambulancesOnDevice) || [];
-    setState({ambulances: ambulancesOnDevice, isLoading: false});
+  const _getDoctors = async () => {
+    // Fetch doctors from AsyncStorage or API
+
+    // Dummy data for testing
+    const dummyData = [
+      {
+        _id: '1',
+        name: 'Kawoolo Hospital',
+        hospital: 'Driver',
+        status: 1,
+        phone: '+256 772680727',
+      },
+      {
+        _id: '2',
+        name: 'St.Francis Ambulance ',
+        hospital: 'Driver ',
+        status: 1,
+        phone: '+256 755996554',
+      },
+      {
+        _id: '3',
+        name: 'Kinoni Boda',
+        hospital: 'Driver',
+        status: 1,
+        phone: '+256 772954307',
+      },
+      {
+        _id: '4',
+        name: 'Mukonge Health Center Ambulance ',
+        specialisation: 'Clinician',
+        hospital: 'Driver',
+        status: 1,
+        phone: '+256 707367315',
+      },
+      {
+        _id: '5',
+        name: 'St.Francis Ambulance',
+        specialisation: 'General practitioner',
+        hospital: 'Driver ',
+        status: 1,
+        phone: '256 755996554',
+      },
+    ];
+
+    if (dummyData && dummyData.length > 0) {
+      setState({doctors: dummyData, isLoading: false});
+    } else {
+      setState({doctors: [], isLoading: false});
+    }
+
+    // Rest of your code for fetching doctors
+
+    // ...
   };
 
   const _keyExtractor = item => item._id;
 
   const _renderItem = ({item}) => {
     return (
-      <TouchableOpacity onPress={() => Linking.openURL(`tel:${item.msdn}`)}>
+      <TouchableOpacity onPress={() => Linking.openURL(`tel:${item.phone}`)}>
         <ListItem bottomDivider>
           <Icon
             name="circle"
             size={25}
             color={
-              item.status == 1
+              item.status === 1
                 ? 'green'
-                : item.status == 2
+                : item.status === 2
                 ? COLORS.PRIMARY
                 : '#f00'
             }
           />
           <ListItem.Content>
             <ListItem.Title style={STYLES.listTitle}>
-              {item.plate || item.msdn}
+              {item.name}
             </ListItem.Title>
             <ListItem.Subtitle style={STYLES.subtitle}>
               <View style={STYLES.wrapper}>
                 <View style={STYLES.subtitle}>
-                  <Text style={STYLES.label}>Driver</Text>
-                  <Text>{item.driver}</Text>
+                  <Text style={STYLES.label}>Phone Number</Text>
+                  <Text>{item.phone}</Text>
                 </View>
                 <View style={STYLES.subtitle}>
-                  <Text style={STYLES.label}>Hospital</Text>
                   <Text>{item.hospital}</Text>
                 </View>
-                {/* 								<View style={STYLES.subtitle}>
-									<Text style={STYLES.label}>Location</Text>
-									<Text>{item.location}</Text>
-								</View> */}
-                <View style={STYLES.subtitle}></View>
               </View>
             </ListItem.Subtitle>
           </ListItem.Content>
@@ -84,42 +129,30 @@ const Ambulance = ({navigation}) => {
     );
   };
 
-  const _header = () => (
-    <CustomHeader
-      left={
-        <TouchableOpacity
-          style={{paddingLeft: 10}}
-          onPress={() => navigation.openDrawer()}>
-          <Icon name="menu" size={25} color={COLORS.SECONDARY} />
-        </TouchableOpacity>
-      }
-     
-    />
-  );
+  const {doctors, isLoading, login} = state;
 
-  let {isLoading, ambulances} = state;
+  if (login) return <Login />;
 
   if (isLoading) return <Loader />;
 
-  if (ambulances?.length == 0)
+  if (!doctors || doctors.length === 0) {
     return (
-      <View style={STYLES.wrapper}>
-        <CustomStatusBar />
-
-
-        <View style={STYLES.body}>
-          <Icon name="smile" size={60} color={COLORS.GREY} />
-          <Text style={STYLES.alert}>Can't not find Ambulances to show.</Text>
+      <View style={STYLES.container}>
+        <CustomHeader navigation={navigation} title={'Doctors'} />
+        <View>
+          <StatusBar />
+          <Text style={STYLES.textColor}>No Doctors available</Text>
         </View>
       </View>
     );
+  }
 
   return (
     <View style={STYLES.wrapper}>
-      <CustomStatusBar />
-      {_header()}
+      <StatusBar />
+
       <FlatList
-        data={ambulances}
+        data={doctors}
         renderItem={_renderItem}
         keyExtractor={_keyExtractor}
       />
@@ -156,7 +189,7 @@ const STYLES = StyleSheet.create({
   },
   subtitle: {
     flexDirection: 'row',
-    fontSize: 10,
+    fontSize: 15,
     opacity: 0.5,
   },
   label: {
@@ -177,4 +210,5 @@ const STYLES = StyleSheet.create({
     justifyContent: 'flex-end',
   },
 });
+
 export default Ambulance;

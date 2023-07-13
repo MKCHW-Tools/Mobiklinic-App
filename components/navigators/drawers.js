@@ -22,6 +22,7 @@ import Maternal from '../screens/maternal';
 import GetStarted from '../screens/get.started';
 import Tips from '../screens/tips';
 import Diagnose from '../screens/diagnosis';
+import SimprintsID from '../simprints/simprintsID';
 
 import Doctors from '../screens/doctors';
 import Ambulance from '../screens/ambulance';
@@ -132,7 +133,7 @@ export const DrawerNavigationLogged = () => {
       <Drawer.Screen name="Dashboard" component={Dashboard} />
       {/* 			<Drawer.Screen name="Messages" component={Chats} />
        */}
-      <Drawer.Screen name="Diagnose" component={Diagnose} />
+      <Drawer.Screen name="SimprintsID" component={SimprintsID} />
       <Drawer.Screen name="Doctors" component={Doctors} />
       <Drawer.Screen name="Ambulance" component={Ambulance} />
       <Drawer.Screen name="Help" component={GetStarted} />

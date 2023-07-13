@@ -18,6 +18,7 @@ import SelectActivity from '../simprints/select.activity';
 // import PatientSummary from '../simprints/patient.summary';
 import GetPatients from '../simprints/getPatients';
 import PatientLists from '../simprints/patient.lists';
+import AntenatalCare from '../simprints/antenatal.care';
 
 const Stack = createStackNavigator();
 
@@ -109,6 +110,11 @@ function AuthStack() {
         name="PatientLists"
         options={{headerShown: false}}
         component={PatientLists}
+      />
+      <Stack.Screen
+        name="AntenatalCare"
+        options={{headerShown: false}}
+        component={AntenatalCare}
       />
     </Stack.Navigator>
   );

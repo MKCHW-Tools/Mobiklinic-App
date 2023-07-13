@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useContext} from 'react';
 
 import {
   View,
@@ -18,14 +18,25 @@ import CustomHeader from '../parts/custom-header';
 import {CustomStatusBar} from '../ui/custom.status.bar';
 import {signOut} from '../helpers/functions';
 import {AuthContext} from '../contexts/auth';
+import DataResultsContext from '../contexts/DataResultsContext';
+
 const Dashboard = ({navigation}) => {
   const {setTokens, setUser} = React.useContext(AuthContext);
+  const {userNames} = useContext(DataResultsContext);
+
   return (
     <View style={STYLES.wrapper}>
       <CustomStatusBar />
-      
+
       <View style={STYLES.hero}>
-        <Text style={STYLES.heroHeading}>Hey CHP,</Text>
+        <Text style={STYLES.heroHeading}>
+          Hey{' '}
+          <Text
+            style={{color: COLORS.PRIMARY, textDecorationLine: 'underline'}}>
+            {userNames}
+          </Text>{' '}
+          ,
+        </Text>
         <Text style={STYLES.heroParagraph}>Welcome back!</Text>
         <Text style={STYLES.heroParagraph}>
           Choose an option below to continue.
@@ -48,19 +59,20 @@ const Dashboard = ({navigation}) => {
               <Text style={STYLES.cardTitle}>Beneficiary</Text>
             </TouchableOpacity>
           </View>
+
           <View style={STYLES.row}>
             <TouchableOpacity
               style={STYLES.card}
-              onPress={() => navigation.navigate('PatientData')}>
+              onPress={() => navigation.navigate('Ambulance')}>
               <View style={STYLES.cardIcon}>
-                <Icon
-                  name="message-circle"
+                <MIcon
+                  name="ambulance"
                   size={40}
                   strokeSize={3}
                   color={COLORS.BLACK}
                 />
               </View>
-              <Text style={STYLES.cardTitle}>Messages</Text>
+              <Text style={STYLES.cardTitle}>Ambulances</Text>
             </TouchableOpacity>
           </View>
           <View style={STYLES.row}>
@@ -107,7 +119,7 @@ const Dashboard = ({navigation}) => {
                   color={COLORS.BLACK}
                 />
               </View>
-              <Text style={STYLES.cardTitle}>Patient Lists</Text>
+              <Text style={STYLES.cardTitle}>Beneficary Lists</Text>
             </TouchableOpacity>
           </View>
           <View style={STYLES.row}>
@@ -148,7 +160,7 @@ const STYLES = StyleSheet.create({
     paddingHorizontal: 15,
   },
   heroHeading: {
-    fontSize: 30,
+    fontSize: 23,
     fontWeight: 'bold',
     color: COLORS.BLACK,
   },

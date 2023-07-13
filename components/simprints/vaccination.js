@@ -19,13 +19,46 @@ import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
-const PatientData = ({navigation}) => {
+const PatientData = ({navigation, route}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
   const {diagnoses} = diagnosisContext;
   const {dataResults} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
   const currentDate = new Date();
+
+  const [dateOfVaccination, setDateOfVaccination] = useState('');
+  const [dateForNextDose, setDateForNextDose] = useState('');
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const handleDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || dateOfVaccination;
+    setShowDatePicker(false);
+    // Update the respective state based on the selected date
+    if (showDatePicker === 'vaccination') {
+      setDateOfVaccination(currentDate);
+      setState({...state, dateOfVaccination: currentDate}); // Update state
+      console.log('Date for Vaccination:', currentDate);
+    } else if (showDatePicker === 'nextDose') {
+      setDateForNextDose(currentDate);
+      setState({...state, dateForNextDose: currentDate}); // Update state
+      console.log('Date for Next Dose:', currentDate);
+    }
+  };
+
+  const formatDate = date => {
+    if (date) {
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+
+      return `${day.toString().padStart(2, '0')}/${month
+        .toString()
+        .padStart(2, '0')}/${year}`;
+    }
+    return 'Click to add date';
+  };
 
   const [state, setState] = React.useState({
     vaccineName: '',
@@ -49,8 +82,7 @@ const PatientData = ({navigation}) => {
       if (
         state.vaccineName === '' ||
         state.dose === '' ||
-        state.units === '' ||
-        state.dateOfVaccination === '' ||
+        dateOfVaccination === '' || // Add check for dateOfVaccination
         state.siteAdministered === ''
       ) {
         Alert.alert('Error', 'Please fill in all required fields');
@@ -80,15 +112,15 @@ const PatientData = ({navigation}) => {
       if (response.ok) {
         const data = await response.json();
         // setId(data.id);
-        Alert.alert('Data posted successfully');
+        Alert.alert('Vaccination Registered Successfully');
         navigation.navigate('Dashboard');
       } else {
         console.error('Error posting data:', response.status);
-        Alert.alert('Error', 'Failed to submit data. Please try again later.');
+        Alert.alert('Error', 'Failed to Register vaccination. Please try again later.');
       }
     } catch (error) {
       console.error('Error posting data:', error);
-      Alert.alert('Error', 'Failed to submit data. Please try again later.');
+      Alert.alert('Error', 'Failed to Register vaccination. Please try again later.');
     } finally {
       setState({...state, isLoading: false}); // Reset isLoading state to false
     }
@@ -134,7 +166,8 @@ const PatientData = ({navigation}) => {
             onValueChange={(value, index) =>
               setState({...state, vaccineName: value})
             }
-            style={STYLES.field}>
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            dropdownIconColor={COLORS.GREY_LIGHTER}>
             <Picker.Item label="" value="" />
             <Picker.Item label="Pfizer-BioNTech" value="pfizer" />
             <Picker.Item label="Moderna" value="moderna" />
@@ -157,57 +190,83 @@ const PatientData = ({navigation}) => {
           </Picker>
         </View>
 
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Card number:</Text>
+          <TextInput
+            style={[
+              STYLES.field,
+              {color: COLORS.BLACK},
+            ]} // Add color and placeholderTextColor styles
+            placeholderTextColor={COLORS.GREY}
+            value={state.units}
+            onChangeText={text => setState({...state, units: text})}
+            placeholder="Enter vaccine card number"
+          />
+        </View>
+        {/* Date for vaccination */}
+        {/* Date for vaccination */}
         {/* Date for vaccination */}
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Date for Vaccination:</Text>
-          <TextInput
-            style={STYLES.field}
-            value={state.dateOfVaccination}
-            onChangeText={text => setState({...state, dateOfVaccination: text})}
-          />
+          <TouchableOpacity
+            style={STYLES.datePickerInput}
+            onPress={() => setShowDatePicker('vaccination')}>
+            <Text style={STYLES.datePickerText}>
+              {formatDate(dateOfVaccination)}
+            </Text>
+          </TouchableOpacity>
+          {showDatePicker === 'vaccination' && (
+            <DateTimePicker
+              value={dateOfVaccination || new Date()} // Use null or fallback to current date
+              mode="date"
+              display="spinner"
+              onChange={handleDateChange}
+            />
+          )}
         </View>
 
-        <View style={STYLES.wrap}>
-          {/* dose */}
-          <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
-            <Picker
-              placeholderTextColor={COLORS.BLACK}
-              selectedValue={state.dose}
-              onValueChange={(value, index) =>
-                setState({...state, dose: value})
-              }
-              style={STYLES.pickerItemStyle}>
-              <Picker.Item label="Dose" value="Dose" />
-              <Picker.Item label="1st" value="1st" />
-              <Picker.Item label="2nd" value="2nd" />
-              <Picker.Item label="3rd" value="3rd" />
-              <Picker.Item label="4th" value="4th" />
-            </Picker>
-          </View>
-          {/* Height */}
-          <View style={STYLES.detail}>
-            {/* <Text style={STYLES.label}>Height:</Text> */}
-            <TextInput
-              keyboardType="numeric"
-              placeholderTextColor={COLORS.BLACK}
-              value={state.units}
-              onChangeText={text => setState({...state, units: text})}
-              placeholder="Units(mls)"
-            />
-          </View>
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Dose:</Text>
+
+          <Picker
+            placeholderTextColor={COLORS.BLACK}
+            selectedValue={state.dose}
+            onValueChange={(value, index) => setState({...state, dose: value})}
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            dropdownIconColor={COLORS.GREY_LIGHTER}>
+            <Picker.Item label="" value="" />
+            <Picker.Item label="1st" value="1st" />
+            <Picker.Item label="2nd" value="2nd" />
+            <Picker.Item label="3rd" value="3rd" />
+            <Picker.Item label="4th" value="4th" />
+          </Picker>
         </View>
 
         {/* Site adminstered */}
-        <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Site Adminstered:</Text>
-          <TextInput
-            style={STYLES.field}
-            value={state.siteAdministered}
-            onChangeText={text => setState({...state, siteAdministered: text})}
-            placeholder='e.g "Left Arm"'
-          />
-        </View>
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Site Administered:</Text>
 
+          <Picker
+            placeholderTextColor={COLORS.BLACK}
+            selectedValue={state.siteAdministered}
+            onValueChange={(value, index) =>
+              setState({...state, siteAdministered: value})
+            }
+            style={STYLES.field}>
+            <Picker.Item label="" value="" />
+            <Picker.Item label="Left Upper Arm" value="Left Upper Arm" />
+            <Picker.Item label="Right Upper Arm" value="Right Upper Arm" />
+            <Picker.Item label="Left Upper Thigh" value="Ventrogluteal Muscle (Hip)" />
+            <Picker.Item label="Mouth" value="Mouth" />
+            <Picker.Item label="Buttocks" value="Buttocks" />
+
+
+            <Picker.Item
+              label="Right Upper Thigh"
+              value="Anterolateral Thigh (Front of the Thigh)"
+            />
+          </Picker>
+        </View>
         {/* Facility */}
         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
           <Text style={STYLES.label}>Facility:</Text>
@@ -218,23 +277,61 @@ const PatientData = ({navigation}) => {
             onValueChange={(value, index) =>
               setState({...state, facility: value})
             }
-            style={STYLES.field}>
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            dropdownIconColor={COLORS.GREY_LIGHTER}>
             <Picker.Item label="" value="" />
             <Picker.Item label="Buikwe Hospital" value="Buikwe Hospital" />
-            <Picker.Item label="Mulago" value="Mulago" />
+            <Picker.Item label="Mulago Hospital" value="Mulago Hospital" />
+            <Picker.Item
+              label="Makonge Health Center III"
+              value="Makonge Health Center III"
+            />
+            <Picker.Item
+              label="Makonge Health Center III"
+              value="Makonge Health Center III"
+            />
+            <Picker.Item
+              label="Makindu Health Center III"
+              value="Makindu Health Center III"
+            />
+            <Picker.Item
+              label="Kisungu Health Center III"
+              value="Kisungu Health Center III"
+            />
+            <Picker.Item
+              label="Najjembe Health Center III"
+              value="Najjemebe Health Center III"
+            />
+            <Picker.Item label="Kawolo Hospital" value="Kawolo Hospital" />
           </Picker>
         </View>
-
         {/* Date for vaccination */}
-        <View style={STYLES.labeled}>
+        {/* <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Date for Next Dose:</Text>
           <TextInput
             style={STYLES.field}
             value={state.dateForNextDose}
             onChangeText={text => setState({...state, dateForNextDose: text})}
           />
+        </View> */}
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Date for Next Dose:</Text>
+          <TouchableOpacity
+            style={STYLES.datePickerInput}
+            onPress={() => setShowDatePicker('nextDose')}>
+            <Text style={STYLES.datePickerText}>
+              {formatDate(dateForNextDose)}
+            </Text>
+          </TouchableOpacity>
+          {showDatePicker === 'nextDose' && (
+            <DateTimePicker
+              value={dateForNextDose || new Date()} // Use null or fallback to current date
+              mode="date"
+              display="spinner"
+              onChange={handleDateChange}
+            />
+          )}
         </View>
-
         <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
           <Text style={STYLES.submitText}>Submit</Text>
         </TouchableOpacity>
@@ -358,8 +455,8 @@ const STYLES = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     color: COLORS.BLACK,
-    fontWeight: 'bold',
-    fontSize: 16,
+    fontWeight: 'medium',
+    fontSize: 13,
   },
   guid: {
     textAlign: 'left',
@@ -451,5 +548,27 @@ const STYLES = StyleSheet.create({
     borderRadius: 10,
     height: 50,
     marginHorizontal: 5,
+  },
+  datePickerText: {
+    paddingVertical: 10,
+    paddingLeft: 12,
+    fontSize: 15,
+    color: COLORS.BLACK,
+  },
+  datePickerInput: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderColor: COLORS.GREY,
+    // borderStyle: 'solid',
+    // borderWidth: 1,
+    // borderRadius: 10,
+  },
+  datePickerText: {
+    marginLeft: 5,
+    color: COLORS.BLACK,
+    fontSize: 14,
+    paddingVertical: 12,
   },
 });
