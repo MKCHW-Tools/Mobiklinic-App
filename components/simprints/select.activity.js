@@ -30,6 +30,7 @@ import FAIcon from 'react-native-vector-icons/FontAwesome';
 import {DiagnosisContext} from '../providers/Diagnosis';
 import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
+import CopyRight from './copyright';
 
 const SelectActivity = ({navigation, route}) => {
   const _header = () => (
@@ -62,7 +63,7 @@ const SelectActivity = ({navigation, route}) => {
         />
         <Text style={STYLES.title}>Mobiklinic</Text>
         <Text style={STYLES.text}>
-          Beneficary Name: {'\t'}
+          Name: {'\t'}
           <Text style={{textDecorationLine: 'underline'}}>
             {route.params.paramKey.firstName}
             {'\t'}
@@ -134,15 +135,13 @@ const SelectActivity = ({navigation, route}) => {
                     color={COLORS.BLACK}
                   />
                 </View>
-                <Text style={STYLES.cardTitle}>Home Page</Text>
+                <Text style={STYLES.cardTitle}>Home</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
 
-        <Text style={STYLES.copy}>
-          © {new Date().getFullYear()} Mobiklinic. All rights reserved.
-        </Text>
+        <CopyRight />
       </View>
     </View>
   );
@@ -271,8 +270,9 @@ const STYLES = StyleSheet.create({
     fontWeight: 'bold',
     color: COLORS.BLACK,
     textAlign: 'center',
+
     // flexGrow: 1,
-    fontSize: 16,
+    fontSize: 18,
   },
   card: {
     backgroundColor: COLORS.WHITE,
@@ -306,6 +306,6 @@ const STYLES = StyleSheet.create({
   copy: {
     color: '#888',
     fontSize: 12,
-    marginTop:100,
+    marginTop: 100,
   },
 });
