@@ -143,12 +143,11 @@ const GetPatients = () => {
                       </Text>
 
                       <Text style={styles.userDataLabel}>
-                        Dose:{' '}
+                        Dose:
                         <Text style={styles.userDataValue}>
                           {vaccination.dose}
                         </Text>
                       </Text>
-
                       <Text style={styles.userDataLabel}>
                         Card Number:{' '}
                         <Text style={styles.userDataValue}>
@@ -175,10 +174,8 @@ const GetPatients = () => {
                           {vaccination.facility}
                         </Text>
                       </Text>
-                      <Text style={styles.userDataLabel}>
-                        ................................................................
-                        <Text style={styles.userDataValue}></Text>
-                      </Text>
+                      <View style={styles.line} />
+
                       <View style={{height: 20}} />
                     </View>
                   ))}
