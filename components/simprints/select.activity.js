@@ -23,6 +23,9 @@ import {
   generateRandomCode,
   MyDate,
 } from '../helpers/functions';
+import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import FoIcon from 'react-native-vector-icons/Fontisto';
+import FAIcon from 'react-native-vector-icons/FontAwesome';
 
 import {DiagnosisContext} from '../providers/Diagnosis';
 import CustomHeader from '../ui/custom-header';
@@ -68,48 +71,78 @@ const SelectActivity = ({navigation, route}) => {
         </Text>
 
         <View style={STYLES.btnContainer}>
-          <TouchableOpacity
-            style={STYLES.btn}
-            onPress={() => navigation.navigate('PatientMedical')}>
-            <Text style={STYLES.btnText}>Diagnose Patient</Text>
-            <Icon
-              name="arrow-right"
-              size={20}
-              strokeSize={3}
-              color={COLORS.WHITE}
-            />
-          </TouchableOpacity>
+          <View style={[STYLES.column, STYLES.rightPad]}>
+            <View style={STYLES.row}>
+              <TouchableOpacity
+                style={STYLES.card}
+                onPress={() => navigation.navigate('PatientMedical')}>
+                <View style={STYLES.cardIcon}>
+                  <FoIcon
+                    name="doctor"
+                    size={40}
+                    strokeSize={3}
+                    color={COLORS.BLACK}
+                  />
+                </View>
+                <Text style={STYLES.cardTitle}>Diagnose Patient</Text>
+              </TouchableOpacity>
+            </View>
 
-          <TouchableOpacity
-            style={STYLES.btn}
-            onPress={() => navigation.navigate('Vaccination')}>
-            <Text style={STYLES.btnText}>Vaccination</Text>
-            <Icon
-              name="arrow-right"
-              size={20}
-              strokeSize={3}
-              color={COLORS.WHITE}
-            />
-          </TouchableOpacity>
+            <View style={STYLES.row}>
+              <TouchableOpacity
+                style={STYLES.card}
+                onPress={() => navigation.navigate('Vaccination')}>
+                <View style={STYLES.cardIcon}>
+                  <MIcon
+                    name="needle"
+                    size={40}
+                    strokeSize={3}
+                    color={COLORS.BLACK}
+                  />
+                </View>
+                <Text style={STYLES.cardTitle}>Vaccination</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
 
-          <TouchableOpacity
-            style={STYLES.btn}
-            onPress={() => navigation.navigate('AntenatalCare')}>
-            <Text style={STYLES.btnText}>Antenatal Care</Text>
-            <Icon
-              name="arrow-right"
-              size={20}
-              strokeSize={3}
-              color={COLORS.WHITE}
-            />
-          </TouchableOpacity>
+          <View style={[STYLES.column, STYLES.rightPad]}>
+            <View style={STYLES.row}>
+              <TouchableOpacity
+                style={STYLES.card}
+                onPress={() => navigation.navigate('AntenatalCare')}>
+                <View style={STYLES.cardIcon}>
+                  <MIcon
+                    name="human-pregnant"
+                    size={50}
+                    strokeSize={3}
+                    color={COLORS.BLACK}
+                  />
+                </View>
+                <Text style={STYLES.cardTitle}>Antenatal Care</Text>
+              </TouchableOpacity>
+            </View>
 
-          <TouchableOpacity
-            style={STYLES.btn}
-            onPress={() => navigation.navigate('Dashboard')}>
-            <Text style={STYLES.btnText}>Back To Dashboard</Text>
-          </TouchableOpacity>
+            <View style={STYLES.row}>
+              <TouchableOpacity
+                style={STYLES.card}
+                onPress={() => navigation.navigate('Dashboard')}>
+                <View style={STYLES.cardIcon}>
+                  <MIcon
+                    name="home"
+                    size={40}
+                    strokeSize={3}
+                    color={COLORS.BLACK}
+                  />
+                </View>
+                <Text style={STYLES.cardTitle}>Home Page</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
+
+        <Text style={STYLES.copy}>
+          © {new Date().getFullYear()} Mobiklinic. All rights reserved.
+        </Text>
       </View>
     </View>
   );
@@ -187,10 +220,20 @@ const STYLES = StyleSheet.create({
     padding: 20,
   },
   btnContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height: 300,
+    padding: 10,
+    marginVertical: 50,
+  },
+  column: {
     flex: 1,
-    marginVertical: 60,
-    // justifyContent: 'center',
-    // alignItems: 'center',
+  },
+  rightPad: {
+    paddingRight: 10,
+  },
+  row: {
+    flex: 1,
   },
 
   btn: {
@@ -230,5 +273,39 @@ const STYLES = StyleSheet.create({
     textAlign: 'center',
     // flexGrow: 1,
     fontSize: 16,
+  },
+  card: {
+    backgroundColor: COLORS.WHITE,
+    flex: 1,
+    borderRadius: 10,
+    marginBottom: 20,
+    marginHorizontal: 8,
+
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  cardIcon: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.ACCENT_1,
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
+  },
+  cardTitle: {
+    padding: 10,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: COLORS.BLACK,
+  },
+  copy: {
+    color: '#888',
+    fontSize: 12,
+    marginTop:100,
   },
 });
