@@ -253,13 +253,13 @@ const PatientLists = ({navigation}) => {
                     </Text>
 
                     <Text style={styles.label}>
-                      Expected Date for Delivery:{' '}
-                      {antenantal.expectedDateOfDelivery}
+                      Expected Date for Delivery:
+                      {formatDate(new Date(antenantal.expectedDateOfDelivery))}
                     </Text>
 
                     <Text style={styles.label}>
                       Date for routine visit:
-                      {antenantal.routineVisitDate}
+                      {formatDate(new Date(antenantal.routineVisitDate))}
                     </Text>
 
                     <Text style={styles.label}>
@@ -270,6 +270,10 @@ const PatientLists = ({navigation}) => {
                     <Text style={styles.label}>
                       Prescriptions:
                       {antenantal.prescriptions}
+                    </Text>
+                    <Text style={styles.label}>
+                      Current Weight:
+                      {antenantal.weight}kg
                     </Text>
 
                     <Text style={styles.label}>
