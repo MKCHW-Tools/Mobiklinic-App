@@ -19,7 +19,8 @@ const styles = StyleSheet.create({
   copy: {
     color: '#888',
     fontSize: 12,
-    marginTop: 40,
-    backgroundColor:COLORS.WHITE_LOW
+    marginTop: 80,
+    // backgroundColor:COLORS.GREY_LIGHTER, 
+    textAlign: 'center'
   },
 });

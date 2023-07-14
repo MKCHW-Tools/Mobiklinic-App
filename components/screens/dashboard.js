@@ -19,6 +19,7 @@ import {CustomStatusBar} from '../ui/custom.status.bar';
 import {signOut} from '../helpers/functions';
 import {AuthContext} from '../contexts/auth';
 import DataResultsContext from '../contexts/DataResultsContext';
+import CopyRight from '../simprints/copyright';
 
 const Dashboard = ({navigation}) => {
   const {setTokens, setUser} = React.useContext(AuthContext);
@@ -146,6 +147,7 @@ const Dashboard = ({navigation}) => {
 				<Icon name="smile" size={60} color={COLORS.GREY} />
 				<Text style={STYLES.alert}>No data to show now.</Text>
 			</View> */}
+      <CopyRight/>
     </View>
   );
 };
