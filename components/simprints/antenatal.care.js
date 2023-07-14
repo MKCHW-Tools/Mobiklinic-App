@@ -66,7 +66,7 @@ const AntenatalCare = ({navigation}) => {
     pregnancyStatus: '',
     expectedDateOfDelivery: '',
     routineVisitDate: '',
-    expectedDateOfDelivery: '',
+    weight: '',
     bloodGroup: '',
     prescriptions: '',
     nextOfKin: '',
@@ -87,7 +87,7 @@ const AntenatalCare = ({navigation}) => {
         state.pregnancyStatus === '' ||
         state.expectedDateOfDelivery === '' ||
         routineVisitDate === '' ||
-        drugNotes === '' ||
+        state.drugNotes === '' ||
         state.bloodGroup === ''
       ) {
         Alert.alert('Error', 'Please fill in all required fields');
@@ -103,7 +103,7 @@ const AntenatalCare = ({navigation}) => {
             expectedDateOfDelivery: state.expectedDateOfDelivery,
             nextOfKinContact: state.nextOfKinContact,
             routineVisitDate: state.routineVisitDate,
-            expectedDateOfDelivery: state.expectedDateOfDelivery,
+            weight: state.weight,
             bloodGroup: state.bloodGroup,
             prescriptions: state.prescriptions,
             nextOfKin: state.nextOfKin,
@@ -238,14 +238,14 @@ const AntenatalCare = ({navigation}) => {
 
         {/* Weight */}
         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Text style={STYLES.label}>Weight:</Text>
+          <Text style={STYLES.label}>Current Weight:</Text>
 
           <TextInput
             keyboardType="numeric"
             value={state.weight}
             placeholderTextColor={COLORS.GREY}
             onChangeText={text => setState({...state, weight: text})}
-            placeholder="Weight (Kgs)"
+            placeholder="Current Weight (Kgs)"
             style={[STYLES.field, {paddingHorizontal: 30}]}
           />
         </View>

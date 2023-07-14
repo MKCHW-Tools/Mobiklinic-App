@@ -135,11 +135,11 @@ const Doctorss = ({ navigation }) => {
               <View style={STYLES.wrapper}>
                 <View style={STYLES.subtitle}>
                   <Text style={STYLES.label}>Specialization</Text>
-                  <Text>{item.specialisation}</Text>
+                  <Text style={{color:COLORS.BLACK}}>{item.specialisation}</Text>
                 </View>
                 <View style={STYLES.subtitle}>
                   <Text style={STYLES.label}>Hospital</Text>
-                  <Text>{item.hospital}</Text>
+                  <Text style={{color:COLORS.BLACK}}>{item.hospital}</Text>
                 </View>
                 
                
@@ -223,6 +223,7 @@ const STYLES = StyleSheet.create({
   label: {
     fontWeight: 'bold',
     marginRight: 5,
+    color:COLORS.BLACK,
   },
   leftHeader: {
     flex: 1,

@@ -1,5 +1,3 @@
-
-
 import React, {useCallback, useEffect, useState, useContext} from 'react';
 import {DeviceEventEmitter, NativeEventEmitter, Text} from 'react-native';
 
@@ -22,6 +20,7 @@ import DataResultsContext from '../contexts/DataResultsContext';
 import Icon from 'react-native-vector-icons/Feather';
 import {COLORS, DIMENS} from '../constants/styles';
 import CustomHeader from '../ui/custom-header';
+import CopyRight from './copyright';
 
 const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
@@ -394,8 +393,6 @@ const SimprintsID = ({navigation}) => {
                               </Text>
                             </Text>
 
-                           
-
                             {/* {userData.diagnoses &&
                               userData.diagnoses.length > 0 && (
                                 <View style={styles.vaccinationsContainer}>
@@ -528,7 +525,9 @@ const SimprintsID = ({navigation}) => {
             )}
           </View>
         </ScrollView>
-        <View style={styles.container}></View>
+        <View style={styles.container}>
+          <CopyRight />
+        </View>
       </View>
     </View>
   );
