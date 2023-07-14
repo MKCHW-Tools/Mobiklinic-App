@@ -193,52 +193,90 @@ const PatientLists = ({navigation}) => {
         </TouchableOpacity>
         {isExpanded && (
           <View style={styles.cardDetails}>
-            <Text style={styles.label}>Sex: {item.sex}</Text>
-            <Text style={styles.label}>
+            <Text style={styles.userDataLabel}>
+              Phone Number:{' '}
+              <Text style={styles.userDataValue}>{item.phoneNumber}</Text>
+            </Text>
+            <Text style={styles.userDataLabel}>
               Date Of Birth:
-              {formatDate(new Date(item.ageGroup))}
+              <Text style={styles.userDataValue}>
+                {formatDate(new Date(item.ageGroup))}
+              </Text>
             </Text>
-            <Text style={styles.label}>
-              Phone Number: {formatPhoneNumber(item.phoneNumber)}
-            </Text>
-            <Text style={styles.label}>
-              Primary Language: {item.primaryLanguage}
-            </Text>
-            <Text style={styles.label}>Country: {item.country}</Text>
-            <Text style={styles.label}>District: {item.district}</Text>
-            <Text style={styles.label}>Sex: {item.sex}</Text>
-            <Text style={styles.label}>Weight: {item.weight}</Text>
-            <Text style={styles.label}>Height: {item.height}</Text>
-            <View style={styles.line} />
 
+            <Text style={styles.userDataLabel}>
+              Primary Language:{' '}
+              <Text style={styles.userDataValue}>{item.primaryLanguage}</Text>
+            </Text>
+            <Text style={styles.userDataLabel}>
+              Country <Text style={styles.userDataValue}>{item.country}</Text>
+            </Text>
+            <Text style={styles.userDataLabel}>
+              District:{' '}
+              <Text style={styles.userDataValue}>{item.district}</Text>
+            </Text>
+            <Text style={styles.userDataLabel}>
+              Sex: <Text style={styles.userDataValue}>{item.sex}</Text>
+            </Text>
+            <Text style={styles.userDataLabel}>
+              Weight: <Text style={styles.userDataValue}>{item.weight}</Text>
+            </Text>
+            <View style={styles.line} />
             {item.vaccinations && item.vaccinations.length > 0 && (
               <View>
                 <Text style={styles.userDataLabel1}>VACCINATION</Text>
                 {item.vaccinations.map((vaccination, index) => (
                   <View key={index}>
-                    <Text style={styles.label}>
-                      Vaccination Name: {vaccination.vaccineName}
+                    <Text style={styles.userDataLabel}>
+                      Vaccine Name:{' '}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.vaccineName}
+                      </Text>
                     </Text>
-                    <Text style={styles.label}>Dosage: {vaccination.dose}</Text>
-                    <Text style={styles.label}>
-                      Vaccination Date:
-                      {formatDate(new Date(vaccination.dateOfVaccination))}
+
+                    <Text style={styles.userDataLabel}>
+                      Date of Vaccination:{' '}
+                      <Text style={styles.userDataValue}>
+                        {formatDate(new Date(vaccination.dateOfVaccination))}
+                      </Text>
                     </Text>
-                    <Text style={styles.label}>
-                      Next Dose Date:
-                      {formatDate(new Date(vaccination.dateForNextDose))}
+
+                    <Text style={styles.userDataLabel}>
+                      Dose:{' '}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.dose}
+                      </Text>
                     </Text>
-                    <Text style={styles.label}>
-                      Site Administered:{vaccination.siteAdministered}
+
+                    <Text style={styles.userDataLabel}>
+                      Card Number:{' '}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.units}
+                      </Text>
                     </Text>
-                    <Text style={styles.label}>
-                      Facility: {vaccination.facility}
+
+                    <Text style={styles.userDataLabel}>
+                      Date for Next Dose:{' '}
+                      <Text style={styles.userDataValue}>
+                        {formatDate(new Date(vaccination.dateForNextDose))}
+                      </Text>
                     </Text>
-                    <Text style={styles.label}>
-                      {' '}
-                      Card Number: {vaccination.units}
+
+                    <Text style={styles.userDataLabel}>
+                      Site Administered:{' '}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.siteAdministered}
+                      </Text>
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      Facility:{' '}
+                      <Text style={styles.userDataValue}>
+                        {vaccination.facility}
+                      </Text>
                     </Text>
                     <View style={styles.line} />
+
+                    <View style={{height: 20}} />
                   </View>
                 ))}
               </View>
@@ -248,47 +286,69 @@ const PatientLists = ({navigation}) => {
                 <Text style={styles.userDataLabel1}>ANTENATAL CARE</Text>
                 {item.antenantals.map((antenantal, index) => (
                   <View key={index}>
-                    <Text style={styles.label}>
-                      Pregnacy Status: {antenantal.pregnancyStatus}
+                    <Text style={styles.userDataLabel}>
+                      Pregnacy Status:
+                      <Text style={styles.userDataValue}>
+                        {antenantal.pregnancyStatus}
+                      </Text>
                     </Text>
 
-                    <Text style={styles.label}>
+                    <Text style={styles.userDataLabel}>
                       Expected Date for Delivery:
-                      {formatDate(new Date(antenantal.expectedDateOfDelivery))}
+                      <Text style={styles.userDataValue}>
+                        {formatDate(
+                          new Date(antenantal.expectedDateOfDelivery),
+                        )}
+                      </Text>
                     </Text>
 
-                    <Text style={styles.label}>
+                    <Text style={styles.userDataLabel}>
                       Date for routine visit:
-                      {formatDate(new Date(antenantal.routineVisitDate))}
+                      <Text style={styles.userDataValue}>
+                        {formatDate(new Date(antenantal.routineVisitDate))}
+                      </Text>
                     </Text>
 
-                    <Text style={styles.label}>
+                    <Text style={styles.userDataLabel}>
                       Blood Group:
-                      {antenantal.bloodGroup}
+                      <Text style={styles.userDataValue}>
+                        {antenantal.bloodGroup}
+                      </Text>
                     </Text>
 
-                    <Text style={styles.label}>
+                    <Text style={styles.userDataLabel}>
                       Prescriptions:
-                      {antenantal.prescriptions}
+                      <Text style={styles.userDataValue}>
+                        {antenantal.prescriptions}
+                      </Text>
                     </Text>
-                    <Text style={styles.label}>
+
+                    <Text style={styles.userDataLabel}>
                       Current Weight:
-                      {antenantal.weight}kg
+                      <Text style={styles.userDataValue}>
+                        {antenantal.weight}
+                      </Text>
                     </Text>
 
-                    <Text style={styles.label}>
+                    <Text style={styles.userDataLabel}>
                       Next of Kin:
-                      {antenantal.nextOfKin}
+                      <Text style={styles.userDataValue}>
+                        {antenantal.nextOfKin}
+                      </Text>
                     </Text>
 
-                    <Text style={styles.label}>
+                    <Text style={styles.userDataLabel}>
                       Next of Kin Contact:
-                      {antenantal.nextOfKinContact}
+                      <Text style={styles.userDataValue}>
+                        {antenantal.nextOfKinContact}
+                      </Text>
                     </Text>
 
-                    <Text style={styles.label}>
+                    <Text style={styles.userDataLabel}>
                       Additional Notes:
-                      {antenantal.drugNotes}
+                      <Text style={styles.userDataValue}>
+                        {antenantal.drugNotes}
+                      </Text>
                     </Text>
 
                     <View style={styles.line} />
@@ -302,34 +362,49 @@ const PatientLists = ({navigation}) => {
 
                 {item.diagnoses.map((diagnosis, index) => (
                   <View key={index}>
-                    <Text style={styles.label}>
-                      Condition: {diagnosis.condition}
+                    <Text style={styles.userDataLabel}>
+                      Condition:{' '}
+                      <Text style={styles.userDataValue}>
+                        {diagnosis.condition}
+                      </Text>
                     </Text>
-                    <Text style={styles.label}>
-                      Date Of Diagnosis:
-                      {formatDate(new Date(diagnosis.dateOfDiagnosis))}
+                    <Text style={styles.userDataLabel}>
+                      Prescribed drugs:{' '}
+                      <Text style={styles.userDataValue}>
+                        {diagnosis.drugsPrescribed}
+                      </Text>
                     </Text>
-                    <Text style={styles.label}>
-                      Impression: {diagnosis.impression}
+                    <Text style={styles.userDataLabel}>
+                      Dosage:{' '}
+                      <Text style={styles.userDataValue}>
+                        {diagnosis.dosage} X {diagnosis.frequency} for {'\t'}
+                        {diagnosis.duration} days
+                      </Text>
                     </Text>
-                    <Text style={styles.label}>
-                      Drugs Prescribed: {diagnosis.drugsPrescribed}
+
+                    <Text style={styles.userDataLabel}>
+                      Date of diagnosis:{' '}
+                      <Text style={styles.userDataValue}>
+                        {formatDate(new Date(diagnosis.dateOfDiagnosis))}
+                      </Text>
                     </Text>
-                    <Text style={styles.label}>
-                      Dosage: {diagnosis.dosage} X {diagnosis.frequency} for{' '}
-                      {diagnosis.duration}
+
+                    <Text style={styles.userDataLabel}>
+                      Date for Next Dose:{' '}
+                      <Text style={styles.userDataValue}>
+                        {formatDate(new Date(diagnosis.followUpDate))}
+                      </Text>
                     </Text>
-                    <Text style={styles.label}>
-                      Is Pregnant: {diagnosis.isPregnant}
-                    </Text>
-                    <Text style={styles.label}>
-                      Follow Up Date:
-                      {formatDate(new Date(diagnosis.followUpDate))}
-                    </Text>
-                    <Text style={styles.label}>
-                      Lab Tests: {diagnosis.labTests}
+
+                    <Text style={styles.userDataLabel}>
+                      Impression:{' '}
+                      <Text style={styles.userDataValue}>
+                        {diagnosis.impression}
+                      </Text>
                     </Text>
                     <View style={styles.line} />
+
+                    <View style={{height: 20}} />
                   </View>
                 ))}
               </View>
@@ -522,13 +597,14 @@ const styles = StyleSheet.create({
   },
   userDataLabel: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 15,
     marginBottom: 5,
     color: COLORS.BLACK,
+    paddingHorizontal:5,
   },
   userDataValue: {
     fontWeight: 'normal',
-    fontSize: 16,
+    fontSize: 15,
   },
   userDataLabel1: {
     fontWeight: 'bold',
