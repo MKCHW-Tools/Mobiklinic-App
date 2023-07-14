@@ -19,6 +19,12 @@ const GetStarted = ({navigation}) => {
       'https://docs.google.com/document/d/1IKTAkLq2gCN2LDmBfjK9at5BVTBF68aj_bQmeeV92eo/edit?usp=sharing';
     Linking.openURL(url);
   };
+  const openEmail = () => {
+    Linking.openURL('mailto:mobiklinicuganda@gmail.com');
+  };
+  const openPhone = () => {
+    Linking.openURL('tel:+256 784 528444');
+  };
   _header = () => (
     <CustomHeader
       left={
@@ -49,16 +55,19 @@ const GetStarted = ({navigation}) => {
           support team.
         </Text>
         <Text style={styles.contact}>Contact Information:</Text>
-        <Text style={styles.contactDetails}>
+        <Text style={styles.contactDetails} onPress={openPhone}>
+          Phone: +256 784 528444
+        </Text>
+        <Text style={styles.contactDetails} onPress={openEmail}>
           Email: mobiklinicuganda@gmail.com
         </Text>
-        <Text style={styles.contactDetails}>Phone: +256 784 528444</Text>
+
         <Text style={styles.text}>
           <Text style={styles.link} onPress={handleLinkPress}>
             User Guide
           </Text>
         </Text>
-        <CopyRight/>
+        <CopyRight />
       </View>
     </View>
   );
@@ -85,7 +94,6 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     backgroundColor: COLORS.SECONDARY,
-
   },
   body: {
     flex: 2,
@@ -129,8 +137,9 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 20,
-    alignItems: 'center',
+    paddingVertical: 80,
+    paddingHorizontal:50
+    // alignItems: 'center',
   },
   title: {
     fontSize: 24,
@@ -149,12 +158,12 @@ const styles = StyleSheet.create({
   contactDetails: {
     fontSize: 16,
     marginBottom: 5,
+    textDecorationLine: 'underline',
   },
   link: {
     textDecorationLine: 'underline',
-    color:COLORS.PRIMARY, 
-    fontSize:16, 
-
+    color: COLORS.PRIMARY,
+    fontSize: 16,
   },
 });
 
