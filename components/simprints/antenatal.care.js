@@ -238,14 +238,14 @@ const AntenatalCare = ({navigation}) => {
 
         {/* Weight */}
         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Text style={STYLES.label}>Weight:</Text>
+          <Text style={STYLES.label}>Current Weight:</Text>
 
           <TextInput
             keyboardType="numeric"
             value={state.weight}
             placeholderTextColor={COLORS.GREY}
             onChangeText={text => setState({...state, weight: text})}
-            placeholder="Weight (Kgs)"
+            placeholder="Current Weight (Kgs)"
             style={[STYLES.field, {paddingHorizontal: 30}]}
           />
         </View>

@@ -115,10 +115,10 @@ const Ambulance = ({navigation}) => {
               <View style={STYLES.wrapper}>
                 <View style={STYLES.subtitle}>
                   <Text style={STYLES.label}>Phone Number</Text>
-                  <Text>{item.phone}</Text>
+                  <Text style={{color: COLORS.BLACK}}>{item.phone}</Text>
                 </View>
-                <View style={STYLES.subtitle}>
-                  <Text>{item.hospital}</Text>
+                <View style={[STYLES.subtitle, {color: COLORS.BLACK}]}>
+                  <Text style={{color: COLORS.BLACK}}>{item.hospital}</Text>
                 </View>
               </View>
             </ListItem.Subtitle>
@@ -191,10 +191,12 @@ const STYLES = StyleSheet.create({
     flexDirection: 'row',
     fontSize: 15,
     opacity: 0.5,
+    color: COLORS.BLACK,
   },
   label: {
     fontWeight: 'bold',
     marginRight: 5,
+    color: COLORS.BLACK,
   },
   leftHeader: {
     flex: 1,
@@ -203,11 +205,13 @@ const STYLES = StyleSheet.create({
   centerHeader: {
     flex: 2,
     flexDirection: 'row',
+    color: COLORS.BLACK,
   },
   rightHeader: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-end',
+    color: COLORS.BLACK,
   },
 });
 

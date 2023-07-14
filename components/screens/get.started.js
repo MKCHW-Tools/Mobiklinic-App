@@ -6,12 +6,25 @@ import {
   Text,
   StatusBar,
   StyleSheet,
+  Linking,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import {COLORS, DIMENS} from '../constants/styles';
 import CustomHeader from '../parts/custom-header';
+import CopyRight from '../simprints/copyright';
 
 const GetStarted = ({navigation}) => {
+  const handleLinkPress = () => {
+    const url =
+      'https://docs.google.com/document/d/1IKTAkLq2gCN2LDmBfjK9at5BVTBF68aj_bQmeeV92eo/edit?usp=sharing';
+    Linking.openURL(url);
+  };
+  const openEmail = () => {
+    Linking.openURL('mailto:mobiklinicuganda@gmail.com');
+  };
+  const openPhone = () => {
+    Linking.openURL('tel:+256 784 528444');
+  };
   _header = () => (
     <CustomHeader
       left={
@@ -22,9 +35,7 @@ const GetStarted = ({navigation}) => {
         </TouchableOpacity>
       }
       title={
-        <Text style={[STYLES.centerHeader, STYLES.textColor]}>
-          Get Started
-        </Text>
+        <Text style={[styles.centerHeader, styles.textColor]}>Get Started</Text>
       }
       right={
         <TouchableOpacity style={{paddingRight: 10}}>
@@ -35,30 +46,34 @@ const GetStarted = ({navigation}) => {
   );
 
   return (
-    <View style={STYLES.wrapper}>
+    <View style={styles.wrapper}>
       <StatusBar backgroundColor={COLORS.PRIMARY} barStyle="light-content" />
-      <View style={STYLES.body}>
-        <View style={STYLES.logoContainer}>
-          <Image
-            style={{width: 70, height: 70}}
-            source={require('../imgs/logo.png')}
-          />
-          <Text style={STYLES.title}>MobiKlinic</Text>
-        </View>
+      <View style={styles.container}>
+        <Text style={styles.title}>Help</Text>
+        <Text style={styles.description}>
+          Welcome to the Help page. If you need assistance, please contact our
+          support team.
+        </Text>
+        <Text style={styles.contact}>Contact Information:</Text>
+        <Text style={styles.contactDetails} onPress={openPhone}>
+          Phone: +256 784 528444
+        </Text>
+        <Text style={styles.contactDetails} onPress={openEmail}>
+          Email: mobiklinicuganda@gmail.com
+        </Text>
 
-        <View>
-          <Text style={STYLES.desc}>Intro</Text>
-          <Text style={STYLES.heading}>
-            Get Started
+        <Text style={styles.text}>
+          <Text style={styles.link} onPress={handleLinkPress}>
+            User Guide
           </Text>
-          
-        </View>
+        </Text>
+        <CopyRight />
       </View>
     </View>
   );
 };
 
-const STYLES = StyleSheet.create({
+const styles = StyleSheet.create({
   logoContainer: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -94,7 +109,6 @@ const STYLES = StyleSheet.create({
     marginTop: 5,
     marginBottom: 10,
     color: COLORS.BLACK,
-    
   },
   title: {
     fontWeight: 'bold',
@@ -120,6 +134,36 @@ const STYLES = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-end',
+  },
+  container: {
+    flex: 1,
+    paddingVertical: 80,
+    paddingHorizontal:50
+    // alignItems: 'center',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  description: {
+    fontSize: 16,
+    marginBottom: 20,
+  },
+  contact: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  contactDetails: {
+    fontSize: 16,
+    marginBottom: 5,
+    textDecorationLine: 'underline',
+  },
+  link: {
+    textDecorationLine: 'underline',
+    color: COLORS.PRIMARY,
+    fontSize: 16,
   },
 });
 
