@@ -185,6 +185,82 @@ const GetPatients = () => {
                 </View>
               )}
 
+              {userData.antenantals && userData.antenantals.length > 0 && (
+                <View style={styles.vaccinationsContainer}>
+                  <Text style={styles.userDataLabel1}>ANTENATAL CARE</Text>
+                  {userData.antenantals.map((antenantal, index) => (
+                    <View key={index}>
+                      <Text style={styles.userDataLabel}>
+                        Pregnacy Status:
+                        <Text style={styles.userDataValue}>
+                          {antenantal.pregnancyStatus}
+                        </Text>
+                      </Text>
+
+                      <Text style={styles.userDataLabel}>
+                        Expected Date for Delivery:
+                        <Text style={styles.userDataValue}>
+                          {formatDate(
+                            new Date(antenantal.expectedDateOfDelivery),
+                          )}
+                        </Text>
+                      </Text>
+
+                      <Text style={styles.userDataLabel}>
+                        Date for routine visit:
+                        <Text style={styles.userDataValue}>
+                          {formatDate(new Date(antenantal.routineVisitDate))}
+                        </Text>
+                      </Text>
+
+                      <Text style={styles.userDataLabel}>
+                        Blood Group:
+                        <Text style={styles.userDataValue}>
+                          {antenantal.bloodGroup}
+                        </Text>
+                      </Text>
+
+                      <Text style={styles.userDataLabel}>
+                        Prescriptions:
+                        <Text style={styles.userDataValue}>
+                          {antenantal.prescriptions}
+                        </Text>
+                      </Text>
+
+                      <Text style={styles.userDataLabel}>
+                        Current Weight:
+                        <Text style={styles.userDataValue}>
+                          {antenantal.weight}
+                        </Text>
+                      </Text>
+
+                      <Text style={styles.userDataLabel}>
+                        Next of Kin:
+                        <Text style={styles.userDataValue}>
+                          {antenantal.nextOfKin}
+                        </Text>
+                      </Text>
+
+                      <Text style={styles.userDataLabel}>
+                        Next of Kin Contact:
+                        <Text style={styles.userDataValue}>
+                          {antenantal.nextOfKinContact}
+                        </Text>
+                      </Text>
+
+                      <Text style={styles.userDataLabel}>
+                        Additional Notes:
+                        <Text style={styles.userDataValue}>
+                          {antenantal.drugNotes}
+                        </Text>
+                      </Text>
+
+                      <View style={styles.line} />
+                    </View>
+                  ))}
+                </View>
+              )}
+
               {userData.diagnoses && userData.diagnoses.length > 0 && (
                 <View style={styles.vaccinationsContainer}>
                   <Text style={styles.userDataLabel1}>DIAGNOSIS</Text>
@@ -242,10 +318,8 @@ const GetPatients = () => {
                           {diagnosis.impression}
                         </Text>
                       </Text>
-                      <Text style={styles.userDataLabel}>
-                        ................................................................
-                        <Text style={styles.userDataValue}></Text>
-                      </Text>
+                      <View style={styles.line} />
+
                       <View style={{height: 20}} />
                     </View>
                   ))}
@@ -390,6 +464,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
     color: COLORS.PRIMARY,
+  },
+  line: {
+    borderBottomColor: 'black',
+    borderBottomWidth: 1,
+    marginVertical: 10,
   },
 });
 

@@ -80,9 +80,9 @@ const SimprintsID = ({navigation}) => {
     return 'Click to add date';
   };
 
-  // fetch data functio
-  // const fetchData = async () => {
-  //   console.log('GUID:', guid);
+  // fetch data function
+  const fetchData = async () => {
+    console.log('GUID:', guid);
 
     try {
       const response = await fetch(
@@ -104,9 +104,9 @@ const SimprintsID = ({navigation}) => {
     // navigation.navigate('GetPatients');
   };
 
-  // useEffect(() => {
-  //   fetchData();
-  // }, [guid]);
+  useEffect(() => {
+    fetchData();
+  }, [guid]);
 
   useEffect(() => {
     if (refreshing) {

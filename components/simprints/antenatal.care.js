@@ -66,7 +66,7 @@ const AntenatalCare = ({navigation}) => {
     pregnancyStatus: '',
     expectedDateOfDelivery: '',
     routineVisitDate: '',
-    expectedDateOfDelivery: '',
+    weight: '',
     bloodGroup: '',
     prescriptions: '',
     nextOfKin: '',
@@ -87,7 +87,7 @@ const AntenatalCare = ({navigation}) => {
         state.pregnancyStatus === '' ||
         state.expectedDateOfDelivery === '' ||
         routineVisitDate === '' ||
-        drugNotes === '' ||
+        state.drugNotes === '' ||
         state.bloodGroup === ''
       ) {
         Alert.alert('Error', 'Please fill in all required fields');
@@ -103,7 +103,7 @@ const AntenatalCare = ({navigation}) => {
             expectedDateOfDelivery: state.expectedDateOfDelivery,
             nextOfKinContact: state.nextOfKinContact,
             routineVisitDate: state.routineVisitDate,
-            expectedDateOfDelivery: state.expectedDateOfDelivery,
+            weight: state.weight,
             bloodGroup: state.bloodGroup,
             prescriptions: state.prescriptions,
             nextOfKin: state.nextOfKin,

@@ -22,7 +22,13 @@ export const DataResultsProvider = ({ children }) => {
     setUserLog(newUserLog);
   };
 
- 
+  const updatePatientVac = newPatientVac => {
+    setPatientVac(newPatientVac);
+  };
+
+  const updateUserNames = newUserNames => {
+    setUserNames(newUserNames);
+  };
 
   return (
     <DataResultsContext.Provider 
