@@ -275,6 +275,11 @@ const AntenatalCare = ({navigation}) => {
             />
             <Picker.Item label="Antiemeitics" value="Antiemeitics" />
             <Picker.Item label="Antihistamines" value="Antihistamines" />
+            <Picker.Item label="Funsider" value="Funsider" />
+            <Picker.Item label="Mebendazole" value="Mebendazole" />
+            <Picker.Item label="Paracemotol" value="Paracemotol" />
+            <Picker.Item label="Vitamin C " value="Vitamin C" />
+            <Picker.Item label="Magnesium" value="Magnesium" />
             <Picker.Item label="Other" value="Other" />
           </Picker>
         </View>
