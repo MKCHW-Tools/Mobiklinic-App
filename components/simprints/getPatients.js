@@ -270,6 +270,12 @@ const GetPatients = () => {
                         </Text>
                       </Text>
                       <Text style={styles.userDataLabel}>
+                        Signs and Symptoms:{' '}
+                        <Text style={styles.userDataValue}>
+                          {diagnosis.impression}
+                        </Text>
+                      </Text>
+                      <Text style={styles.userDataLabel}>
                         Prescribed drugs:{' '}
                         <Text style={styles.userDataValue}>
                           {diagnosis.drugsPrescribed}
@@ -278,20 +284,8 @@ const GetPatients = () => {
                       <Text style={styles.userDataLabel}>
                         Dosage:{' '}
                         <Text style={styles.userDataValue}>
-                          {diagnosis.dosage}
-                        </Text>
-                      </Text>
-
-                      <Text style={styles.userDataLabel}>
-                        Frequency:{' '}
-                        <Text style={styles.userDataValue}>
-                          {diagnosis.frequency}
-                        </Text>
-                      </Text>
-                      <Text style={styles.userDataLabel}>
-                        Duration:{' '}
-                        <Text style={styles.userDataValue}>
-                          {diagnosis.duration}
+                          {diagnosis.dosage} X {diagnosis.frequency} for{' '}
+                          {diagnosis.duration} days
                         </Text>
                       </Text>
 
@@ -303,18 +297,19 @@ const GetPatients = () => {
                       </Text>
 
                       <Text style={styles.userDataLabel}>
-                        Date for Next Dose:{' '}
+                        Follow Up Date:{' '}
                         <Text style={styles.userDataValue}>
                           {formatDate(new Date(diagnosis.followUpDate))}
                         </Text>
                       </Text>
 
                       <Text style={styles.userDataLabel}>
-                        Impression:{' '}
+                        Is Pregnant:{' '}
                         <Text style={styles.userDataValue}>
-                          {diagnosis.impression}
+                        {diagnosis.isPregnant}
                         </Text>
                       </Text>
+
                       <View style={styles.line} />
 
                       <View style={{height: 20}} />

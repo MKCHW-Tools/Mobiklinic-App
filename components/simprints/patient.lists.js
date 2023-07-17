@@ -410,7 +410,9 @@ const PatientLists = ({navigation}) => {
               </View>
             )}
             {/* Add the button to add data */}
-            <TouchableOpacity onPress={addData} style={styles.buttonSec}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('SimprintsID')}
+              style={styles.buttonSec}>
               <Text style={styles.buttonText}>Add Data</Text>
             </TouchableOpacity>
           </View>
@@ -600,11 +602,13 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginBottom: 5,
     color: COLORS.BLACK,
-    paddingHorizontal:5,
+    paddingHorizontal: 10,
+    paddingLeft:10,
   },
   userDataValue: {
     fontWeight: 'normal',
     fontSize: 15,
+    paddingRight:10,
   },
   userDataLabel1: {
     fontWeight: 'bold',

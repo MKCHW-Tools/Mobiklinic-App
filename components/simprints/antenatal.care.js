@@ -22,6 +22,7 @@ import {COLORS, DIMENS} from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import MultiSelectView from 'react-native-multiselect-view';
 import {format} from 'date-fns';
+import CopyRight from './copyright';
 
 const AntenatalCare = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -251,27 +252,31 @@ const AntenatalCare = ({navigation}) => {
         </View>
 
         {/* prescriptions */}
-        <View style={STYLES.labeledItem} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Text style={STYLES.prescribe}>Prescriptions:</Text>
-          <View style={STYLES.select}>
-            <MultiSelectView
-              data={medications}
-              onSelectionChanged={selectedItems =>
-                setSelectedPrescriptions(selectedItems)
-              }
-              style={STYLES.multiSelect}
-              itemStyle={STYLES.item}
-              selectedTextStyle={[
-                STYLES.selectedItemText,
-                {color: COLORS.BLACK},
-              ]}
-              selectedItemStyle={[
-                STYLES.selectedItem,
-                {backgroundColor: COLORS.PRIMARY},
-              ]}
-              checkboxStyle={STYLES.checkbox}
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Prescriptions/Medicine:</Text>
+
+          <Picker
+            placeholderTextColor={COLORS.BLACK}
+            selectedValue={state.prescriptions}
+            onValueChange={(value, index) =>
+              setState({...state, prescriptions: value})
+            }
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            dropdownIconColor={COLORS.GREY_LIGHTER}>
+            <Picker.Item label="" value="" />
+            <Picker.Item
+              label="Folic Acid Supplements"
+              value="Folic Acid Supplements"
             />
-          </View>
+            <Picker.Item label="Iron Supplements" value="Iron Supplements" />
+            <Picker.Item
+              label="Calcium Supplements"
+              value="Calcium Supplements"
+            />
+            <Picker.Item label="Antiemeitics" value="Antiemeitics" />
+            <Picker.Item label="Antihistamines" value="Antihistamines" />
+            <Picker.Item label="Other" value="Other" />
+          </Picker>
         </View>
 
         {/* drug note*/}
@@ -282,7 +287,7 @@ const AntenatalCare = ({navigation}) => {
             value={state.drugNotes}
             placeholderTextColor={COLORS.GREY}
             onChangeText={text => setState({...state, drugNotes: text})}
-            placeholder="Add Drug Note"
+            placeholder="Add Drug Note eg '2 tabs per day"
             style={[STYLES.field, {paddingHorizontal: 30}]}
             multiline={true}
             numberOfLines={2}
@@ -339,6 +344,7 @@ const AntenatalCare = ({navigation}) => {
         <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
           <Text style={STYLES.submitText}>Submit</Text>
         </TouchableOpacity>
+        <CopyRight />
       </ScrollView>
     </View>
   );
@@ -481,7 +487,7 @@ const STYLES = StyleSheet.create({
     marginRight: 5,
     color: COLORS.BLACK,
     fontSize: 14,
-    paddingVertical:8, 
+    paddingVertical: 8,
   },
   submit: {
     backgroundColor: COLORS.BLACK,

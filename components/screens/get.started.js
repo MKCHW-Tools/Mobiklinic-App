@@ -56,7 +56,7 @@ const GetStarted = ({navigation}) => {
           support team.
         </Text>
         <Text style={styles.contact}>Contact Information:</Text>
-        <Text style={styles.link} onPress={openEmail}>
+        <Text style={styles.link} onPress={openPhone}>
           <MIcon name="phone" size={20} strokeSize={3} color={COLORS.PRIMARY} />
           <Text style={{paddingHorizontal: 20}}> Call Us</Text>
         </Text>
@@ -65,6 +65,8 @@ const GetStarted = ({navigation}) => {
           <MIcon name="email" size={20} strokeSize={3} color={COLORS.PRIMARY} />
           <Text style={{paddingHorizontal: 20}}> Email Us</Text>
         </Text>
+
+        
 
         <Text style={styles.link} onPress={handleLinkPress}>
           User Guide

@@ -207,7 +207,7 @@ const PatientData = ({navigation}) => {
               STYLES.field,
               {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
             ]} // Add color and placeholderTextColor styles
-            placeholderTextColor={COLORS.BLACK} //
+            placeholderTextColor={COLORS.GREY} //
             value={state.firstName}
             onChangeText={text => setState({...state, firstName: text})}
             placeholder="Enter first name"
@@ -222,7 +222,7 @@ const PatientData = ({navigation}) => {
               STYLES.field,
               {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
             ]} // Add color and placeholderTextColor styles
-            placeholderTextColor={COLORS.BLACK}
+            placeholderTextColor={COLORS.GREY}
             value={state.lastName}
             onChangeText={text => setState({...state, lastName: text})}
             placeholder="Enter last name"
@@ -237,7 +237,7 @@ const PatientData = ({navigation}) => {
               STYLES.field,
               {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
             ]} // Add color and placeholderTextColor styles
-            placeholderTextColor={COLORS.BLACK} // Set the placeholder text color
+            placeholderTextColor={COLORS.GREY} // Set the placeholder text color
             value={state.phoneNumber}
             onChangeText={text => setState({...state, phoneNumber: text})}
             keyboardType="numeric"
@@ -251,7 +251,7 @@ const PatientData = ({navigation}) => {
 
           <Picker
             placeholder="Sex"
-            placeholderTextColor={COLORS.BLACK}
+            placeholderTextColor={COLORS.GREY}
             selectedValue={state.sex}
             onValueChange={(value, index) => setState({...state, sex: value})}
             style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
@@ -308,7 +308,7 @@ const PatientData = ({navigation}) => {
             <TextInput
               keyboardType="numeric"
               value={state.weight}
-              placeholderTextColor={COLORS.BLACK}
+              placeholderTextColor={COLORS.GREY}
               onChangeText={text => setState({...state, weight: text})}
               placeholder="Weight (Kgs)"
               style={STYLES.field}
@@ -319,7 +319,7 @@ const PatientData = ({navigation}) => {
             {/* <Text style={STYLES.label}>Height:</Text> */}
             <TextInput
               keyboardType="numeric"
-              placeholderTextColor={COLORS.BLACK}
+              placeholderTextColor={COLORS.GREY}
               value={state.height}
               style={STYLES.field}
               onChangeText={text => setState({...state, height: text})}
@@ -332,7 +332,7 @@ const PatientData = ({navigation}) => {
           <Text style={STYLES.label}>Country:</Text>
 
           <Picker
-            placeholderTextColor={COLORS.BLACK}
+            placeholderTextColor={COLORS.GREY}
             selectedValue={state.country}
             onValueChange={(value, index) =>
               setState({...state, country: value})
@@ -353,7 +353,7 @@ const PatientData = ({navigation}) => {
           <Text style={STYLES.label}>District:</Text>
 
           <Picker
-            placeholderTextColor={COLORS.BLACK}
+            placeholderTextColor={COLORS.GREY}
             selectedValue={state.district}
             onValueChange={(value, index) =>
               setState({...state, district: value})
