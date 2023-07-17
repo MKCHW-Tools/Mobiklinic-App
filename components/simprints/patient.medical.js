@@ -21,6 +21,7 @@ import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {format} from 'date-fns';
+import CopyRight from './copyright';
 
 const PatientMedical = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -123,11 +124,17 @@ const PatientMedical = ({navigation}) => {
         navigation.navigate('Dashboard');
       } else {
         console.error('Error posting data:', response.status);
-        Alert.alert('Error', 'Failed to Register Diagnosis. Please try again later.');
+        Alert.alert(
+          'Error',
+          'Failed to Register Diagnosis. Please try again later.',
+        );
       }
     } catch (error) {
       console.error('Error posting data:', error);
-      Alert.alert('Error', 'Failed to Register Diagnosis. Please try again later.');
+      Alert.alert(
+        'Error',
+        'Failed to Register Diagnosis. Please try again later.',
+      );
     } finally {
       setState({...state, isLoading: false}); // Reset isLoading state to false
     }
@@ -320,7 +327,6 @@ const PatientMedical = ({navigation}) => {
           <TouchableOpacity
             style={STYLES.datePickerInput}
             placeholderTextColor={COLORS.GREY}
-
             onPress={() => setShowDatePicker('followUp')}>
             <Text style={STYLES.datePickerText}>
               {formatDate(followUpDate)}
@@ -332,7 +338,6 @@ const PatientMedical = ({navigation}) => {
               mode="date"
               display="spinner"
               onChange={handleDateChange}
-              
             />
           )}
         </View>
@@ -340,6 +345,7 @@ const PatientMedical = ({navigation}) => {
         <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
           <Text style={STYLES.submitText}>Submit</Text>
         </TouchableOpacity>
+        <CopyRight />
       </ScrollView>
     </View>
   );

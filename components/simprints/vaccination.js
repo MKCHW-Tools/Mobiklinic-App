@@ -20,6 +20,7 @@ import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import CopyRight from './copyright';
 
 const PatientData = ({navigation, route}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -169,9 +170,9 @@ const PatientData = ({navigation, route}) => {
             style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
             dropdownIconColor={COLORS.GREY_LIGHTER}>
             <Picker.Item label="" value="" />
-            <Picker.Item label="Pfizer-BioNTech" value="pfizer" />
+            <Picker.Item label="Pfizer-BioNTech" value="Pfizer-BioNTech" />
             <Picker.Item label="Moderna" value="moderna" />
-            <Picker.Item label="Johnson & Johnson" value="jnj" />
+            <Picker.Item label="Johnson & Johnson" value="Johnson & Johnson" />
             <Picker.Item label="AstraZeneca" value="astrazeneca" />
             <Picker.Item label="Sinovac" value="sinovac" />
             <Picker.Item label="Sinopharm" value="sinopharm" />
@@ -335,6 +336,7 @@ const PatientData = ({navigation, route}) => {
         <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
           <Text style={STYLES.submitText}>Submit</Text>
         </TouchableOpacity>
+        <CopyRight/>
       </ScrollView>
     </View>
   );
