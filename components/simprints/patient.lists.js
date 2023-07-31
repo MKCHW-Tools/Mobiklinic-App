@@ -16,7 +16,7 @@ import Loader from '../ui/loader';
 import CustomHeader from '../ui/custom-header';
 import DataResultsContext from '../contexts/DataResultsContext';
 
-const PatientLists = ({navigation}) => {
+const PatientList = ({navigation}) => {
   const [users, setUsers] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -25,6 +25,9 @@ const PatientLists = ({navigation}) => {
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [isNoUserFound, setIsNoUserFound] = useState(false);
   const {patientId, setPatientId} = useContext(DataResultsContext);
+  const [patientsEnrolledCount, setPatientsEnrolledCount] = useState(0);
+  const {userNames} = useContext(DataResultsContext);
+  const [loggedInUserPhoneNumber, setLoggedInUserPhoneNumber] = useState('');
 
   // user context
   const {userLog} = useContext(DataResultsContext);
@@ -67,37 +70,41 @@ const PatientLists = ({navigation}) => {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `https://mobi-be-production.up.railway.app/${userLog}/patients`,
+        `https://mobi-be-production.up.railway.app/patients`,
       );
 
       if (response.status === 200) {
-        const sortedData = response.data.sort(
+        const currentDate = new Date(); // Get the current date
+        const lastWeekDate = new Date('2023-07-19'); // Set the last week date (17/07/2023)
+
+        const filteredData = response.data.filter(item => {
+          const itemDate = new Date(item.createdAt);
+          return itemDate >= lastWeekDate && itemDate <= currentDate;
+        });
+
+        // Sort the filtered data based on date, with the most recent admissions first
+        const sortedData = filteredData.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
         );
 
-        const filteredData = sortedData.filter(item => {
-          const fullName = `${item.firstName} ${item.lastName}`;
-          const fullNameLower = fullName.toLowerCase();
-          const searchQueryLower = searchQuery.toLowerCase();
+        // Filter the data based on the logged-in user's phone number
+        const loggedInUserPhone = userLog ? userLog.phoneNumber : '';
+        const filteredDataForUser = sortedData.filter(
+          item => item.phoneNumber === loggedInUserPhone,
+        );
 
-          for (let i = 0; i < searchQueryLower.length; i++) {
-            const letter = searchQueryLower[i];
-            if (!fullNameLower.includes(letter)) {
-              return false;
-            }
-          }
-
-          return true;
-        });
-
-        setUsers(filteredData);
-        await AsyncStorage.setItem('patientList', JSON.stringify(filteredData));
-        setIsNoUserFound(filteredData.length === 0);
+        setUsers(sortedData);
+        await AsyncStorage.setItem('patientList', JSON.stringify(sortedData));
+        setIsNoUserFound(sortedData.length === 0);
+        // Update the patientsEnrolledCount state with the length of the items
+        setPatientsEnrolledCount(sortedData.length);
       } else {
         const storedData = await AsyncStorage.getItem('patientList');
 
         if (storedData) {
           setUsers(JSON.parse(storedData));
+          // Update the patientsEnrolledCount state with the length of the items
+          setPatientsEnrolledCount(JSON.parse(storedData).length);
         }
       }
     } catch (error) {
@@ -107,12 +114,24 @@ const PatientLists = ({navigation}) => {
 
       if (storedData) {
         setUsers(JSON.parse(storedData));
+        // Update the patientsEnrolledCount state with the length of the items
+        setPatientsEnrolledCount(JSON.parse(storedData).length);
       }
     } finally {
       setIsLoading(false);
       setRefreshing(false);
     }
   };
+
+  // ... rest of the code ...
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchUsers();
+    };
+
+    fetchData();
+  }, [userLog]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -194,7 +213,12 @@ const PatientLists = ({navigation}) => {
         {isExpanded && (
           <View style={styles.cardDetails}>
             <Text style={styles.userDataLabel}>
-              Phone Number:{' '}
+              User Name:{'\t'}
+              {'\t'}
+              <Text style={styles.userDataValue}>{userNames}</Text>
+            </Text>
+            <Text style={styles.userDataLabel}>
+              Phone Number:
               <Text style={styles.userDataValue}>{item.phoneNumber}</Text>
             </Text>
             <Text style={styles.userDataLabel}>
@@ -207,6 +231,10 @@ const PatientLists = ({navigation}) => {
             <Text style={styles.userDataLabel}>
               Primary Language:{' '}
               <Text style={styles.userDataValue}>{item.primaryLanguage}</Text>
+            </Text>
+            <Text style={styles.userDataLabel}>
+              Simprints GUID:{' '}
+              <Text style={styles.userDataValue}>{item.simprintsGui}</Text>
             </Text>
             <Text style={styles.userDataLabel}>
               Country <Text style={styles.userDataValue}>{item.country}</Text>
@@ -428,9 +456,12 @@ const PatientLists = ({navigation}) => {
   return (
     <View style={styles.wrapper}>
       {_header()}
-
       <View style={styles.container}>
         <Text style={styles.header}>Beneficiary List</Text>
+        <Text style={styles.header}>
+          Patients Enrolled: {patientsEnrolledCount}
+        </Text>
+
         <View style={styles.searchContainer}>
           <TextInput
             style={styles.searchInput}
@@ -603,12 +634,12 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     color: COLORS.BLACK,
     paddingHorizontal: 10,
-    paddingLeft:10,
+    paddingLeft: 10,
   },
   userDataValue: {
     fontWeight: 'normal',
     fontSize: 15,
-    paddingRight:10,
+    paddingRight: 10,
   },
   userDataLabel1: {
     fontWeight: 'bold',
@@ -644,4 +675,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PatientLists;
+export default PatientList;

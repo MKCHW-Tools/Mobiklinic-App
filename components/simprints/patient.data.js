@@ -21,6 +21,7 @@ import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {format} from 'date-fns';
+import {countryData} from './country.selector';
 
 const PatientData = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -29,6 +30,24 @@ const PatientData = ({navigation}) => {
   const {userLog} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
 
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState('');
+  const [selectedDistrict, setSelectedDistrict] = useState('');
+
+  const handleCountryChange = country => {
+    setSelectedCountry(country);
+    setSelectedLanguage(''); // Reset language selection when country changes
+    setSelectedDistrict(''); // Reset district selection when country changes
+  };
+
+  const handleLanguageChange = language => {
+    setSelectedLanguage(language);
+    setSelectedDistrict(''); // Reset district selection when language changes
+  };
+
+  const handleDistrictChange = district => {
+    setSelectedDistrict(district);
+  };
   // date
   const currentDate = new Date();
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -116,9 +135,9 @@ const PatientData = ({navigation}) => {
             phoneNumber: state.phoneNumber,
             weight: state.weight,
             height: state.height,
-            district: state.district,
-            country: state.country,
-            primaryLanguage: state.primaryLanguage,
+            district: selectedDistrict,
+            country: selectedCountry,
+            primaryLanguage: selectedLanguage,
             simprintsGui: dataResults,
             // registeredById: userLog,
           }),
@@ -262,25 +281,6 @@ const PatientData = ({navigation}) => {
             <Picker.Item label="Other" value="Other" />
           </Picker>
         </View>
-        {/* Age Group */}
-        {/* <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
-            <Picker
-              placeholder="Age"
-              placeholderTextColor={COLORS.BLACK}
-              selectedValue={state.ageGroup}
-              onValueChange={(value, index) =>
-                setState({...state, ageGroup: value})
-              }
-              style={STYLES.pickerItemStyle}>
-              <Picker.Item label="Age" value="Age group" />
-              <Picker.Item label="0 - 3" value="0 - 3" />
-              <Picker.Item label="3 - 10" value="3 - 10" />
-              <Picker.Item label="10 - 17" value="10 - 17" />
-              <Picker.Item label="17 - 40" value="17 - 40" />
-              <Picker.Item label="40 - 60" value="40 - 60" />
-              <Picker.Item label="60 above" value="60 above" />
-            </Picker>
-          </View> */}
 
         {/* Date for birth */}
 
@@ -330,67 +330,62 @@ const PatientData = ({navigation}) => {
         {/* Country */}
         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
           <Text style={STYLES.label}>Country:</Text>
-
           <Picker
-            placeholderTextColor={COLORS.GREY}
-            selectedValue={state.country}
-            onValueChange={(value, index) =>
-              setState({...state, country: value})
-            }
             style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
-            dropdownIconColor={COLORS.GREY_LIGHTER}>
-            <Picker.Item label="" value="" />
-            <Picker.Item label="Uganda" value="Uganda" />
-            <Picker.Item label="Kenya" value="Kenya" />
-            <Picker.Item label="Rwanda" value="Rwanda" />
-            <Picker.Item label="Tanzania" value="Tanzania" />
-            <Picker.Item label="Other" value="Other" />
+            selectedValue={selectedCountry}
+            onValueChange={handleCountryChange}>
+            <Picker.Item value="" />
+            {countryData.map(country => (
+              <Picker.Item
+                key={country.name}
+                label={country.name}
+                value={country.name}
+              />
+            ))}
           </Picker>
         </View>
 
-        {/* District */}
-        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Text style={STYLES.label}>District:</Text>
+        {selectedCountry && (
+          <>
+            <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+              <Text style={STYLES.label}>District:</Text>
+              <Picker
+                selectedValue={selectedDistrict}
+                style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+                onValueChange={handleDistrictChange}>
+                <Picker.Item label="Select a district" value="" />
+                {countryData
+                  .find(country => country.name === selectedCountry)
+                  .districts.map(district => (
+                    <Picker.Item
+                      key={district}
+                      label={district}
+                      value={district}
+                    />
+                  ))}
+              </Picker>
+            </View>
 
-          <Picker
-            placeholderTextColor={COLORS.GREY}
-            selectedValue={state.district}
-            onValueChange={(value, index) =>
-              setState({...state, district: value})
-            }
-            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
-            dropdownIconColor={COLORS.GREY_LIGHTER}>
-            <Picker.Item label="" value="" />
-            <Picker.Item label="Kampala" value="Kampala" />
-            <Picker.Item label="Buikwe" value="Buikwe" />
-            <Picker.Item label="Jinja" value="Jinja" />
-            <Picker.Item label="Masaka" value="Masaka" />
-            <Picker.Item label="Mbarara" value="Mbarara" />
-            <Picker.Item label="Other" value="Other" />
-          </Picker>
-        </View>
-
-        {/* Country */}
-        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Text style={STYLES.label}>Primary Language:</Text>
-
-          <Picker
-            placeholderTextColor={COLORS.BLACK}
-            selectedValue={state.primaryLanguage}
-            onValueChange={(value, index) =>
-              setState({...state, primaryLanguage: value})
-            }
-            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
-            dropdownIconColor={COLORS.GREY_LIGHTER}>
-            <Picker.Item label="" value="" />
-            <Picker.Item label="Luganda" value="Luganda" />
-            <Picker.Item label="Lusoga" value="Lusoga" />
-            <Picker.Item label="Runyakore" value="Runyakore" />
-            <Picker.Item label="Rutoro" value="Rutoro" />
-            <Picker.Item label="English" value="English" />
-            <Picker.Item label="Other" value="Other" />
-          </Picker>
-        </View>
+            <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+              <Text style={STYLES.label}>Primary Language:</Text>
+              <Picker
+                selectedValue={selectedLanguage}
+                style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+                onValueChange={handleLanguageChange}>
+                <Picker.Item label="Select a district" value="" />
+                {countryData
+                  .find(country => country.name === selectedCountry)
+                  .languages.map(language => (
+                    <Picker.Item
+                      key={language}
+                      label={language}
+                      value={language}
+                    />
+                  ))}
+              </Picker>
+            </View>
+          </>
+        )}
 
         <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
           <Text style={STYLES.submitText}>Submit</Text>
