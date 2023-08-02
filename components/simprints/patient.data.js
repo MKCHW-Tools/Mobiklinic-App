@@ -26,6 +26,7 @@ const PatientData = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
   const {diagnoses} = diagnosisContext;
   const {dataResults} = useContext(DataResultsContext);
+  const {sessionId} = useContext(DataResultsContext);
   const {userLog} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
 
@@ -72,12 +73,14 @@ const PatientData = ({navigation}) => {
     country: '',
     primaryLanguage: '',
     simprintsGui: '',
-    // registeredById: '',
+    simSessionId: '',
+    
   });
 
   const handleSubmit = async () => {
     try {
       console.log('User Id:', userLog);
+      
 
       if (state.isLoading) {
         // Prevent multiple submissions
@@ -120,7 +123,7 @@ const PatientData = ({navigation}) => {
             country: state.country,
             primaryLanguage: state.primaryLanguage,
             simprintsGui: dataResults,
-            // registeredById: userLog,
+            simSessionId: sessionId,
           }),
           headers: {
             'Content-type': 'application/json; charset=UTF-8',
@@ -136,6 +139,8 @@ const PatientData = ({navigation}) => {
         const patientId = data.id; // Access the patient ID from the response data
         setPatientId(patientId);
         console.log('Patient ID:', patientId);
+        console.log('Simprints session ID:', sessionId);
+        console.log('sessionId data type:', typeof sessionId);
         Alert.alert('Beneficiary Registered Successfully');
         navigation.navigate('SelectActivity', {
           patientId: patientId,
@@ -198,7 +203,20 @@ const PatientData = ({navigation}) => {
             onChangeText={text => setState({...state, simprintsGui: text})}
             placeholder="Enter simprints GUI"
           />
+          
         </View>
+
+        {/* Simprints Session ID */}
+        <View style={STYLES.guid}>
+          <Text style={STYLES.label}>Simprints Session ID</Text>
+          <TextInput
+            style={STYLES.guid}
+            value={sessionId}
+            onChangeText={text => setState({...state, simSessionId: text})}
+            placeholder="Enter simprints session ID"
+          />
+          </View>
+
         {/* First Name */}
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>First Name:</Text>
@@ -262,27 +280,6 @@ const PatientData = ({navigation}) => {
             <Picker.Item label="Other" value="Other" />
           </Picker>
         </View>
-        {/* Age Group */}
-        {/* <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
-            <Picker
-              placeholder="Age"
-              placeholderTextColor={COLORS.BLACK}
-              selectedValue={state.ageGroup}
-              onValueChange={(value, index) =>
-                setState({...state, ageGroup: value})
-              }
-              style={STYLES.pickerItemStyle}>
-              <Picker.Item label="Age" value="Age group" />
-              <Picker.Item label="0 - 3" value="0 - 3" />
-              <Picker.Item label="3 - 10" value="3 - 10" />
-              <Picker.Item label="10 - 17" value="10 - 17" />
-              <Picker.Item label="17 - 40" value="17 - 40" />
-              <Picker.Item label="40 - 60" value="40 - 60" />
-              <Picker.Item label="60 above" value="60 above" />
-            </Picker>
-          </View> */}
-
-        {/* Date for birth */}
 
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Date of Birth:</Text>
@@ -370,7 +367,7 @@ const PatientData = ({navigation}) => {
           </Picker>
         </View>
 
-        {/* Country */}
+        {/* Primary languange */}
         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
           <Text style={STYLES.label}>Primary Language:</Text>
 
@@ -526,7 +523,7 @@ const STYLES = StyleSheet.create({
     color: COLORS.BLACK,
     fontSize: 11,
     fontWeight: 'bold',
-    display: 'none',
+    
   },
   submit: {
     backgroundColor: COLORS.BLACK,

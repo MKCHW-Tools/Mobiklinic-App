@@ -21,6 +21,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import {COLORS, DIMENS} from '../constants/styles';
 import CustomHeader from '../ui/custom-header';
 import CopyRight from './copyright';
+import { set } from 'date-fns';
 
 const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
@@ -28,6 +29,7 @@ var OpenActivity = NativeModules.OpenActivity;
 
 const SimprintsID = ({navigation}) => {
   const {updateDataResults} = useContext(DataResultsContext);
+  const {updateSession} = useContext(DataResultsContext);
   const {updateBenData} = useContext(DataResultsContext);
   const {benData} = useContext(DataResultsContext);
   const {userNames} = useContext(DataResultsContext);
@@ -35,6 +37,8 @@ const SimprintsID = ({navigation}) => {
   const [guid, setGuid] = React.useState(
     benData.length > 0 ? benData[0].guid : [],
   );
+ 
+  
   const [identificationPlusResults, setIdentificationPlusResults] = useState(
     [],
   );
@@ -105,7 +109,7 @@ const SimprintsID = ({navigation}) => {
 
   useEffect(() => {
     fetchData();
-  }, [guid]);
+  }, [guid, sessionId]);
 
   useEffect(() => {
     if (refreshing) {
@@ -122,7 +126,12 @@ const SimprintsID = ({navigation}) => {
         setDisplayMode('identificationPlus');
         updateBenData(results);
         const {guid} = results[0];
+        // setSessionId(results[0].sessionId);
         updateDataResults(guid);
+
+         // Console log the guid and sessionId here
+      // console.log('Guidssss:', guid);
+      // console.log('SessionId:', sessionId);
       },
     );
 
@@ -134,7 +143,11 @@ const SimprintsID = ({navigation}) => {
         updateBenData(results);
         const {guid} = results[0];
         updateDataResults(guid);
-        // updateDataResults(results);
+     
+
+         // Console log the guid and sessionId here
+      console.log('Guid:', guid);
+      console.log('SessionId:', sessionId);
       },
     );
 
@@ -142,10 +155,18 @@ const SimprintsID = ({navigation}) => {
       'SimprintsRegistrationSuccess',
       event => {
         const {guid} = event;
+        const {sessionId} = event;
         setEnrollmentGuid(guid);
+        setSessionId(sessionId);
         setDisplayMode('enrollment');
         navigation.navigate('PatientData');
         updateDataResults(guid);
+        updateSession(sessionId);
+        // setSessionId(sessionId);
+
+        console.log('Guid:', guid);
+        console.log('SessionId:', sessionId);
+        console.log('sessionId data type:', typeof sessionId);
       },
     );
 
@@ -154,7 +175,7 @@ const SimprintsID = ({navigation}) => {
       identificationSubscription.remove();
       registrationSuccessSubscription.remove();
     };
-  }, [updateDataResults, updateBenData]);
+  }, [updateDataResults, updateBenData, updateSession]);
 
   const handleIdentificationPlus = () => {
     const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
@@ -192,6 +213,7 @@ const SimprintsID = ({navigation}) => {
       );
     }
     setGuid(guid);
+    setSessionId(sessionId);
     fetchData();
     navigation.navigate('GetPatients');
     console.log('Beneficiary confirmed');
@@ -265,6 +287,9 @@ const SimprintsID = ({navigation}) => {
                       <Text style={styles.label}>
                         <Text style={{fontWeight: 'bold', fontSize: 15}}>
                           {enrollmentGuid}
+                        </Text>
+                        <Text style={{fontWeight: 'bold', fontSize: 15}}>
+                          {sessionId}
                         </Text>
                       </Text>
                     </TouchableOpacity>
