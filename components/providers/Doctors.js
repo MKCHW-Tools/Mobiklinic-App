@@ -1,19 +1,19 @@
-import * as React from 'react'
+import * as React from 'react';
 
-const DoctorsContext = React.createContext()
+const DoctorsContext = React.createContext();
 
 const DoctorsProvider = ({children}) => {
+  const [doctors, setDoctors] = React.useState([]);
 
-    const [doctors, setDoctors] = React.useState([])
+  return (
+    <DoctorsContext.Provider
+      value={{
+        doctors,
+        setDoctors,
+      }}>
+      {children}
+    </DoctorsContext.Provider>
+  );
+};
 
-    return (
-        <DoctorsContext.Provider value={{
-            doctors,
-            setDoctors
-        }}>
-            {children}
-        </DoctorsContext.Provider>
-    )
-}
-
-export {DoctorsContext, DoctorsProvider}
+export {DoctorsContext, DoctorsProvider};

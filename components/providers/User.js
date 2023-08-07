@@ -5,7 +5,7 @@ const UserContext = React.createContext();
 const UserProvider = ({ children }) => {
 	const [accessToken, setAccessToken] = React.useState("");
 	const [user, setUser] = React.useState({});
-	const [isRegistering, setIsRegistering] = React.useState("no");
+	const [isRegistering, setIsRegistering] = React.useState(false);
 
 	return (
 		<UserContext.Provider
