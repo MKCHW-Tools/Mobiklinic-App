@@ -77,8 +77,9 @@ const Profile = ({navigation}) => {
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(
-        `https://mobi-be-production.up.railway.app/${userLog}/patients`,
+      const response = await axios.get( navigation
+        `https://mobi-be-production.up.railway.app/patients`,
+
       );
 
       if (response.status === 200) {
@@ -141,7 +142,9 @@ const Profile = ({navigation}) => {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `https://mobi-be-production.up.railway.app/vaccinations/${userNames}`,
+navigation
+        `https://mobi-be-production.up.railway.app/vaccinations/all`,
+
       );
 
       if (response.status === 200) {
@@ -175,7 +178,9 @@ const Profile = ({navigation}) => {
     setIsLoading(true);
     try {
       const response = await axios.get(
+
         `https://mobi-be-production.up.railway.app/diagnosis/${userNames}`,
+
       );
 
       if (response.status === 200) {
@@ -208,7 +213,10 @@ const Profile = ({navigation}) => {
     setIsLoading(true);
     try {
       const response = await axios.get(
+
+
         `https://mobi-be-production.up.railway.app/antenantals/${userNames}`,
+
       );
 
       if (response.status === 200) {

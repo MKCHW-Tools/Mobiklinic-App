@@ -14,9 +14,12 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import com.simprints.libsimprints.Registration;
+import com.simprints.libsimprints.Constants;
 
 
 public class OpenActivityModule extends ReactContextBaseJavaModule implements ActivityEventListener {
+    private static final int REGISTER_OR_IDENTIFY_REQUEST_CODE = 1;
+
     public OpenActivityModule(ReactApplicationContext reactContext) {
         super(reactContext);
         // Register the ActivityEventListener
@@ -37,7 +40,7 @@ public class OpenActivityModule extends ReactContextBaseJavaModule implements Ac
             intent.putExtra("projectId", projectId);
             intent.putExtra("userId", userId);
             intent.putExtra("moduleId", moduleId);
-            activity.startActivityForResult(intent, 1);
+            activity.startActivityForResult(intent, REGISTER_OR_IDENTIFY_REQUEST_CODE);
         }
     }
 
@@ -49,10 +52,13 @@ public class OpenActivityModule extends ReactContextBaseJavaModule implements Ac
                 Registration registration = data.getParcelableExtra("registration");
                 if (registration != null) { // Check if the registration object is not null
                     String guid = registration.getGuid();
+                    String sessionId = data.getStringExtra(Constants.SIMPRINTS_SESSION_ID);
+
                     // Store the GUID or perform any desired actions
                     // For example, you can emit an event to your React Native code
                     WritableMap params = Arguments.createMap();
                     params.putString("guid", guid);
+                    params.putString("sessionId", sessionId);
                     getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                             .emit("SimprintsRegistrationSuccess", params);
                 } else {

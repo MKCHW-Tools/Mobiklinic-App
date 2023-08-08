@@ -27,6 +27,7 @@ const PatientData = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
   const {diagnoses} = diagnosisContext;
   const {dataResults} = useContext(DataResultsContext);
+  const {sessionId} = useContext(DataResultsContext);
   const {userLog} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
 
@@ -91,7 +92,7 @@ const PatientData = ({navigation}) => {
     country: '',
     primaryLanguage: '',
     simprintsGui: '',
-    // registeredById: '',
+    simSessionId: '',
   });
 
   const handleSubmit = async () => {
@@ -104,22 +105,8 @@ const PatientData = ({navigation}) => {
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
 
-      if (
-        state.firstName === '' ||
-        state.lastName === '' ||
-        ageGroup === '' ||
-        state.phoneNumber === ''
-      ) {
+      if (state.firstName === '' || state.lastName === '') {
         Alert.alert('Error', 'Please fill in all required fields');
-        return;
-      }
-
-      // Remove any non-digit characters from the phone number
-      const phoneNumber = state.phoneNumber.replace(/\D/g, '');
-
-      // Check if the resulting phone number has exactly 10 digits
-      if (phoneNumber.length !== 10) {
-        Alert.alert('Error', 'Phone number must be 10 digits');
         return;
       }
 
@@ -139,7 +126,7 @@ const PatientData = ({navigation}) => {
             country: selectedCountry,
             primaryLanguage: selectedLanguage,
             simprintsGui: dataResults,
-            // registeredById: userLog,
+            simSessionId: sessionId,
           }),
           headers: {
             'Content-type': 'application/json; charset=UTF-8',
@@ -155,6 +142,8 @@ const PatientData = ({navigation}) => {
         const patientId = data.id; // Access the patient ID from the response data
         setPatientId(patientId);
         console.log('Patient ID:', patientId);
+        console.log('Simprints session ID:', sessionId);
+        console.log('sessionId data type:', typeof sessionId);
         Alert.alert('Beneficiary Registered Successfully');
         navigation.navigate('SelectActivity', {
           patientId: patientId,
@@ -203,7 +192,7 @@ const PatientData = ({navigation}) => {
   return (
     <View style={STYLES.wrapper}>
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
-      {/* {_header()} */}
+      {_header()}
 
       <ScrollView style={STYLES.body}>
         <Text style={STYLES.title}>Beneficiary Profile</Text>
