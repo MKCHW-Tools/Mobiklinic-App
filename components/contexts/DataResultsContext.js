@@ -8,6 +8,7 @@ export const DataResultsProvider = ({ children }) => {
   const [userLog, setUserLog] = useState('');
   const [patientId, setPatientId] = useState('');
   const [userNames, setUserNames] = useState('');
+  const [sessionId, setSessionId] = useState('');
 
 
   const updateDataResults = newDataResults => {
@@ -30,6 +31,10 @@ export const DataResultsProvider = ({ children }) => {
     setUserNames(newUserNames);
   };
 
+  const updateSession = newSession => {
+    setSessionId(newSession);
+  };
+
   return (
     <DataResultsContext.Provider 
       value={{
@@ -42,7 +47,9 @@ export const DataResultsProvider = ({ children }) => {
         patientId,
         setPatientId,
         userNames,
-        updateUserNames
+        updateUserNames,
+        sessionId,
+        updateSession
       }}
     >
       {children}

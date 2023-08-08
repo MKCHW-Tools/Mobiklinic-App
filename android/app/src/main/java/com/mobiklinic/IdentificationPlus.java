@@ -34,6 +34,8 @@ public class IdentificationPlus extends ReactContextBaseJavaModule {
     private static final int ENROLMENT_REQUEST_CODE = 3;
     private SimHelper simHelper;
     private String moduleID;
+    private static final int REGISTER_OR_IDENTIFY_REQUEST_CODE = 1;
+
 
     private ReactApplicationContext reactContext;
 
@@ -59,7 +61,7 @@ public class IdentificationPlus extends ReactContextBaseJavaModule {
             intent.putExtra("projectId", projectID);
             intent.putExtra("userId", userID);
             intent.putExtra("moduleId", moduleID);
-            activity.startActivityForResult(intent, 1);
+            activity.startActivityForResult(intent, REGISTER_OR_IDENTIFY_REQUEST_CODE);
 
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(getReactApplicationContext());
@@ -98,8 +100,10 @@ public class IdentificationPlus extends ReactContextBaseJavaModule {
                     Registration registration = data.getParcelableExtra("registration");
                     if (registration != null) {
                         String guid = registration.getGuid();
+                        String sessionId = data.getStringExtra(Constants.SIMPRINTS_SESSION_ID);
                         WritableMap params = Arguments.createMap();
                         params.putString("guid", guid);
+                        params.putString("sessionId", sessionId);
                         getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                                 .emit("SimprintsRegistrationSuccess+", params);
                     }
