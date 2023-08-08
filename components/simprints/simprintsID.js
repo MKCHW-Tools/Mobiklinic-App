@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, {useCallback, useEffect, useState, useContext} from 'react';
 import {DeviceEventEmitter, NativeEventEmitter, Text} from 'react-native';
 
@@ -27,21 +28,11 @@ const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
 var OpenActivity = NativeModules.OpenActivity;
 
-const SimprintsID = ({navigation}) => {
-  const {updateDataResults} = useContext(DataResultsContext);
-  const {updateSession} = useContext(DataResultsContext);
-  const {updateBenData} = useContext(DataResultsContext);
-  const {benData} = useContext(DataResultsContext);
-  const {userNames} = useContext(DataResultsContext);
-  const [userData, setUserData] = React.useState(null);
-  const [guid, setGuid] = React.useState(
-    benData.length > 0 ? benData[0].guid : [],
-  );
- 
-  
-  const [identificationPlusResults, setIdentificationPlusResults] = useState(
-    [],
-  );
+const SimprintsID = ({ navigation }) => {
+  const { updateDataResults, updateSession, updateBenData, benData, userNames, patientId, setPatientId } = useContext(DataResultsContext);
+  const [userData, setUserData] = useState(null);
+  const [guid, setGuid] = useState(benData.length > 0 ? benData[0].guid : []);
+  const [identificationPlusResults, setIdentificationPlusResults] = useState([]);
   const [identificationResults, setIdentificationResults] = useState([]);
   const [displayMode, setDisplayMode] = useState(null);
   const [enrollmentGuid, setEnrollmentGuid] = useState(null);
@@ -50,17 +41,12 @@ const SimprintsID = ({navigation}) => {
   const [noMatchButtonPressed, setNoMatchButtonPressed] = useState(false);
   const [showButtons, setShowButtons] = useState(true);
   const sortedResults = identificationResults
-    .filter(
-      result => result.confidenceScore >= 20 && result.confidenceScore <= 99,
-    )
+    .filter(result => result.confidenceScore >= 20 && result.confidenceScore <= 99)
     .sort((a, b) => b.confidenceScore - a.confidenceScore);
   const [showResults, setShowResults] = useState(false);
-  const [collapsedIndex, setCollapsedIndex] = useState(-1); // Add this line to define the collapsedIndex state variable
+  const [collapsedIndex, setCollapsedIndex] = useState(-1);
   const [clickedResult, setClickedResult] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
-  const {patientId, setPatientId} = useContext(DataResultsContext);
-
-  // console.log('Logged User from simprints is', userNames);
 
   const toggleCollapse = index => {
     if (collapsedIndex === index) {
@@ -76,35 +62,27 @@ const SimprintsID = ({navigation}) => {
       const month = date.getMonth() + 1;
       const year = date.getFullYear();
 
-      return `${day.toString().padStart(2, '0')}/${month
-        .toString()
-        .padStart(2, '0')}/${year}`;
+      return `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
     }
     return 'Click to add date';
   };
 
-  // fetch data function
   const fetchData = async () => {
-    console.log('GUID:', guid);
-
     try {
-      const response = await fetch(
-        `https://mobi-be-production.up.railway.app/patients/${guid}`,
-      );
-      if (response.ok) {
-        const data = await response.json();
+      const response = await axios.get(`https://mobi-be-production.up.railway.app/patients/${guid}`);
+      if (response.status === 200) {
+        const data = response.data;
         const patientId = data.id;
-        console.log('Patient id:', patientId);
         setPatientId(patientId);
-
         setUserData(data);
         setShowResults(true);
       } else {
         setUserData(null);
         setShowResults(false);
       }
-    } catch (error) {}
-    // navigation.navigate('GetPatients');
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
@@ -125,13 +103,8 @@ const SimprintsID = ({navigation}) => {
         setIdentificationPlusResults(results);
         setDisplayMode('identificationPlus');
         updateBenData(results);
-        const {guid} = results[0];
-        // setSessionId(results[0].sessionId);
+        const { guid } = results[0];
         updateDataResults(guid);
-
-         // Console log the guid and sessionId here
-      // console.log('Guidssss:', guid);
-      // console.log('SessionId:', sessionId);
       },
     );
 
@@ -141,32 +114,21 @@ const SimprintsID = ({navigation}) => {
         setIdentificationResults(results);
         setDisplayMode('identification');
         updateBenData(results);
-        const {guid} = results[0];
+        const { guid } = results[0];
         updateDataResults(guid);
-     
-
-         // Console log the guid and sessionId here
-      console.log('Guid:', guid);
-      console.log('SessionId:', sessionId);
       },
     );
 
     const registrationSuccessSubscription = DeviceEventEmitter.addListener(
       'SimprintsRegistrationSuccess',
       event => {
-        const {guid} = event;
-        const {sessionId} = event;
+        const { guid, sessionId } = event;
         setEnrollmentGuid(guid);
         setSessionId(sessionId);
         setDisplayMode('enrollment');
         navigation.navigate('PatientData');
         updateDataResults(guid);
         updateSession(sessionId);
-        // setSessionId(sessionId);
-
-        console.log('Guid:', guid);
-        console.log('SessionId:', sessionId);
-        console.log('sessionId data type:', typeof sessionId);
       },
     );
 
@@ -195,10 +157,7 @@ const SimprintsID = ({navigation}) => {
 
   const confirmSelectedBeneficiary = () => {
     if (sessionId && selectedUserUniqueId) {
-      IdentificationPlus.confirmSelectedBeneficiary(
-        sessionId,
-        selectedUserUniqueId,
-      );
+      IdentificationPlus.confirmSelectedBeneficiary(sessionId, selectedUserUniqueId);
     }
     fetchData();
     navigation.navigate('PatientData');
@@ -207,10 +166,7 @@ const SimprintsID = ({navigation}) => {
 
   const confirmSelectedBeneficiaryy = guid => {
     if (sessionId && selectedUserUniqueId) {
-      IdentificationPlus.confirmSelectedBeneficiary(
-        sessionId,
-        selectedUserUniqueId,
-      );
+      IdentificationPlus.confirmSelectedBeneficiary(sessionId, selectedUserUniqueId);
     }
     setGuid(guid);
     setSessionId(sessionId);
@@ -222,8 +178,7 @@ const SimprintsID = ({navigation}) => {
   useEffect(() => {
     if (noMatchButtonPressed) {
       console.log('No match found button pressed');
-      // Call the noMatchFound method here if needed
-      setNoMatchButtonPressed(false); // Reset the button pressed state
+      setNoMatchButtonPressed(false);
     }
   }, [noMatchButtonPressed]);
 
@@ -267,7 +222,7 @@ const SimprintsID = ({navigation}) => {
       {_header()}
       <View style={styles.wrap}>
         <Image
-          style={{width: 70, height: 70}}
+          style={{ width: 70, height: 70 }}
           source={require('../imgs/logo.png')}
         />
         <Text style={styles.title}>Mobiklinic</Text>
@@ -279,22 +234,22 @@ const SimprintsID = ({navigation}) => {
                 {enrollmentGuid && (
                   <>
                     <Text style={styles.text}>Beneficiary Enrolled on ID</Text>
-                    <View style={{height: 30}} />
+                    <View style={{ height: 30 }} />
 
                     <TouchableOpacity
                       onPress={confirmSelectedBeneficiary}
                       style={styles.input}>
                       <Text style={styles.label}>
-                        <Text style={{fontWeight: 'bold', fontSize: 15}}>
+                        <Text style={{ fontWeight: 'bold', fontSize: 15 }}>
                           {enrollmentGuid}
                         </Text>
-                        <Text style={{fontWeight: 'bold', fontSize: 15}}>
+                        <Text style={{ fontWeight: 'bold', fontSize: 15 }}>
                           {sessionId}
                         </Text>
                       </Text>
                     </TouchableOpacity>
 
-                    <View style={{height: 20}} />
+                    <View style={{ height: 20 }} />
                   </>
                 )}
               </>
@@ -305,7 +260,7 @@ const SimprintsID = ({navigation}) => {
                 {identificationPlusResults.length > 0 && (
                   <React.Fragment key="identification-plus-heading">
                     <Text style={styles.text}>Beneficiary Identified:</Text>
-                    <View style={{height: 20}} />
+                    <View style={{ height: 20 }} />
                   </React.Fragment>
                 )}
 
@@ -321,31 +276,31 @@ const SimprintsID = ({navigation}) => {
                         style={styles.input}
                         onPress={confirmSelectedBeneficiaryy}>
                         <Text style={styles.label}>
-                          <View style={{height: 20}} />
+                          <View style={{ height: 20 }} />
                           Tier:{'\t'}
                           {'\t'}
-                          <Text style={{fontWeight: 'bold'}}>
+                          <Text style={{ fontWeight: 'bold' }}>
                             {result.tier}
                           </Text>
                           {'\n'}
                           Confidence Score:{'\t'}
                           {'\t'}
-                          <Text style={{fontWeight: 'bold'}}>
+                          <Text style={{ fontWeight: 'bold' }}>
                             {result.confidenceScore}%
                           </Text>
                           {'\n'}
                           Guid:
-                          <Text style={{fontWeight: 'bold'}}>
+                          <Text style={{ fontWeight: 'bold' }}>
                             {result.guid}
                           </Text>
                         </Text>
                       </TouchableOpacity>
                     </View>
                   ))}
-                <View style={{height: 20}} />
+                <View style={{ height: 20 }} />
                 {showButtons ? (
                   <>
-                    <View style={{height: 20}} />
+                    <View style={{ height: 20 }} />
 
                     <TouchableOpacity
                       style={styles.button}
@@ -363,10 +318,9 @@ const SimprintsID = ({navigation}) => {
 
             {sortedResults.length > 0 && (
               <React.Fragment>
-                {/* Render results */}
                 {sortedResults.map((result, index) => (
                   <React.Fragment key={index}>
-                    {index === 0 && ( // Display "RESULTS" heading only for the first result
+                    {index === 0 && (
                       <Text style={styles.userDataLabel}>RESULTS</Text>
                     )}
 
@@ -380,7 +334,7 @@ const SimprintsID = ({navigation}) => {
                         setRefreshing(true);
                       }}>
                       <Text style={styles.label}>
-                        <View style={{height: 20}} />
+                        <View style={{ height: 20 }} />
                         {`Beneficiary ${index + 1} (Score: ${
                           result.confidenceScore
                         }%)`}
@@ -418,82 +372,8 @@ const SimprintsID = ({navigation}) => {
                               </Text>
                             </Text>
 
-                            {/* {userData.diagnoses &&
-                              userData.diagnoses.length > 0 && (
-                                <View style={styles.vaccinationsContainer}>
-                                  <Text style={styles.userDataLabel1}>
-                                    DIAGNOSIS
-                                  </Text>
-                                  {userData.diagnoses.map(
-                                    (diagnosis, index) => (
-                                      <View key={index}>
-                                        <Text style={styles.userDataLabel}>
-                                          Condition:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.condition}
-                                          </Text>
-                                        </Text>
-                                        <Text style={styles.userDataLabel}>
-                                          Prescribed drugs:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.drugsPrescribed}
-                                          </Text>
-                                        </Text>
-                                        <Text style={styles.userDataLabel}>
-                                          Dosage:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.dosage}
-                                          </Text>
-                                        </Text>
-
-                                        <Text style={styles.userDataLabel}>
-                                          Frequency:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.frequency}
-                                          </Text>
-                                        </Text>
-                                        <Text style={styles.userDataLabel}>
-                                          Duration:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.duration}
-                                          </Text>
-                                        </Text>
-
-                                        <Text style={styles.userDataLabel}>
-                                          Date of diagnosis:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.dateOfDiagnosis}
-                                          </Text>
-                                        </Text>
-
-                                        <Text style={styles.userDataLabel}>
-                                          Date for Next Dose:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.followUpDate}
-                                          </Text>
-                                        </Text>
-
-                                        <Text style={styles.userDataLabel}>
-                                          Impression:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.impression}
-                                          </Text>
-                                        </Text>
-                                        <Text style={styles.userDataLabel}>
-                                          .................................................................{' '}
-                                          <Text
-                                            style={styles.userDataValue}></Text>
-                                        </Text>
-                                        <View style={{height: 20}} />
-                                      </View>
-                                    ),
-                                  )}
-                                </View>
-                              )} */}
-
                             <TouchableOpacity
                               style={styles.buttonSec}
-                              // onPress={() => navigation.navigate('SelectActivity')}
                               onPress={() =>
                                 navigation.navigate('GetPatients', {
                                   paramKey: userData,
@@ -539,7 +419,7 @@ const SimprintsID = ({navigation}) => {
                   <Text style={styles.buttonText}>Start Registration</Text>
                 </TouchableOpacity>
 
-                <View style={{height: 10}} />
+                <View style={{ height: 10 }} />
 
                 <TouchableOpacity
                   style={styles.button}
@@ -557,6 +437,30 @@ const SimprintsID = ({navigation}) => {
     </View>
   );
 };
+
+// const styles = StyleSheet.create({
+//   wrapper: {
+//     flex: 1,
+//     backgroundColor: COLORS.WHITE_LOW,
+//   },
+//   container: {
+//     flex: 1,
+//     alignItems: 'center',
+//     marginVertical: 40,
+//     backgroundColor: '#fff',
+//     flexGrow: 1,
+//     height: '100%',
+//   },
+//   wrap: {
+//     flex: 2,
+//     alignItems: 'center',
+//     padding: 20,
+//     marginVertical: 30,
+//   },
+//   ...
+// });
+
+// export default SimprintsID;
 
 const styles = StyleSheet.create({
   wrapper: {
