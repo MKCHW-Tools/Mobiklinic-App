@@ -429,107 +429,167 @@ const PatientList = ({ navigation }) => {
   );
 };
 
+
+
+export default PatientList;
 const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 20,
+  },
   wrapper: {
     flex: 1,
     backgroundColor: COLORS.BACKGROUND,
   },
-  container: {
-    flex: 1,
-    padding: 16,
-  },
   header: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 16,
+    color: COLORS.PRIMARY,
+    marginBottom: 20,
+    textAlign: 'center',
+    marginVertical: 20,
+    textDecorationLine: 'underline',
   },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  searchInput: {
+  centerHeader: {
     flex: 1,
-    height: 40,
-    borderWidth: 1,
-    borderColor: COLORS.BLACK,
-    borderRadius: 4,
-    paddingHorizontal: 8,
-    marginRight: 8,
-  },
-  searchIcon: {
-    marginRight: 8,
-  },
-  searchSuggestionsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 16,
-  },
-  searchSuggestion: {
-    backgroundColor: COLORS.PRIMARY,
-    borderRadius: 4,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    marginRight: 8,
-    marginBottom: 8,
-  },
-  searchSuggestionText: {
-    color: COLORS.WHITE,
+    alignItems: 'center',
+    color: COLORS.BLACK,
+    fontWeight: 'bold',
   },
   flatListContent: {
-    paddingBottom: 16,
-  },
-  noUserFoundText: {
-    fontSize: 16,
-    textAlign: 'center',
+    paddingBottom: 20,
   },
   userCard: {
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: COLORS.BLACK,
-    borderRadius: 4,
-    padding: 16,
+    backgroundColor: COLORS.WHITE,
+    borderRadius: 10,
+    padding: 20,
+    marginBottom: 20,
+    elevation: 2,
+    shadowColor: COLORS.GRAY,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
   },
   cardHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 8,
+    alignItems: 'center',
   },
   userName: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: COLORS.BLACK,
   },
   cardDetails: {
-    marginTop: 8,
+    marginTop: 10,
   },
-  userDataLabel: {
-    marginBottom: 4,
+  label: {
+    fontSize: 14,
+    marginBottom: 5,
+    color: COLORS.BLACK,
   },
   userDataValue: {
+    fontWeight: 'normal',
+    fontSize: 16,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderColor: COLORS.BLACK,
+    borderRadius: 5,
+    marginBottom: 20,
+    backgroundColor: COLORS.WHITE,
+    elevation: 3,
+    marginBottom: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginBottom: 15,
+    borderRadius: 10,
+  },
+  searchInput: {
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    color: COLORS.BLACK,
+    fontSize: 16,
+  },
+  searchIcon: {
+    marginHorizontal: 10,
+    fontSize: 20,
+    color: COLORS.PRIMARY,
+  },
+  searchSuggestionsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 15,
+  },
+  searchSuggestion: {
+    backgroundColor: COLORS.PRIMARY,
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    marginRight: 10,
+    marginBottom: 10,
+  },
+  searchSuggestionText: {
+    color: COLORS.BLACK,
+    fontSize: 16,
+  },
+  noUserFoundText: {
+    textAlign: 'center',
+    fontSize: 18,
+    color: COLORS.BLACK,
+    marginTop: 20,
     fontWeight: 'bold',
+  },
+  userDataLabel: {
+    fontWeight: 'bold',
+    fontSize: 15,
+    marginBottom: 5,
+    color: COLORS.BLACK,
+    paddingHorizontal: 10,
+    paddingLeft: 10,
+  },
+  userDataValue: {
+    fontWeight: 'normal',
+    fontSize: 15,
+    paddingRight: 10,
   },
   userDataLabel1: {
     fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  line: {
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.BLACK,
-    marginBottom: 8,
+    fontSize: 16,
+    marginBottom: 5,
+    color: COLORS.PRIMARY,
   },
   buttonSec: {
-    backgroundColor: COLORS.PRIMARY,
-    borderRadius: 4,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    marginTop: 16,
+    backgroundColor: COLORS.WHITE,
+    paddingVertical: 10,
+    // paddingHorizontal: 15,
+    borderRadius: 10,
+    marginVertical: 20,
+    borderWidth: 2,
+    borderColor: COLORS.PRIMARY,
   },
   buttonText: {
-    color: COLORS.WHITE,
+    color: COLORS.PRIMARY,
+    fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  userDataLabel1: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginBottom: 5,
+    color: COLORS.PRIMARY,
+  },
+  line: {
+    borderBottomColor: 'black',
+    borderBottomWidth: 1,
+    marginVertical: 10,
+  },
 });
 
-export default PatientList;
+// export default PatientList;
