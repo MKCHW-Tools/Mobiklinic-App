@@ -34,7 +34,7 @@ const AntenatalCare = ({navigation}) => {
   const [routineVisitDate, setRoutineVisitDate] = useState('');
   const [expectedDateOfDelivery, setExpectedDateOfDelivery] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [prescriptions, setPrescriptions] = useState([]);
+  const [prescriptions, setSelectedPrescriptions] = useState([]);
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || routineVisitDate;
@@ -69,9 +69,12 @@ const AntenatalCare = ({navigation}) => {
     routineVisitDate: '',
     weight: '',
     bloodGroup: '',
+    prescriptions: '',
     nextOfKin: '',
     nextOfKinContact: '',
     drugNotes: '',
+
+    // registeredById: '',
   });
 
   const handleSubmit = async () => {
@@ -86,8 +89,7 @@ const AntenatalCare = ({navigation}) => {
         state.expectedDateOfDelivery === '' ||
         routineVisitDate === '' ||
         state.drugNotes === '' ||
-        state.bloodGroup === '' ||
-        state.prescriptions.length === 0
+        state.bloodGroup === ''
       ) {
         Alert.alert('Error', 'Please fill in all required fields');
         return;
@@ -250,25 +252,26 @@ const AntenatalCare = ({navigation}) => {
         </View>
 
         {/* prescriptions */}
-        <View style={STYLES.labeledItem} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Text style={STYLES.prescribe}>Prescriptions:</Text>
-          <View style={STYLES.select}>
-            <MultiSelectView
-              data={medications}
-              onSelectionChanged={selectedItems =>
-                setSelectedPrescriptions(selectedItems)
-              }
-              style={STYLES.multiSelect}
-              itemStyle={STYLES.item}
-              selectedTextStyle={[
-                STYLES.selectedItemText,
-                {color: COLORS.BLACK},
-              ]}
-              selectedItemStyle={[
-                STYLES.selectedItem,
-                {backgroundColor: COLORS.PRIMARY},
-              ]}
-              checkboxStyle={STYLES.checkbox}
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Prescriptions/Medicine:</Text>
+
+          <Picker
+            placeholderTextColor={COLORS.BLACK}
+            selectedValue={state.prescriptions}
+            onValueChange={(value, index) =>
+              setState({...state, prescriptions: value})
+            }
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            dropdownIconColor={COLORS.GREY_LIGHTER}>
+            <Picker.Item label="" value="" />
+            <Picker.Item
+              label="Folic Acid Supplements"
+              value="Folic Acid Supplements"
+            />
+            <Picker.Item label="Iron Supplements" value="Iron Supplements" />
+            <Picker.Item
+              label="Calcium Supplements"
+              value="Calcium Supplements"
             />
             <Picker.Item label="Antiemeitics" value="Antiemeitics" />
             <Picker.Item label="Antihistamines" value="Antihistamines" />
@@ -441,20 +444,27 @@ const STYLES = StyleSheet.create({
     borderColor: COLORS.GREY,
     borderStyle: 'solid',
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: 10,
+    paddingHorizontal: 15,
     marginBottom: 10,
-    backgroundColor: COLORS.GREY_LIGHTER,
+    fontWeight: 'bold',
+    // backgroundColor: COLORS.GREY,
+  },
+  pickerItemStyle: {
+    color: 'rgba(0,0,0,0.7)',
   },
   labeled: {
-    marginBottom: 20,
-  },
-  datePickerInput: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    // paddingVertical: 10,
     color: COLORS.BLACK,
-    backgroundColor: COLORS.GREY_LIGHTER,
-    borderRadius: DIMENS.INPUT_RADIUS,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    marginTop: 10,
     marginBottom: 10,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 10,
   },
   field: {
     flex: 1,
@@ -482,47 +492,155 @@ const STYLES = StyleSheet.create({
     marginRight: 5,
     color: COLORS.BLACK,
     fontSize: 14,
-    paddingVertical:8, 
+    paddingVertical: 8,
   },
   submit: {
-    backgroundColor: COLORS.PRIMARY,
-    paddingVertical: 15,
-    borderRadius: DIMENS.INPUT_RADIUS,
-    marginTop: 20,
+    backgroundColor: COLORS.BLACK,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginBottom: 10,
+    marginTop: 10,
   },
   submitText: {
-    color: COLORS.WHITE,
+    color: '#fff',
+    fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
-    fontSize: 16,
   },
-  field: {
-    color: 'rgba(0,0,0,0.7)',
+  wrap: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: 70,
     borderRadius: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+  },
+  pickerWrap: {
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    marginBottom: 10,
+    backgroundColor: COLORS.GREY_LIGHTER,
+  },
+  smallInput: {
+    width: 80,
+    height: 40,
+    textAlign: 'right',
+    color: COLORS.BLACK,
+    borderRadius: 20,
+    paddingHorizontal: 15,
     borderColor: COLORS.GREY,
     borderStyle: 'solid',
     borderWidth: 1,
     marginBottom: 10,
     backgroundColor: COLORS.GREY_LIGHTER,
   },
+  wrap: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    // alignItems: 'center',
+    // minHeight: 70,
+    borderRadius: 20,
+    marginBottom: 10,
+    // paddingHorizontal: 10,
+  },
+  detail: {
+    flex: 1,
+    paddingHorizontal: 8,
+    // paddingVertical: 10,
+    color: COLORS.BLACK,
+    marginTop: 10,
+    marginBottom: 10,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 10,
+    // height: 50,
+    marginHorizontal: 5,
+  },
+  pickerStyle: {
+    flex: 1,
+    paddingHorizontal: 15,
+    // paddingVertical: 10,
+    color: COLORS.BLACK,
+    marginTop: 10,
+    marginBottom: 10,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 10,
+    height: 50,
+    marginHorizontal: 5,
+  },
+  datePickerText: {
+    paddingVertical: 10,
+    paddingLeft: 12,
+    fontSize: 15,
+    color: COLORS.BLACK,
+  },
+  datePickerInput: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderColor: COLORS.GREY,
+    // borderStyle: 'solid',
+    // borderWidth: 1,
+    // borderRadius: 10,
+  },
+  datePickerText: {
+    marginLeft: 5,
+    color: COLORS.BLACK,
+    fontSize: 14,
+    paddingVertical: 12,
+  },
   multiSelect: {
-    backgroundColor: COLORS.GREY_LIGHTER,
+    width: '80%',
+    maxHeight: 200,
+    borderWidth: 1,
+    borderColor: COLORS.GREY_LIGHTER,
+    borderRadius: 10,
+    padding: 8,
   },
   item: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderBottomColor: COLORS.GREY,
-    borderBottomWidth: 1,
+    padding: 8,
   },
   selectedItem: {
     backgroundColor: COLORS.PRIMARY,
   },
   selectedItemText: {
-    color: COLORS.WHITE,
+    color: COLORS.BLACK,
   },
   checkbox: {
-    marginRight: 10,
+    marginRight: 8,
+  },
+  select: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: 70,
+    alignItems: 'center',
+  },
+  labeledItem: {
+    // flexDirection: 'row',
+    paddingHorizontal: 15,
+    // paddingVertical: 10,
+    color: COLORS.BLACK,
+    marginTop: 10,
+    marginBottom: 10,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 10,
   },
 });
