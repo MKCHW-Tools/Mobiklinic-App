@@ -16,36 +16,29 @@ import Loader from '../ui/loader';
 import CustomHeader from '../ui/custom-header';
 import DataResultsContext from '../contexts/DataResultsContext';
 
-const PatientList = ({navigation}) => {
+const PatientList = ({ navigation }) => {
+  const { userLog, userNames } = useContext(DataResultsContext);
   const [users, setUsers] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  // searching users by name
   const [searchQuery, setSearchQuery] = useState('');
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [isNoUserFound, setIsNoUserFound] = useState(false);
-  const {patientId, setPatientId} = useContext(DataResultsContext);
   const [patientsEnrolledCount, setPatientsEnrolledCount] = useState(0);
-  const {userNames} = useContext(DataResultsContext);
   const [loggedInUserPhoneNumber, setLoggedInUserPhoneNumber] = useState('');
+  const [expandedUserId, setExpandedUserId] = useState(null);
 
-  // user context
-  const {userLog} = useContext(DataResultsContext);
-
-  // formate date
-  const formatDate = date => {
+  const formatDate = (date) => {
     if (date) {
       const day = date.getDate();
       const month = date.getMonth() + 1;
       const year = date.getFullYear();
 
-      return `${day.toString().padStart(2, '0')}/${month
-        .toString()
-        .padStart(2, '0')}/${year}`;
+      return `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
     }
     return 'Click to add date';
   };
-  // header
+
   const _header = () => (
     <CustomHeader
       left={
@@ -65,56 +58,44 @@ const PatientList = ({navigation}) => {
     />
   );
 
-  // fetch users from api
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(
-        `https://mobi-be-production.up.railway.app/patients`,
-      );
+      const response = await axios.get(`https://mobi-be-production.up.railway.app/patients`);
 
       if (response.status === 200) {
-        const currentDate = new Date(); // Get the current date
-        const lastWeekDate = new Date('2023-07-19'); // Set the last week date (17/07/2023)
+        const currentDate = new Date();
+        const lastWeekDate = new Date('2023-07-19');
 
-        const filteredData = response.data.filter(item => {
+        const filteredData = response.data.filter((item) => {
           const itemDate = new Date(item.createdAt);
           return itemDate >= lastWeekDate && itemDate <= currentDate;
         });
 
-        // Sort the filtered data based on date, with the most recent admissions first
-        const sortedData = filteredData.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
-        );
+        const sortedData = filteredData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-        // Filter the data based on the logged-in user's phone number
         const loggedInUserPhone = userLog ? userLog.phoneNumber : '';
-        const filteredDataForUser = sortedData.filter(
-          item => item.phoneNumber === loggedInUserPhone,
-        );
+        const filteredDataForUser = sortedData.filter((item) => item.phoneNumber === loggedInUserPhone);
 
         setUsers(sortedData);
         await AsyncStorage.setItem('patientList', JSON.stringify(sortedData));
         setIsNoUserFound(sortedData.length === 0);
-        // Update the patientsEnrolledCount state with the length of the items
         setPatientsEnrolledCount(sortedData.length);
       } else {
         const storedData = await AsyncStorage.getItem('patientList');
 
         if (storedData) {
           setUsers(JSON.parse(storedData));
-          // Update the patientsEnrolledCount state with the length of the items
           setPatientsEnrolledCount(JSON.parse(storedData).length);
         }
       }
     } catch (error) {
-      console.error(error);
+      console.error('An error occurred:', error);
 
       const storedData = await AsyncStorage.getItem('patientList');
 
       if (storedData) {
         setUsers(JSON.parse(storedData));
-        // Update the patientsEnrolledCount state with the length of the items
         setPatientsEnrolledCount(JSON.parse(storedData).length);
       }
     } finally {
@@ -123,44 +104,30 @@ const PatientList = ({navigation}) => {
     }
   };
 
-  // ... rest of the code ...
-
   useEffect(() => {
     const fetchData = async () => {
       await fetchUsers();
     };
 
     fetchData();
-  }, [userLog]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      await fetchUsers();
-    };
-
-    fetchData();
-  }, [userLog]);
+  }, []);
 
   const onRefresh = () => {
     setRefreshing(true);
     fetchUsers();
   };
-  // handle search results
-  const handleSearch = async query => {
+
+  const handleSearch = async (query) => {
     setSearchQuery(query);
     try {
-      const response = await axios.get(
-        `https://mobi-be-production.up.railway.app/search?query=${query}`,
-      );
+      const response = await axios.get(`https://mobi-be-production.up.railway.app/search?query=${query}`);
       setSearchSuggestions(response.data);
     } catch (error) {
-      console.error(error);
+      console.error('An error occurred:', error);
     }
   };
 
-  const [expandedUserId, setExpandedUserId] = useState(null);
-
-  const renderUserCard = ({item}) => {
+  const renderUserCard = ({ item }) => {
     const isExpanded = item.id === expandedUserId;
 
     const toggleExpansion = () => {
@@ -174,14 +141,13 @@ const PatientList = ({navigation}) => {
     const fullName = `${item.firstName} ${item.lastName}`;
     const fullNameChars = fullName.split('');
 
-    // ADD DATA
     const addData = () => {
-      setPatientId(item.id); // Set the patientId using setPatientId
+      setPatientId(item.id);
       console.log('Adding data for patient ID:', patientId.id);
 
       navigation.navigate('SelectActivity', {
         patientId: patientId,
-        paramKey: {firstName: item.firstName, lastName: item.lastName},
+        paramKey: { firstName: item.firstName, lastName: item.lastName },
       });
     };
 
@@ -190,12 +156,8 @@ const PatientList = ({navigation}) => {
         <TouchableOpacity onPress={toggleExpansion} style={styles.cardHeader}>
           <Text style={styles.userName}>
             {fullNameChars.map((char, index) => {
-              const isMatchingChar = searchQuery
-                .toLowerCase()
-                .includes(char.toLowerCase());
-              const highlightStyle = isMatchingChar
-                ? {backgroundColor: COLORS.PRIMARY}
-                : {};
+              const isMatchingChar = searchQuery.toLowerCase().includes(char.toLowerCase());
+              const highlightStyle = isMatchingChar ? { backgroundColor: COLORS.PRIMARY } : {};
 
               return (
                 <Text key={index} style={[styles.userName, highlightStyle]}>
@@ -223,9 +185,7 @@ const PatientList = ({navigation}) => {
             </Text>
             <Text style={styles.userDataLabel}>
               Date Of Birth:
-              <Text style={styles.userDataValue}>
-                {formatDate(new Date(item.ageGroup))}
-              </Text>
+              <Text style={styles.userDataValue}>{formatDate(new Date(item.ageGroup))}</Text>
             </Text>
 
             <Text style={styles.userDataLabel}>
@@ -257,9 +217,7 @@ const PatientList = ({navigation}) => {
                   <View key={index}>
                     <Text style={styles.userDataLabel}>
                       Vaccine Name:{' '}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.vaccineName}
-                      </Text>
+                      <Text style={styles.userDataValue}>{vaccination.vaccineName}</Text>
                     </Text>
 
                     <Text style={styles.userDataLabel}>
@@ -271,16 +229,12 @@ const PatientList = ({navigation}) => {
 
                     <Text style={styles.userDataLabel}>
                       Dose:{' '}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.dose}
-                      </Text>
+                      <Text style={styles.userDataValue}>{vaccination.dose}</Text>
                     </Text>
 
                     <Text style={styles.userDataLabel}>
                       Card Number:{' '}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.units}
-                      </Text>
+                      <Text style={styles.userDataValue}>{vaccination.units}</Text>
                     </Text>
 
                     <Text style={styles.userDataLabel}>
@@ -292,19 +246,15 @@ const PatientList = ({navigation}) => {
 
                     <Text style={styles.userDataLabel}>
                       Site Administered:{' '}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.siteAdministered}
-                      </Text>
+                      <Text style={styles.userDataValue}>{vaccination.siteAdministered}</Text>
                     </Text>
                     <Text style={styles.userDataLabel}>
                       Facility:{' '}
-                      <Text style={styles.userDataValue}>
-                        {vaccination.facility}
-                      </Text>
+                      <Text style={styles.userDataValue}>{vaccination.facility}</Text>
                     </Text>
                     <View style={styles.line} />
 
-                    <View style={{height: 20}} />
+                    <View style={{ height: 20 }} />
                   </View>
                 ))}
               </View>
@@ -316,17 +266,13 @@ const PatientList = ({navigation}) => {
                   <View key={index}>
                     <Text style={styles.userDataLabel}>
                       Pregnacy Status:
-                      <Text style={styles.userDataValue}>
-                        {antenantal.pregnancyStatus}
-                      </Text>
+                      <Text style={styles.userDataValue}>{antenantal.pregnancyStatus}</Text>
                     </Text>
 
                     <Text style={styles.userDataLabel}>
                       Expected Date for Delivery:
                       <Text style={styles.userDataValue}>
-                        {formatDate(
-                          new Date(antenantal.expectedDateOfDelivery),
-                        )}
+                        {formatDate(new Date(antenantal.expectedDateOfDelivery))}
                       </Text>
                     </Text>
 
@@ -339,44 +285,32 @@ const PatientList = ({navigation}) => {
 
                     <Text style={styles.userDataLabel}>
                       Blood Group:
-                      <Text style={styles.userDataValue}>
-                        {antenantal.bloodGroup}
-                      </Text>
+                      <Text style={styles.userDataValue}>{antenantal.bloodGroup}</Text>
                     </Text>
 
                     <Text style={styles.userDataLabel}>
                       Prescriptions:
-                      <Text style={styles.userDataValue}>
-                        {antenantal.prescriptions}
-                      </Text>
+                      <Text style={styles.userDataValue}>{antenantal.prescriptions}</Text>
                     </Text>
 
                     <Text style={styles.userDataLabel}>
                       Current Weight:
-                      <Text style={styles.userDataValue}>
-                        {antenantal.weight}
-                      </Text>
+                      <Text style={styles.userDataValue}>{antenantal.weight}</Text>
                     </Text>
 
                     <Text style={styles.userDataLabel}>
                       Next of Kin:
-                      <Text style={styles.userDataValue}>
-                        {antenantal.nextOfKin}
-                      </Text>
+                      <Text style={styles.userDataValue}>{antenantal.nextOfKin}</Text>
                     </Text>
 
                     <Text style={styles.userDataLabel}>
                       Next of Kin Contact:
-                      <Text style={styles.userDataValue}>
-                        {antenantal.nextOfKinContact}
-                      </Text>
+                      <Text style={styles.userDataValue}>{antenantal.nextOfKinContact}</Text>
                     </Text>
 
                     <Text style={styles.userDataLabel}>
                       Additional Notes:
-                      <Text style={styles.userDataValue}>
-                        {antenantal.drugNotes}
-                      </Text>
+                      <Text style={styles.userDataValue}>{antenantal.drugNotes}</Text>
                     </Text>
 
                     <View style={styles.line} />
@@ -392,15 +326,11 @@ const PatientList = ({navigation}) => {
                   <View key={index}>
                     <Text style={styles.userDataLabel}>
                       Condition:{' '}
-                      <Text style={styles.userDataValue}>
-                        {diagnosis.condition}
-                      </Text>
+                      <Text style={styles.userDataValue}>{diagnosis.condition}</Text>
                     </Text>
                     <Text style={styles.userDataLabel}>
                       Prescribed drugs:{' '}
-                      <Text style={styles.userDataValue}>
-                        {diagnosis.drugsPrescribed}
-                      </Text>
+                      <Text style={styles.userDataValue}>{diagnosis.drugsPrescribed}</Text>
                     </Text>
                     <Text style={styles.userDataLabel}>
                       Dosage:{' '}
@@ -426,21 +356,16 @@ const PatientList = ({navigation}) => {
 
                     <Text style={styles.userDataLabel}>
                       Impression:{' '}
-                      <Text style={styles.userDataValue}>
-                        {diagnosis.impression}
-                      </Text>
+                      <Text style={styles.userDataValue}>{diagnosis.impression}</Text>
                     </Text>
                     <View style={styles.line} />
 
-                    <View style={{height: 20}} />
+                    <View style={{ height: 20 }} />
                   </View>
                 ))}
               </View>
             )}
-            {/* Add the button to add data */}
-            <TouchableOpacity
-              onPress={() => navigation.navigate('SimprintsID')}
-              style={styles.buttonSec}>
+            <TouchableOpacity onPress={() => navigation.navigate('SimprintsID')} style={styles.buttonSec}>
               <Text style={styles.buttonText}>Add Data</Text>
             </TouchableOpacity>
           </View>
@@ -449,7 +374,7 @@ const PatientList = ({navigation}) => {
     );
   };
 
-  const formatPhoneNumber = phoneNumber => {
+  const formatPhoneNumber = (phoneNumber) => {
     return phoneNumber;
   };
 
@@ -458,9 +383,7 @@ const PatientList = ({navigation}) => {
       {_header()}
       <View style={styles.container}>
         <Text style={styles.header}>Beneficiary List</Text>
-        <Text style={styles.header}>
-          Patients Enrolled: {patientsEnrolledCount}
-        </Text>
+        <Text style={styles.header}>Patients Enrolled: {patientsEnrolledCount}</Text>
 
         <View style={styles.searchContainer}>
           <TextInput
@@ -471,12 +394,7 @@ const PatientList = ({navigation}) => {
             onChangeText={handleSearch}
           />
           <TouchableOpacity onPress={fetchUsers}>
-            <Icon
-              name="search"
-              size={20}
-              color={COLORS.BLACK}
-              style={styles.searchIcon}
-            />
+            <Icon name="search" size={20} color={COLORS.BLACK} style={styles.searchIcon} />
           </TouchableOpacity>
         </View>
         {searchSuggestions.length > 0 && (
@@ -495,20 +413,16 @@ const PatientList = ({navigation}) => {
           users.length > 0 ? (
             <FlatList
               data={users}
-              keyExtractor={item => item.id.toString()}
+              keyExtractor={(item) => item.id.toString()}
               renderItem={renderUserCard}
               contentContainerStyle={styles.flatListContent}
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
+              refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             />
           ) : (
             <Text style={styles.noUserFoundText}>No user found</Text>
           )
         ) : (
-          <View>
-            <Loader />
-          </View>
+          <Loader />
         )}
       </View>
     </View>
@@ -516,162 +430,105 @@ const PatientList = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 20,
-  },
   wrapper: {
     flex: 1,
     backgroundColor: COLORS.BACKGROUND,
   },
-  header: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: COLORS.PRIMARY,
-    marginBottom: 20,
-    textAlign: 'center',
-    marginVertical: 20,
-    textDecorationLine: 'underline',
-  },
-  centerHeader: {
+  container: {
     flex: 1,
-    alignItems: 'center',
-    color: COLORS.BLACK,
+    padding: 16,
+  },
+  header: {
+    fontSize: 18,
     fontWeight: 'bold',
-  },
-  flatListContent: {
-    paddingBottom: 20,
-  },
-  userCard: {
-    backgroundColor: COLORS.WHITE,
-    borderRadius: 10,
-    padding: 20,
-    marginBottom: 20,
-    elevation: 2,
-    shadowColor: COLORS.GRAY,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  userName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: COLORS.BLACK,
-  },
-  cardDetails: {
-    marginTop: 10,
-  },
-  label: {
-    fontSize: 14,
-    marginBottom: 5,
-    color: COLORS.BLACK,
-  },
-  userDataValue: {
-    fontWeight: 'normal',
-    fontSize: 16,
+    marginBottom: 16,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    borderColor: COLORS.BLACK,
-    borderRadius: 5,
-    marginBottom: 20,
-    backgroundColor: COLORS.WHITE,
-    elevation: 3,
-    marginBottom: 15,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    marginBottom: 15,
-    borderRadius: 10,
+    marginBottom: 16,
   },
   searchInput: {
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    color: COLORS.BLACK,
-    fontSize: 16,
+    flex: 1,
+    height: 40,
+    borderWidth: 1,
+    borderColor: COLORS.BLACK,
+    borderRadius: 4,
+    paddingHorizontal: 8,
+    marginRight: 8,
   },
   searchIcon: {
-    marginHorizontal: 10,
-    fontSize: 20,
-    color: COLORS.PRIMARY,
+    marginRight: 8,
   },
   searchSuggestionsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 15,
+    marginBottom: 16,
   },
   searchSuggestion: {
     backgroundColor: COLORS.PRIMARY,
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    marginRight: 10,
-    marginBottom: 10,
+    borderRadius: 4,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    marginRight: 8,
+    marginBottom: 8,
   },
   searchSuggestionText: {
-    color: COLORS.BLACK,
-    fontSize: 16,
+    color: COLORS.WHITE,
+  },
+  flatListContent: {
+    paddingBottom: 16,
   },
   noUserFoundText: {
+    fontSize: 16,
     textAlign: 'center',
-    fontSize: 18,
-    color: COLORS.BLACK,
-    marginTop: 20,
+  },
+  userCard: {
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: COLORS.BLACK,
+    borderRadius: 4,
+    padding: 16,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  userName: {
+    fontSize: 16,
     fontWeight: 'bold',
+  },
+  cardDetails: {
+    marginTop: 8,
   },
   userDataLabel: {
-    fontWeight: 'bold',
-    fontSize: 15,
-    marginBottom: 5,
-    color: COLORS.BLACK,
-    paddingHorizontal: 10,
-    paddingLeft: 10,
+    marginBottom: 4,
   },
   userDataValue: {
-    fontWeight: 'normal',
-    fontSize: 15,
-    paddingRight: 10,
+    fontWeight: 'bold',
   },
   userDataLabel1: {
     fontWeight: 'bold',
-    fontSize: 16,
-    marginBottom: 5,
-    color: COLORS.PRIMARY,
-  },
-  buttonSec: {
-    backgroundColor: COLORS.WHITE,
-    paddingVertical: 10,
-    // paddingHorizontal: 15,
-    borderRadius: 10,
-    marginVertical: 20,
-    borderWidth: 2,
-    borderColor: COLORS.PRIMARY,
-  },
-  buttonText: {
-    color: COLORS.PRIMARY,
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  userDataLabel1: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginBottom: 5,
-    color: COLORS.PRIMARY,
+    marginBottom: 8,
   },
   line: {
-    borderBottomColor: 'black',
     borderBottomWidth: 1,
-    marginVertical: 10,
+    borderBottomColor: COLORS.BLACK,
+    marginBottom: 8,
+  },
+  buttonSec: {
+    backgroundColor: COLORS.PRIMARY,
+    borderRadius: 4,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginTop: 16,
+  },
+  buttonText: {
+    color: COLORS.WHITE,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
