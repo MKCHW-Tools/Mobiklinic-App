@@ -523,6 +523,7 @@ const STYLES = StyleSheet.create({
     color: COLORS.BLACK,
     fontSize: 11,
     fontWeight: 'bold',
+    display: 'none',
     
   },
   submit: {
