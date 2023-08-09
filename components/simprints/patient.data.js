@@ -105,7 +105,7 @@ const PatientData = ({navigation}) => {
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
 
-      if (state.firstName === '' || state.lastName === '') {
+      if (state.firstName === '' || state.sex === '' || state.lastName === '') {
         Alert.alert('Error', 'Please fill in all required fields');
         return;
       }

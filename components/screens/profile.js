@@ -10,6 +10,9 @@ import DataResultsContext from '../contexts/DataResultsContext';
 import {AuthContext} from '../contexts/auth';
 import CopyRight from '../simprints/copyright';
 
+
+
+
 const Profile = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
   const {userNames, patientId} = useContext(DataResultsContext);
@@ -111,6 +114,7 @@ const Profile = ({navigation}) => {
           weeklyEnrollmentsCount: weeklyEnrollments.length,
         }));
 
+        // DAILY ENROLLMENTS count
         const dailyEnrollments = sortedData.filter(item => {
           const itemDate = new Date(item.createdAt);
           return (
@@ -139,24 +143,26 @@ const Profile = ({navigation}) => {
       const response = await axios.get(
         `https://mobi-be-production.up.railway.app/vaccinations/all`,
       );
-
+  
       if (response.status === 200) {
         const sortedData = response.data.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
         );
-
+  
         const currentDate = new Date();
         const currentMonth = currentDate.getMonth();
         const currentYear = currentDate.getFullYear();
-
+  
+  
         const startDate = new Date(currentYear, currentMonth, 1);
         const endDate = new Date(currentYear, currentMonth + 1, 0);
-
+  
         const monthlyVaccinations = sortedData.filter(item => {
           const itemDate = new Date(item.createdAt);
           return itemDate >= startDate && itemDate <= endDate;
         });
-
+        
+  
         setCounts(prevCounts => ({
           ...prevCounts,
           totalVaccinations: monthlyVaccinations.length,
