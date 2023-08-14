@@ -91,7 +91,8 @@ public class IdentificationModule extends ReactContextBaseJavaModule {
     
             if (identifications != null && identifications.size() > 0) {
                 Identification topMatch = identifications.get(0);
-                String topMatchId = topMatch.getGuid();
+                // String topMatchId = topMatch.getGuid();
+                
     
                
                 WritableArray resultArray = Arguments.createArray();
