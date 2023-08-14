@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState, useContext} from 'react';
+import React, { useCallback, useEffect, useState, useContext } from 'react';
 import {
   View,
   Image,
@@ -10,15 +10,15 @@ import {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
-import {COLORS, DIMENS} from '../constants/styles';
+import { COLORS, DIMENS } from '../constants/styles';
 
-import {AuthContext} from '../contexts/auth';
-import {CustomStatusBar} from '../ui/custom.status.bar';
+import { AuthContext } from '../contexts/auth';
+import { CustomStatusBar } from '../ui/custom.status.bar';
 import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import {URLS} from '../constants/API';
+import { URLS } from '../constants/API';
 
 export const clearStorage = async () => {
   await AsyncStorage.clear();
@@ -42,9 +42,8 @@ export const generateRandomCode = length => {
 
 export const MyDate = () => {
   const myDate = new Date();
-  return `${
-    myDate.getMonth() + 1
-  }-${myDate.getDate()}-${myDate.getFullYear()} ${myDate.getHours()}:${myDate.getMinutes()}:${myDate.getSeconds()}`;
+  return `${myDate.getMonth() + 1
+    }-${myDate.getDate()}-${myDate.getFullYear()} ${myDate.getHours()}:${myDate.getMinutes()}:${myDate.getSeconds()}`;
 };
 
 export const tokensRefresh = async user => {
@@ -78,7 +77,7 @@ export const tokensRefresh = async user => {
     });
     if (data === null) return null;
 
-    const {accessToken, refreshToken, msg, result} = data;
+    const { accessToken, refreshToken, msg, result } = data;
     if (result === 'Success') {
       await SAVE_LOCAL_USER({
         id: user.id,
@@ -157,7 +156,7 @@ export const cyrb53 = function (str, seed = 0) {
 export const DOWNLOAD = async data => {
   // await AsyncStorage.removeItem("@doctors");
   // await AsyncStorage.removeItem("@ambulances");
-  const {accessToken, items, userId, per_page} = data;
+  const { accessToken, items, userId, per_page } = data;
   axios.defaults.baseURL = URLS.BASE;
   axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
   axios.defaults.headers.post['Content-Type'] =
@@ -167,7 +166,7 @@ export const DOWNLOAD = async data => {
   for (let i = 0; i < items.length; i++) {
     try {
       const {
-        data: {total},
+        data: { total },
       } = await axios.get(`/${items[i]}`);
 
       let pages = Math.round(total / per_page);
@@ -192,7 +191,7 @@ export const DOWNLOAD = async data => {
   }
 };
 
-const Login = ({navigation}) => {
+const Login = ({ navigation }) => {
   const {
     setUser: setMyUser,
     isLoading,
@@ -205,12 +204,12 @@ const Login = ({navigation}) => {
     password: '',
   });
 
-  const {updateUserLog} = useContext(DataResultsContext);
-  const {updateUserNames} = useContext(DataResultsContext);
+  const { updateUserLog } = useContext(DataResultsContext);
+  const { updateUserNames } = useContext(DataResultsContext);
 
   const signIn = async () => {
     clearStorage();
-    let {username, password} = user;
+    let { username, password } = user;
 
     if (username === '' || password === '') {
       Alert.alert('Error', 'Provide your phone number and password');
@@ -261,7 +260,7 @@ const Login = ({navigation}) => {
       );
 
       let json_data = await response.json();
-      const {message, id, accessToken, refreshToken, firstName, lastName} =
+      const { message, id, accessToken, refreshToken, firstName, lastName } =
         json_data;
 
       if (message === 'Login successful') {
@@ -276,7 +275,7 @@ const Login = ({navigation}) => {
           id,
           username,
           password,
-          tokens: {accessToken: accessToken, refreshToken: refreshToken},
+          tokens: { accessToken: accessToken, refreshToken: refreshToken },
         });
 
         const resources = ['ambulances', 'doctors', 'diagnosis'];
@@ -291,7 +290,7 @@ const Login = ({navigation}) => {
           setMyUser({
             id,
             username,
-            tokens: {accessToken: accessToken, refreshToken: refreshToken},
+            tokens: { accessToken: accessToken, refreshToken: refreshToken },
             offline: false,
           });
           setIsLoading(false);
@@ -345,7 +344,7 @@ const Login = ({navigation}) => {
 
       <View style={styles.logoContainer}>
         <Image
-          style={{width: 80, height: 80}}
+          style={{ width: 80, height: 80 }}
           source={require('../imgs/logo.png')}
         />
         <Text style={styles.title}>Sign in</Text>
@@ -358,7 +357,7 @@ const Login = ({navigation}) => {
             placeholderTextColor="grey"
             // keyboardType={'phone-pad'}
             selectionColor={COLORS.SECONDARY}
-            onChangeText={text => setUser({...user, username: text})}
+            onChangeText={text => setUser({ ...user, username: text })}
             value={user.username}
             placeholder="Phone number e.g: 256778xxxxxx"
           />
@@ -371,7 +370,7 @@ const Login = ({navigation}) => {
             autoCorrect={false}
             placeholderTextColor="grey"
             selectionColor={COLORS.SECONDARY}
-            onChangeText={text => setUser({...user, password: text})}
+            onChangeText={text => setUser({ ...user, password: text })}
             value={user.password}
             placeholder="Password"
           />

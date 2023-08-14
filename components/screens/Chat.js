@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect, useContext} from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import {
   Text,
   TouchableOpacity,
@@ -10,7 +10,6 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
-// import {Camera} from 'react-native-camera';
 import RNFS from 'react-native-fs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {
@@ -20,13 +19,13 @@ import {
   MaterialIcons,
 } from 'react-native-vector-icons';
 
-import {COLORS, DIMENS} from '../constants/styles';
+import { COLORS, DIMENS } from '../constants/styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {URLS} from '../constants/API';
-import {AuthContext} from '../contexts/auth';
-import {tokensRefresh, SAVE_LOCAL_USER} from '../helpers/functions';
+import { URLS } from '../constants/API';
+import { AuthContext } from '../contexts/auth';
+import { tokensRefresh, SAVE_LOCAL_USER } from '../helpers/functions';
 
-export default function Chat({route, navigation}) {
+export default function Chat({ route, navigation }) {
   const [isLoading, setLoading] = useState(true);
   // const [type, setType] = useState(Camera.constants.Type.back);
   const [permission, setPermission] = useState(null);
@@ -39,7 +38,7 @@ export default function Chat({route, navigation}) {
   const [msg, setMsg] = useState('');
   const [chatId, setChatId] = useState(null);
   // const [cameraOn, setCameraOn] = useState(false);
-  const {user, setUser} = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
 
   const chatIdParam = route?.params?._id || undefined;
   const usersParam = route?.params?.users;
@@ -334,7 +333,7 @@ export default function Chat({route, navigation}) {
   React.useEffect(() => {
     makeChatId();
   }, []);
-  const Amessage = ({chat, style}) => {
+  const Amessage = ({ chat, style }) => {
     let statusIcon = <Feather name="clock" />;
     switch (chat?.status) {
       case 0: // sending
@@ -379,7 +378,7 @@ export default function Chat({route, navigation}) {
     );
   };
 
-  const RevealImage = ({image}) => {
+  const RevealImage = ({ image }) => {
     return (
       <View style={STYLES.revealContainer}>
         <TouchableOpacity style={STYLES.revealImageClose}>
@@ -390,7 +389,7 @@ export default function Chat({route, navigation}) {
             onPress={() => setViewImage(undefined)}
           />
         </TouchableOpacity>
-        <Image source={{uri: image}} style={STYLES.revealedImage} />
+        <Image source={{ uri: image }} style={STYLES.revealedImage} />
       </View>
     );
   };
@@ -429,7 +428,7 @@ export default function Chat({route, navigation}) {
             <View style={STYLES.cameraInner}></View>
           </Camera>
         ) : (
-          <Image source={{uri: image}} style={STYLES.camera} />
+          <Image source={{ uri: image }} style={STYLES.camera} />
         )}
         {!image ? (
           <View style={STYLES.buttonContainer}>
@@ -558,7 +557,7 @@ export default function Chat({route, navigation}) {
             style={STYLES.messageInputControl}
             onChangeText={text => setMsg(text)}
             placeholder={'Type a message'}
-            // onFocus={() => setKeyboardStatus(true)}
+          // onFocus={() => setKeyboardStatus(true)}
           />
           {/* <TouchableOpacity>
 			<MaterialCommunityIcons

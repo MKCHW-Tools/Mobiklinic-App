@@ -12,13 +12,13 @@ import {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
-import {CustomStatusBar} from '../ui/custom.status.bar';
-import {signUp} from '../helpers/functions';
-import {validateUgandaPhoneNumber} from '../helpers/validation';
+import { CustomStatusBar } from '../ui/custom.status.bar';
+import { signUp } from '../helpers/functions';
+import { validateUgandaPhoneNumber } from '../helpers/validation';
 import Loader from '../ui/loader';
-import {COLORS, DIMENS} from '../constants/styles';
+import { COLORS, DIMENS } from '../constants/styles';
 
-const SignUp = ({navigation}) => {
+const SignUp = ({ navigation }) => {
   const [state, setState] = React.useState({
     firstName: '',
     lastName: '',
@@ -40,7 +40,7 @@ const SignUp = ({navigation}) => {
     navigation.navigate(screen);
   };
 
-  const {firstName, lastName, phoneNumber, password, cPassword, eMail, msg} =
+  const { firstName, lastName, phoneNumber, password, cPassword, eMail, msg } =
     state;
 
   if (isLoading)
@@ -69,7 +69,7 @@ const SignUp = ({navigation}) => {
 
       <View style={styles.logoContainer}>
         <Image
-          style={{width: 80, height: 80}}
+          style={{ width: 80, height: 80 }}
           source={require('../imgs/logo.png')}
         />
         <Text style={styles.title}>Sign up to become A Mobiklinic CHP.</Text>
@@ -86,7 +86,7 @@ const SignUp = ({navigation}) => {
               autoCorrect={false}
               placeholderTextColor="grey"
               selectionColor={COLORS.SECONDARY}
-              onChangeText={firstName => setState({...state, firstName})}
+              onChangeText={firstName => setState({ ...state, firstName })}
               value={firstName}
               placeholder="Enter First name"
             />
@@ -98,7 +98,7 @@ const SignUp = ({navigation}) => {
               autoCorrect={false}
               placeholderTextColor="grey"
               selectionColor={COLORS.SECONDARY}
-              onChangeText={lastName => setState({...state, lastName})}
+              onChangeText={lastName => setState({ ...state, lastName })}
               value={lastName}
               placeholder="Enter Last name"
             />
@@ -110,7 +110,7 @@ const SignUp = ({navigation}) => {
               autoCorrect={false}
               placeholderTextColor="grey"
               selectionColor={COLORS.SECONDARY}
-              onChangeText={eMail => setState({...state, eMail})}
+              onChangeText={eMail => setState({ ...state, eMail })}
               value={eMail}
               keyboardType="email-address"
               placeholder="Enter Email"
@@ -125,7 +125,7 @@ const SignUp = ({navigation}) => {
               keyboardType="numeric"
               selectionColor={COLORS.SECONDARY}
               onChangeText={phoneNumber => {
-                setState({...state, phoneNumber});
+                setState({ ...state, phoneNumber });
                 if (!validateUgandaPhoneNumber(phoneNumber)) {
                   setPhoneError('Phone Number should begin with area code. e.g: 2567xxx...');
                 } else {
@@ -151,7 +151,7 @@ const SignUp = ({navigation}) => {
               autoCorrect={false}
               placeholderTextColor="grey"
               selectionColor={COLORS.SECONDARY}
-              onChangeText={password => setState({...state, password})}
+              onChangeText={password => setState({ ...state, password })}
               value={password}
               placeholder="Enter Password"
             />
@@ -167,7 +167,7 @@ const SignUp = ({navigation}) => {
               placeholderTextColor="grey"
               selectionColor={COLORS.SECONDARY}
               onChangeText={cPassword => {
-                setState({...state, cPassword});
+                setState({ ...state, cPassword });
                 if (password != cPassword) {
                   setPasswordError('Make sure passwords are not different.');
                 } else {
