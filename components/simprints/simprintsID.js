@@ -126,7 +126,7 @@ const SimprintsID = ({navigation}) => {
         setDisplayMode('identificationPlus');
         updateBenData(results);
         const {guid} = results[0];
-        // const {sessionId} = results[0];
+        const {sessionId} = results[0];
         updateDataResults(guid);
        
   
@@ -136,13 +136,14 @@ const SimprintsID = ({navigation}) => {
     const identificationSubscription = DeviceEventEmitter.addListener(
       'onIdentificationResult',
       results => {
+        const {guid} = results[0];
+        const {sessionId} = results[0];
         setIdentificationResults(results);
         setDisplayMode('identification');
         setSessionId(sessionId);
         updateBenData(results);
         updateSession(sessionId);
-        const {guid} = results[0];
-        const {sessionId} = results[0];
+       
 
         updateDataResults(guid);
      

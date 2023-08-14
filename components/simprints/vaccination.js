@@ -160,18 +160,8 @@ const PatientData = ({navigation, route}) => {
     <View style={STYLES.wrapper}>
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
       {_header()}
-      <ScrollView style={STYLES.labeled}>
-         {/* Simprints GUI */}
-         <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Simprints GUI</Text>
-          <TextInput
-            style={STYLES.guid}
-            value={dataResults}
-            onChangeText={text => setState({...state, simprintsGui: text})}
-            placeholder="Enter simprints GUI"
-          />
-          
-        </View>
+      <ScrollView style={STYLES.body}>
+        
         {/* Vaccine Name */}
         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
           <Text style={STYLES.label}>Vaccine Name:</Text>
@@ -205,6 +195,30 @@ const PatientData = ({navigation, route}) => {
             <Picker.Item label="Influenza Vaccine" value="influenza" />
           </Picker>
         </View>
+
+          {/* Simprints GUI */}
+          <View style={STYLES.guid}>
+          <Text style={STYLES.label}>Simprints GUI</Text>
+          <TextInput
+            style={STYLES.guid}
+            value={dataResults}
+            onChangeText={text => setState({...state, simprintsGui: text})}
+            placeholder="Enter simprints GUI"
+          />
+          
+        </View>
+
+         {/* Simprints Session ID */}
+         <View style={STYLES.guid}>
+          <Text style={STYLES.label}>Simprints Session ID</Text>
+          <TextInput
+            style={STYLES.guid}
+            value={sessionId}
+            onChangeText={text => setState({...state, simSessionId: text})}
+            placeholder="Enter simprints session ID"
+          />
+          </View>
+
 
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Card number:</Text>
