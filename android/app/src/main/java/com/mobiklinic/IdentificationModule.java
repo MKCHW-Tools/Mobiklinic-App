@@ -102,6 +102,7 @@ public class IdentificationModule extends ReactContextBaseJavaModule {
                     identificationMap.putString("tier", identification.getTier().toString());
                     identificationMap.putDouble("confidenceScore", identification.getConfidence());
                     identificationMap.putString("guid", identification.getGuid());
+                    identificationMap.putString("sessionId", sessionId);
                     resultArray.pushMap(identificationMap);
                 }
     

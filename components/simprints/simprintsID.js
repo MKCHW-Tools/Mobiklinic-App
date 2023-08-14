@@ -126,12 +126,10 @@ const SimprintsID = ({navigation}) => {
         setDisplayMode('identificationPlus');
         updateBenData(results);
         const {guid} = results[0];
-        const {sessionId} = results;
+        // const {sessionId} = results[0];
         updateDataResults(guid);
-        console.log(results[0].sessionId);
-         // Console log the guid and sessionId here
-      // console.log('Guidssss:', guid);
-      console.log('SessionId:', sessionId);
+       
+  
       },
     );
 
@@ -140,7 +138,9 @@ const SimprintsID = ({navigation}) => {
       results => {
         setIdentificationResults(results);
         setDisplayMode('identification');
+        setSessionId(sessionId);
         updateBenData(results);
+        updateSession(sessionId);
         const {guid} = results[0];
         const {sessionId} = results[0];
 
@@ -151,7 +151,7 @@ const SimprintsID = ({navigation}) => {
       console.log('Guid:', guid);
       console.log('SessionId:', sessionId);
       console.log('sessionId data type:', typeof sessionId);
-      // console.log('SessionId:', sessionId);
+    
 
       },
     );
@@ -171,7 +171,7 @@ const SimprintsID = ({navigation}) => {
 
         console.log('Guid:', guid);
         console.log('SessionId:', sessionId);
-        console.log('sessionId data type:', typeof sessionId);
+    
       },
     );
 

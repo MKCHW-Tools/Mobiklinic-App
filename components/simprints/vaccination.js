@@ -31,6 +31,7 @@ const PatientData = ({navigation, route}) => {
   const [dateOfVaccination, setDateOfVaccination] = useState('');
   const [dateForNextDose, setDateForNextDose] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const {sessionId} = useContext(DataResultsContext);
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || dateOfVaccination;
@@ -68,6 +69,8 @@ const PatientData = ({navigation, route}) => {
     dateForNextDose: '',
     siteAdministered: '',
     facility: '',
+    simSessionId: '',
+    simprintsGui: '',
 
     // registeredById: '',
   });
@@ -101,6 +104,8 @@ const PatientData = ({navigation, route}) => {
             dateForNextDose: state.dateForNextDose,
             siteAdministered: state.siteAdministered,
             facility: state.facility,
+            simSessionId: sessionId,
+            simprintsGui: dataResults,
           }),
           headers: {
             'Content-type': 'application/json; charset=UTF-8',
@@ -155,7 +160,18 @@ const PatientData = ({navigation, route}) => {
     <View style={STYLES.wrapper}>
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
       {_header()}
-      <ScrollView style={STYLES.body}>
+      <ScrollView style={STYLES.labeled}>
+         {/* Simprints GUI */}
+         <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Simprints GUI</Text>
+          <TextInput
+            style={STYLES.guid}
+            value={dataResults}
+            onChangeText={text => setState({...state, simprintsGui: text})}
+            placeholder="Enter simprints GUI"
+          />
+          
+        </View>
         {/* Vaccine Name */}
         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
           <Text style={STYLES.label}>Vaccine Name:</Text>
