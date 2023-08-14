@@ -32,12 +32,12 @@ describe("Testing Sign Up Component", () => {
     // Tests that the user is registered when valid data is submitted during sign up
     it('should register user when valid data is submitted', async () => {
         const data = {
-            firstName: 'John',
-            lastName: 'Doe',
+            firstName: 'Silas',
+            lastName: 'sangmin',
             phoneNumber: '256754123456',
             password: 'password',
             cPassword: 'password',
-            eMail: 'johndoe@example.com',
+            eMail: 'Silassangmin@example.com',
             setIsLoading: jest.fn(),
             setProcess: jest.fn(),
             setRegistered: jest.fn()
