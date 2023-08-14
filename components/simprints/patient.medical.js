@@ -94,7 +94,7 @@ const PatientMedical = ({navigation}) => {
       }
 
       const response = await fetch(
-        `https://mobi-be-production.up.railway.app/${patientId}/diagnosis`,
+        `http://192.168.1.12:3000/${patientId}/diagnosis`,
         {
           method: 'POST',
           body: JSON.stringify({

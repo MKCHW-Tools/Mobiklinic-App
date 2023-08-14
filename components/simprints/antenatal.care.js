@@ -93,7 +93,7 @@ const AntenatalCare = ({navigation}) => {
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
       const response = await fetch(
-        `https://mobi-be-production.up.railway.app/${patientId}/antenantals`,
+        `http://192.168.1.12:3000/${patientId}/antenantals`,
         {
           method: 'POST',
           body: JSON.stringify({

@@ -90,7 +90,7 @@ const PatientData = ({navigation, route}) => {
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
       const response = await fetch(
-        `https://mobi-be-production.up.railway.app/${patientId}/vaccinations`,
+        `http://192.168.1.12:3000/${patientId}/vaccinations`,
         {
           method: 'POST',
           body: JSON.stringify({

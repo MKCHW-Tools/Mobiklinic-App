@@ -108,7 +108,7 @@ const PatientData = ({navigation}) => {
       }
 
       const response = await fetch(
-        `https://mobi-be-production.up.railway.app/${userLog}/patients`,
+        `http://192.168.1.12:3000/${userLog}/patients`,
         {
           method: 'POST',
           body: JSON.stringify({
