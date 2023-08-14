@@ -1,26 +1,26 @@
 
 export const initialState = {
-    diagnoses:[],
-    diagnosis:{},
-    followup:{}
+    diagnoses: [],
+    diagnosis: {},
+    followup: {}
 }
 
 export const reducer = (state, action) => {
-    switch(action.type) {
+    switch (action.type) {
         case 'NEW_DIAGNOSIS':
             return {
                 ...state,
-                diagnosis
+                diagnosis: action.diagnosis
             }
         case 'FOLLOW_UP':
             return {
                 ...state,
-                followup
+                followup: action.followup
             }
         case 'DIAGNOSES':
             return {
                 ...state,
-                diagnoses
+                diagnoses: action.diagnoses
             }
         default:
             return state
