@@ -10,6 +10,12 @@ import renderer from 'react-test-renderer';
 
 
 describe("Testing Sign Up Component", () => {
+
+    //mock the navigation
+    const mockNavigation = {
+        navigate: jest.fn()
+    };
+
     //Tests that the component renders correctly
     it('renders same screen', () => {
         const tree = renderer.create(
@@ -19,7 +25,7 @@ describe("Testing Sign Up Component", () => {
     });
 
     test('renders field lables and placeholders', () => {
-        const { getByText, getByPlaceholderText } = render(<SignUp />);
+        const { getByText, getByPlaceholderText } = render(<SignUp navigation={mockNavigation} />);
 
         // Verify the existence of UI elements like labels, placeholders, and buttons
         expect(getByText('Sign Up')).toBeTruthy();
@@ -63,5 +69,12 @@ describe("Testing Sign Up Component", () => {
         ]); //should alert error because default fields are empty
     });
 
+    //Test Already have an account? Sign in navigation to sign in screen
+    it('should navigate to sign in screen', async () => {
+        const { getByText } = render(<SignUp navigation={mockNavigation} />);
+        const signInNavButton = getByText('Already have an account? Sign in');
+        fireEvent.press(signInNavButton);
+        expect(mockNavigation.navigate).toHaveBeenCalledWith('Login');
+    });
 });
 
