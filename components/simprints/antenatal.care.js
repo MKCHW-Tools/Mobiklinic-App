@@ -22,18 +22,22 @@ import {COLORS, DIMENS} from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import MultiSelectView from 'react-native-multiselect-view';
 import {format} from 'date-fns';
+import CopyRight from './copyright';
 
 const AntenatalCare = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
   const {diagnoses} = diagnosisContext;
   const {dataResults} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
+  const {userNames} = useContext(DataResultsContext);
   const currentDate = new Date();
+  const {sessionId} = useContext(DataResultsContext);
+
 
   const [routineVisitDate, setRoutineVisitDate] = useState('');
   const [expectedDateOfDelivery, setExpectedDateOfDelivery] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [prescriptions, setPrescriptions] = useState([]);
+  const [prescriptions, setSelectedPrescriptions] = useState([]);
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || routineVisitDate;
@@ -68,9 +72,13 @@ const AntenatalCare = ({navigation}) => {
     routineVisitDate: '',
     weight: '',
     bloodGroup: '',
+    prescriptions: '',
     nextOfKin: '',
     nextOfKinContact: '',
     drugNotes: '',
+
+
+    // registeredById: '',
   });
 
   const handleSubmit = async () => {
@@ -82,18 +90,16 @@ const AntenatalCare = ({navigation}) => {
       }
       if (
         state.pregnancyStatus === '' ||
-        state.expectedDateOfDelivery === '' ||
         routineVisitDate === '' ||
         state.drugNotes === '' ||
-        state.bloodGroup === '' ||
-        state.prescriptions.length === 0
+        state.bloodGroup === ''
       ) {
         Alert.alert('Error', 'Please fill in all required fields');
         return;
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
       const response = await fetch(
-        `http://192.168.1.12:3000/${patientId}/antenantals`,
+        `http://192.168.1.11:3000/${patientId}/antenantals`,
         {
           method: 'POST',
           body: JSON.stringify({
@@ -106,6 +112,9 @@ const AntenatalCare = ({navigation}) => {
             prescriptions: state.prescriptions,
             nextOfKin: state.nextOfKin,
             drugNotes: state.drugNotes,
+            reviewedBy: userNames,
+            simprintsGui: dataResults,
+            simSessionId: sessionId,
           }),
           headers: {
             'Content-type': 'application/json; charset=UTF-8',
@@ -182,7 +191,7 @@ const AntenatalCare = ({navigation}) => {
             placeholderTextColor={COLORS.GREY}
             value={state.pregnancyStatus}
             onChangeText={text => setState({...state, pregnancyStatus: text})}
-            placeholder="Enter Pregnancy Status e.g 'lower back pain'"
+            placeholder="Enter Pregnancy Status e.g 'first trimster'"
             multiline={true}
             numberOfLines={4}
           />
@@ -231,6 +240,7 @@ const AntenatalCare = ({navigation}) => {
             <Picker.Item label="AB-" value="AB-" />
             <Picker.Item label="0+" value="O+" />
             <Picker.Item label="O-" value="O-" />
+            <Picker.Item label="Don't Know" value="Don't Know" />
           </Picker>
         </View>
 
@@ -249,27 +259,40 @@ const AntenatalCare = ({navigation}) => {
         </View>
 
         {/* prescriptions */}
-        <View style={STYLES.labeledItem} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Text style={STYLES.prescribe}>Prescriptions:</Text>
-          <View style={STYLES.select}>
-            <MultiSelectView
-              data={medications}
-              onSelectionChanged={selectedItems =>
-                setState({...state, prescriptions: selectedItems})
-              }
-              style={STYLES.multiSelect}
-              itemStyle={STYLES.item}
-              selectedTextStyle={[
-                STYLES.selectedItemText,
-                {color: COLORS.BLACK},
-              ]}
-              selectedItemStyle={[
-                STYLES.selectedItem,
-                {backgroundColor: COLORS.PRIMARY},
-              ]}
-              checkboxStyle={STYLES.checkbox}
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Prescriptions/Medicine:</Text>
+
+          <Picker
+            placeholderTextColor={COLORS.BLACK}
+            selectedValue={state.prescriptions}
+            onValueChange={(value, index) =>
+              setState({...state, prescriptions: value})
+            }
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            dropdownIconColor={COLORS.GREY_LIGHTER}>
+            <Picker.Item label="" value="" />
+            <Picker.Item
+              label="Folic Acid Supplements"
+              value="Folic Acid Supplements"
             />
-          </View>
+            <Picker.Item
+              label="Folic Acid  & Iron Supplements"
+              value="Folic Acid  & Iron Supplements"
+            />
+            <Picker.Item label="Iron Supplements" value="Iron Supplements" />
+            <Picker.Item
+              label="Calcium Supplements"
+              value="Calcium Supplements"
+            />
+            <Picker.Item label="Fansidar" value="Fansidar" />
+            <Picker.Item label="Mebendazole" value="Mebendazole" />
+            <Picker.Item label="Paracemotol" value="Paracemotol" />
+            <Picker.Item label="Vitamin C " value="Vitamin C" />
+            <Picker.Item label="Magnesium" value="Magnesium" />
+            <Picker.Item label="Cetirizine" value="Cetirizine" />
+
+            <Picker.Item label="Other" value="Other" />
+          </Picker>
         </View>
 
         {/* drug note*/}
@@ -280,7 +303,7 @@ const AntenatalCare = ({navigation}) => {
             value={state.drugNotes}
             placeholderTextColor={COLORS.GREY}
             onChangeText={text => setState({...state, drugNotes: text})}
-            placeholder="Add Drug Note"
+            placeholder="Add Drug Note eg '2 tabs per day"
             style={[STYLES.field, {paddingHorizontal: 30}]}
             multiline={true}
             numberOfLines={2}
@@ -320,6 +343,32 @@ const AntenatalCare = ({navigation}) => {
           />
         </View>
 
+         {/* Simprints is */}
+         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>GUID:</Text>
+
+          <TextInput
+            value={dataResults}
+            placeholderTextColor={COLORS.GREY}
+            onChangeText={text => setState({...state, nextOfKin: text})}
+           
+            style={[STYLES.field, {paddingHorizontal: 30}]}
+          />
+        </View>
+
+        {/* Sim session */}
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Session:</Text>
+
+          <TextInput
+            value={sessionId}
+            placeholderTextColor={COLORS.GREY}
+            onChangeText={text => setState({...state, nextOfKin: text})}
+           
+            style={[STYLES.field, {paddingHorizontal: 30}]}
+          />
+        </View>
+
         {/* next of kin */}
         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
           <Text style={STYLES.label}>Next of Kin Contact:</Text>
@@ -337,6 +386,7 @@ const AntenatalCare = ({navigation}) => {
         <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
           <Text style={STYLES.submitText}>Submit</Text>
         </TouchableOpacity>
+        <CopyRight />
       </ScrollView>
     </View>
   );
@@ -431,63 +481,203 @@ const STYLES = StyleSheet.create({
     borderColor: COLORS.GREY,
     borderStyle: 'solid',
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: 10,
+    paddingHorizontal: 15,
     marginBottom: 10,
-    backgroundColor: COLORS.GREY_LIGHTER,
+    fontWeight: 'bold',
+    // backgroundColor: COLORS.GREY,
+  },
+  pickerItemStyle: {
+    color: 'rgba(0,0,0,0.7)',
   },
   labeled: {
-    marginBottom: 20,
-  },
-  datePickerInput: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    // paddingVertical: 10,
     color: COLORS.BLACK,
-    backgroundColor: COLORS.GREY_LIGHTER,
-    borderRadius: DIMENS.INPUT_RADIUS,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    marginTop: 10,
     marginBottom: 10,
-  },
-  datePickerText: {
-    color: COLORS.GREY,
-  },
-  submit: {
-    backgroundColor: COLORS.PRIMARY,
-    paddingVertical: 15,
-    borderRadius: DIMENS.INPUT_RADIUS,
-    marginTop: 20,
-  },
-  submitText: {
-    color: COLORS.WHITE,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    fontSize: 16,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 10,
   },
   field: {
-    color: 'rgba(0,0,0,0.7)',
-    borderRadius: 20,
-    paddingHorizontal: 20,
+    flex: 1,
+    justifyContent: 'center',
+    color: COLORS.BLACK,
+    fontWeight: 'medium',
+    fontSize: 13,
+  },
+  guid: {
+    textAlign: 'left',
+    color: COLORS.BLACK,
+    fontSize: 11,
+    fontWeight: 'bold ',
+  },
+  label: {
+    fontWeight: 'bold',
+    marginLeft: 5,
+    marginRight: 5,
+    color: COLORS.BLACK,
+    fontSize: 14,
+  },
+  prescribe: {
+    fontWeight: 'bold',
+    marginLeft: 5,
+    marginRight: 5,
+    color: COLORS.BLACK,
+    fontSize: 14,
+    paddingVertical: 8,
+  },
+  submit: {
+    backgroundColor: COLORS.BLACK,
     paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  submitText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  wrap: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: 70,
+    borderRadius: 20,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+  },
+  pickerWrap: {
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    marginBottom: 10,
+    backgroundColor: COLORS.GREY_LIGHTER,
+  },
+  smallInput: {
+    width: 80,
+    height: 40,
+    textAlign: 'right',
+    color: COLORS.BLACK,
+    borderRadius: 20,
+    paddingHorizontal: 15,
     borderColor: COLORS.GREY,
     borderStyle: 'solid',
     borderWidth: 1,
     marginBottom: 10,
     backgroundColor: COLORS.GREY_LIGHTER,
   },
+  wrap: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    // alignItems: 'center',
+    // minHeight: 70,
+    borderRadius: 20,
+    marginBottom: 10,
+    // paddingHorizontal: 10,
+  },
+  detail: {
+    flex: 1,
+    paddingHorizontal: 8,
+    // paddingVertical: 10,
+    color: COLORS.BLACK,
+    marginTop: 10,
+    marginBottom: 10,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 10,
+    // height: 50,
+    marginHorizontal: 5,
+  },
+  pickerStyle: {
+    flex: 1,
+    paddingHorizontal: 15,
+    // paddingVertical: 10,
+    color: COLORS.BLACK,
+    marginTop: 10,
+    marginBottom: 10,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 10,
+    height: 50,
+    marginHorizontal: 5,
+  },
+  datePickerText: {
+    paddingVertical: 10,
+    paddingLeft: 12,
+    fontSize: 15,
+    color: COLORS.BLACK,
+  },
+  datePickerInput: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderColor: COLORS.GREY,
+    // borderStyle: 'solid',
+    // borderWidth: 1,
+    // borderRadius: 10,
+  },
+  datePickerText: {
+    marginLeft: 5,
+    color: COLORS.BLACK,
+    fontSize: 14,
+    paddingVertical: 12,
+  },
   multiSelect: {
-    backgroundColor: COLORS.GREY_LIGHTER,
+    width: '80%',
+    maxHeight: 200,
+    borderWidth: 1,
+    borderColor: COLORS.GREY_LIGHTER,
+    borderRadius: 10,
+    padding: 8,
   },
   item: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderBottomColor: COLORS.GREY,
-    borderBottomWidth: 1,
+    padding: 8,
   },
   selectedItem: {
     backgroundColor: COLORS.PRIMARY,
   },
   selectedItemText: {
-    color: COLORS.WHITE,
+    color: COLORS.BLACK,
   },
   checkbox: {
-    marginRight: 10,
+    marginRight: 8,
+  },
+  select: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: 70,
+    alignItems: 'center',
+  },
+  labeledItem: {
+    // flexDirection: 'row',
+    paddingHorizontal: 15,
+    // paddingVertical: 10,
+    color: COLORS.BLACK,
+    marginTop: 10,
+    marginBottom: 10,
+    borderColor: COLORS.GREY,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderRadius: 10,
   },
 });

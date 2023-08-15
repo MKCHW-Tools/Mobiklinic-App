@@ -29,6 +29,9 @@ const PatientMedical = ({navigation}) => {
   const {patientId, setPatientId} = useContext(DataResultsContext);
   const currentDate = new Date();
   const [showDatePicker, setShowDatePicker] = useState(false);
+   const {sessionId} = useContext(DataResultsContext);
+   const {userNames} = useContext(DataResultsContext);
+
 
   const [dateOfDiagnosis, setDateOfDiagnosis] = useState(''); // Add state for date of vaccination
   const [followUpDate, setFollowUpDate] = useState(''); // Add state for date for next dose
@@ -94,7 +97,7 @@ const PatientMedical = ({navigation}) => {
       }
 
       const response = await fetch(
-        `http://192.168.1.12:3000/${patientId}/diagnosis`,
+        `http://192.168.1.11:3000/${patientId}/diagnosis`,
         {
           method: 'POST',
           body: JSON.stringify({
@@ -108,6 +111,9 @@ const PatientMedical = ({navigation}) => {
             followUpDate: state.followUpDate,
             isPregnant: state.isPregnant,
             labTests: state.labTests,
+            simSessionId: sessionId,
+            simprintsGui: dataResults,
+            diagnosedBy: userNames,
           }),
           headers: {
             'Content-type': 'application/json; charset=UTF-8',

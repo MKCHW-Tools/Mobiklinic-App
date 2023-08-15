@@ -27,6 +27,7 @@ const PatientData = ({navigation, route}) => {
   const {dataResults} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
   const currentDate = new Date();
+  const {userNames} = useContext(DataResultsContext);
 
   const [dateOfVaccination, setDateOfVaccination] = useState('');
   const [dateForNextDose, setDateForNextDose] = useState('');
@@ -93,7 +94,7 @@ const PatientData = ({navigation, route}) => {
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
       const response = await fetch(
-        `http://192.168.1.12:3000/${patientId}/vaccinations`,
+        `http://192.168.1.11:3000/${patientId}/vaccinations`,
         {
           method: 'POST',
           body: JSON.stringify({
@@ -106,6 +107,8 @@ const PatientData = ({navigation, route}) => {
             facility: state.facility,
             simSessionId: sessionId,
             simprintsGui: dataResults,
+            vaccinatedBy: userNames,
+            
           }),
           headers: {
             'Content-type': 'application/json; charset=UTF-8',

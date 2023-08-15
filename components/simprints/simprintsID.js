@@ -89,7 +89,7 @@ const SimprintsID = ({navigation}) => {
 
     try {
       const response = await fetch(
-        `http://192.168.1.12:3000/patients/${guid}`,
+        `http://192.168.1.11:3000/patients/${guid}`,
       );
       if (response.ok) {
         const data = await response.json();
