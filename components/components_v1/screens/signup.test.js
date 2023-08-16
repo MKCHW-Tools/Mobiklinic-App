@@ -6,7 +6,7 @@ import SignUp from "../../screens/signup";
 import { render, fireEvent } from '@testing-library/react-native';
 import * as funcs from '../../helpers/functions';
 
-import renderer from 'react-test-renderer';
+import renderer, { act } from 'react-test-renderer';
 
 
 describe("Testing Sign Up Component", () => {
@@ -73,7 +73,11 @@ describe("Testing Sign Up Component", () => {
     it('should navigate to sign in screen', async () => {
         const { getByText } = render(<SignUp navigation={mockNavigation} />);
         const signInNavButton = getByText('Already have an account? Sign in');
-        fireEvent.press(signInNavButton);
+
+        act(() => {
+            fireEvent.press(signInNavButton);
+        });
+
         expect(mockNavigation.navigate).toHaveBeenCalledWith('Login');
     });
 });
