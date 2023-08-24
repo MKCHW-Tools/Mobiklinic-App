@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
   View,
   Alert,
@@ -11,23 +11,23 @@ import {
   StatusBar,
   Button,
 } from 'react-native';
-import {Picker} from '@react-native-picker/picker';
+import { Picker } from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/Feather';
-import {_removeStorageItem} from '../helpers/functions';
-import {DiagnosisContext} from '../providers/Diagnosis';
+import { _removeStorageItem } from '../helpers/functions';
+import { DiagnosisContext } from '../providers/Diagnosis';
 import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
-import {COLORS, DIMENS} from '../constants/styles';
+import { COLORS, DIMENS } from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {format} from 'date-fns';
+import { format } from 'date-fns';
 
-const PatientData = ({navigation}) => {
+const PatientData = ({ navigation }) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
-  const {diagnoses} = diagnosisContext;
-  const {dataResults} = useContext(DataResultsContext);
-  const {userLog} = useContext(DataResultsContext);
-  const {patientId, setPatientId} = useContext(DataResultsContext);
+  const { diagnoses } = diagnosisContext;
+  const { dataResults } = useContext(DataResultsContext);
+  const { userLog } = useContext(DataResultsContext);
+  const { patientId, setPatientId } = useContext(DataResultsContext);
 
   // date
   const currentDate = new Date();
@@ -42,7 +42,7 @@ const PatientData = ({navigation}) => {
     // Update the respective state based on the selected date
     if (showDatePicker === 'patient') {
       setAgeGroup(currentDate);
-      setState({...state, ageGroup: currentDate});
+      setState({ ...state, ageGroup: currentDate });
       console.log('Date of birth:', currentDate);
     }
   };
@@ -83,14 +83,16 @@ const PatientData = ({navigation}) => {
         // Prevent multiple submissions
         return;
       }
-      setState({...state, isLoading: true}); // Set isLoading state to true
-
+      setState({ ...state, isLoading: true }); // Set isLoading state to true
+      //log data
+      //console.log('Patient Data:', state);
       if (
         state.firstName === '' ||
         state.lastName === '' ||
-        ageGroup === '' ||
+
         state.phoneNumber === ''
       ) {
+        console.log('Patient Data:', state);
         Alert.alert('Error', 'Please fill in all required fields');
         return;
       }
@@ -155,7 +157,7 @@ const PatientData = ({navigation}) => {
         'Failed to register Beneficiary. Please try again later.',
       );
     } finally {
-      setState({...state, isLoading: false}); // Reset isLoading state to false
+      setState({ ...state, isLoading: false }); // Reset isLoading state to false
     }
   };
 
@@ -195,7 +197,7 @@ const PatientData = ({navigation}) => {
           <TextInput
             style={STYLES.guid}
             value={dataResults}
-            onChangeText={text => setState({...state, simprintsGui: text})}
+            onChangeText={text => setState({ ...state, simprintsGui: text })}
             placeholder="Enter simprints GUI"
           />
         </View>
@@ -205,11 +207,11 @@ const PatientData = ({navigation}) => {
           <TextInput
             style={[
               STYLES.field,
-              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              { color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY },
             ]} // Add color and placeholderTextColor styles
             placeholderTextColor={COLORS.BLACK} //
             value={state.firstName}
-            onChangeText={text => setState({...state, firstName: text})}
+            onChangeText={text => setState({ ...state, firstName: text })}
             placeholder="Enter first name"
           />
         </View>
@@ -220,11 +222,11 @@ const PatientData = ({navigation}) => {
           <TextInput
             style={[
               STYLES.field,
-              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              { color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY },
             ]} // Add color and placeholderTextColor styles
             placeholderTextColor={COLORS.BLACK}
             value={state.lastName}
-            onChangeText={text => setState({...state, lastName: text})}
+            onChangeText={text => setState({ ...state, lastName: text })}
             placeholder="Enter last name"
           />
         </View>
@@ -235,11 +237,11 @@ const PatientData = ({navigation}) => {
           <TextInput
             style={[
               STYLES.field,
-              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              { color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY },
             ]} // Add color and placeholderTextColor styles
             placeholderTextColor={COLORS.BLACK} // Set the placeholder text color
             value={state.phoneNumber}
-            onChangeText={text => setState({...state, phoneNumber: text})}
+            onChangeText={text => setState({ ...state, phoneNumber: text })}
             keyboardType="numeric"
             placeholder='eg:"0772700900'
           />
@@ -253,8 +255,8 @@ const PatientData = ({navigation}) => {
             placeholder="Sex"
             placeholderTextColor={COLORS.BLACK}
             selectedValue={state.sex}
-            onValueChange={(value, index) => setState({...state, sex: value})}
-            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            onValueChange={(value, index) => setState({ ...state, sex: value })}
+            style={[STYLES.field, { color: COLORS.BLACK }]} // Add color style
             dropdownIconColor={COLORS.GREY_LIGHTER}>
             <Picker.Item label="" value="" />
             <Picker.Item label="Female" value="Female" />
@@ -287,6 +289,7 @@ const PatientData = ({navigation}) => {
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Date of Birth:</Text>
           <TouchableOpacity
+            testID='setAgeGroup'
             style={STYLES.datePickerInput}
             onPress={() => setShowDatePicker('patient')}>
             <Text style={STYLES.datePickerText}>{formatDate(ageGroup)}</Text>
@@ -309,7 +312,7 @@ const PatientData = ({navigation}) => {
               keyboardType="numeric"
               value={state.weight}
               placeholderTextColor={COLORS.BLACK}
-              onChangeText={text => setState({...state, weight: text})}
+              onChangeText={text => setState({ ...state, weight: text })}
               placeholder="Weight (Kgs)"
               style={STYLES.field}
             />
@@ -322,7 +325,7 @@ const PatientData = ({navigation}) => {
               placeholderTextColor={COLORS.BLACK}
               value={state.height}
               style={STYLES.field}
-              onChangeText={text => setState({...state, height: text})}
+              onChangeText={text => setState({ ...state, height: text })}
               placeholder="Height (cm)"
             />
           </View>
@@ -335,9 +338,9 @@ const PatientData = ({navigation}) => {
             placeholderTextColor={COLORS.BLACK}
             selectedValue={state.country}
             onValueChange={(value, index) =>
-              setState({...state, country: value})
+              setState({ ...state, country: value })
             }
-            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            style={[STYLES.field, { color: COLORS.BLACK }]} // Add color style
             dropdownIconColor={COLORS.GREY_LIGHTER}>
             <Picker.Item label="" value="" />
             <Picker.Item label="Uganda" value="Uganda" />
@@ -356,9 +359,9 @@ const PatientData = ({navigation}) => {
             placeholderTextColor={COLORS.BLACK}
             selectedValue={state.district}
             onValueChange={(value, index) =>
-              setState({...state, district: value})
+              setState({ ...state, district: value })
             }
-            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            style={[STYLES.field, { color: COLORS.BLACK }]} // Add color style
             dropdownIconColor={COLORS.GREY_LIGHTER}>
             <Picker.Item label="" value="" />
             <Picker.Item label="Kampala" value="Kampala" />
@@ -378,9 +381,9 @@ const PatientData = ({navigation}) => {
             placeholderTextColor={COLORS.BLACK}
             selectedValue={state.primaryLanguage}
             onValueChange={(value, index) =>
-              setState({...state, primaryLanguage: value})
+              setState({ ...state, primaryLanguage: value })
             }
-            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            style={[STYLES.field, { color: COLORS.BLACK }]} // Add color style
             dropdownIconColor={COLORS.GREY_LIGHTER}>
             <Picker.Item label="" value="" />
             <Picker.Item label="Luganda" value="Luganda" />

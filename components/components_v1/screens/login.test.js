@@ -104,24 +104,19 @@ describe('Login Component', () => {
         const navigation = {
             navigate: jest.fn()
         };
-
         const { getByText, getByPlaceholderText } = render(
-            <MockAuthContextProvider>
+            <MockAuthContextProvider value={mockContextValue}>
                 <MockDataResultsContextProvider>
                     <Login navigation={navigation} />
                 </MockDataResultsContextProvider>
             </MockAuthContextProvider>
-
         );
-
         //get signup screen button
         const signUpButton = getByText(`Don't have an Account? Sign up`);
-
         // press signup button
         act(() => {
             fireEvent.press(signUpButton);
         });
-
         expect(navigation.navigate).toHaveBeenCalledWith('signUp');
 
     });

@@ -1,8 +1,8 @@
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Alert} from 'react-native';
+import { Alert } from 'react-native';
 import axios from 'axios';
-import {URLS} from '../constants/API';
+import { URLS } from '../constants/API';
 import uniqWith from 'lodash/uniqWith';
 import isEqual from 'lodash/isEqual';
 import DataResultsContext from '../contexts/DataResultsContext';
@@ -25,9 +25,8 @@ export const generateRandomCode = length => {
 
 export const MyDate = () => {
   const myDate = new Date();
-  return `${
-    myDate.getMonth() + 1
-  }-${myDate.getDate()}-${myDate.getFullYear()} ${myDate.getHours()}:${myDate.getMinutes()}:${myDate.getSeconds()}`;
+  return `${myDate.getMonth() + 1
+    }-${myDate.getDate()}-${myDate.getFullYear()} ${myDate.getHours()}:${myDate.getMinutes()}:${myDate.getSeconds()}`;
 };
 
 export const tokensRefresh = async user => {
@@ -61,7 +60,7 @@ export const tokensRefresh = async user => {
     });
     if (data === null) return null;
 
-    const {accessToken, refreshToken, msg, result} = data;
+    const { accessToken, refreshToken, msg, result } = data;
     if (result === 'Success') {
       await SAVE_LOCAL_USER({
         id: user.id,
@@ -140,7 +139,7 @@ export const cyrb53 = function (str, seed = 0) {
 export const DOWNLOAD = async data => {
   // await AsyncStorage.removeItem("@doctors");
   // await AsyncStorage.removeItem("@ambulances");
-  const {accessToken, items, userId, per_page} = data;
+  const { accessToken, items, userId, per_page } = data;
   axios.defaults.baseURL = URLS.BASE;
   axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
   axios.defaults.headers.post['Content-Type'] =
@@ -150,7 +149,7 @@ export const DOWNLOAD = async data => {
   for (let i = 0; i < items.length; i++) {
     try {
       const {
-        data: {total},
+        data: { total },
       } = await axios.get(`/${items[i]}`);
 
       let pages = Math.round(total / per_page);
@@ -177,13 +176,13 @@ export const DOWNLOAD = async data => {
 
 export const signIn = async data => {
   // clearStorage();
-  let {user, setIsLoading, setMyUser: setUser} = data;
+  let { user, setIsLoading, setMyUser: setUser } = data;
   if (typeof user === undefined) {
     Alert.alert('Error', 'Provide your phone number and password');
     return;
   }
 
-  const {username, password} = user;
+  const { username, password } = user;
   let hash = cyrb53(password);
 
   if (username === '' && password === '') {
@@ -233,7 +232,7 @@ export const signIn = async data => {
     );
 
     let json_data = await response.json();
-    const {message, id, accessToken, refreshToken} = json_data;
+    const { message, id, accessToken, refreshToken } = json_data;
 
     if (message === 'Login successful') {
       const userId = json_data.id;
@@ -244,7 +243,7 @@ export const signIn = async data => {
         id,
         username,
         password,
-        tokens: {accessToken: accessToken, refreshToken: refreshToken},
+        tokens: { accessToken: accessToken, refreshToken: refreshToken },
       });
 
       const resources = ['ambulances', 'doctors', 'diagnosis'];
@@ -259,7 +258,7 @@ export const signIn = async data => {
         setUser({
           id,
           username,
-          tokens: {accessToken: accessToken, refreshToken: refreshToken},
+          tokens: { accessToken: accessToken, refreshToken: refreshToken },
           offline: false,
         });
         setIsLoading(false);
@@ -423,4 +422,4 @@ export const getKeys = async () => {
   console.log(keys);
 };
 
-const processMessage = async () => {};
+const processMessage = async () => { };

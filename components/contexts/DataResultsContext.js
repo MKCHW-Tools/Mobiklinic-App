@@ -31,7 +31,7 @@ export const DataResultsProvider = ({ children }) => {
   };
 
   return (
-    <DataResultsContext.Provider 
+    <DataResultsContext.Provider
       value={{
         dataResults,
         updateDataResults,

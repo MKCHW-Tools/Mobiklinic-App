@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
   View,
   Alert,
@@ -11,23 +11,23 @@ import {
   StatusBar,
   Button,
 } from 'react-native';
-import {Picker} from '@react-native-picker/picker';
+import { Picker } from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/Feather';
-import {_removeStorageItem} from '../helpers/functions';
-import {DiagnosisContext} from '../providers/Diagnosis';
+import { _removeStorageItem } from '../helpers/functions';
+import { DiagnosisContext } from '../providers/Diagnosis';
 import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
-import {COLORS, DIMENS} from '../constants/styles';
+import { COLORS, DIMENS } from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import MultiSelectView from 'react-native-multiselect-view';
-import {format} from 'date-fns';
+import { format } from 'date-fns';
 
-const AntenatalCare = ({navigation}) => {
+const AntenatalCare = ({ navigation }) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
-  const {diagnoses} = diagnosisContext;
-  const {dataResults} = useContext(DataResultsContext);
-  const {patientId, setPatientId} = useContext(DataResultsContext);
+  const { diagnoses } = diagnosisContext;
+  const { dataResults } = useContext(DataResultsContext);
+  const { patientId, setPatientId } = useContext(DataResultsContext);
   const currentDate = new Date();
 
   const [routineVisitDate, setRoutineVisitDate] = useState('');
@@ -41,11 +41,11 @@ const AntenatalCare = ({navigation}) => {
     // Update the respective state based on the selected date
     if (showDatePicker === 'antenatal') {
       setRoutineVisitDate(currentDate);
-      setState({...state, routineVisitDate: currentDate}); // Update state
+      setState({ ...state, routineVisitDate: currentDate }); // Update state
       console.log('Date of Visit:', currentDate);
     } else if (showDatePicker === 'expectedDate') {
       setExpectedDateOfDelivery(currentDate);
-      setState({...state, expectedDateOfDelivery: currentDate}); // Update state
+      setState({ ...state, expectedDateOfDelivery: currentDate }); // Update state
       console.log('Expected date:', currentDate);
     }
   };
@@ -78,6 +78,7 @@ const AntenatalCare = ({navigation}) => {
       console.log('Patient ID :', patientId);
       if (state.isLoading) {
         // Prevent multiple submissions
+        console.log("prevent multiple submissions")
         return;
       }
       if (
@@ -88,10 +89,15 @@ const AntenatalCare = ({navigation}) => {
         state.bloodGroup === '' ||
         state.prescriptions.length === 0
       ) {
+        console.log('Testing Log:',
+          state.pregnancyStatus,
+          state.expectedDateOfDelivery,
+          routineVisitDate
+        )
         Alert.alert('Error', 'Please fill in all required fields');
         return;
       }
-      setState({...state, isLoading: true}); // Set isLoading state to true
+      setState({ ...state, isLoading: true }); // Set isLoading state to true
       const response = await fetch(
         `https://mobi-be-production.up.railway.app/${patientId}/antenantals`,
         {
@@ -133,7 +139,7 @@ const AntenatalCare = ({navigation}) => {
         'Failed to Register patient. Please try again later.',
       );
     } finally {
-      setState({...state, isLoading: false}); // Reset isLoading state to false
+      setState({ ...state, isLoading: false }); // Reset isLoading state to false
     }
   };
 
@@ -178,10 +184,10 @@ const AntenatalCare = ({navigation}) => {
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Pregnacy Status:</Text>
           <TextInput
-            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color and placeholderTextColor styles
+            style={[STYLES.field, { color: COLORS.BLACK }]} // Add color and placeholderTextColor styles
             placeholderTextColor={COLORS.GREY}
             value={state.pregnancyStatus}
-            onChangeText={text => setState({...state, pregnancyStatus: text})}
+            onChangeText={text => setState({ ...state, pregnancyStatus: text })}
             placeholder="Enter Pregnancy Status e.g 'lower back pain'"
             multiline={true}
             numberOfLines={4}
@@ -200,6 +206,7 @@ const AntenatalCare = ({navigation}) => {
           </TouchableOpacity>
           {showDatePicker === 'antenatal' && (
             <DateTimePicker
+              testID='AdatePicker'
               value={routineVisitDate || new Date()} // Use null or fallback to current date
               mode="date"
               display="spinner"
@@ -213,14 +220,15 @@ const AntenatalCare = ({navigation}) => {
           <Text style={STYLES.label}>Blood Group:</Text>
 
           <Picker
+            testID="blood-group-picker"
             placeholderTextColor={COLORS.BLACK}
             selectedValue={state.bloodGroup}
             onValueChange={(value, index) =>
-              setState({...state, bloodGroup: value})
+              setState({ ...state, bloodGroup: value })
             }
             dropdownIconColor={COLORS.GREY_LIGHTER}
             style={STYLES.field}
-            itemStyle={{fontSize: 8}}>
+            itemStyle={{ fontSize: 8 }}>
             <Picker.Item label="" value="" />
             <Picker.Item label="A+" value="A+" />
             <Picker.Item label="A-" value="A-" />
@@ -242,9 +250,9 @@ const AntenatalCare = ({navigation}) => {
             keyboardType="numeric"
             value={state.weight}
             placeholderTextColor={COLORS.GREY}
-            onChangeText={text => setState({...state, weight: text})}
+            onChangeText={text => setState({ ...state, weight: text })}
             placeholder="Current Weight (Kgs)"
-            style={[STYLES.field, {paddingHorizontal: 30}]}
+            style={[STYLES.field, { paddingHorizontal: 30 }]}
           />
         </View>
 
@@ -253,19 +261,22 @@ const AntenatalCare = ({navigation}) => {
           <Text style={STYLES.prescribe}>Prescriptions:</Text>
           <View style={STYLES.select}>
             <MultiSelectView
+              accessible={true}
+              accessibilityLabel="Prescriptions"
+              testID="prescriptionsMultiSelect"
               data={medications}
               onSelectionChanged={selectedItems =>
-                setState({...state, prescriptions: selectedItems})
+                setState({ ...state, prescriptions: selectedItems })
               }
               style={STYLES.multiSelect}
               itemStyle={STYLES.item}
               selectedTextStyle={[
                 STYLES.selectedItemText,
-                {color: COLORS.BLACK},
+                { color: COLORS.BLACK },
               ]}
               selectedItemStyle={[
                 STYLES.selectedItem,
-                {backgroundColor: COLORS.PRIMARY},
+                { backgroundColor: COLORS.PRIMARY },
               ]}
               checkboxStyle={STYLES.checkbox}
             />
@@ -279,9 +290,9 @@ const AntenatalCare = ({navigation}) => {
           <TextInput
             value={state.drugNotes}
             placeholderTextColor={COLORS.GREY}
-            onChangeText={text => setState({...state, drugNotes: text})}
+            onChangeText={text => setState({ ...state, drugNotes: text })}
             placeholder="Add Drug Note"
-            style={[STYLES.field, {paddingHorizontal: 30}]}
+            style={[STYLES.field, { paddingHorizontal: 30 }]}
             multiline={true}
             numberOfLines={2}
           />
@@ -299,6 +310,7 @@ const AntenatalCare = ({navigation}) => {
           </TouchableOpacity>
           {showDatePicker === 'expectedDate' && (
             <DateTimePicker
+              testID="expected-delivery-date-picker"
               value={expectedDateOfDelivery || new Date()} // Use null or fallback to current date
               mode="date"
               display="spinner"
@@ -314,9 +326,9 @@ const AntenatalCare = ({navigation}) => {
           <TextInput
             value={state.nextOfKin}
             placeholderTextColor={COLORS.GREY}
-            onChangeText={text => setState({...state, nextOfKin: text})}
+            onChangeText={text => setState({ ...state, nextOfKin: text })}
             placeholder="Next of Kin"
-            style={[STYLES.field, {paddingHorizontal: 30}]}
+            style={[STYLES.field, { paddingHorizontal: 30 }]}
           />
         </View>
 
@@ -327,10 +339,10 @@ const AntenatalCare = ({navigation}) => {
           <TextInput
             value={state.nextOfKinContact}
             placeholderTextColor={COLORS.GREY}
-            onChangeText={text => setState({...state, nextOfKinContact: text})}
+            onChangeText={text => setState({ ...state, nextOfKinContact: text })}
             placeholder="Add Contact"
             keyboardType="numeric"
-            style={[STYLES.field, {paddingHorizontal: 30}]}
+            style={[STYLES.field, { paddingHorizontal: 30 }]}
           />
         </View>
 
