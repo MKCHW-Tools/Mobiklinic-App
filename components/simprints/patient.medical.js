@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
   View,
   Alert,
@@ -11,22 +11,22 @@ import {
   StatusBar,
   Button,
 } from 'react-native';
-import {Picker} from '@react-native-picker/picker';
+import { Picker } from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/Feather';
-import {_removeStorageItem} from '../helpers/functions';
-import {DiagnosisContext} from '../providers/Diagnosis';
+import { _removeStorageItem } from '../helpers/functions';
+import { DiagnosisContext } from '../providers/Diagnosis';
 import CustomHeader from '../ui/custom-header';
 import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
-import {COLORS, DIMENS} from '../constants/styles';
+import { COLORS, DIMENS } from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {format} from 'date-fns';
+import { format } from 'date-fns';
 
-const PatientMedical = ({navigation}) => {
+const PatientMedical = ({ navigation }) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
-  const {diagnoses} = diagnosisContext;
-  const {dataResults} = useContext(DataResultsContext);
-  const {patientId, setPatientId} = useContext(DataResultsContext);
+  const { diagnoses } = diagnosisContext;
+  const { dataResults } = useContext(DataResultsContext);
+  const { patientId, setPatientId } = useContext(DataResultsContext);
   const currentDate = new Date();
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -40,11 +40,11 @@ const PatientMedical = ({navigation}) => {
     // Update the respective state based on the selected date
     if (showDatePicker === 'diagnoses') {
       setDateOfDiagnosis(currentDate);
-      setState({...state, dateOfDiagnosis: currentDate}); // Update state
+      setState({ ...state, dateOfDiagnosis: currentDate }); // Update state
       console.log('Date for Diagnosis:', currentDate);
     } else if (showDatePicker === 'followUp') {
       setFollowUpDate(currentDate);
-      setState({...state, followUpDate: currentDate}); // Update state
+      setState({ ...state, followUpDate: currentDate }); // Update state
       console.log('Date for Next Dose:', currentDate);
     }
   };
@@ -83,12 +83,13 @@ const PatientMedical = ({navigation}) => {
         // Prevent multiple submissions
         return;
       }
-      setState({...state, isLoading: true}); // Set isLoading state to true
+      setState({ ...state, isLoading: true }); // Set isLoading state to true
       if (
         state.condition === '' ||
         dateOfDiagnosis === '' || // Add check for dateOfVaccination
         state.impression === ''
       ) {
+        console.log('state in P Medi:', state);
         Alert.alert('Error', 'Please fill in all required fields');
         return;
       }
@@ -129,7 +130,7 @@ const PatientMedical = ({navigation}) => {
       console.error('Error posting data:', error);
       Alert.alert('Error', 'Failed to Register Diagnosis. Please try again later.');
     } finally {
-      setState({...state, isLoading: false}); // Reset isLoading state to false
+      setState({ ...state, isLoading: false }); // Reset isLoading state to false
     }
   };
 
@@ -169,11 +170,11 @@ const PatientMedical = ({navigation}) => {
           <TextInput
             style={[
               STYLES.field,
-              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              { color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY },
             ]} // Add color and placeholderTextColor styles
             placeholderTextColor={COLORS.GREY}
             value={state.impression}
-            onChangeText={text => setState({...state, impression: text})}
+            onChangeText={text => setState({ ...state, impression: text })}
             placeholder='signs and symptoms e.g "Headache, Fever, Cough"'
             multiline={true}
             numberOfLines={3}
@@ -185,6 +186,7 @@ const PatientMedical = ({navigation}) => {
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Date for Diagnosis:</Text>
           <TouchableOpacity
+            testID='clickToOpenDatePicker'
             style={STYLES.datePickerInput}
             onPress={() => setShowDatePicker('diagnoses')}>
             <Text style={STYLES.datePickerText}>
@@ -193,6 +195,7 @@ const PatientMedical = ({navigation}) => {
           </TouchableOpacity>
           {showDatePicker === 'diagnoses' && (
             <DateTimePicker
+              testID='dateOfDiagnosis'
               value={dateOfDiagnosis || new Date()} // Use null or fallback to current date
               mode="date"
               display="spinner"
@@ -207,11 +210,11 @@ const PatientMedical = ({navigation}) => {
           <TextInput
             style={[
               STYLES.field,
-              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              { color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY },
             ]} // Add color and placeholderTextColor styles
             placeholderTextColor={COLORS.GREY}
             value={state.labTests}
-            onChangeText={text => setState({...state, labTests: text})}
+            onChangeText={text => setState({ ...state, labTests: text })}
             placeholder='Lab tests and results e.g "Malaria positive"'
             multiline={true}
             numberOfLines={3}
@@ -224,11 +227,11 @@ const PatientMedical = ({navigation}) => {
           <TextInput
             style={[
               STYLES.field,
-              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              { color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY },
             ]} // Add color and placeholderTextColor styles
             placeholderTextColor={COLORS.GREY}
             value={state.condition}
-            onChangeText={text => setState({...state, condition: text})}
+            onChangeText={text => setState({ ...state, condition: text })}
             placeholder='e.g "Malaria"'
             multiline={true}
             numberOfLines={3}
@@ -241,7 +244,7 @@ const PatientMedical = ({navigation}) => {
           </Text>
           <Switch
             style={STYLES.switch}
-            onValueChange={text => setState({...state, isPregnant: text})}
+            onValueChange={text => setState({ ...state, isPregnant: text })}
             value={state.isPregnant}
           />
         </View>
@@ -252,11 +255,11 @@ const PatientMedical = ({navigation}) => {
           <TextInput
             style={[
               STYLES.field,
-              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              { color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY },
             ]} // Add color and placeholderTextColor styles
             placeholderTextColor={COLORS.GREY}
             value={state.drugsPrescribed}
-            onChangeText={text => setState({...state, drugsPrescribed: text})}
+            onChangeText={text => setState({ ...state, drugsPrescribed: text })}
             placeholder='e.g "Paracetamol"'
             multiline={true}
             numberOfLines={3}
@@ -271,12 +274,12 @@ const PatientMedical = ({navigation}) => {
             <TextInput
               value={state.dosage}
               placeholderTextColor={COLORS.GREY}
-              onChangeText={text => setState({...state, dosage: text})}
+              onChangeText={text => setState({ ...state, dosage: text })}
               placeholder="1"
               keyboardType="numeric"
               style={[
                 STYLES.field,
-                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+                { color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY },
               ]}
             />
           </View>
@@ -286,12 +289,12 @@ const PatientMedical = ({navigation}) => {
             <TextInput
               value={state.frequency}
               placeholderTextColor={COLORS.GREY}
-              onChangeText={text => setState({...state, frequency: text})}
+              onChangeText={text => setState({ ...state, frequency: text })}
               placeholder="1"
               keyboardType="numeric"
               style={[
                 STYLES.field,
-                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+                { color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY },
               ]}
             />
           </View>
@@ -303,12 +306,12 @@ const PatientMedical = ({navigation}) => {
             <TextInput
               value={state.duration}
               placeholderTextColor={COLORS.GREY}
-              onChangeText={text => setState({...state, duration: text})}
+              onChangeText={text => setState({ ...state, duration: text })}
               placeholder="1"
               keyboardType="numeric"
               style={[
                 STYLES.field,
-                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+                { color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY },
               ]}
             />
           </View>
@@ -332,7 +335,7 @@ const PatientMedical = ({navigation}) => {
               mode="date"
               display="spinner"
               onChange={handleDateChange}
-              
+
             />
           )}
         </View>

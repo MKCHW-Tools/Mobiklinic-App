@@ -4,16 +4,13 @@ import React from 'react';
 import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import { DiagnosisProvider, DiagnosisContext } from '../../providers/Diagnosis';
-// import DiagnosisContext from '../../providers/Diagnosis';
 import { DataResultsProvider } from '../../contexts/DataResultsContext';
 import DataResultsContext from '../../contexts/DataResultsContext';
 import PatientLists from '../../simprints/patient.lists';
 import axios from 'axios';
-// import { DiagnosisProvider, DiagnosisContext } from '../__mocks__/mockDiagnosisContext';
-// import { DataResultsProvider, DataResultsContext } from '../__mocks__/mockDataResultsContext';
+
 
 describe('PatientLists', () => {
-
     // Tests that the component renders without crashing
     it('should render without crashing', () => {
         // Mock the necessary dependencies
@@ -41,15 +38,12 @@ describe('PatientLists', () => {
         };
 
         // Mock the API response
-        jest.mock('axios');
         const mockUsers = [
             { id: 1, firstName: 'John', lastName: 'Paul' },
             { id: 2, firstName: 'Esther', lastName: 'Mart' }
         ];
         const mockAxiosSpy = jest.spyOn(axios, 'get').mockResolvedValueOnce({ status: 200, data: mockUsers });
 
-
-        // Render the component
         const screen = render(
             <DiagnosisContext.Provider value={{ diagnoses: [] }}>
                 <DataResultsContext.Provider value={{ dataResults: '', userLog: 'userLog', patientId: '', setPatientId: jest.fn() }}>
@@ -72,8 +66,6 @@ describe('PatientLists', () => {
         };
 
         // Mock the API response
-        // Mock Axios
-        jest.mock('axios');
         const mockUsers = [
             { id: 1, firstName: 'John', lastName: 'Paul' },
             { id: 2, firstName: 'Esther', lastName: 'Mart' }
@@ -87,14 +79,11 @@ describe('PatientLists', () => {
                     <PatientLists navigation={navigation} />
                 </DataResultsContext.Provider>
             </DiagnosisContext.Provider>);
+
         // Wait for the API call to resolve
         await waitFor(() => expect(mockAxiosSpy).toBeCalled());
 
         //assert that the axios get is called with the correct url
         expect(mockAxiosSpy).toHaveBeenCalledWith(`https://mobi-be-production.up.railway.app/userLog/patients`);
-    }
-    );
-
-
-
+    });
 });

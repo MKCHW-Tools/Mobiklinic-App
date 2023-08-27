@@ -2,12 +2,11 @@ import React from 'react';
 import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import { DiagnosisProvider, DiagnosisContext } from '../../providers/Diagnosis';
-// import DiagnosisContext from '../../providers/Diagnosis';
+
 import { DataResultsProvider } from '../../contexts/DataResultsContext';
 import DataResultsContext from '../../contexts/DataResultsContext';
 import PatientData from '../../simprints/patient.data';
-// import { DiagnosisProvider, DiagnosisContext } from '../__mocks__/mockDiagnosisContext';
-// import { DataResultsProvider, DataResultsContext } from '../__mocks__/mockDataResultsContext';
+
 import fetchMock from 'jest-fetch-mock';
 
 // Configure fetch to use the mock implementation
@@ -25,7 +24,7 @@ describe('PatientData', () => {
     it('should render successfully', () => {
         // Mock the necessary dependencies
         const navigation = { goBack: jest.fn(), navigate: jest.fn() };
-        const useContextMock = jest.spyOn(React, 'useContext').mockReturnValue({ benData: [] });
+
         const { getByText } = render(
             <DiagnosisProvider>
                 <DataResultsProvider >
@@ -46,15 +45,7 @@ describe('PatientData', () => {
         const navigation = {
             navigate: jest.fn()
         };
-        const diagnosisContext = {
-            diagnoses: []
-        };
-        const dataResultsContext = {
-            dataResults: '',
-            userLog: '',
-            patientId: '',
-            setPatientId: jest.fn()
-        };
+
 
         const mockDiagnosisValue = {
             diagnoses: [{ id: 1, name: 'Diagnosis 1' }],
@@ -85,10 +76,7 @@ describe('PatientData', () => {
             </DiagnosisContext.Provider>
         );
 
-        // Mock the Alert.alert function
-        const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation((title, message) => {
 
-        });
 
         fireEvent.changeText(screen.getByPlaceholderText('Enter first name'), 'Silas');
         fireEvent.changeText(screen.getByPlaceholderText('Enter last name'), 'Sangmin');
@@ -115,8 +103,6 @@ describe('PatientData', () => {
 
         });
 
-
-        //test that press submit button calls any function
         const data = {
             diagnoses: [{ id: 1, name: 'Diagnosis 1' }],
             followups: [{ id: 1, name: 'Followup 1' }],
@@ -133,15 +119,6 @@ describe('PatientData', () => {
         // Mock necessary dependencies
         const navigation = {
             navigate: jest.fn()
-        };
-        const diagnosisContext = {
-            diagnoses: []
-        };
-        const dataResultsContext = {
-            dataResults: '',
-            userLog: '',
-            patientId: '',
-            setPatientId: jest.fn()
         };
 
         // Render the component with required fields filled in
@@ -163,7 +140,6 @@ describe('PatientData', () => {
         fireEvent.changeText(getByPlaceholderText('eg:"0772700900'), '');   // Empty phone number
 
         fireEvent.press(getByText('Submit'));
-
 
         expect(alertSpy).toHaveBeenCalledWith("Error", expect.any(String));
 
@@ -243,11 +219,6 @@ describe('PatientData', () => {
                     simprintsGui: ''
                 }
             });
-
-
         });
-
-
     });
-
 });
