@@ -22,6 +22,7 @@ import {COLORS, DIMENS} from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {format} from 'date-fns';
 import {countryData} from './country.selector';
+import { URLS } from '../constants/API';
 
 const PatientData = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -44,7 +45,7 @@ const PatientData = ({navigation}) => {
 
   const handleLanguageChange = language => {
     setSelectedLanguage(language);
-    setSelectedDistrict(''); // Reset district selection when language changes
+    // setSelectedDistrict(''); // Reset district selection when language changes
   };
 
   const handleDistrictChange = district => {
@@ -112,7 +113,7 @@ const PatientData = ({navigation}) => {
       }
 
       const response = await fetch(
-        `https://mobi-be-production.up.railway.app/${userLog}/patients`,
+        `${URLS.BASE}/${userLog}/patients`,
         {
           method: 'POST',
           body: JSON.stringify({

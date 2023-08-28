@@ -246,7 +246,7 @@ const Login = ({navigation}) => {
     try {
       console.log('Starting network request');
       let response = await fetch(
-        `https://mobi-be-production.up.railway.app/auth/login`,
+        `${URLS.BASE}/auth/login`,
         {
           method: 'POST',
           body: JSON.stringify({

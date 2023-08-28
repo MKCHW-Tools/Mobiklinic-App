@@ -23,6 +23,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import MultiSelectView from 'react-native-multiselect-view';
 import {format} from 'date-fns';
 import CopyRight from './copyright';
+import { URLS } from '../constants/API';
 
 const AntenatalCare = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -98,7 +99,7 @@ const AntenatalCare = ({navigation}) => {
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
       const response = await fetch(
-        `https://mobi-be-production.up.railway.app/${patientId}/antenantals`,
+        `${URLS.BASE}/${patientId}/antenantals`,
         {
           method: 'POST',
           body: JSON.stringify({

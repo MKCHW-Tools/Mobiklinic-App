@@ -22,6 +22,7 @@ import {COLORS, DIMENS} from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {format} from 'date-fns';
 import CopyRight from './copyright';
+import { URLS } from '../constants/API';
 
 const PatientMedical = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -98,7 +99,7 @@ const PatientMedical = ({navigation}) => {
       }
 
       const response = await fetch(
-        `https://mobi-be-production.up.railway.app/${patientId}/diagnosis`,
+        `${URLS.BASE}/${patientId}/diagnosis`,
         {
           method: 'POST',
           body: JSON.stringify({
