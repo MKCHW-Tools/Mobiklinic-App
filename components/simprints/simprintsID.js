@@ -39,6 +39,7 @@ const SimprintsID = ({navigation}) => {
     patientId,
     setPatientId,
     updateRegistrationErrorContext,
+    setRefusalData,
   } = useContext(DataResultsContext);
   const [userData, setUserData] = useState(null);
   const [guid, setGuid] = useState(benData.length > 0 ? benData[0].guid : []);
@@ -171,7 +172,8 @@ const SimprintsID = ({navigation}) => {
         // Display the refusal reason and extra reasons in the console
         console.log('Refusal Reason:', reason);
         console.log('Refusal Extra:', extra);
-
+        // Set the refusal data in the context
+        setRefusalData({reason, extra});
 
         handleRegistrationError(reason, extra);
       },
@@ -189,7 +191,6 @@ const SimprintsID = ({navigation}) => {
     updateRegistrationErrorContext(reason, extra);
     navigation.navigate('PatientData');
     console.log(reason);
-
   };
 
   const handleIdentificationPlus = () => {

@@ -26,10 +26,11 @@ import {countryData} from './country.selector';
 const PatientData = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
   const {diagnoses} = diagnosisContext;
-  const {dataResults} = useContext(DataResultsContext);
+  const {dataResults, refusalData} = useContext(DataResultsContext);
   const {sessionId} = useContext(DataResultsContext);
   const {userLog} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
+  const {reason, extra} = refusalData;
 
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState('');
@@ -206,6 +207,11 @@ const PatientData = ({navigation}) => {
             onChangeText={text => setState({...state, simprintsGui: text})}
             placeholder="Enter simprints GUI"
           />
+        </View>
+
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.field}>Refusal Reason: {reason}</Text>
+          <Text style={STYLES.field}>Refusal Extra: {extra}</Text>
         </View>
         {/* First Name */}
         <View style={STYLES.labeled}>

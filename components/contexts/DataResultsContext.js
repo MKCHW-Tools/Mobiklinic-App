@@ -13,6 +13,8 @@ export const DataResultsProvider = ({children}) => {
     reason: '',
     extra: '',
   });
+  const [refusalData, setRefusalData] = useState({});
+
 
   const updateRegistrationErrorContext = (reason, extra) => {
     setRegistrationError({reason, extra});
@@ -58,6 +60,8 @@ export const DataResultsProvider = ({children}) => {
         updateSession,
         registrationError,
         updateRegistrationErrorContext,
+        refusalData, 
+        setRefusalData,
       }}>
       {children}
     </DataResultsContext.Provider>
