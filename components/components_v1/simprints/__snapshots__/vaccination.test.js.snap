@@ -1,0 +1,864 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[` Vaccination - PatientData should render correctly 1`] = `
+<View
+  style={
+    {
+      "backgroundColor": "rgba(255,255,255,0.6)",
+      "flex": 1,
+    }
+  }
+>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "backgroundColor": "#fff",
+          "borderBottomColor": "#ccc",
+          "borderBottomWidth": 1,
+          "borderStyle": "solid",
+          "flexDirection": "row",
+          "paddingBottom": 5,
+          "paddingTop": 5,
+        },
+      ]
+    }
+  >
+    <View
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        {
+          "alignItems": "center",
+          "height": 35,
+          "justifyContent": "center",
+          "marginHorizontal": 4,
+          "opacity": 1,
+          "width": 35,
+        }
+      }
+    >
+      <Text
+        allowFontScaling={false}
+        selectable={false}
+        style={
+          [
+            {
+              "color": "#000",
+              "fontSize": 25,
+            },
+            undefined,
+            {
+              "fontFamily": "Feather",
+              "fontStyle": "normal",
+              "fontWeight": "normal",
+            },
+            {},
+          ]
+        }
+      >
+        
+      </Text>
+    </View>
+    <Text
+      style={
+        [
+          {
+            "alignItems": "center",
+            "color": undefined,
+            "flex": 2,
+          },
+          {
+            "alignItems": "center",
+            "color": "#000",
+            "flexGrow": 1,
+            "fontWeight": "bold",
+          },
+        ]
+      }
+    >
+      VACCINATION DATA
+    </Text>
+  </View>
+  <RCTScrollView
+    style={
+      {
+        "flex": 2,
+        "padding": 30,
+      }
+    }
+  >
+    <View>
+      <View
+        placeholderTextColor="rgba(0,0,0,0.7)"
+        style={
+          {
+            "alignItems": "center",
+            "borderColor": "#ccc",
+            "borderRadius": 10,
+            "borderStyle": "solid",
+            "borderWidth": 1,
+            "color": "#000",
+            "flexDirection": "row",
+            "marginBottom": 10,
+            "marginTop": 10,
+            "paddingHorizontal": 15,
+          }
+        }
+        testID="vaccineNameParent"
+      >
+        <Text
+          style={
+            {
+              "color": "#000",
+              "fontSize": 14,
+              "fontWeight": "medium",
+              "marginLeft": 5,
+              "marginRight": 5,
+            }
+          }
+        >
+          Vaccine Name:
+        </Text>
+        <View
+          style={
+            [
+              {
+                "color": "#000",
+                "flex": 1,
+                "fontSize": 13,
+                "fontWeight": "medium",
+                "justifyContent": "center",
+              },
+              {
+                "color": "#000",
+              },
+            ]
+          }
+        >
+          <RNCPicker
+            items={
+              [
+                {
+                  "label": "",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "",
+                },
+                {
+                  "label": "Pfizer-BioNTech",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "pfizer",
+                },
+                {
+                  "label": "Moderna",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "moderna",
+                },
+                {
+                  "label": "Johnson & Johnson",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "jnj",
+                },
+                {
+                  "label": "AstraZeneca",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "astrazeneca",
+                },
+                {
+                  "label": "Sinovac",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "sinovac",
+                },
+                {
+                  "label": "Sinopharm",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "sinopharm",
+                },
+                {
+                  "label": "Covishield",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "covishield",
+                },
+                {
+                  "label": "Sputnik V",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "sputnik",
+                },
+                {
+                  "label": "Hepatitis B Vaccine",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "hepatitisB",
+                },
+                {
+                  "label": "Polio Vaccine",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "polio",
+                },
+                {
+                  "label": "Tetanus, Diphtheria, and Pertussis Vaccine",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "tdap",
+                },
+                {
+                  "label": "Pneumococcal Vaccine",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "pneumococcal",
+                },
+                {
+                  "label": "Rotavirus Vaccine",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "rotavirus",
+                },
+                {
+                  "label": "Influenza Vaccine",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "influenza",
+                },
+              ]
+            }
+            numberOfLines={1}
+            onChange={[Function]}
+            selectedIndex={0}
+            style={
+              [
+                {
+                  "height": 216,
+                },
+                undefined,
+              ]
+            }
+            testID="vaccineName"
+          />
+        </View>
+      </View>
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "borderColor": "#ccc",
+            "borderRadius": 10,
+            "borderStyle": "solid",
+            "borderWidth": 1,
+            "color": "#000",
+            "flexDirection": "row",
+            "marginBottom": 10,
+            "marginTop": 10,
+            "paddingHorizontal": 15,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#000",
+              "fontSize": 14,
+              "fontWeight": "medium",
+              "marginLeft": 5,
+              "marginRight": 5,
+            }
+          }
+        >
+          Card number:
+        </Text>
+        <TextInput
+          onChangeText={[Function]}
+          placeholder="Enter vaccine card number"
+          placeholderTextColor="#ccc"
+          style={
+            [
+              {
+                "color": "#000",
+                "flex": 1,
+                "fontSize": 13,
+                "fontWeight": "medium",
+                "justifyContent": "center",
+              },
+              {
+                "color": "#000",
+              },
+            ]
+          }
+          value=""
+        />
+      </View>
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "borderColor": "#ccc",
+            "borderRadius": 10,
+            "borderStyle": "solid",
+            "borderWidth": 1,
+            "color": "#000",
+            "flexDirection": "row",
+            "marginBottom": 10,
+            "marginTop": 10,
+            "paddingHorizontal": 15,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#000",
+              "fontSize": 14,
+              "fontWeight": "medium",
+              "marginLeft": 5,
+              "marginRight": 5,
+            }
+          }
+        >
+          Date for Vaccination:
+        </Text>
+        <View
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            {
+              "alignItems": "center",
+              "borderColor": "#ccc",
+              "flexDirection": "row",
+              "opacity": 1,
+              "paddingHorizontal": 10,
+              "paddingVertical": 5,
+            }
+          }
+          testID="showVaccDatePicker"
+        >
+          <Text
+            style={
+              {
+                "color": "#000",
+                "fontSize": 14,
+                "marginLeft": 5,
+                "paddingVertical": 12,
+              }
+            }
+          >
+            Click to add date
+          </Text>
+        </View>
+      </View>
+      <View
+        placeholderTextColor="rgba(0,0,0,0.7)"
+        style={
+          {
+            "alignItems": "center",
+            "borderColor": "#ccc",
+            "borderRadius": 10,
+            "borderStyle": "solid",
+            "borderWidth": 1,
+            "color": "#000",
+            "flexDirection": "row",
+            "marginBottom": 10,
+            "marginTop": 10,
+            "paddingHorizontal": 15,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#000",
+              "fontSize": 14,
+              "fontWeight": "medium",
+              "marginLeft": 5,
+              "marginRight": 5,
+            }
+          }
+        >
+          Dose:
+        </Text>
+        <View
+          style={
+            [
+              {
+                "color": "#000",
+                "flex": 1,
+                "fontSize": 13,
+                "fontWeight": "medium",
+                "justifyContent": "center",
+              },
+              {
+                "color": "#000",
+              },
+            ]
+          }
+        >
+          <RNCPicker
+            items={
+              [
+                {
+                  "label": "",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "",
+                },
+                {
+                  "label": "1st",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "1st",
+                },
+                {
+                  "label": "2nd",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "2nd",
+                },
+                {
+                  "label": "3rd",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "3rd",
+                },
+                {
+                  "label": "4th",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "4th",
+                },
+              ]
+            }
+            numberOfLines={1}
+            onChange={[Function]}
+            selectedIndex={0}
+            style={
+              [
+                {
+                  "height": 216,
+                },
+                undefined,
+              ]
+            }
+            testID="dose"
+          />
+        </View>
+      </View>
+      <View
+        placeholderTextColor="rgba(0,0,0,0.7)"
+        style={
+          {
+            "alignItems": "center",
+            "borderColor": "#ccc",
+            "borderRadius": 10,
+            "borderStyle": "solid",
+            "borderWidth": 1,
+            "color": "#000",
+            "flexDirection": "row",
+            "marginBottom": 10,
+            "marginTop": 10,
+            "paddingHorizontal": 15,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#000",
+              "fontSize": 14,
+              "fontWeight": "medium",
+              "marginLeft": 5,
+              "marginRight": 5,
+            }
+          }
+        >
+          Site Administered:
+        </Text>
+        <View
+          style={
+            {
+              "color": "#000",
+              "flex": 1,
+              "fontSize": 13,
+              "fontWeight": "medium",
+              "justifyContent": "center",
+            }
+          }
+        >
+          <RNCPicker
+            items={
+              [
+                {
+                  "label": "",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "",
+                },
+                {
+                  "label": "Left Upper Arm",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "Left Upper Arm",
+                },
+                {
+                  "label": "Right Upper Arm",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "Right Upper Arm",
+                },
+                {
+                  "label": "Left Upper Thigh",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "Ventrogluteal Muscle (Hip)",
+                },
+                {
+                  "label": "Mouth",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "Mouth",
+                },
+                {
+                  "label": "Buttocks",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "Buttocks",
+                },
+                {
+                  "label": "Right Upper Thigh",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "Anterolateral Thigh (Front of the Thigh)",
+                },
+              ]
+            }
+            numberOfLines={1}
+            onChange={[Function]}
+            selectedIndex={0}
+            style={
+              [
+                {
+                  "height": 216,
+                },
+                undefined,
+              ]
+            }
+            testID="siteAdministered"
+          />
+        </View>
+      </View>
+      <View
+        placeholderTextColor="rgba(0,0,0,0.7)"
+        style={
+          {
+            "alignItems": "center",
+            "borderColor": "#ccc",
+            "borderRadius": 10,
+            "borderStyle": "solid",
+            "borderWidth": 1,
+            "color": "#000",
+            "flexDirection": "row",
+            "marginBottom": 10,
+            "marginTop": 10,
+            "paddingHorizontal": 15,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#000",
+              "fontSize": 14,
+              "fontWeight": "medium",
+              "marginLeft": 5,
+              "marginRight": 5,
+            }
+          }
+        >
+          Facility:
+        </Text>
+        <View
+          style={
+            [
+              {
+                "color": "#000",
+                "flex": 1,
+                "fontSize": 13,
+                "fontWeight": "medium",
+                "justifyContent": "center",
+              },
+              {
+                "color": "#000",
+              },
+            ]
+          }
+        >
+          <RNCPicker
+            items={
+              [
+                {
+                  "label": "",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "",
+                },
+                {
+                  "label": "Buikwe Hospital",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "Buikwe Hospital",
+                },
+                {
+                  "label": "Mulago Hospital",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "Mulago Hospital",
+                },
+                {
+                  "label": "Makonge Health Center III",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "Makonge Health Center III",
+                },
+                {
+                  "label": "Makonge Health Center III",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "Makonge Health Center III",
+                },
+                {
+                  "label": "Makindu Health Center III",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "Makindu Health Center III",
+                },
+                {
+                  "label": "Kisungu Health Center III",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "Kisungu Health Center III",
+                },
+                {
+                  "label": "Najjembe Health Center III",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "Najjemebe Health Center III",
+                },
+                {
+                  "label": "Kawolo Hospital",
+                  "testID": undefined,
+                  "textColor": undefined,
+                  "value": "Kawolo Hospital",
+                },
+              ]
+            }
+            numberOfLines={1}
+            onChange={[Function]}
+            selectedIndex={0}
+            style={
+              [
+                {
+                  "height": 216,
+                },
+                undefined,
+              ]
+            }
+          />
+        </View>
+      </View>
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "borderColor": "#ccc",
+            "borderRadius": 10,
+            "borderStyle": "solid",
+            "borderWidth": 1,
+            "color": "#000",
+            "flexDirection": "row",
+            "marginBottom": 10,
+            "marginTop": 10,
+            "paddingHorizontal": 15,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#000",
+              "fontSize": 14,
+              "fontWeight": "medium",
+              "marginLeft": 5,
+              "marginRight": 5,
+            }
+          }
+        >
+          Date for Next Dose:
+        </Text>
+        <View
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            {
+              "alignItems": "center",
+              "borderColor": "#ccc",
+              "flexDirection": "row",
+              "opacity": 1,
+              "paddingHorizontal": 10,
+              "paddingVertical": 5,
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "color": "#000",
+                "fontSize": 14,
+                "marginLeft": 5,
+                "paddingVertical": 12,
+              }
+            }
+          >
+            Click to add date
+          </Text>
+        </View>
+      </View>
+      <View
+        accessibilityState={
+          {
+            "busy": undefined,
+            "checked": undefined,
+            "disabled": undefined,
+            "expanded": undefined,
+            "selected": undefined,
+          }
+        }
+        accessibilityValue={
+          {
+            "max": undefined,
+            "min": undefined,
+            "now": undefined,
+            "text": undefined,
+          }
+        }
+        accessible={true}
+        collapsable={false}
+        focusable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          {
+            "backgroundColor": "#000",
+            "borderRadius": 10,
+            "marginBottom": 10,
+            "marginTop": 10,
+            "opacity": 1,
+            "paddingHorizontal": 20,
+            "paddingVertical": 10,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#fff",
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "textAlign": "center",
+            }
+          }
+        >
+          Submit
+        </Text>
+      </View>
+    </View>
+  </RCTScrollView>
+</View>
+`;

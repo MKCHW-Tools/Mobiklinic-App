@@ -78,7 +78,6 @@ const AntenatalCare = ({ navigation }) => {
       console.log('Patient ID :', patientId);
       if (state.isLoading) {
         // Prevent multiple submissions
-        console.log("prevent multiple submissions")
         return;
       }
       if (
@@ -89,11 +88,11 @@ const AntenatalCare = ({ navigation }) => {
         state.bloodGroup === '' ||
         state.prescriptions.length === 0
       ) {
-        console.log('Testing Log:',
-          state.pregnancyStatus,
-          state.expectedDateOfDelivery,
-          routineVisitDate
-        )
+        // console.log('Testing Log:',
+        //   state.pregnancyStatus,
+        //   state.expectedDateOfDelivery,
+        //   routineVisitDate
+        // )
         Alert.alert('Error', 'Please fill in all required fields');
         return;
       }

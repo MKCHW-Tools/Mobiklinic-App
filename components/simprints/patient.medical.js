@@ -89,7 +89,7 @@ const PatientMedical = ({ navigation }) => {
         dateOfDiagnosis === '' || // Add check for dateOfVaccination
         state.impression === ''
       ) {
-        console.log('state in P Medi:', state);
+        //console.log('state in P Medi:', state);
         Alert.alert('Error', 'Please fill in all required fields');
         return;
       }
