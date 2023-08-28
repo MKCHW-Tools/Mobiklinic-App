@@ -679,24 +679,7 @@ const STYLES = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
   },
-  select: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    minHeight: 70,
-    alignItems: 'center',
-  },
-  labeledItem: {
-    // flexDirection: 'row',
-    paddingHorizontal: 15,
-    // paddingVertical: 10,
-    color: COLORS.BLACK,
-    marginTop: 10,
-    marginBottom: 10,
-    borderColor: COLORS.GREY,
-    borderStyle: 'solid',
-    borderWidth: 1,
-    borderRadius: 10,
-  },
+
 });
+
+
