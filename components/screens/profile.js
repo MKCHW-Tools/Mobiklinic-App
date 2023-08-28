@@ -1,13 +1,5 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  RefreshControl,
-  TextInput,
-} from 'react-native';
+import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS, DIMENS} from '../constants/styles';
@@ -18,38 +10,45 @@ import DataResultsContext from '../contexts/DataResultsContext';
 import {AuthContext} from '../contexts/auth';
 import CopyRight from '../simprints/copyright';
 
+
+
+
 const Profile = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
-  const {userNames} = useContext(DataResultsContext);
-  const [patientsEnrolledCount, setPatientsEnrolledCount] = useState(0);
-  const [patientsEnrolledCountt, setPatientsEnrolledCountt] = useState(0);
-  const [dailyEnrollmentsCount, setDailyEnrollmentsCount] = useState(0);
-  const [monthlyEnrollmentsCount, setMonthlyEnrollmentsCount] = useState(0);
-  const [weeklyEnrollmentsCount, setWeeklyEnrollmentsCount] = useState(0);
-  const {patientId} = useContext(DataResultsContext);
-  const [totalVaccinations, setTotalVaccinations] = useState(0);
-  const [totalDiagnosis, setTotalDiagnosis] = useState(0);
-  const [totalAntenatal, setTotalAntenatal] = useState(0);
+  const {userNames, patientId} = useContext(DataResultsContext);
+  const [counts, setCounts] = useState({
+    patientsEnrolledCount: 0,
+    patientsEnrolledCountt: 0,
+    dailyEnrollmentsCount: 0,
+    monthlyEnrollmentsCount: 0,
+    weeklyEnrollmentsCount: 0,
+    totalVaccinations: 0,
+    totalDiagnosis: 0,
+    totalAntenatal: 0,
+  });
+  const {
+    patientsEnrolledCount,
+    patientsEnrolledCountt,
+    dailyEnrollmentsCount,
+    monthlyEnrollmentsCount,
+    weeklyEnrollmentsCount,
+    totalVaccinations,
+    totalDiagnosis,
+    totalAntenatal,
+  } = counts;
 
-  const {user} = React.useContext(AuthContext);
-  React.useEffect(() => {
+  const {user} = useContext(AuthContext);
+  useEffect(() => {
     console.log(user);
   });
-  // user context
+
   const {userLog} = useContext(DataResultsContext);
 
-  // header
   const _header = () => (
     <CustomHeader
       left={
         <TouchableOpacity
-          style={{
-            marginHorizontal: 4,
-            width: 35,
-            height: 35,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
+          style={styles.headerButton}
           onPress={() => navigation.goBack()}>
           <Icon name="arrow-left" size={25} color={COLORS.BLACK} />
         </TouchableOpacity>
@@ -58,22 +57,20 @@ const Profile = ({navigation}) => {
     />
   );
 
-  // Function to get the week number of a date for the last seven days
   const getWeekNumber = () => {
     const currentDate = new Date();
     const target = new Date(currentDate.valueOf());
-    target.setDate(target.getDate() - 7); // Subtract seven days from the current date
+    target.setDate(target.getDate() - 7);
     const dayNr = (target.getDay() + 6) % 7;
     target.setDate(target.getDate() - dayNr + 3);
-    const firstThursday = target.valueOf();
-    target.setMonth(0, 1);
+
     if (target.getDay() !== 4) {
       target.setMonth(0, 1 + ((4 - target.getDay() + 7) % 7));
     }
-    return 1 + Math.ceil((firstThursday - target) / 604800000); // 604800000 = 7 * 24 * 3600 * 1000
+
+    return 1 + Math.ceil(target.getTime() / (7 * 24 * 60 * 60 * 1000)); // Corrected line
   };
 
-  // fetch enrollements
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
@@ -87,48 +84,52 @@ const Profile = ({navigation}) => {
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
         );
 
-        setPatientsEnrolledCount(sortedData.length);
+        setCounts(prevCounts => ({
+          ...prevCounts,
+          patientsEnrolledCount: sortedData.length,
+        }));
 
-        // Calculate the daily enrollments count
         const currentDate = new Date();
-        const startDate = new Date('2023-07-19'); // Start counting from 19/07/2023
+
+        // Last 30 days filtering
+        const thirtyDaysAgo = new Date(currentDate);
+        thirtyDaysAgo.setDate(currentDate.getDate() - 30);
+        const monthlyEnrollments = sortedData.filter(item => {
+          const itemDate = new Date(item.createdAt);
+          return itemDate >= thirtyDaysAgo && itemDate <= currentDate;
+        });
+        setCounts(prevCounts => ({
+          ...prevCounts,
+          monthlyEnrollmentsCount: monthlyEnrollments.length,
+        }));
+
+        // Last 7 days filtering
+        const sevenDaysAgo = new Date(currentDate);
+        sevenDaysAgo.setDate(currentDate.getDate() - 7);
+        const weeklyEnrollments = sortedData.filter(item => {
+          const itemDate = new Date(item.createdAt);
+          return itemDate >= sevenDaysAgo && itemDate <= currentDate;
+        });
+        setCounts(prevCounts => ({
+          ...prevCounts,
+          weeklyEnrollmentsCount: weeklyEnrollments.length,
+        }));
+
+        // DAILY ENROLLMENTS count
         const dailyEnrollments = sortedData.filter(item => {
           const itemDate = new Date(item.createdAt);
           return (
-            itemDate >= startDate &&
+            itemDate >= thirtyDaysAgo &&
             itemDate <= currentDate &&
             itemDate.getDate() === currentDate.getDate() &&
             itemDate.getMonth() === currentDate.getMonth() &&
             itemDate.getFullYear() === currentDate.getFullYear()
           );
         });
-        setDailyEnrollmentsCount(dailyEnrollments.length);
-
-        // Calculate the monthly enrollments count
-        const currentMonth = currentDate.getMonth();
-        const currentYear = currentDate.getFullYear();
-        const monthlyEnrollments = sortedData.filter(item => {
-          const itemDate = new Date(item.createdAt);
-          return (
-            itemDate >= startDate &&
-            itemDate <= currentDate &&
-            itemDate.getMonth() === currentMonth &&
-            itemDate.getFullYear() === currentYear
-          );
-        });
-        setMonthlyEnrollmentsCount(monthlyEnrollments.length);
-
-        // Calculate the weekly enrollments count
-        const currentWeek = getWeekNumber();
-        const weeklyEnrollments = sortedData.filter(item => {
-          const itemDate = new Date(item.createdAt);
-          return (
-            itemDate >= startDate &&
-            itemDate <= currentDate &&
-            getWeekNumber(itemDate) === currentWeek
-          );
-        });
-        setWeeklyEnrollmentsCount(weeklyEnrollments.length);
+        setCounts(prevCounts => ({
+          ...prevCounts,
+          dailyEnrollmentsCount: dailyEnrollments.length,
+        }));
       }
     } catch (error) {
       console.error(error);
@@ -137,7 +138,6 @@ const Profile = ({navigation}) => {
     }
   };
 
-  // fetch vaccinations done in a month
   const fetchVaccinationData = async () => {
     setIsLoading(true);
     try {
@@ -146,25 +146,30 @@ navigation
         `https://mobi-be-production.up.railway.app/vaccinations/all`,
 
       );
-
+  
       if (response.status === 200) {
         const sortedData = response.data.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
         );
-
+  
         const currentDate = new Date();
         const currentMonth = currentDate.getMonth();
         const currentYear = currentDate.getFullYear();
-
+  
+  
         const startDate = new Date(currentYear, currentMonth, 1);
         const endDate = new Date(currentYear, currentMonth + 1, 0);
-
+  
         const monthlyVaccinations = sortedData.filter(item => {
           const itemDate = new Date(item.createdAt);
           return itemDate >= startDate && itemDate <= endDate;
         });
-
-        setTotalVaccinations(monthlyVaccinations.length);
+        
+  
+        setCounts(prevCounts => ({
+          ...prevCounts,
+          totalVaccinations: monthlyVaccinations.length,
+        }));
       }
     } catch (error) {
       console.error(error);
@@ -173,7 +178,6 @@ navigation
     }
   };
 
-  // fetch diagnosis done in a month
   const fetchDiagnosis = async () => {
     setIsLoading(true);
     try {
@@ -200,7 +204,10 @@ navigation
           return itemDate >= startDate && itemDate <= endDate;
         });
 
-        setTotalDiagnosis(monthlyDiagnosis.length);
+        setCounts(prevCounts => ({
+          ...prevCounts,
+          totalDiagnosis: monthlyDiagnosis.length,
+        }));
       }
     } catch (error) {
       console.error(error);
@@ -236,7 +243,10 @@ navigation
           return itemDate >= startDate && itemDate <= endDate;
         });
 
-        setTotalAntenatal(monthlyAntenatal.length);
+        setCounts(prevCounts => ({
+          ...prevCounts,
+          totalAntenatal: monthlyAntenatal.length,
+        }));
       }
     } catch (error) {
       console.error(error);
@@ -246,7 +256,6 @@ navigation
   };
 
   useEffect(() => {
-    // Fetch data when the component mounts
     async function fetchData() {
       try {
         await fetchUsers();
@@ -329,6 +338,8 @@ navigation
   );
 };
 
+export default Profile;
+
 const styles = StyleSheet.create({
   container: {
     // flexDirection: 'row',
@@ -384,7 +395,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color: 'black',
-
   },
   header: {
     fontSize: 22,
@@ -407,5 +417,3 @@ const styles = StyleSheet.create({
     color: COLORS.PRIMARY,
   },
 });
-
-export default Profile;

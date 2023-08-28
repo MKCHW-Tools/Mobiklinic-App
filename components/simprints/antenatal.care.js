@@ -29,7 +29,10 @@ const AntenatalCare = ({navigation}) => {
   const {diagnoses} = diagnosisContext;
   const {dataResults} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
+  const {userNames} = useContext(DataResultsContext);
   const currentDate = new Date();
+  const {sessionId} = useContext(DataResultsContext);
+
 
   const [routineVisitDate, setRoutineVisitDate] = useState('');
   const [expectedDateOfDelivery, setExpectedDateOfDelivery] = useState('');
@@ -86,7 +89,6 @@ const AntenatalCare = ({navigation}) => {
       }
       if (
         state.pregnancyStatus === '' ||
-        state.expectedDateOfDelivery === '' ||
         routineVisitDate === '' ||
         state.drugNotes === '' ||
         state.bloodGroup === ''
@@ -109,6 +111,9 @@ const AntenatalCare = ({navigation}) => {
             prescriptions: state.prescriptions,
             nextOfKin: state.nextOfKin,
             drugNotes: state.drugNotes,
+            reviewedBy: userNames,
+            simprintsGui: dataResults,
+            simSessionId: sessionId,
           }),
           headers: {
             'Content-type': 'application/json; charset=UTF-8',
@@ -185,7 +190,7 @@ const AntenatalCare = ({navigation}) => {
             placeholderTextColor={COLORS.GREY}
             value={state.pregnancyStatus}
             onChangeText={text => setState({...state, pregnancyStatus: text})}
-            placeholder="Enter Pregnancy Status e.g 'lower back pain'"
+            placeholder="Enter Pregnancy Status e.g 'first trimster'"
             multiline={true}
             numberOfLines={4}
           />
@@ -234,6 +239,7 @@ const AntenatalCare = ({navigation}) => {
             <Picker.Item label="AB-" value="AB-" />
             <Picker.Item label="0+" value="O+" />
             <Picker.Item label="O-" value="O-" />
+            <Picker.Item label="Don't Know" value="Don't Know" />
           </Picker>
         </View>
 
@@ -268,18 +274,22 @@ const AntenatalCare = ({navigation}) => {
               label="Folic Acid Supplements"
               value="Folic Acid Supplements"
             />
+            <Picker.Item
+              label="Folic Acid  & Iron Supplements"
+              value="Folic Acid  & Iron Supplements"
+            />
             <Picker.Item label="Iron Supplements" value="Iron Supplements" />
             <Picker.Item
               label="Calcium Supplements"
               value="Calcium Supplements"
             />
-            <Picker.Item label="Antiemeitics" value="Antiemeitics" />
-            <Picker.Item label="Antihistamines" value="Antihistamines" />
-            <Picker.Item label="Funsider" value="Funsider" />
+            <Picker.Item label="Fansidar" value="Fansidar" />
             <Picker.Item label="Mebendazole" value="Mebendazole" />
             <Picker.Item label="Paracemotol" value="Paracemotol" />
             <Picker.Item label="Vitamin C " value="Vitamin C" />
             <Picker.Item label="Magnesium" value="Magnesium" />
+            <Picker.Item label="Cetirizine" value="Cetirizine" />
+
             <Picker.Item label="Other" value="Other" />
           </Picker>
         </View>
@@ -328,6 +338,32 @@ const AntenatalCare = ({navigation}) => {
             placeholderTextColor={COLORS.GREY}
             onChangeText={text => setState({...state, nextOfKin: text})}
             placeholder="Next of Kin"
+            style={[STYLES.field, {paddingHorizontal: 30}]}
+          />
+        </View>
+
+         {/* Simprints is */}
+         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>GUID:</Text>
+
+          <TextInput
+            value={dataResults}
+            placeholderTextColor={COLORS.GREY}
+            onChangeText={text => setState({...state, nextOfKin: text})}
+           
+            style={[STYLES.field, {paddingHorizontal: 30}]}
+          />
+        </View>
+
+        {/* Sim session */}
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Session:</Text>
+
+          <TextInput
+            value={sessionId}
+            placeholderTextColor={COLORS.GREY}
+            onChangeText={text => setState({...state, nextOfKin: text})}
+           
             style={[STYLES.field, {paddingHorizontal: 30}]}
           />
         </View>
@@ -643,4 +679,7 @@ const STYLES = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
   },
+
 });
+
+

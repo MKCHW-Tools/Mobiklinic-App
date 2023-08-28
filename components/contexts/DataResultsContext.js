@@ -1,16 +1,24 @@
-import React, { createContext, useState } from 'react';
+import React, {createContext, useState} from 'react';
 
 const DataResultsContext = createContext();
 
-export const DataResultsProvider = ({ children }) => {
+export const DataResultsProvider = ({children}) => {
   const [dataResults, setDataResults] = useState('');
   const [benData, setBenData] = useState([]);
   const [userLog, setUserLog] = useState('');
   const [patientId, setPatientId] = useState('');
   const [userNames, setUserNames] = useState('');
   const [sessionId, setSessionId] = useState('');
+  const [registrationError, setRegistrationError] = useState({
+    reason: '',
+    extra: '',
+  });
+  const [refusalData, setRefusalData] = useState({});
 
 
+  const updateRegistrationErrorContext = (reason, extra) => {
+    setRegistrationError({reason, extra});
+  };
   const updateDataResults = newDataResults => {
     setDataResults(newDataResults);
   };
@@ -36,7 +44,7 @@ export const DataResultsProvider = ({ children }) => {
   };
 
   return (
-    <DataResultsContext.Provider 
+    <DataResultsContext.Provider
       value={{
         dataResults,
         updateDataResults,
@@ -49,9 +57,12 @@ export const DataResultsProvider = ({ children }) => {
         userNames,
         updateUserNames,
         sessionId,
-        updateSession
-      }}
-    >
+        updateSession,
+        registrationError,
+        updateRegistrationErrorContext,
+        refusalData, 
+        setRefusalData,
+      }}>
       {children}
     </DataResultsContext.Provider>
   );

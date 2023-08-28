@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, {useCallback, useEffect, useState, useContext} from 'react';
 import {DeviceEventEmitter, NativeEventEmitter, Text} from 'react-native';
 
@@ -21,24 +22,27 @@ import Icon from 'react-native-vector-icons/Feather';
 import {COLORS, DIMENS} from '../constants/styles';
 import CustomHeader from '../ui/custom-header';
 import CopyRight from './copyright';
-import { set } from 'date-fns';
+import {set} from 'date-fns';
+import {useNavigation} from '@react-navigation/native';
 
 const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
 var OpenActivity = NativeModules.OpenActivity;
 
 const SimprintsID = ({navigation}) => {
-  const {updateDataResults} = useContext(DataResultsContext);
-  const {updateSession} = useContext(DataResultsContext);
-  const {updateBenData} = useContext(DataResultsContext);
-  const {benData} = useContext(DataResultsContext);
-  const {userNames} = useContext(DataResultsContext);
-  const [userData, setUserData] = React.useState(null);
-  const [guid, setGuid] = React.useState(
-    benData.length > 0 ? benData[0].guid : [],
-  );
- 
-  
+  const {
+    updateDataResults,
+    updateSession,
+    updateBenData,
+    benData,
+    userNames,
+    patientId,
+    setPatientId,
+    updateRegistrationErrorContext,
+    setRefusalData,
+  } = useContext(DataResultsContext);
+  const [userData, setUserData] = useState(null);
+  const [guid, setGuid] = useState(benData.length > 0 ? benData[0].guid : []);
   const [identificationPlusResults, setIdentificationPlusResults] = useState(
     [],
   );
@@ -55,12 +59,9 @@ const SimprintsID = ({navigation}) => {
     )
     .sort((a, b) => b.confidenceScore - a.confidenceScore);
   const [showResults, setShowResults] = useState(false);
-  const [collapsedIndex, setCollapsedIndex] = useState(-1); // Add this line to define the collapsedIndex state variable
+  const [collapsedIndex, setCollapsedIndex] = useState(-1);
   const [clickedResult, setClickedResult] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
-  const {patientId, setPatientId} = useContext(DataResultsContext);
-
-  // console.log('Logged User from simprints is', userNames);
 
   const toggleCollapse = index => {
     if (collapsedIndex === index) {
@@ -83,10 +84,7 @@ const SimprintsID = ({navigation}) => {
     return 'Click to add date';
   };
 
-  // fetch data function
   const fetchData = async () => {
-    console.log('GUID:', guid);
-
     try {
       const response = await fetch(
         `https://mobi-be-production.up.railway.app/patients/${guid}`,
@@ -94,17 +92,16 @@ const SimprintsID = ({navigation}) => {
       if (response.ok) {
         const data = await response.json();
         const patientId = data.id;
-        console.log('Patient id:', patientId);
         setPatientId(patientId);
-
         setUserData(data);
         setShowResults(true);
       } else {
         setUserData(null);
         setShowResults(false);
       }
-    } catch (error) {}
-    // navigation.navigate('GetPatients');
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
@@ -126,47 +123,59 @@ const SimprintsID = ({navigation}) => {
         setDisplayMode('identificationPlus');
         updateBenData(results);
         const {guid} = results[0];
-        // setSessionId(results[0].sessionId);
+        const {sessionId} = results[0];
         updateDataResults(guid);
-
-         // Console log the guid and sessionId here
-      // console.log('Guidssss:', guid);
-      // console.log('SessionId:', sessionId);
       },
     );
 
     const identificationSubscription = DeviceEventEmitter.addListener(
       'onIdentificationResult',
       results => {
+        const {guid} = results[0];
+        const {sessionId} = results[0];
         setIdentificationResults(results);
         setDisplayMode('identification');
+        setSessionId(sessionId);
         updateBenData(results);
-        const {guid} = results[0];
-        updateDataResults(guid);
-     
+        updateSession(sessionId);
 
-         // Console log the guid and sessionId here
-      console.log('Guid:', guid);
-      console.log('SessionId:', sessionId);
+        updateDataResults(guid);
+
+        // Console log the guid and sessionId here
+        console.log('Guid:', guid);
+        console.log('SessionId:', sessionId);
+        console.log('sessionId data type:', typeof sessionId);
       },
     );
 
     const registrationSuccessSubscription = DeviceEventEmitter.addListener(
       'SimprintsRegistrationSuccess',
       event => {
-        const {guid} = event;
-        const {sessionId} = event;
+        const {guid, sessionId} = event;
         setEnrollmentGuid(guid);
         setSessionId(sessionId);
         setDisplayMode('enrollment');
         navigation.navigate('PatientData');
         updateDataResults(guid);
         updateSession(sessionId);
-        // setSessionId(sessionId);
 
         console.log('Guid:', guid);
         console.log('SessionId:', sessionId);
-        console.log('sessionId data type:', typeof sessionId);
+      },
+    );
+
+    const registrationErrorSubscription = DeviceEventEmitter.addListener(
+      'SimprintsRegistrationError',
+      event => {
+        const {reason, extra} = event;
+
+        // Display the refusal reason and extra reasons in the console
+        console.log('Refusal Reason:', reason);
+        console.log('Refusal Extra:', extra);
+        // Set the refusal data in the context
+        setRefusalData({reason, extra});
+
+        handleRegistrationError(reason, extra);
       },
     );
 
@@ -174,8 +183,15 @@ const SimprintsID = ({navigation}) => {
       identificationPlusSubscription.remove();
       identificationSubscription.remove();
       registrationSuccessSubscription.remove();
+      registrationErrorSubscription.remove();
     };
   }, [updateDataResults, updateBenData, updateSession]);
+
+  const handleRegistrationError = (reason, extra) => {
+    updateRegistrationErrorContext(reason, extra);
+    navigation.navigate('PatientData');
+    console.log(reason);
+  };
 
   const handleIdentificationPlus = () => {
     const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
@@ -222,8 +238,7 @@ const SimprintsID = ({navigation}) => {
   useEffect(() => {
     if (noMatchButtonPressed) {
       console.log('No match found button pressed');
-      // Call the noMatchFound method here if needed
-      setNoMatchButtonPressed(false); // Reset the button pressed state
+      setNoMatchButtonPressed(false);
     }
   }, [noMatchButtonPressed]);
 
@@ -363,10 +378,9 @@ const SimprintsID = ({navigation}) => {
 
             {sortedResults.length > 0 && (
               <React.Fragment>
-                {/* Render results */}
                 {sortedResults.map((result, index) => (
                   <React.Fragment key={index}>
-                    {index === 0 && ( // Display "RESULTS" heading only for the first result
+                    {index === 0 && (
                       <Text style={styles.userDataLabel}>RESULTS</Text>
                     )}
 
@@ -418,82 +432,8 @@ const SimprintsID = ({navigation}) => {
                               </Text>
                             </Text>
 
-                            {/* {userData.diagnoses &&
-                              userData.diagnoses.length > 0 && (
-                                <View style={styles.vaccinationsContainer}>
-                                  <Text style={styles.userDataLabel1}>
-                                    DIAGNOSIS
-                                  </Text>
-                                  {userData.diagnoses.map(
-                                    (diagnosis, index) => (
-                                      <View key={index}>
-                                        <Text style={styles.userDataLabel}>
-                                          Condition:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.condition}
-                                          </Text>
-                                        </Text>
-                                        <Text style={styles.userDataLabel}>
-                                          Prescribed drugs:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.drugsPrescribed}
-                                          </Text>
-                                        </Text>
-                                        <Text style={styles.userDataLabel}>
-                                          Dosage:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.dosage}
-                                          </Text>
-                                        </Text>
-
-                                        <Text style={styles.userDataLabel}>
-                                          Frequency:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.frequency}
-                                          </Text>
-                                        </Text>
-                                        <Text style={styles.userDataLabel}>
-                                          Duration:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.duration}
-                                          </Text>
-                                        </Text>
-
-                                        <Text style={styles.userDataLabel}>
-                                          Date of diagnosis:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.dateOfDiagnosis}
-                                          </Text>
-                                        </Text>
-
-                                        <Text style={styles.userDataLabel}>
-                                          Date for Next Dose:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.followUpDate}
-                                          </Text>
-                                        </Text>
-
-                                        <Text style={styles.userDataLabel}>
-                                          Impression:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.impression}
-                                          </Text>
-                                        </Text>
-                                        <Text style={styles.userDataLabel}>
-                                          .................................................................{' '}
-                                          <Text
-                                            style={styles.userDataValue}></Text>
-                                        </Text>
-                                        <View style={{height: 20}} />
-                                      </View>
-                                    ),
-                                  )}
-                                </View>
-                              )} */}
-
                             <TouchableOpacity
                               style={styles.buttonSec}
-                              // onPress={() => navigation.navigate('SelectActivity')}
                               onPress={() =>
                                 navigation.navigate('GetPatients', {
                                   paramKey: userData,
@@ -557,6 +497,30 @@ const SimprintsID = ({navigation}) => {
     </View>
   );
 };
+
+// const styles = StyleSheet.create({
+//   wrapper: {
+//     flex: 1,
+//     backgroundColor: COLORS.WHITE_LOW,
+//   },
+//   container: {
+//     flex: 1,
+//     alignItems: 'center',
+//     marginVertical: 40,
+//     backgroundColor: '#fff',
+//     flexGrow: 1,
+//     height: '100%',
+//   },
+//   wrap: {
+//     flex: 2,
+//     alignItems: 'center',
+//     padding: 20,
+//     marginVertical: 30,
+//   },
+//   ...
+// });
+
+// export default SimprintsID;
 
 const styles = StyleSheet.create({
   wrapper: {
