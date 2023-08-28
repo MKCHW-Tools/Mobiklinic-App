@@ -67,7 +67,7 @@ const PatientLists = ({navigation}) => {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `http://192.168.1.11:3000/${userLog}/patients`,
+        `http://192.168.1.5:3000/${userLog}/patients`,
       );
 
       if (response.status === 200) {
@@ -131,7 +131,7 @@ const PatientLists = ({navigation}) => {
     setSearchQuery(query);
     try {
       const response = await axios.get(
-        `http://192.168.1.11:3000/search?query=${query}`,
+        `http://192.168.1.5:3000/search?query=${query}`,
       );
       setSearchSuggestions(response.data);
     } catch (error) {

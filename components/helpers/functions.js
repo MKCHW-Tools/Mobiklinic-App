@@ -218,7 +218,7 @@ export const signIn = async data => {
   try {
     console.log('Starting network request');
     let response = await fetch(
-      `http://192.168.1.11:3000/auth/login`,
+      `http://192.168.1.5:3000/auth/login`,
       {
         method: 'POST',
         body: JSON.stringify({
@@ -340,7 +340,7 @@ export const signUp = async data => {
   }
 
   try {
-    await fetch(`http://192.168.1.11:3000/auth/signup`, {
+    await fetch(`http://192.168.1.5:3000/auth/signup`, {
       method: 'POST',
       body: JSON.stringify({
         phone: phoneNumber,

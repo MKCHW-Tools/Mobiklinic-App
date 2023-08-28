@@ -49,7 +49,7 @@ const GetPatients = () => {
     console.log('GUID:', guid);
     try {
       const response = await fetch(
-        `http://192.168.1.11:3000/patients/${guid}`,
+        `http://192.168.1.5:3000/patients/${guid}`,
       );
       // console.log('Response:', response);
       if (response.ok) {

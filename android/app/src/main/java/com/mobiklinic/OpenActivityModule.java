@@ -68,6 +68,7 @@ public class OpenActivityModule extends ReactContextBaseJavaModule implements Ac
                             .emit("SimprintsRegistrationError", null);
                 }
             } else {
+                
                 // Handle the case when the registration was not successful
                 // You can emit an event to your React Native code to handle the error
                 getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
