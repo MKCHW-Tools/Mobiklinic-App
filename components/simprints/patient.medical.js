@@ -97,7 +97,7 @@ const PatientMedical = ({navigation}) => {
       }
 
       const response = await fetch(
-        `http://192.168.1.5:3000/${patientId}/diagnosis`,
+        `http://192.168.1.14:3000/${patientId}/diagnosis`,
         {
           method: 'POST',
           body: JSON.stringify({

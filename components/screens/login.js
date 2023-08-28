@@ -246,7 +246,7 @@ const Login = ({navigation}) => {
     try {
       console.log('Starting network request');
       let response = await fetch(
-        `http://192.168.1.5:3000/auth/login`,
+        `http://192.168.1.14:3000/auth/login`,
         {
           method: 'POST',
           body: JSON.stringify({
