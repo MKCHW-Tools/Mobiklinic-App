@@ -24,6 +24,7 @@ import CustomHeader from '../ui/custom-header';
 import CopyRight from './copyright';
 import {set} from 'date-fns';
 import {useNavigation} from '@react-navigation/native';
+import { URLS } from '../constants/API';
 
 const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
@@ -87,7 +88,7 @@ const SimprintsID = ({navigation}) => {
   const fetchData = async () => {
     try {
       const response = await fetch(
-        `https://mobi-be-production.up.railway.app/patients/${guid}`,
+        `${URLS.BASE}/patients/${guid}`,
       );
       if (response.ok) {
         const data = await response.json();

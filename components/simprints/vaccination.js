@@ -21,6 +21,7 @@ import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import CopyRight from './copyright';
+import { URLS } from '../constants/API';
 
 const PatientData = ({navigation, route}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -95,7 +96,7 @@ const PatientData = ({navigation, route}) => {
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
       const response = await fetch(
-        `https://mobi-be-production.up.railway.app/${patientId}/vaccinations`,
+        `${URLS.BASE}/${patientId}/vaccinations`,
         {
           method: 'POST',
           body: JSON.stringify({

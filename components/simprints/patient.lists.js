@@ -15,9 +15,10 @@ import Icon from 'react-native-vector-icons/Feather';
 import Loader from '../ui/loader';
 import CustomHeader from '../ui/custom-header';
 import DataResultsContext from '../contexts/DataResultsContext';
+import {URLS} from '../constants/API';
 
-const PatientList = ({ navigation }) => {
-  const { userLog, userNames } = useContext(DataResultsContext);
+const PatientList = ({navigation}) => {
+  const {userLog, userNames, refusalData} = useContext(DataResultsContext);
   const [users, setUsers] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -27,14 +28,17 @@ const PatientList = ({ navigation }) => {
   const [patientsEnrolledCount, setPatientsEnrolledCount] = useState(0);
   const [loggedInUserPhoneNumber, setLoggedInUserPhoneNumber] = useState('');
   const [expandedUserId, setExpandedUserId] = useState(null);
+  const {reason, extra} = refusalData;
 
-  const formatDate = (date) => {
+  const formatDate = date => {
     if (date) {
       const day = date.getDate();
       const month = date.getMonth() + 1;
       const year = date.getFullYear();
 
-      return `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
+      return `${day.toString().padStart(2, '0')}/${month
+        .toString()
+        .padStart(2, '0')}/${year}`;
     }
     return 'Click to add date';
   };
@@ -61,24 +65,26 @@ const PatientList = ({ navigation }) => {
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(
-        `http://192.168.1.14:3000/${userLog}/patients`,
-      );
+      const response = await axios.get(`${URLS.BASE}/${userLog}/patients`);
       // const response = await axios.get(`https://mobi-be-production.up.railway.app/patients`);
 
       if (response.status === 200) {
         const currentDate = new Date();
         const lastWeekDate = new Date('2023-07-19');
 
-        const filteredData = response.data.filter((item) => {
+        const filteredData = response.data.filter(item => {
           const itemDate = new Date(item.createdAt);
           return itemDate >= lastWeekDate && itemDate <= currentDate;
         });
 
-        const sortedData = filteredData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        const sortedData = filteredData.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+        );
 
         const loggedInUserPhone = userLog ? userLog.phoneNumber : '';
-        const filteredDataForUser = sortedData.filter((item) => item.phoneNumber === loggedInUserPhone);
+        const filteredDataForUser = sortedData.filter(
+          item => item.phoneNumber === loggedInUserPhone,
+        );
 
         setUsers(sortedData);
         await AsyncStorage.setItem('patientList', JSON.stringify(sortedData));
@@ -120,7 +126,7 @@ const PatientList = ({ navigation }) => {
     fetchUsers();
   };
 
-  const handleSearch = async (query) => {
+  const handleSearch = async query => {
     setSearchQuery(query);
     try {
       const response = await axios.get(
@@ -132,7 +138,7 @@ const PatientList = ({ navigation }) => {
     }
   };
 
-  const renderUserCard = ({ item }) => {
+  const renderUserCard = ({item}) => {
     const isExpanded = item.id === expandedUserId;
 
     const toggleExpansion = () => {
@@ -152,7 +158,7 @@ const PatientList = ({ navigation }) => {
 
       navigation.navigate('SelectActivity', {
         patientId: patientId,
-        paramKey: { firstName: item.firstName, lastName: item.lastName },
+        paramKey: {firstName: item.firstName, lastName: item.lastName},
       });
     };
 
@@ -161,8 +167,12 @@ const PatientList = ({ navigation }) => {
         <TouchableOpacity onPress={toggleExpansion} style={styles.cardHeader}>
           <Text style={styles.userName}>
             {fullNameChars.map((char, index) => {
-              const isMatchingChar = searchQuery.toLowerCase().includes(char.toLowerCase());
-              const highlightStyle = isMatchingChar ? { backgroundColor: COLORS.PRIMARY } : {};
+              const isMatchingChar = searchQuery
+                .toLowerCase()
+                .includes(char.toLowerCase());
+              const highlightStyle = isMatchingChar
+                ? {backgroundColor: COLORS.PRIMARY}
+                : {};
 
               return (
                 <Text key={index} style={[styles.userName, highlightStyle]}>
@@ -189,8 +199,14 @@ const PatientList = ({ navigation }) => {
               <Text style={styles.userDataValue}>{item.phoneNumber}</Text>
             </Text>
             <Text style={styles.userDataLabel}>
+              Reason for not using simprints:{'\t'}
+              <Text style={styles.userDataValue}>{reason}</Text>
+            </Text>
+            <Text style={styles.userDataLabel}>
               Date Of Birth:
-              <Text style={styles.userDataValue}>{formatDate(new Date(item.ageGroup))}</Text>
+              <Text style={styles.userDataValue}>
+                {formatDate(new Date(item.ageGroup))}
+              </Text>
             </Text>
 
             <Text style={styles.userDataLabel}>
@@ -222,7 +238,9 @@ const PatientList = ({ navigation }) => {
                   <View key={index}>
                     <Text style={styles.userDataLabel}>
                       Vaccine Name:{' '}
-                      <Text style={styles.userDataValue}>{vaccination.vaccineName}</Text>
+                      <Text style={styles.userDataValue}>
+                        {vaccination.vaccineName}
+                      </Text>
                     </Text>
 
                     <Text style={styles.userDataLabel}>
@@ -234,12 +252,16 @@ const PatientList = ({ navigation }) => {
 
                     <Text style={styles.userDataLabel}>
                       Dose:{' '}
-                      <Text style={styles.userDataValue}>{vaccination.dose}</Text>
+                      <Text style={styles.userDataValue}>
+                        {vaccination.dose}
+                      </Text>
                     </Text>
 
                     <Text style={styles.userDataLabel}>
                       Card Number:{' '}
-                      <Text style={styles.userDataValue}>{vaccination.units}</Text>
+                      <Text style={styles.userDataValue}>
+                        {vaccination.units}
+                      </Text>
                     </Text>
 
                     <Text style={styles.userDataLabel}>
@@ -251,15 +273,19 @@ const PatientList = ({ navigation }) => {
 
                     <Text style={styles.userDataLabel}>
                       Site Administered:{' '}
-                      <Text style={styles.userDataValue}>{vaccination.siteAdministered}</Text>
+                      <Text style={styles.userDataValue}>
+                        {vaccination.siteAdministered}
+                      </Text>
                     </Text>
                     <Text style={styles.userDataLabel}>
                       Facility:{' '}
-                      <Text style={styles.userDataValue}>{vaccination.facility}</Text>
+                      <Text style={styles.userDataValue}>
+                        {vaccination.facility}
+                      </Text>
                     </Text>
                     <View style={styles.line} />
 
-                    <View style={{ height: 20 }} />
+                    <View style={{height: 20}} />
                   </View>
                 ))}
               </View>
@@ -271,13 +297,17 @@ const PatientList = ({ navigation }) => {
                   <View key={index}>
                     <Text style={styles.userDataLabel}>
                       Pregnacy Status:
-                      <Text style={styles.userDataValue}>{antenantal.pregnancyStatus}</Text>
+                      <Text style={styles.userDataValue}>
+                        {antenantal.pregnancyStatus}
+                      </Text>
                     </Text>
 
                     <Text style={styles.userDataLabel}>
                       Expected Date for Delivery:
                       <Text style={styles.userDataValue}>
-                        {formatDate(new Date(antenantal.expectedDateOfDelivery))}
+                        {formatDate(
+                          new Date(antenantal.expectedDateOfDelivery),
+                        )}
                       </Text>
                     </Text>
 
@@ -290,32 +320,44 @@ const PatientList = ({ navigation }) => {
 
                     <Text style={styles.userDataLabel}>
                       Blood Group:
-                      <Text style={styles.userDataValue}>{antenantal.bloodGroup}</Text>
+                      <Text style={styles.userDataValue}>
+                        {antenantal.bloodGroup}
+                      </Text>
                     </Text>
 
                     <Text style={styles.userDataLabel}>
                       Prescriptions:
-                      <Text style={styles.userDataValue}>{antenantal.prescriptions}</Text>
+                      <Text style={styles.userDataValue}>
+                        {antenantal.prescriptions}
+                      </Text>
                     </Text>
 
                     <Text style={styles.userDataLabel}>
                       Current Weight:
-                      <Text style={styles.userDataValue}>{antenantal.weight}</Text>
+                      <Text style={styles.userDataValue}>
+                        {antenantal.weight}
+                      </Text>
                     </Text>
 
                     <Text style={styles.userDataLabel}>
                       Next of Kin:
-                      <Text style={styles.userDataValue}>{antenantal.nextOfKin}</Text>
+                      <Text style={styles.userDataValue}>
+                        {antenantal.nextOfKin}
+                      </Text>
                     </Text>
 
                     <Text style={styles.userDataLabel}>
                       Next of Kin Contact:
-                      <Text style={styles.userDataValue}>{antenantal.nextOfKinContact}</Text>
+                      <Text style={styles.userDataValue}>
+                        {antenantal.nextOfKinContact}
+                      </Text>
                     </Text>
 
                     <Text style={styles.userDataLabel}>
                       Additional Notes:
-                      <Text style={styles.userDataValue}>{antenantal.drugNotes}</Text>
+                      <Text style={styles.userDataValue}>
+                        {antenantal.drugNotes}
+                      </Text>
                     </Text>
 
                     <View style={styles.line} />
@@ -331,11 +373,15 @@ const PatientList = ({ navigation }) => {
                   <View key={index}>
                     <Text style={styles.userDataLabel}>
                       Condition:{' '}
-                      <Text style={styles.userDataValue}>{diagnosis.condition}</Text>
+                      <Text style={styles.userDataValue}>
+                        {diagnosis.condition}
+                      </Text>
                     </Text>
                     <Text style={styles.userDataLabel}>
                       Prescribed drugs:{' '}
-                      <Text style={styles.userDataValue}>{diagnosis.drugsPrescribed}</Text>
+                      <Text style={styles.userDataValue}>
+                        {diagnosis.drugsPrescribed}
+                      </Text>
                     </Text>
                     <Text style={styles.userDataLabel}>
                       Dosage:{' '}
@@ -361,16 +407,20 @@ const PatientList = ({ navigation }) => {
 
                     <Text style={styles.userDataLabel}>
                       Impression:{' '}
-                      <Text style={styles.userDataValue}>{diagnosis.impression}</Text>
+                      <Text style={styles.userDataValue}>
+                        {diagnosis.impression}
+                      </Text>
                     </Text>
                     <View style={styles.line} />
 
-                    <View style={{ height: 20 }} />
+                    <View style={{height: 20}} />
                   </View>
                 ))}
               </View>
             )}
-            <TouchableOpacity onPress={() => navigation.navigate('SimprintsID')} style={styles.buttonSec}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('SimprintsID')}
+              style={styles.buttonSec}>
               <Text style={styles.buttonText}>Add Data</Text>
             </TouchableOpacity>
           </View>
@@ -379,7 +429,7 @@ const PatientList = ({ navigation }) => {
     );
   };
 
-  const formatPhoneNumber = (phoneNumber) => {
+  const formatPhoneNumber = phoneNumber => {
     return phoneNumber;
   };
 
@@ -388,7 +438,9 @@ const PatientList = ({ navigation }) => {
       {_header()}
       <View style={styles.container}>
         <Text style={styles.header}>Beneficiary List</Text>
-        <Text style={styles.header}>Patients Enrolled: {patientsEnrolledCount}</Text>
+        <Text style={styles.header}>
+          Patients Enrolled: {patientsEnrolledCount}
+        </Text>
 
         <View style={styles.searchContainer}>
           <TextInput
@@ -399,7 +451,12 @@ const PatientList = ({ navigation }) => {
             onChangeText={handleSearch}
           />
           <TouchableOpacity onPress={fetchUsers}>
-            <Icon name="search" size={20} color={COLORS.BLACK} style={styles.searchIcon} />
+            <Icon
+              name="search"
+              size={20}
+              color={COLORS.BLACK}
+              style={styles.searchIcon}
+            />
           </TouchableOpacity>
         </View>
         {searchSuggestions.length > 0 && (
@@ -418,10 +475,12 @@ const PatientList = ({ navigation }) => {
           users.length > 0 ? (
             <FlatList
               data={users}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={item => item.id.toString()}
               renderItem={renderUserCard}
               contentContainerStyle={styles.flatListContent}
-              refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
             />
           ) : (
             <Text style={styles.noUserFoundText}>No user found</Text>
@@ -433,8 +492,6 @@ const PatientList = ({ navigation }) => {
     </View>
   );
 };
-
-
 
 export default PatientList;
 const styles = StyleSheet.create({
