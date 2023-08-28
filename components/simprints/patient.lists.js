@@ -61,7 +61,10 @@ const PatientList = ({ navigation }) => {
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(`https://mobi-be-production.up.railway.app/patients`);
+      const response = await axios.get(
+        `http://192.168.1.14:3000/${userLog}/patients`,
+      );
+      // const response = await axios.get(`https://mobi-be-production.up.railway.app/patients`);
 
       if (response.status === 200) {
         const currentDate = new Date();
@@ -120,7 +123,9 @@ const PatientList = ({ navigation }) => {
   const handleSearch = async (query) => {
     setSearchQuery(query);
     try {
-      const response = await axios.get(`https://mobi-be-production.up.railway.app/search?query=${query}`);
+      const response = await axios.get(
+        `http://192.168.1.14:3000/search?query=${query}`,
+      );
       setSearchSuggestions(response.data);
     } catch (error) {
       console.error('An error occurred:', error);

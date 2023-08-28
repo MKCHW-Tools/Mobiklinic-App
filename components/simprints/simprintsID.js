@@ -22,17 +22,29 @@ import Icon from 'react-native-vector-icons/Feather';
 import {COLORS, DIMENS} from '../constants/styles';
 import CustomHeader from '../ui/custom-header';
 import CopyRight from './copyright';
-import { set } from 'date-fns';
+import {set} from 'date-fns';
+import {useNavigation} from '@react-navigation/native';
 
 const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
 var OpenActivity = NativeModules.OpenActivity;
 
-const SimprintsID = ({ navigation }) => {
-  const { updateDataResults, updateSession, updateBenData, benData, userNames, patientId, setPatientId } = useContext(DataResultsContext);
+const SimprintsID = ({navigation}) => {
+  const {
+    updateDataResults,
+    updateSession,
+    updateBenData,
+    benData,
+    userNames,
+    patientId,
+    setPatientId,
+    updateRegistrationErrorContext,
+  } = useContext(DataResultsContext);
   const [userData, setUserData] = useState(null);
   const [guid, setGuid] = useState(benData.length > 0 ? benData[0].guid : []);
-  const [identificationPlusResults, setIdentificationPlusResults] = useState([]);
+  const [identificationPlusResults, setIdentificationPlusResults] = useState(
+    [],
+  );
   const [identificationResults, setIdentificationResults] = useState([]);
   const [displayMode, setDisplayMode] = useState(null);
   const [enrollmentGuid, setEnrollmentGuid] = useState(null);
@@ -41,7 +53,9 @@ const SimprintsID = ({ navigation }) => {
   const [noMatchButtonPressed, setNoMatchButtonPressed] = useState(false);
   const [showButtons, setShowButtons] = useState(true);
   const sortedResults = identificationResults
-    .filter(result => result.confidenceScore >= 20 && result.confidenceScore <= 99)
+    .filter(
+      result => result.confidenceScore >= 20 && result.confidenceScore <= 99,
+    )
     .sort((a, b) => b.confidenceScore - a.confidenceScore);
   const [showResults, setShowResults] = useState(false);
   const [collapsedIndex, setCollapsedIndex] = useState(-1);
@@ -62,16 +76,20 @@ const SimprintsID = ({ navigation }) => {
       const month = date.getMonth() + 1;
       const year = date.getFullYear();
 
-      return `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
+      return `${day.toString().padStart(2, '0')}/${month
+        .toString()
+        .padStart(2, '0')}/${year}`;
     }
     return 'Click to add date';
   };
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`https://mobi-be-production.up.railway.app/patients/${guid}`);
-      if (response.status === 200) {
-        const data = response.data;
+      const response = await fetch(
+        `https://mobi-be-production.up.railway.app/patients/${guid}`,
+      );
+      if (response.ok) {
+        const data = await response.json();
         const patientId = data.id;
         setPatientId(patientId);
         setUserData(data);
@@ -103,7 +121,8 @@ const SimprintsID = ({ navigation }) => {
         setIdentificationPlusResults(results);
         setDisplayMode('identificationPlus');
         updateBenData(results);
-        const { guid } = results[0];
+        const {guid} = results[0];
+        const {sessionId} = results[0];
         updateDataResults(guid);
       },
     );
@@ -111,24 +130,50 @@ const SimprintsID = ({ navigation }) => {
     const identificationSubscription = DeviceEventEmitter.addListener(
       'onIdentificationResult',
       results => {
+        const {guid} = results[0];
+        const {sessionId} = results[0];
         setIdentificationResults(results);
         setDisplayMode('identification');
+        setSessionId(sessionId);
         updateBenData(results);
-        const { guid } = results[0];
+        updateSession(sessionId);
+
         updateDataResults(guid);
+
+        // Console log the guid and sessionId here
+        console.log('Guid:', guid);
+        console.log('SessionId:', sessionId);
+        console.log('sessionId data type:', typeof sessionId);
       },
     );
 
     const registrationSuccessSubscription = DeviceEventEmitter.addListener(
       'SimprintsRegistrationSuccess',
       event => {
-        const { guid, sessionId } = event;
+        const {guid, sessionId} = event;
         setEnrollmentGuid(guid);
         setSessionId(sessionId);
         setDisplayMode('enrollment');
         navigation.navigate('PatientData');
         updateDataResults(guid);
         updateSession(sessionId);
+
+        console.log('Guid:', guid);
+        console.log('SessionId:', sessionId);
+      },
+    );
+
+    const registrationErrorSubscription = DeviceEventEmitter.addListener(
+      'SimprintsRegistrationError',
+      event => {
+        const {reason, extra} = event;
+
+        // Display the refusal reason and extra reasons in the console
+        console.log('Refusal Reason:', reason);
+        console.log('Refusal Extra:', extra);
+
+
+        handleRegistrationError(reason, extra);
       },
     );
 
@@ -136,8 +181,16 @@ const SimprintsID = ({ navigation }) => {
       identificationPlusSubscription.remove();
       identificationSubscription.remove();
       registrationSuccessSubscription.remove();
+      registrationErrorSubscription.remove();
     };
   }, [updateDataResults, updateBenData, updateSession]);
+
+  const handleRegistrationError = (reason, extra) => {
+    updateRegistrationErrorContext(reason, extra);
+    navigation.navigate('PatientData');
+    console.log(reason);
+
+  };
 
   const handleIdentificationPlus = () => {
     const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
@@ -157,7 +210,10 @@ const SimprintsID = ({ navigation }) => {
 
   const confirmSelectedBeneficiary = () => {
     if (sessionId && selectedUserUniqueId) {
-      IdentificationPlus.confirmSelectedBeneficiary(sessionId, selectedUserUniqueId);
+      IdentificationPlus.confirmSelectedBeneficiary(
+        sessionId,
+        selectedUserUniqueId,
+      );
     }
     fetchData();
     navigation.navigate('PatientData');
@@ -166,7 +222,10 @@ const SimprintsID = ({ navigation }) => {
 
   const confirmSelectedBeneficiaryy = guid => {
     if (sessionId && selectedUserUniqueId) {
-      IdentificationPlus.confirmSelectedBeneficiary(sessionId, selectedUserUniqueId);
+      IdentificationPlus.confirmSelectedBeneficiary(
+        sessionId,
+        selectedUserUniqueId,
+      );
     }
     setGuid(guid);
     setSessionId(sessionId);
@@ -222,7 +281,7 @@ const SimprintsID = ({ navigation }) => {
       {_header()}
       <View style={styles.wrap}>
         <Image
-          style={{ width: 70, height: 70 }}
+          style={{width: 70, height: 70}}
           source={require('../imgs/logo.png')}
         />
         <Text style={styles.title}>Mobiklinic</Text>
@@ -234,22 +293,22 @@ const SimprintsID = ({ navigation }) => {
                 {enrollmentGuid && (
                   <>
                     <Text style={styles.text}>Beneficiary Enrolled on ID</Text>
-                    <View style={{ height: 30 }} />
+                    <View style={{height: 30}} />
 
                     <TouchableOpacity
                       onPress={confirmSelectedBeneficiary}
                       style={styles.input}>
                       <Text style={styles.label}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 15 }}>
+                        <Text style={{fontWeight: 'bold', fontSize: 15}}>
                           {enrollmentGuid}
                         </Text>
-                        <Text style={{ fontWeight: 'bold', fontSize: 15 }}>
+                        <Text style={{fontWeight: 'bold', fontSize: 15}}>
                           {sessionId}
                         </Text>
                       </Text>
                     </TouchableOpacity>
 
-                    <View style={{ height: 20 }} />
+                    <View style={{height: 20}} />
                   </>
                 )}
               </>
@@ -260,7 +319,7 @@ const SimprintsID = ({ navigation }) => {
                 {identificationPlusResults.length > 0 && (
                   <React.Fragment key="identification-plus-heading">
                     <Text style={styles.text}>Beneficiary Identified:</Text>
-                    <View style={{ height: 20 }} />
+                    <View style={{height: 20}} />
                   </React.Fragment>
                 )}
 
@@ -276,31 +335,31 @@ const SimprintsID = ({ navigation }) => {
                         style={styles.input}
                         onPress={confirmSelectedBeneficiaryy}>
                         <Text style={styles.label}>
-                          <View style={{ height: 20 }} />
+                          <View style={{height: 20}} />
                           Tier:{'\t'}
                           {'\t'}
-                          <Text style={{ fontWeight: 'bold' }}>
+                          <Text style={{fontWeight: 'bold'}}>
                             {result.tier}
                           </Text>
                           {'\n'}
                           Confidence Score:{'\t'}
                           {'\t'}
-                          <Text style={{ fontWeight: 'bold' }}>
+                          <Text style={{fontWeight: 'bold'}}>
                             {result.confidenceScore}%
                           </Text>
                           {'\n'}
                           Guid:
-                          <Text style={{ fontWeight: 'bold' }}>
+                          <Text style={{fontWeight: 'bold'}}>
                             {result.guid}
                           </Text>
                         </Text>
                       </TouchableOpacity>
                     </View>
                   ))}
-                <View style={{ height: 20 }} />
+                <View style={{height: 20}} />
                 {showButtons ? (
                   <>
-                    <View style={{ height: 20 }} />
+                    <View style={{height: 20}} />
 
                     <TouchableOpacity
                       style={styles.button}
@@ -334,7 +393,7 @@ const SimprintsID = ({ navigation }) => {
                         setRefreshing(true);
                       }}>
                       <Text style={styles.label}>
-                        <View style={{ height: 20 }} />
+                        <View style={{height: 20}} />
                         {`Beneficiary ${index + 1} (Score: ${
                           result.confidenceScore
                         }%)`}
@@ -419,7 +478,7 @@ const SimprintsID = ({ navigation }) => {
                   <Text style={styles.buttonText}>Start Registration</Text>
                 </TouchableOpacity>
 
-                <View style={{ height: 10 }} />
+                <View style={{height: 10}} />
 
                 <TouchableOpacity
                   style={styles.button}

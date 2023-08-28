@@ -91,7 +91,8 @@ public class IdentificationModule extends ReactContextBaseJavaModule {
     
             if (identifications != null && identifications.size() > 0) {
                 Identification topMatch = identifications.get(0);
-                String topMatchId = topMatch.getGuid();
+                // String topMatchId = topMatch.getGuid();
+                
     
                
                 WritableArray resultArray = Arguments.createArray();
@@ -101,6 +102,7 @@ public class IdentificationModule extends ReactContextBaseJavaModule {
                     identificationMap.putString("tier", identification.getTier().toString());
                     identificationMap.putDouble("confidenceScore", identification.getConfidence());
                     identificationMap.putString("guid", identification.getGuid());
+                    identificationMap.putString("sessionId", sessionId);
                     resultArray.pushMap(identificationMap);
                 }
     

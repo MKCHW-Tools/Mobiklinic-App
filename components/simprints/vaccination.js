@@ -28,10 +28,12 @@ const PatientData = ({navigation, route}) => {
   const {dataResults} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
   const currentDate = new Date();
+  const {userNames} = useContext(DataResultsContext);
 
   const [dateOfVaccination, setDateOfVaccination] = useState('');
   const [dateForNextDose, setDateForNextDose] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const {sessionId} = useContext(DataResultsContext);
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || dateOfVaccination;
@@ -69,6 +71,8 @@ const PatientData = ({navigation, route}) => {
     dateForNextDose: '',
     siteAdministered: '',
     facility: '',
+    simSessionId: '',
+    simprintsGui: '',
 
     // registeredById: '',
   });
@@ -102,6 +106,10 @@ const PatientData = ({navigation, route}) => {
             dateForNextDose: state.dateForNextDose,
             siteAdministered: state.siteAdministered,
             facility: state.facility,
+            simSessionId: sessionId,
+            simprintsGui: dataResults,
+            vaccinatedBy: userNames,
+            
           }),
           headers: {
             'Content-type': 'application/json; charset=UTF-8',
@@ -157,6 +165,7 @@ const PatientData = ({navigation, route}) => {
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
       {_header()}
       <ScrollView style={STYLES.body}>
+        
         {/* Vaccine Name */}
         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
           <Text style={STYLES.label}>Vaccine Name:</Text>
@@ -190,6 +199,30 @@ const PatientData = ({navigation, route}) => {
             <Picker.Item label="Influenza Vaccine" value="influenza" />
           </Picker>
         </View>
+
+          {/* Simprints GUI */}
+          <View style={STYLES.guid}>
+          <Text style={STYLES.label}>Simprints GUI</Text>
+          <TextInput
+            style={STYLES.guid}
+            value={dataResults}
+            onChangeText={text => setState({...state, simprintsGui: text})}
+            placeholder="Enter simprints GUI"
+          />
+          
+        </View>
+
+         {/* Simprints Session ID */}
+         <View style={STYLES.guid}>
+          <Text style={STYLES.label}>Simprints Session ID</Text>
+          <TextInput
+            style={STYLES.guid}
+            value={sessionId}
+            onChangeText={text => setState({...state, simSessionId: text})}
+            placeholder="Enter simprints session ID"
+          />
+          </View>
+
 
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Card number:</Text>
