@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import com.simprints.libsimprints.Constants;
 import com.simprints.libsimprints.Identification;
 import com.simprints.libsimprints.SimHelper;
+import com.simprints.libsimprints.RefusalForm;
 
 public class IdentificationModule extends ReactContextBaseJavaModule {
     private static final int IDENTIFY_REQUEST_CODE = 1;
@@ -108,6 +109,26 @@ public class IdentificationModule extends ReactContextBaseJavaModule {
     
                 // Emit an event to the React Native app with the identification results
                 sendEvent(EVENT_IDENTIFICATION_RESULT, resultArray);
+            }
+
+            else{
+                if(data.hasExtra(Constants.SIMPRINTS_REFUSAL_FORM)){
+                    RefusalForm refusalForm = data.getParcelableExtra(Constants.SIMPRINTS_REFUSAL_FORM);
+                    String reason = refusalForm.getReason();
+                    String extra = refusalForm.getExtra();
+                    WritableMap errorParams = Arguments.createMap();
+                    errorParams.putString("reason", reason);
+                    errorParams.putString("extra", extra);
+                    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                            .emit("SimprintsIdentificationError", errorParams);
+                }
+                else{
+                    WritableMap errorParams = Arguments.createMap();
+                    errorParams.putString("reason", "No identification results");
+                    errorParams.putString("extra", "No identification results");
+                    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                            .emit("SimprintsIdentificationError", errorParams);                }
+
             }
         }
     }

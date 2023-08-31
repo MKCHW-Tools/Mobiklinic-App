@@ -18,7 +18,7 @@ import DataResultsContext from '../contexts/DataResultsContext';
 import {URLS} from '../constants/API';
 
 const PatientList = ({navigation}) => {
-  const {userLog, userNames, refusalData} = useContext(DataResultsContext);
+  const {userLog, userNames, refusalData, patientId, setPatientId} = useContext(DataResultsContext);
   const [users, setUsers] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +28,8 @@ const PatientList = ({navigation}) => {
   const [patientsEnrolledCount, setPatientsEnrolledCount] = useState(0);
   const [loggedInUserPhoneNumber, setLoggedInUserPhoneNumber] = useState('');
   const [expandedUserId, setExpandedUserId] = useState(null);
-  const {reason, extra} = refusalData;
+  const {reason} = refusalData;
+
 
   const formatDate = date => {
     if (date) {
@@ -418,9 +419,7 @@ const PatientList = ({navigation}) => {
                 ))}
               </View>
             )}
-            <TouchableOpacity
-              onPress={() => navigation.navigate('SimprintsID')}
-              style={styles.buttonSec}>
+            <TouchableOpacity onPress={addData()} style={styles.buttonSec}>
               <Text style={styles.buttonText}>Add Data</Text>
             </TouchableOpacity>
           </View>
