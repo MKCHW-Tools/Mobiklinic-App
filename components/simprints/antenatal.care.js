@@ -99,7 +99,7 @@ const AntenatalCare = ({navigation}) => {
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
       const response = await fetch(
-        `http://192.168.1.14:3000/${patientId}/antenantals`,
+        `http://192.168.1.16:3000/${patientId}/antenantals`,
         {
           method: 'POST',
           body: JSON.stringify({

@@ -94,7 +94,7 @@ const PatientData = ({navigation, route}) => {
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
       const response = await fetch(
-        `http://192.168.1.14:3000/${patientId}/vaccinations`,
+        `http://192.168.1.16:3000/${patientId}/vaccinations`,
         {
           method: 'POST',
           body: JSON.stringify({

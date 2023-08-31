@@ -89,7 +89,7 @@ const SimprintsID = ({navigation}) => {
 
     try {
       const response = await fetch(
-        `http://192.168.1.14:3000/patients/${guid}`,
+        `http://192.168.1.16:3000/patients/${guid}`,
       );
       if (response.ok) {
         const data = await response.json();
@@ -186,9 +186,22 @@ const SimprintsID = ({navigation}) => {
           console.log('Refusal Reason:', reason);
           console.log('Refusal Extra:', extra);
   
-          // ... handle the refusal form data as needed
+          
       }
   );
+
+  const identificationErrorSubscription = DeviceEventEmitter.addListener(
+    'SimprintsIdentificationError',
+    event => {
+      const {reason} = event;
+      const {extra} = event;
+
+      // Now you can use the 'reason' and 'extra' values in your React Native code
+      console.log('Refusal Reason:', reason);
+      console.log('Refusal Extra:', extra);
+    },
+  );
+
   
 
     return () => {
