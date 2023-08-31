@@ -18,7 +18,8 @@ import DataResultsContext from '../contexts/DataResultsContext';
 import {URLS} from '../constants/API';
 
 const PatientList = ({navigation}) => {
-  const {userLog, userNames, refusalData, patientId, setPatientId} = useContext(DataResultsContext);
+  const {userLog, userNames, refusalData, patientId, setPatientId} =
+    useContext(DataResultsContext);
   const [users, setUsers] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -26,10 +27,8 @@ const PatientList = ({navigation}) => {
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [isNoUserFound, setIsNoUserFound] = useState(false);
   const [patientsEnrolledCount, setPatientsEnrolledCount] = useState(0);
-  const [loggedInUserPhoneNumber, setLoggedInUserPhoneNumber] = useState('');
   const [expandedUserId, setExpandedUserId] = useState(null);
   const {reason} = refusalData;
-
 
   const formatDate = date => {
     if (date) {
@@ -437,9 +436,6 @@ const PatientList = ({navigation}) => {
       {_header()}
       <View style={styles.container}>
         <Text style={styles.header}>Beneficiary List</Text>
-        <Text style={styles.header}>
-          Patients Enrolled: {patientsEnrolledCount}
-        </Text>
 
         <View style={styles.searchContainer}>
           <TextInput
