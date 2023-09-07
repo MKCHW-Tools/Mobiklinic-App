@@ -18,7 +18,8 @@ import DataResultsContext from '../contexts/DataResultsContext';
 import {URLS} from '../constants/API';
 
 const PatientList = ({navigation}) => {
-  const {userLog, userNames, refusalData} = useContext(DataResultsContext);
+  const {userLog, userNames, refusalData, patientId, setPatientId} =
+    useContext(DataResultsContext);
   const [users, setUsers] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -26,9 +27,8 @@ const PatientList = ({navigation}) => {
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [isNoUserFound, setIsNoUserFound] = useState(false);
   const [patientsEnrolledCount, setPatientsEnrolledCount] = useState(0);
-  const [loggedInUserPhoneNumber, setLoggedInUserPhoneNumber] = useState('');
   const [expandedUserId, setExpandedUserId] = useState(null);
-  const {reason, extra} = refusalData;
+  const {reason} = refusalData;
 
   const formatDate = date => {
     if (date) {
@@ -331,7 +331,6 @@ const PatientList = ({navigation}) => {
                         {antenantal.prescriptions}
                       </Text>
                     </Text>
-
                     <Text style={styles.userDataLabel}>
                       Current Weight:
                       <Text style={styles.userDataValue}>
@@ -360,6 +359,17 @@ const PatientList = ({navigation}) => {
                       </Text>
                     </Text>
 
+                    {antenantal.medicines && antenantal.medicines.length > 0 && (
+                      <View>
+                        <Text style={styles.userDataLabel1}>MEDICINES</Text>
+                        <Text style={styles.userDataLabel}>
+                      Additional Notes:
+                      <Text style={styles.userDataValue}>
+                        {antenantal.drugNotes}
+                      </Text>
+                    </Text>
+                      </View>)}
+
                     <View style={styles.line} />
                   </View>
                 ))}
@@ -375,19 +385,6 @@ const PatientList = ({navigation}) => {
                       Condition:{' '}
                       <Text style={styles.userDataValue}>
                         {diagnosis.condition}
-                      </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Prescribed drugs:{' '}
-                      <Text style={styles.userDataValue}>
-                        {diagnosis.drugsPrescribed}
-                      </Text>
-                    </Text>
-                    <Text style={styles.userDataLabel}>
-                      Dosage:{' '}
-                      <Text style={styles.userDataValue}>
-                        {diagnosis.dosage} X {diagnosis.frequency} for {'\t'}
-                        {diagnosis.duration} days
                       </Text>
                     </Text>
 
@@ -411,6 +408,36 @@ const PatientList = ({navigation}) => {
                         {diagnosis.impression}
                       </Text>
                     </Text>
+                    {diagnosis.medicines && diagnosis.medicines.length > 0 && (
+                      <View>
+                        <Text style={styles.userDataLabel1}>MEDICINES</Text>
+                        {diagnosis.medicines.map((medicine, index) => (
+                          <View key={index}>
+                            <Text style={styles.userDataLabel}>
+                              Medicine Name:
+                              <Text style={styles.userDataValue}>
+                                {diagnosis.medicine.name}
+                              </Text>
+                            </Text>
+                            <Text style={styles.userDataLabel}>
+                              Dosage:
+                              <Text style={styles.userDataValue}>
+                                {diagnosis.medicine.dosage}
+                              </Text>
+                            </Text>
+                            <Text style={styles.userDataLabel}>
+                              Frequency:
+                              <Text style={styles.userDataValue}>
+                                {medicine.frequency}
+                              </Text>
+                            </Text>
+                            {/* Add more medicine properties here */}
+                            <View style={styles.line} />
+                          </View>
+                        ))}
+                      </View>
+                    )}
+
                     <View style={styles.line} />
 
                     <View style={{height: 20}} />
@@ -418,9 +445,7 @@ const PatientList = ({navigation}) => {
                 ))}
               </View>
             )}
-            <TouchableOpacity
-              onPress={() => navigation.navigate('SimprintsID')}
-              style={styles.buttonSec}>
+            <TouchableOpacity onPress={addData} style={styles.buttonSec}>
               <Text style={styles.buttonText}>Add Data</Text>
             </TouchableOpacity>
           </View>
@@ -438,9 +463,6 @@ const PatientList = ({navigation}) => {
       {_header()}
       <View style={styles.container}>
         <Text style={styles.header}>Beneficiary List</Text>
-        <Text style={styles.header}>
-          Patients Enrolled: {patientsEnrolledCount}
-        </Text>
 
         <View style={styles.searchContainer}>
           <TextInput

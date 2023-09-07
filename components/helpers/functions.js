@@ -340,7 +340,7 @@ export const signUp = async data => {
   }
 
   try {
-    await fetch(`http://192.168.1.14:3000/auth/signup`, {
+    await fetch(`${URLS.BASE}/auth/signup`, {
       method: 'POST',
       body: JSON.stringify({
         phone: phoneNumber,

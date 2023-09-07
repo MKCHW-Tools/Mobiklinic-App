@@ -24,7 +24,7 @@ import CustomHeader from '../ui/custom-header';
 import CopyRight from './copyright';
 import {set} from 'date-fns';
 import {useNavigation} from '@react-navigation/native';
-import { URLS } from '../constants/API';
+import {URLS} from '../constants/API';
 
 const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
@@ -87,9 +87,7 @@ const SimprintsID = ({navigation}) => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(
-        `${URLS.BASE}/patients/${guid}`,
-      );
+      const response = await fetch(`${URLS.BASE}/patients/${guid}`);
       if (response.ok) {
         const data = await response.json();
         const patientId = data.id;
@@ -169,14 +167,25 @@ const SimprintsID = ({navigation}) => {
       'SimprintsRegistrationError',
       event => {
         const {reason, extra} = event;
-
         // Display the refusal reason and extra reasons in the console
         console.log('Refusal Reason:', reason);
         console.log('Refusal Extra:', extra);
         // Set the refusal data in the context
         setRefusalData({reason, extra});
-
         handleRegistrationError(reason, extra);
+      },
+    );
+
+    const identificationErrorSubscription = DeviceEventEmitter.addListener(
+      'SimprintsIdentificationError',
+      event => {
+        const {reason} = event;
+        const {extra} = event;
+        console.log('Refusal Reason:', reason);
+        console.log('Refusal Extra:', extra);
+        setRefusalData({reason, extra});
+        updateRegistrationErrorContext(reason, extra);
+        navigation.navigate('PatientLists');
       },
     );
 
@@ -185,6 +194,7 @@ const SimprintsID = ({navigation}) => {
       identificationSubscription.remove();
       registrationSuccessSubscription.remove();
       registrationErrorSubscription.remove();
+      identificationErrorSubscription.remove();
     };
   }, [updateDataResults, updateBenData, updateSession]);
 

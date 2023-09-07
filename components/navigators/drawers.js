@@ -33,8 +33,6 @@ export const CustomDrawerContent = props => {
   const {tokens} = React.useContext(AuthContext);
 
   React.useEffect(() => {
-    // console.log('Drawer header')
-    // console.log(userDetail)
   }, []);
 
   return (
@@ -52,46 +50,46 @@ export const CustomDrawerContent = props => {
   );
 };
 
-export const DrawerNavigation = () => {
-  const {accessToken} = React.useContext(UserContext);
+// export const DrawerNavigation = () => {
+//   const {accessToken} = React.useContext(UserContext);
 
-  return (
-    <Drawer.Navigator
-      initialRouteName="Dashboard"
-      drawerContentOptions={{
-        itemsContainerStyle: {
-          marginVertical: 0,
-        },
-        activeTintColor: COLORS.WHITE,
-        inactiveTintColor: COLORS.WHITE,
-        activeBackgroundColor: COLORS.ACCENT_1,
-        itemStyle: {
-          marginHorizontal: 0,
-          // padding: DIMENS.PADDING,
-          borderRadius: 0,
-        },
-      }}
-      drawerType={'slide'}
-      hideStatusBar={'true'}
-      drawerStyle={{
-        backgroundColor: COLORS.PRIMARY,
-        width: 240,
-      }}
-      drawerContent={props => <CustomDrawerContent {...props} />}>
-      {/* <Drawer.Screen name="Dashboard" component={Dashboard} /> */}
-      <Drawer.Screen name="Covid" component={Covid19} />
-      <Drawer.Screen name="News" component={News} />
-      <Drawer.Screen name="Maternal" component={Maternal} />
-      <Drawer.Screen name="Health Tips" component={Tips} />
-      <Drawer.Screen
-        name="Login"
-        component={Login}
-        options={{headerShown: false, swipeEnabled: false}}
-      />
-      <Drawer.Screen name="About" component={About} />
-    </Drawer.Navigator>
-  );
-};
+//   return (
+//     <Drawer.Navigator
+//       initialRouteName="Dashboard"
+//       drawerContentOptions={{
+//         itemsContainerStyle: {
+//           marginVertical: 0,
+//         },
+//         activeTintColor: COLORS.WHITE,
+//         inactiveTintColor: COLORS.WHITE,
+//         activeBackgroundColor: COLORS.ACCENT_1,
+//         itemStyle: {
+//           marginHorizontal: 0,
+//           // padding: DIMENS.PADDING,
+//           borderRadius: 0,
+//         },
+//       }}
+//       drawerType={'slide'}
+//       hideStatusBar={'true'}
+//       drawerStyle={{
+//         backgroundColor: COLORS.PRIMARY,
+//         width: 240,
+//       }}
+//       drawerContent={props => <CustomDrawerContent {...props} />}>
+//       {/* <Drawer.Screen name="Dashboard" component={Dashboard} /> */}
+//       <Drawer.Screen name="Covid" component={Covid19} />
+//       <Drawer.Screen name="News" component={News} />
+//       <Drawer.Screen name="Maternal" component={Maternal} />
+//       <Drawer.Screen name="Health Tips" component={Tips} />
+//       <Drawer.Screen
+//         name="Login"
+//         component={Login}
+//         options={{headerShown: false, swipeEnabled: false}}
+//       />
+//       <Drawer.Screen name="About" component={About} />
+//     </Drawer.Navigator>
+//   );
+// };
 
 export const DrawerNavigationLogged = () => {
   const {setTokens, setUser} = React.useContext(AuthContext);
@@ -131,8 +129,7 @@ export const DrawerNavigationLogged = () => {
         </CustomDrawerContent>
       )}>
       <Drawer.Screen name="Dashboard" component={Dashboard} />
-      {/* 			<Drawer.Screen name="Messages" component={Chats} />
-       */}
+
       <Drawer.Screen name="SimprintsID" component={SimprintsID} />
       <Drawer.Screen name="Doctors" component={Doctors} />
       <Drawer.Screen name="Ambulance" component={Ambulance} />
