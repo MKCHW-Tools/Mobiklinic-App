@@ -331,7 +331,6 @@ const PatientList = ({navigation}) => {
                         {antenantal.prescriptions}
                       </Text>
                     </Text>
-
                     <Text style={styles.userDataLabel}>
                       Current Weight:
                       <Text style={styles.userDataValue}>
@@ -359,6 +358,17 @@ const PatientList = ({navigation}) => {
                         {antenantal.drugNotes}
                       </Text>
                     </Text>
+
+                    {antenantal.medicines && antenantal.medicines.length > 0 && (
+                      <View>
+                        <Text style={styles.userDataLabel1}>MEDICINES</Text>
+                        <Text style={styles.userDataLabel}>
+                      Additional Notes:
+                      <Text style={styles.userDataValue}>
+                        {antenantal.drugNotes}
+                      </Text>
+                    </Text>
+                      </View>)}
 
                     <View style={styles.line} />
                   </View>
