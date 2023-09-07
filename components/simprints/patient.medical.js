@@ -183,66 +183,79 @@ const PatientMedical = ({navigation}) => {
 
   const renderMedicineInputs = () => {
     return medicines.map((medicine, index) => (
-      <View key={index}>
-        <Text style={STYLES.label}>Medicine #{index + 1}:</Text>
-        <TextInput
-          style={[
-            STYLES.field,
-            {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
-          ]}
-          placeholderTextColor={COLORS.GREY}
-          value={medicine.name}
-          onChangeText={text => handleMedicineChange(index, 'name', text)}
-          placeholder="Medicine Name"
-        />
+      <View key={index} style={STYLES.medicineContainer}>
+        <Text style={STYLES.medicineLabel}>Medicine #{index + 1}:</Text>
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Medicine:</Text>
+          <TextInput
+            style={[
+              STYLES.field,
+              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+            ]}
+            placeholderTextColor={COLORS.GREY}
+            placeholder="Medicine Name"
+            value={medicine.name}
+            onChangeText={text => handleMedicineChange(index, 'name', text)}
+          />
+        </View>
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Additional Instructions:</Text>
+          <TextInput
+            style={[
+              STYLES.field,
+              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+            ]}
+            placeholder="Take Medicine after eating"
+            value={medicine.description}
+            onChangeText={text =>
+              handleMedicineChange(index, 'description', text)
+            }
+            placeholderTextColor={COLORS.GREY}
+            multiline={true}
+            numberOfLines={3}
+          />
+        </View>
 
-        <TextInput
-          style={[
-            STYLES.field,
-            {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
-          ]}
-          placeholderTextColor={COLORS.GREY}
-          value={medicine.dosage}
-          onChangeText={text => handleMedicineChange(index, 'dosage', text)}
-          placeholder="Dosage"
-        />
+        <View style={STYLES.wrap}>
+          <Text style={STYLES.label}>Dosage:</Text>
 
-        <TextInput
-          style={[
-            STYLES.field,
-            {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
-          ]}
-          placeholderTextColor={COLORS.GREY}
-          value={medicine.frequency}
-          onChangeText={text => handleMedicineChange(index, 'frequency', text)}
-          placeholder="Frequency"
-        />
+          <View>
+            <TextInput
+              style={STYLES.medicineInput}
+              placeholder="dose"
+              value={medicine.dosage}
+              keyboardType="numeric"
+              onChangeText={text => handleMedicineChange(index, 'dosage', text)}
+              placeholderTextColor={COLORS.GREY}
+            />
+          </View>
+          <Text style={STYLES.label}>X</Text>
 
-        <TextInput
-          style={[
-            STYLES.field,
-            {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
-          ]}
-          placeholderTextColor={COLORS.GREY}
-          value={medicine.duration}
-          onChangeText={text => handleMedicineChange(index, 'duration', text)}
-          placeholder="Duration"
-        />
+          <TextInput
+            style={STYLES.medicineInput}
+            placeholder="Freq"
+            value={medicine.frequency}
+            keyboardType="numeric"
+            onChangeText={text =>
+              handleMedicineChange(index, 'frequency', text)
+            }
+            placeholderTextColor={COLORS.GREY}
+          />
+          <Text style={STYLES.label}>for</Text>
 
-        <TextInput
-          style={[
-            STYLES.field,
-            {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
-          ]}
-          placeholderTextColor={COLORS.GREY}
-          value={medicine.description}
-          onChangeText={text =>
-            handleMedicineChange(index, 'description', text)
-          }
-          placeholder="Description"
-        />
+          <TextInput
+            style={STYLES.medicineInput}
+            placeholder="duration"
+            keyboardType="numeric"
+            value={medicine.frequency}
+            onChangeText={text => handleMedicineChange(index, 'duration', text)}
+            placeholderTextColor={COLORS.GREY}
+          />
+          <Text style={STYLES.label}>days</Text>
+        </View>
+
         <TouchableOpacity onPress={() => handleRemoveMedicine(index)}>
-          <Text style={STYLES.label}>Remove</Text>
+          <Text style={STYLES.medicineRemoveButton}>Remove</Text>
         </TouchableOpacity>
       </View>
     ));
@@ -372,8 +385,10 @@ const PatientMedical = ({navigation}) => {
 
         {/* Render medicine inputs */}
         {renderMedicineInputs()}
-        <TouchableOpacity onPress={handleAddMedicine}>
-          <Text style={STYLES.label}>Add Medicine</Text>
+        <TouchableOpacity
+          style={STYLES.addMedicineButton}
+          onPress={handleAddMedicine}>
+          <Text style={STYLES.addMedicineButtonText}>Add Medicine</Text>
         </TouchableOpacity>
 
         <View style={STYLES.labeled}>
@@ -635,5 +650,44 @@ const STYLES = StyleSheet.create({
     paddingLeft: 12,
     fontSize: 15,
     color: COLORS.BLACK,
+  },
+  medicineContainer: {
+    marginBottom: 20,
+  },
+  medicineLabel: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: COLORS.BLACK,
+  },
+  medicineInput: {
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderColor: COLORS.GREY,
+    borderWidth: 1,
+    borderRadius: 10,
+    marginTop: 5,
+    marginBottom: 10,
+    color: COLORS.BLACK,
+  },
+  medicineRemoveButton: {
+    color: COLORS.RED, // Customize the color as needed
+    fontWeight: 'bold',
+    fontSize: 14,
+    textAlign: 'right',
+  },
+  addMedicineButton: {
+    backgroundColor: COLORS.WHITE,
+    paddingVertical: 10,
+    // paddingHorizontal: 15,
+    borderRadius: 10,
+    marginVertical: 20,
+    borderWidth: 2,
+    borderColor: COLORS.PRIMARY,
+  },
+  addMedicineButtonText: {
+    color: COLORS.PRIMARY,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
