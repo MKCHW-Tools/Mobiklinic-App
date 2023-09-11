@@ -190,11 +190,6 @@ const PatientList = ({navigation}) => {
         {isExpanded && (
           <View style={styles.cardDetails}>
             <Text style={styles.userDataLabel}>
-              User Name:{'\t'}
-              {'\t'}
-              <Text style={styles.userDataValue}>{userNames}</Text>
-            </Text>
-            <Text style={styles.userDataLabel}>
               Phone Number:
               <Text style={styles.userDataValue}>{item.phoneNumber}</Text>
             </Text>
@@ -324,13 +319,6 @@ const PatientList = ({navigation}) => {
                         {antenantal.bloodGroup}
                       </Text>
                     </Text>
-
-                    <Text style={styles.userDataLabel}>
-                      Prescriptions:
-                      <Text style={styles.userDataValue}>
-                        {antenantal.prescriptions}
-                      </Text>
-                    </Text>
                     <Text style={styles.userDataLabel}>
                       Current Weight:
                       <Text style={styles.userDataValue}>
@@ -352,23 +340,37 @@ const PatientList = ({navigation}) => {
                       </Text>
                     </Text>
 
-                    <Text style={styles.userDataLabel}>
-                      Additional Notes:
-                      <Text style={styles.userDataValue}>
-                        {antenantal.drugNotes}
-                      </Text>
-                    </Text>
+                    {antenantal.medicines &&
+                      antenantal.medicines.length > 0 && (
+                        <View>
+                          <Text style={styles.userDataLabel}>MEDICINES</Text>
+                          {antenantal.medicines.map((medicine, index) => (
+                            <View key={index}>
+                              <Text style={styles.userDataLabel}>
+                                Medicine Name:
+                                <Text style={styles.userDataValue}>
+                                  {medicine.name}
+                                </Text>
+                              </Text>
 
-                    {antenantal.medicines && antenantal.medicines.length > 0 && (
-                      <View>
-                        <Text style={styles.userDataLabel1}>MEDICINES</Text>
-                        <Text style={styles.userDataLabel}>
-                      Additional Notes:
-                      <Text style={styles.userDataValue}>
-                        {antenantal.drugNotes}
-                      </Text>
-                    </Text>
-                      </View>)}
+                              <Text style={styles.userDataLabel}>
+                                Additional Notes:
+                                <Text style={styles.userDataValue}>
+                                  {medicine.description}
+                                </Text>
+                              </Text>
+
+                              <Text style={styles.userDataLabel}>
+                                Dosage:
+                                <Text style={styles.userDataValue}>
+                                  {medicine.dosage} X {medicine.frequency} for{' '}
+                                  {medicine.duration} days
+                                </Text>
+                              </Text>
+                            </View>
+                          ))}
+                        </View>
+                      )}
 
                     <View style={styles.line} />
                   </View>
@@ -377,70 +379,71 @@ const PatientList = ({navigation}) => {
             )}
             {item.diagnoses && item.diagnoses.length > 0 && (
               <View>
-                <Text style={styles.userDataLabel1}>DIAGNOSIS</Text>
-
+                <Text style={styles.userDataLabel1}>DAIGNOSIS</Text>
                 {item.diagnoses.map((diagnosis, index) => (
                   <View key={index}>
                     <Text style={styles.userDataLabel}>
-                      Condition:{' '}
+                      Pregnacy Status:
                       <Text style={styles.userDataValue}>
                         {diagnosis.condition}
                       </Text>
                     </Text>
-
                     <Text style={styles.userDataLabel}>
-                      Date of diagnosis:{' '}
-                      <Text style={styles.userDataValue}>
-                        {formatDate(new Date(diagnosis.dateOfDiagnosis))}
-                      </Text>
-                    </Text>
-
-                    <Text style={styles.userDataLabel}>
-                      Date for Next Dose:{' '}
-                      <Text style={styles.userDataValue}>
-                        {formatDate(new Date(diagnosis.followUpDate))}
-                      </Text>
-                    </Text>
-
-                    <Text style={styles.userDataLabel}>
-                      Impression:{' '}
+                      Signs and Symptoms:
                       <Text style={styles.userDataValue}>
                         {diagnosis.impression}
                       </Text>
                     </Text>
+                    <Text style={styles.userDataLabel}>
+                      Is pregnant?:
+                      <Text style={styles.userDataValue}>
+                        {diagnosis.isPregnant}
+                      </Text>
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      Date of Diagnosis:
+                      <Text style={styles.userDataValue}>
+                        {formatDate(new Date(diagnosis.dateOfDiagnosis))}
+                      </Text>
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      Date for next visit:
+                      <Text style={styles.userDataValue}>
+                        {formatDate(new Date(diagnosis.followUpDate))}
+                      </Text>
+                    </Text>
+                    {console.log(diagnosis.medicines)}
                     {diagnosis.medicines && diagnosis.medicines.length > 0 && (
                       <View>
-                        <Text style={styles.userDataLabel1}>MEDICINES</Text>
-                        {diagnosis.medicines.map((medicine, index) => (
-                          <View key={index}>
+                        <Text style={styles.userDataLabel}>MEDICINES</Text>
+                        {diagnosis.medicines.map((medicine, medIndex) => (
+                          <View key={medIndex}>
                             <Text style={styles.userDataLabel}>
                               Medicine Name:
                               <Text style={styles.userDataValue}>
-                                {diagnosis.medicine.name}
+                                {medicine.name}
                               </Text>
                             </Text>
+
+                            <Text style={styles.userDataLabel}>
+                              Additional Notes:
+                              <Text style={styles.userDataValue}>
+                                {medicine.description}
+                              </Text>
+                            </Text>
+
                             <Text style={styles.userDataLabel}>
                               Dosage:
                               <Text style={styles.userDataValue}>
-                                {diagnosis.medicine.dosage}
+                                {medicine.dosage} X {medicine.frequency} for{' '}
+                                {medicine.duration} days
                               </Text>
                             </Text>
-                            <Text style={styles.userDataLabel}>
-                              Frequency:
-                              <Text style={styles.userDataValue}>
-                                {medicine.frequency}
-                              </Text>
-                            </Text>
-                            {/* Add more medicine properties here */}
-                            <View style={styles.line} />
                           </View>
                         ))}
                       </View>
                     )}
-
                     <View style={styles.line} />
-
-                    <View style={{height: 20}} />
                   </View>
                 ))}
               </View>

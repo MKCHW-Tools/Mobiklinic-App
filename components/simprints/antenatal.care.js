@@ -37,6 +37,7 @@ const AntenatalCare = ({navigation}) => {
   const [expectedDateOfDelivery, setExpectedDateOfDelivery] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [prescriptions, setSelectedPrescriptions] = useState([]);
+  const {isBeneficiaryConfirmed} = useContext(DataResultsContext);
   const [medicines, setMedicines] = useState([
     {
       name: '',
@@ -104,13 +105,14 @@ const AntenatalCare = ({navigation}) => {
     nextOfKin: '',
     nextOfKinContact: '',
     drugNotes: '',
-
+    biometricsVerified: isBeneficiaryConfirmed,
     // registeredById: '',
   });
 
   const handleSubmit = async () => {
     try {
       console.log('Patient ID :', patientId);
+      console.log('Biometrically Verified:', isBeneficiaryConfirmed);
       if (state.isLoading) {
         // Prevent multiple submissions
         return;
@@ -139,7 +141,8 @@ const AntenatalCare = ({navigation}) => {
           reviewedBy: userNames,
           simprintsGui: dataResults,
           simSessionId: sessionId,
-          medicines: medicines, 
+          medicines: medicines,
+          biometricsVerified: isBeneficiaryConfirmed,
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -152,6 +155,7 @@ const AntenatalCare = ({navigation}) => {
         // setId(data.id);
         Alert.alert('Antenatal Care Patient Registered');
         navigation.navigate('Dashboard');
+        console.log(medicines);
       } else {
         console.error('Error posting data:', response.status);
         Alert.alert(
@@ -213,7 +217,6 @@ const AntenatalCare = ({navigation}) => {
             placeholderTextColor={COLORS.BLACK}
             selectedValue={medicine.name}
             onValueChange={value => handleMedicineChange(index, 'name', value)}
-
             style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
             dropdownIconColor={COLORS.GREY_LIGHTER}>
             <Picker.Item label="" value="" />
@@ -289,7 +292,7 @@ const AntenatalCare = ({navigation}) => {
             style={STYLES.medicineInput}
             placeholder="duration"
             keyboardType="numeric"
-            value={medicine.frequency}
+            value={medicine.duration}
             onChangeText={text => handleMedicineChange(index, 'duration', text)}
             placeholderTextColor={COLORS.GREY}
           />

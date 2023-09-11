@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, {useCallback, useEffect, useState, useContext} from 'react';
 import {DeviceEventEmitter, NativeEventEmitter, Text} from 'react-native';
 
@@ -23,27 +22,24 @@ import {COLORS, DIMENS} from '../constants/styles';
 import CustomHeader from '../ui/custom-header';
 import CopyRight from './copyright';
 import {set} from 'date-fns';
-import {useNavigation} from '@react-navigation/native';
 import {URLS} from '../constants/API';
+import {is} from 'date-fns/locale';
 
 const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
 var OpenActivity = NativeModules.OpenActivity;
 
 const SimprintsID = ({navigation}) => {
-  const {
-    updateDataResults,
-    updateSession,
-    updateBenData,
-    benData,
-    userNames,
-    patientId,
-    setPatientId,
-    updateRegistrationErrorContext,
-    setRefusalData,
-  } = useContext(DataResultsContext);
-  const [userData, setUserData] = useState(null);
-  const [guid, setGuid] = useState(benData.length > 0 ? benData[0].guid : []);
+  const {updateDataResults} = useContext(DataResultsContext);
+  const {updateSession} = useContext(DataResultsContext);
+  const {updateBenData} = useContext(DataResultsContext);
+  const {benData} = useContext(DataResultsContext);
+  const {userNames} = useContext(DataResultsContext);
+  const [userData, setUserData] = React.useState(null);
+  const [guid, setGuid] = React.useState(
+    benData.length > 0 ? benData[0].guid : [],
+  );
+
   const [identificationPlusResults, setIdentificationPlusResults] = useState(
     [],
   );
@@ -60,9 +56,14 @@ const SimprintsID = ({navigation}) => {
     )
     .sort((a, b) => b.confidenceScore - a.confidenceScore);
   const [showResults, setShowResults] = useState(false);
-  const [collapsedIndex, setCollapsedIndex] = useState(-1);
+  const [collapsedIndex, setCollapsedIndex] = useState(-1); // Add this line to define the collapsedIndex state variable
   const [clickedResult, setClickedResult] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const {patientId, setPatientId} = useContext(DataResultsContext);
+  const [isBeneficiaryConfirmed, setIsBeneficiaryConfirmed] = useState(true);
+  const {updateIsBeneficiaryConfirmed} = useContext(DataResultsContext); // Add this line to include the new state
+
+  // console.log('Logged User from simprints is', userNames);
 
   const toggleCollapse = index => {
     if (collapsedIndex === index) {
@@ -85,22 +86,26 @@ const SimprintsID = ({navigation}) => {
     return 'Click to add date';
   };
 
+  // fetch data function
   const fetchData = async () => {
+    console.log('GUID:', guid);
+
     try {
       const response = await fetch(`${URLS.BASE}/patients/${guid}`);
       if (response.ok) {
         const data = await response.json();
         const patientId = data.id;
+        console.log('Patient id:', patientId);
         setPatientId(patientId);
+
         setUserData(data);
         setShowResults(true);
       } else {
         setUserData(null);
         setShowResults(false);
       }
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) {}
+    // navigation.navigate('GetPatients');
   };
 
   useEffect(() => {
@@ -150,13 +155,15 @@ const SimprintsID = ({navigation}) => {
     const registrationSuccessSubscription = DeviceEventEmitter.addListener(
       'SimprintsRegistrationSuccess',
       event => {
-        const {guid, sessionId} = event;
+        const {guid} = event;
+        const {sessionId} = event;
         setEnrollmentGuid(guid);
         setSessionId(sessionId);
         setDisplayMode('enrollment');
         navigation.navigate('PatientData');
         updateDataResults(guid);
         updateSession(sessionId);
+        // setSessionId(sessionId);
 
         console.log('Guid:', guid);
         console.log('SessionId:', sessionId);
@@ -166,13 +173,12 @@ const SimprintsID = ({navigation}) => {
     const registrationErrorSubscription = DeviceEventEmitter.addListener(
       'SimprintsRegistrationError',
       event => {
-        const {reason, extra} = event;
-        // Display the refusal reason and extra reasons in the console
+        const {reason} = event;
+        const {extra} = event;
+
+        // Now you can use the 'reason' and 'extra' values in your React Native code
         console.log('Refusal Reason:', reason);
         console.log('Refusal Extra:', extra);
-        // Set the refusal data in the context
-        setRefusalData({reason, extra});
-        handleRegistrationError(reason, extra);
       },
     );
 
@@ -181,11 +187,10 @@ const SimprintsID = ({navigation}) => {
       event => {
         const {reason} = event;
         const {extra} = event;
+
+        // Now you can use the 'reason' and 'extra' values in your React Native code
         console.log('Refusal Reason:', reason);
         console.log('Refusal Extra:', extra);
-        setRefusalData({reason, extra});
-        updateRegistrationErrorContext(reason, extra);
-        navigation.navigate('PatientLists');
       },
     );
 
@@ -193,16 +198,8 @@ const SimprintsID = ({navigation}) => {
       identificationPlusSubscription.remove();
       identificationSubscription.remove();
       registrationSuccessSubscription.remove();
-      registrationErrorSubscription.remove();
-      identificationErrorSubscription.remove();
     };
   }, [updateDataResults, updateBenData, updateSession]);
-
-  const handleRegistrationError = (reason, extra) => {
-    updateRegistrationErrorContext(reason, extra);
-    navigation.navigate('PatientData');
-    console.log(reason);
-  };
 
   const handleIdentificationPlus = () => {
     const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
@@ -249,7 +246,8 @@ const SimprintsID = ({navigation}) => {
   useEffect(() => {
     if (noMatchButtonPressed) {
       console.log('No match found button pressed');
-      setNoMatchButtonPressed(false);
+      // Call the noMatchFound method here if needed
+      setNoMatchButtonPressed(false); // Reset the button pressed state
     }
   }, [noMatchButtonPressed]);
 
@@ -389,9 +387,10 @@ const SimprintsID = ({navigation}) => {
 
             {sortedResults.length > 0 && (
               <React.Fragment>
+                {/* Render results */}
                 {sortedResults.map((result, index) => (
                   <React.Fragment key={index}>
-                    {index === 0 && (
+                    {index === 0 && ( // Display "RESULTS" heading only for the first result
                       <Text style={styles.userDataLabel}>RESULTS</Text>
                     )}
 
@@ -445,11 +444,15 @@ const SimprintsID = ({navigation}) => {
 
                             <TouchableOpacity
                               style={styles.buttonSec}
-                              onPress={() =>
+                              onPress={() => {
+                                setIsBeneficiaryConfirmed(true);
+                                updateIsBeneficiaryConfirmed(true);
+                                console.log(isBeneficiaryConfirmed);
+                                // Then navigate to the 'GetPatients' screen
                                 navigation.navigate('GetPatients', {
                                   paramKey: userData,
-                                })
-                              }>
+                                });
+                              }}>
                               <Text style={styles.buttonStyle}>
                                 Confirm Beneficiary
                               </Text>
@@ -508,30 +511,6 @@ const SimprintsID = ({navigation}) => {
     </View>
   );
 };
-
-// const styles = StyleSheet.create({
-//   wrapper: {
-//     flex: 1,
-//     backgroundColor: COLORS.WHITE_LOW,
-//   },
-//   container: {
-//     flex: 1,
-//     alignItems: 'center',
-//     marginVertical: 40,
-//     backgroundColor: '#fff',
-//     flexGrow: 1,
-//     height: '100%',
-//   },
-//   wrap: {
-//     flex: 2,
-//     alignItems: 'center',
-//     padding: 20,
-//     marginVertical: 30,
-//   },
-//   ...
-// });
-
-// export default SimprintsID;
 
 const styles = StyleSheet.create({
   wrapper: {
