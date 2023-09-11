@@ -139,7 +139,7 @@ const AntenatalCare = ({navigation}) => {
           reviewedBy: userNames,
           simprintsGui: dataResults,
           simSessionId: sessionId,
-          medicines: medicines, 
+          medicines: medicines,
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -152,6 +152,7 @@ const AntenatalCare = ({navigation}) => {
         // setId(data.id);
         Alert.alert('Antenatal Care Patient Registered');
         navigation.navigate('Dashboard');
+        console.log(medicines);
       } else {
         console.error('Error posting data:', response.status);
         Alert.alert(
@@ -213,7 +214,6 @@ const AntenatalCare = ({navigation}) => {
             placeholderTextColor={COLORS.BLACK}
             selectedValue={medicine.name}
             onValueChange={value => handleMedicineChange(index, 'name', value)}
-
             style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
             dropdownIconColor={COLORS.GREY_LIGHTER}>
             <Picker.Item label="" value="" />
@@ -289,7 +289,7 @@ const AntenatalCare = ({navigation}) => {
             style={STYLES.medicineInput}
             placeholder="duration"
             keyboardType="numeric"
-            value={medicine.frequency}
+            value={medicine.duration}
             onChangeText={text => handleMedicineChange(index, 'duration', text)}
             placeholderTextColor={COLORS.GREY}
           />
