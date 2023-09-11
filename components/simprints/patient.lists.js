@@ -324,13 +324,6 @@ const PatientList = ({navigation}) => {
                         {antenantal.bloodGroup}
                       </Text>
                     </Text>
-
-                    <Text style={styles.userDataLabel}>
-                      Prescriptions:
-                      <Text style={styles.userDataValue}>
-                        {antenantal.prescriptions}
-                      </Text>
-                    </Text>
                     <Text style={styles.userDataLabel}>
                       Current Weight:
                       <Text style={styles.userDataValue}>
@@ -352,23 +345,37 @@ const PatientList = ({navigation}) => {
                       </Text>
                     </Text>
 
-                    <Text style={styles.userDataLabel}>
-                      Additional Notes:
-                      <Text style={styles.userDataValue}>
-                        {antenantal.drugNotes}
-                      </Text>
-                    </Text>
+                    {antenantal.medicines &&
+                      antenantal.medicines.length > 0 && (
+                        <View>
+                          <Text style={styles.userDataLabel}>MEDICINES</Text>
+                          {antenantal.medicines.map((medicine, index) => (
+                            <View key={index}>
+                              <Text style={styles.userDataLabel}>
+                                Medicine Name:
+                                <Text style={styles.userDataValue}>
+                                  {medicine.name}
+                                </Text>
+                              </Text>
 
-                    {antenantal.medicines && antenantal.medicines.length > 0 && (
-                      <View>
-                        <Text style={styles.userDataLabel1}>MEDICINES</Text>
-                        <Text style={styles.userDataLabel}>
-                      Additional Notes:
-                      <Text style={styles.userDataValue}>
-                        {antenantal.drugNotes}
-                      </Text>
-                    </Text>
-                      </View>)}
+                              <Text style={styles.userDataLabel}>
+                                Additional Notes:
+                                <Text style={styles.userDataValue}>
+                                  {medicine.description}
+                                </Text>
+                              </Text>
+
+                              <Text style={styles.userDataLabel}>
+                                Dosage:
+                                <Text style={styles.userDataValue}>
+                                  {medicine.dosage} X {medicine.frequency} for{' '}
+                                  {medicine.duration} days
+                                </Text>
+                              </Text>
+                            </View>
+                          ))}
+                        </View>
+                      )}
 
                     <View style={styles.line} />
                   </View>
@@ -416,13 +423,13 @@ const PatientList = ({navigation}) => {
                             <Text style={styles.userDataLabel}>
                               Medicine Name:
                               <Text style={styles.userDataValue}>
-                                {diagnosis.medicine.name}
+                                {medicine.name}
                               </Text>
                             </Text>
                             <Text style={styles.userDataLabel}>
                               Dosage:
                               <Text style={styles.userDataValue}>
-                                {diagnosis.medicine.dosage}
+                                {medicine.dosage}
                               </Text>
                             </Text>
                             <Text style={styles.userDataLabel}>
@@ -431,7 +438,6 @@ const PatientList = ({navigation}) => {
                                 {medicine.frequency}
                               </Text>
                             </Text>
-                            {/* Add more medicine properties here */}
                             <View style={styles.line} />
                           </View>
                         ))}
@@ -439,7 +445,6 @@ const PatientList = ({navigation}) => {
                     )}
 
                     <View style={styles.line} />
-
                     <View style={{height: 20}} />
                   </View>
                 ))}
