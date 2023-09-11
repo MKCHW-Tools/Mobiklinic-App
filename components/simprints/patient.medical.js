@@ -34,8 +34,10 @@ const PatientMedical = ({navigation}) => {
    const {userNames} = useContext(DataResultsContext);
 
 
-  const [dateOfDiagnosis, setDateOfDiagnosis] = useState(''); // Add state for date of vaccination
-  const [followUpDate, setFollowUpDate] = useState(''); // Add state for date for next dose
+  const [dateOfDiagnosis, setDateOfDiagnosis] = useState(''); 
+  const [followUpDate, setFollowUpDate] = useState(''); 
+  const {isBeneficiaryConfirmed} = useContext(DataResultsContext); 
+
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || dateOfDiagnosis;
@@ -83,6 +85,8 @@ const PatientMedical = ({navigation}) => {
   const handleSubmit = async () => {
     try {
       console.log('Patient ID :', patientId);
+      console.log('Biometrically Verified:', isBeneficiaryConfirmed);
+
       if (state.isLoading) {
         // Prevent multiple submissions
         return;
@@ -115,6 +119,7 @@ const PatientMedical = ({navigation}) => {
             simSessionId: sessionId,
             simprintsGui: dataResults,
             diagnosedBy: userNames,
+            biometricsVerified: isBeneficiaryConfirmed,
           }),
           headers: {
             'Content-type': 'application/json; charset=UTF-8',

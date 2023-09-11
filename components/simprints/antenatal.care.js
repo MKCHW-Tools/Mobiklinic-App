@@ -39,6 +39,8 @@ const AntenatalCare = ({navigation}) => {
   const [expectedDateOfDelivery, setExpectedDateOfDelivery] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [prescriptions, setSelectedPrescriptions] = useState([]);
+  const {isBeneficiaryConfirmed} = useContext(DataResultsContext); 
+
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || routineVisitDate;
@@ -85,6 +87,8 @@ const AntenatalCare = ({navigation}) => {
   const handleSubmit = async () => {
     try {
       console.log('Patient ID :', patientId);
+      console.log('Biometrically Verified:', isBeneficiaryConfirmed);
+
       if (state.isLoading) {
         // Prevent multiple submissions
         return;
@@ -116,6 +120,7 @@ const AntenatalCare = ({navigation}) => {
             reviewedBy: userNames,
             simprintsGui: dataResults,
             simSessionId: sessionId,
+            biometricsVerified: isBeneficiaryConfirmed,
           }),
           headers: {
             'Content-type': 'application/json; charset=UTF-8',
@@ -340,32 +345,6 @@ const AntenatalCare = ({navigation}) => {
             placeholderTextColor={COLORS.GREY}
             onChangeText={text => setState({...state, nextOfKin: text})}
             placeholder="Next of Kin"
-            style={[STYLES.field, {paddingHorizontal: 30}]}
-          />
-        </View>
-
-         {/* Simprints is */}
-         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Text style={STYLES.label}>GUID:</Text>
-
-          <TextInput
-            value={dataResults}
-            placeholderTextColor={COLORS.GREY}
-            onChangeText={text => setState({...state, nextOfKin: text})}
-           
-            style={[STYLES.field, {paddingHorizontal: 30}]}
-          />
-        </View>
-
-        {/* Sim session */}
-        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Text style={STYLES.label}>Session:</Text>
-
-          <TextInput
-            value={sessionId}
-            placeholderTextColor={COLORS.GREY}
-            onChangeText={text => setState({...state, nextOfKin: text})}
-           
             style={[STYLES.field, {paddingHorizontal: 30}]}
           />
         </View>

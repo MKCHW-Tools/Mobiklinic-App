@@ -34,7 +34,7 @@ const PatientData = ({navigation, route}) => {
   const [dateForNextDose, setDateForNextDose] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const {sessionId} = useContext(DataResultsContext);
-  const {isBeneficiaryConfirmed} = useContext(DataResultsContext); // Add this line to include the new state
+  const {isBeneficiaryConfirmed} = useContext(DataResultsContext); 
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || dateOfVaccination;
@@ -81,7 +81,7 @@ const PatientData = ({navigation, route}) => {
   const handleSubmit = async () => {
     try {
       console.log('Patient ID :', patientId);
-      console.log('Registered:', isBeneficiaryConfirmed);
+      console.log('Biometrically Verified:', isBeneficiaryConfirmed);
       if (state.isLoading) {
         // Prevent multiple submissions
         return;
@@ -202,29 +202,6 @@ const PatientData = ({navigation, route}) => {
             <Picker.Item label="Influenza Vaccine" value="influenza" />
           </Picker>
         </View>
-
-          {/* Simprints GUI */}
-          {/* <View style={STYLES.guid}>
-          <Text style={STYLES.label}>Simprints GUI</Text>
-          <TextInput
-            style={STYLES.guid}
-            value={dataResults}
-            onChangeText={text => setState({...state, simprintsGui: text})}
-            placeholder="Enter simprints GUI"
-          />
-          
-        </View> */}
-
-         {/* Simprints Session ID */}
-         {/* <View style={STYLES.guid}>
-          <Text style={STYLES.label}>Simprints Session ID</Text>
-          <TextInput
-            style={STYLES.guid}
-            value={sessionId}
-            onChangeText={text => setState({...state, simSessionId: text})}
-            placeholder="Enter simprints session ID"
-          />
-          </View> */}
 
 
         <View style={STYLES.labeled}>
