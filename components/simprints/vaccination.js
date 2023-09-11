@@ -75,7 +75,7 @@ const PatientData = ({navigation, route}) => {
     simSessionId: '',
     simprintsGui: '',
     biometricsVerified: isBeneficiaryConfirmed,
-
+    reviewedBy:'',
     // registeredById: '',
   });
 
@@ -108,7 +108,7 @@ const PatientData = ({navigation, route}) => {
           facility: state.facility,
           simSessionId: sessionId,
           simprintsGui: dataResults,
-          vaccinatedBy: userNames,
+          reviewedBy: userNames,
           biometricsVerified: isBeneficiaryConfirmed,
         }),
         headers: {
