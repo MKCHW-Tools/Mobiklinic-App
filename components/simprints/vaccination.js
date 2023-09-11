@@ -34,6 +34,7 @@ const PatientData = ({navigation, route}) => {
   const [dateForNextDose, setDateForNextDose] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const {sessionId} = useContext(DataResultsContext);
+  const {isBeneficiaryConfirmed} = useContext(DataResultsContext); // Add this line to include the new state
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || dateOfVaccination;
@@ -80,6 +81,7 @@ const PatientData = ({navigation, route}) => {
   const handleSubmit = async () => {
     try {
       console.log('Patient ID :', patientId);
+      console.log('Registered:', isBeneficiaryConfirmed);
       if (state.isLoading) {
         // Prevent multiple submissions
         return;
@@ -109,6 +111,7 @@ const PatientData = ({navigation, route}) => {
             simSessionId: sessionId,
             simprintsGui: dataResults,
             vaccinatedBy: userNames,
+            biometricsVerified: isBeneficiaryConfirmed,
             
           }),
           headers: {
@@ -201,7 +204,7 @@ const PatientData = ({navigation, route}) => {
         </View>
 
           {/* Simprints GUI */}
-          <View style={STYLES.guid}>
+          {/* <View style={STYLES.guid}>
           <Text style={STYLES.label}>Simprints GUI</Text>
           <TextInput
             style={STYLES.guid}
@@ -210,10 +213,10 @@ const PatientData = ({navigation, route}) => {
             placeholder="Enter simprints GUI"
           />
           
-        </View>
+        </View> */}
 
          {/* Simprints Session ID */}
-         <View style={STYLES.guid}>
+         {/* <View style={STYLES.guid}>
           <Text style={STYLES.label}>Simprints Session ID</Text>
           <TextInput
             style={STYLES.guid}
@@ -221,7 +224,7 @@ const PatientData = ({navigation, route}) => {
             onChangeText={text => setState({...state, simSessionId: text})}
             placeholder="Enter simprints session ID"
           />
-          </View>
+          </View> */}
 
 
         <View style={STYLES.labeled}>
@@ -497,6 +500,7 @@ const STYLES = StyleSheet.create({
     color: COLORS.BLACK,
     fontSize: 11,
     fontWeight: 'bold ',
+    
   },
   submit: {
     backgroundColor: COLORS.BLACK,

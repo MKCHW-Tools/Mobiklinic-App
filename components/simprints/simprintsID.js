@@ -61,6 +61,7 @@ const SimprintsID = ({navigation}) => {
   const [refreshing, setRefreshing] = useState(false);
   const {patientId, setPatientId} = useContext(DataResultsContext);
   const [isBeneficiaryConfirmed, setIsBeneficiaryConfirmed] = useState(true); 
+  const {updateIsBeneficiaryConfirmed} = useContext(DataResultsContext); // Add this line to include the new state
 
   // console.log('Logged User from simprints is', userNames);
 
@@ -444,7 +445,8 @@ const SimprintsID = ({navigation}) => {
                             <TouchableOpacity
                               style={styles.buttonSec}
                               onPress={() => {
-                                setIsBeneficiaryConfirmed(true); 
+                                setIsBeneficiaryConfirmed(true);
+                                 updateIsBeneficiaryConfirmed(true); 
                                 console.log(isBeneficiaryConfirmed);
                                 // Then navigate to the 'GetPatients' screen
                                 navigation.navigate('GetPatients', {
