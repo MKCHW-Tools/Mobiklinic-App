@@ -15,6 +15,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import Loader from '../ui/loader';
 import CustomHeader from '../ui/custom-header';
 import DataResultsContext from '../contexts/DataResultsContext';
+import {URLS} from '../constants/API';
 
 const PatientLists = ({navigation}) => {
   const [users, setUsers] = useState([]);
@@ -67,7 +68,7 @@ const PatientLists = ({navigation}) => {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `http://192.168.1.16:3000/${userLog}/patients`,
+        `${URLS.BASE}/${userLog}/patients`,
       );
 
       if (response.status === 200) {
@@ -131,7 +132,7 @@ const PatientLists = ({navigation}) => {
     setSearchQuery(query);
     try {
       const response = await axios.get(
-        `http://192.168.1.16:3000/search?query=${query}`,
+        `${URLS.BASE}/search?query=${query}`,
       );
       setSearchSuggestions(response.data);
     } catch (error) {

@@ -21,6 +21,7 @@ import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {format} from 'date-fns';
+import {URLS} from '../constants/API';
 
 const PatientMedical = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -97,7 +98,7 @@ const PatientMedical = ({navigation}) => {
       }
 
       const response = await fetch(
-        `http://192.168.1.16:3000/${patientId}/diagnosis`,
+        `${URLS.BASE}/${patientId}/diagnosis`,
         {
           method: 'POST',
           body: JSON.stringify({

@@ -21,7 +21,9 @@ import Icon from 'react-native-vector-icons/Feather';
 import {COLORS, DIMENS} from '../constants/styles';
 import CustomHeader from '../ui/custom-header';
 import CopyRight from './copyright';
-import { set } from 'date-fns';
+import {set} from 'date-fns';
+import {URLS} from '../constants/API';
+import { is } from 'date-fns/locale';
 
 const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
@@ -37,8 +39,7 @@ const SimprintsID = ({navigation}) => {
   const [guid, setGuid] = React.useState(
     benData.length > 0 ? benData[0].guid : [],
   );
- 
-  
+
   const [identificationPlusResults, setIdentificationPlusResults] = useState(
     [],
   );
@@ -59,6 +60,7 @@ const SimprintsID = ({navigation}) => {
   const [clickedResult, setClickedResult] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const {patientId, setPatientId} = useContext(DataResultsContext);
+  const [isBeneficiaryConfirmed, setIsBeneficiaryConfirmed] = useState(true); 
 
   // console.log('Logged User from simprints is', userNames);
 
@@ -88,9 +90,7 @@ const SimprintsID = ({navigation}) => {
     console.log('GUID:', guid);
 
     try {
-      const response = await fetch(
-        `http://192.168.1.16:3000/patients/${guid}`,
-      );
+      const response = await fetch(`${URLS.BASE}/patients/${guid}`);
       if (response.ok) {
         const data = await response.json();
         const patientId = data.id;
@@ -128,8 +128,6 @@ const SimprintsID = ({navigation}) => {
         const {guid} = results[0];
         const {sessionId} = results[0];
         updateDataResults(guid);
-       
-  
       },
     );
 
@@ -143,17 +141,13 @@ const SimprintsID = ({navigation}) => {
         setSessionId(sessionId);
         updateBenData(results);
         updateSession(sessionId);
-       
 
         updateDataResults(guid);
-     
 
-         // Console log the guid and sessionId here
-      console.log('Guid:', guid);
-      console.log('SessionId:', sessionId);
-      console.log('sessionId data type:', typeof sessionId);
-    
-
+        // Console log the guid and sessionId here
+        console.log('Guid:', guid);
+        console.log('SessionId:', sessionId);
+        console.log('sessionId data type:', typeof sessionId);
       },
     );
 
@@ -172,7 +166,6 @@ const SimprintsID = ({navigation}) => {
 
         console.log('Guid:', guid);
         console.log('SessionId:', sessionId);
-    
       },
     );
 
@@ -181,28 +174,24 @@ const SimprintsID = ({navigation}) => {
       event => {
         const {reason} = event;
         const {extra} = event;
-          
-          // Now you can use the 'reason' and 'extra' values in your React Native code
-          console.log('Refusal Reason:', reason);
-          console.log('Refusal Extra:', extra);
-  
-          
-      }
-  );
 
-  const identificationErrorSubscription = DeviceEventEmitter.addListener(
-    'SimprintsIdentificationError',
-    event => {
-      const {reason} = event;
-      const {extra} = event;
+        // Now you can use the 'reason' and 'extra' values in your React Native code
+        console.log('Refusal Reason:', reason);
+        console.log('Refusal Extra:', extra);
+      },
+    );
 
-      // Now you can use the 'reason' and 'extra' values in your React Native code
-      console.log('Refusal Reason:', reason);
-      console.log('Refusal Extra:', extra);
-    },
-  );
+    const identificationErrorSubscription = DeviceEventEmitter.addListener(
+      'SimprintsIdentificationError',
+      event => {
+        const {reason} = event;
+        const {extra} = event;
 
-  
+        // Now you can use the 'reason' and 'extra' values in your React Native code
+        console.log('Refusal Reason:', reason);
+        console.log('Refusal Extra:', extra);
+      },
+    );
 
     return () => {
       identificationPlusSubscription.remove();
@@ -452,87 +441,18 @@ const SimprintsID = ({navigation}) => {
                               </Text>
                             </Text>
 
-                            {/* {userData.diagnoses &&
-                              userData.diagnoses.length > 0 && (
-                                <View style={styles.vaccinationsContainer}>
-                                  <Text style={styles.userDataLabel1}>
-                                    DIAGNOSIS
-                                  </Text>
-                                  {userData.diagnoses.map(
-                                    (diagnosis, index) => (
-                                      <View key={index}>
-                                        <Text style={styles.userDataLabel}>
-                                          Condition:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.condition}
-                                          </Text>
-                                        </Text>
-                                        <Text style={styles.userDataLabel}>
-                                          Prescribed drugs:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.drugsPrescribed}
-                                          </Text>
-                                        </Text>
-                                        <Text style={styles.userDataLabel}>
-                                          Dosage:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.dosage}
-                                          </Text>
-                                        </Text>
-
-                                        <Text style={styles.userDataLabel}>
-                                          Frequency:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.frequency}
-                                          </Text>
-                                        </Text>
-                                        <Text style={styles.userDataLabel}>
-                                          Duration:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.duration}
-                                          </Text>
-                                        </Text>
-
-                                        <Text style={styles.userDataLabel}>
-                                          Date of diagnosis:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.dateOfDiagnosis}
-                                          </Text>
-                                        </Text>
-
-                                        <Text style={styles.userDataLabel}>
-                                          Date for Next Dose:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.followUpDate}
-                                          </Text>
-                                        </Text>
-
-                                        <Text style={styles.userDataLabel}>
-                                          Impression:{' '}
-                                          <Text style={styles.userDataValue}>
-                                            {diagnosis.impression}
-                                          </Text>
-                                        </Text>
-                                        <Text style={styles.userDataLabel}>
-                                          .................................................................{' '}
-                                          <Text
-                                            style={styles.userDataValue}></Text>
-                                        </Text>
-                                        <View style={{height: 20}} />
-                                      </View>
-                                    ),
-                                  )}
-                                </View>
-                              )} */}
-
                             <TouchableOpacity
                               style={styles.buttonSec}
-                              // onPress={() => navigation.navigate('SelectActivity')}
-                              onPress={() =>
+                              onPress={() => {
+                                setIsBeneficiaryConfirmed(true); 
+                                console.log(isBeneficiaryConfirmed);
+                                // Then navigate to the 'GetPatients' screen
                                 navigation.navigate('GetPatients', {
                                   paramKey: userData,
-                                })
-                              }>
+                                
+                                });
+
+                              }}>
                               <Text style={styles.buttonStyle}>
                                 Confirm Beneficiary
                               </Text>

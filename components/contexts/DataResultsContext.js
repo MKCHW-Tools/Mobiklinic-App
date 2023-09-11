@@ -9,6 +9,8 @@ export const DataResultsProvider = ({ children }) => {
   const [patientId, setPatientId] = useState('');
   const [userNames, setUserNames] = useState('');
   const [sessionId, setSessionId] = useState('');
+  const [isBeneficiaryConfirmed, setIsBeneficiaryConfirmed] = useState(true); // Add this line to include the new state
+
 
 
   const updateDataResults = newDataResults => {
@@ -35,6 +37,10 @@ export const DataResultsProvider = ({ children }) => {
     setSessionId(newSession);
   };
 
+  const updateIsBeneficiaryConfirmed = newIsBeneficiaryConfirmed => { // Add this function to update the state
+    setIsBeneficiaryConfirmed(newIsBeneficiaryConfirmed);
+  };
+
   return (
     <DataResultsContext.Provider 
       value={{
@@ -49,7 +55,9 @@ export const DataResultsProvider = ({ children }) => {
         userNames,
         updateUserNames,
         sessionId,
-        updateSession
+        updateSession,
+        isBeneficiaryConfirmed,
+        updateIsBeneficiaryConfirmed // Add this line to include the new state
       }}
     >
       {children}

@@ -23,6 +23,7 @@ import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
 import CustomHeader from '../ui/custom-header';
+import {URLS} from '../constants/API';
 
 const GetPatients = () => {
   const navigation = useNavigation();
@@ -49,7 +50,7 @@ const GetPatients = () => {
     console.log('GUID:', guid);
     try {
       const response = await fetch(
-        `http://192.168.1.16:3000/patients/${guid}`,
+        `${URLS.BASE}/patients/${guid}`,
       );
       // console.log('Response:', response);
       if (response.ok) {

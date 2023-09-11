@@ -20,6 +20,7 @@ import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import {URLS} from '../constants/API';
 
 const PatientData = ({navigation, route}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -94,7 +95,7 @@ const PatientData = ({navigation, route}) => {
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
       const response = await fetch(
-        `http://192.168.1.16:3000/${patientId}/vaccinations`,
+        `${URLS.BASE}/${patientId}/vaccinations`,
         {
           method: 'POST',
           body: JSON.stringify({
