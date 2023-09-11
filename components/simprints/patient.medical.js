@@ -33,6 +33,7 @@ const PatientMedical = ({navigation}) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const {sessionId} = useContext(DataResultsContext);
   const {userNames} = useContext(DataResultsContext);
+  const {isBeneficiaryConfirmed} = useContext(DataResultsContext);
   const [medicines, setMedicines] = useState([
     {
       name: '',
@@ -87,6 +88,8 @@ const PatientMedical = ({navigation}) => {
     isPregnant: false,
     labTests: '',
     sessionId: '',
+    biometricsVerified: isBeneficiaryConfirmed,
+
     // registeredById: '',
   });
 
@@ -132,6 +135,9 @@ const PatientMedical = ({navigation}) => {
           isPregnant: state.isPregnant,
           simSessionId: state.sessionId,
           medicines: medicines, // Use the medicines array as is
+          biometricsVerified: isBeneficiaryConfirmed,
+          vaccinatedBy: userNames,
+
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -143,6 +149,7 @@ const PatientMedical = ({navigation}) => {
         const data = await response.json();
         Alert.alert('Diagnosis Registered successfully');
         navigation.navigate('Dashboard');
+        console.log(state, medicines);
       } else {
         console.error('Error posting data:', response.status);
         Alert.alert(
@@ -184,19 +191,39 @@ const PatientMedical = ({navigation}) => {
   const renderMedicineInputs = () => {
     return medicines.map((medicine, index) => (
       <View key={index} style={STYLES.medicineContainer}>
-        <Text style={STYLES.medicineLabel}>Medicine #{index + 1}:</Text>
-        <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Medicine:</Text>
-          <TextInput
-            style={[
-              STYLES.field,
-              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
-            ]}
-            placeholderTextColor={COLORS.GREY}
-            placeholder="Medicine Name"
-            value={medicine.name}
-            onChangeText={text => handleMedicineChange(index, 'name', text)}
-          />
+        <Text style={STYLES.label}>Medicine #{index + 1}:</Text>
+
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Prescriptions/Medicine:</Text>
+          <Picker
+            placeholderTextColor={COLORS.BLACK}
+            selectedValue={medicine.name}
+            onValueChange={value => handleMedicineChange(index, 'name', value)}
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            dropdownIconColor={COLORS.GREY_LIGHTER}>
+            <Picker.Item label="" value="" />
+            <Picker.Item
+              label="Folic Acid Supplements"
+              value="Folic Acid Supplements"
+            />
+            <Picker.Item
+              label="Folic Acid  & Iron Supplements"
+              value="Folic Acid  & Iron Supplements"
+            />
+            <Picker.Item label="Iron Supplements" value="Iron Supplements" />
+            <Picker.Item
+              label="Calcium Supplements"
+              value="Calcium Supplements"
+            />
+            <Picker.Item label="Fansidar" value="Fansidar" />
+            <Picker.Item label="Mebendazole" value="Mebendazole" />
+            <Picker.Item label="Paracemotol" value="Paracemotol" />
+            <Picker.Item label="Vitamin C " value="Vitamin C" />
+            <Picker.Item label="Magnesium" value="Magnesium" />
+            <Picker.Item label="Cetirizine" value="Cetirizine" />
+
+            <Picker.Item label="Other" value="Other" />
+          </Picker>
         </View>
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Additional Instructions:</Text>
@@ -247,7 +274,7 @@ const PatientMedical = ({navigation}) => {
             style={STYLES.medicineInput}
             placeholder="duration"
             keyboardType="numeric"
-            value={medicine.frequency}
+            value={medicine.duration}
             onChangeText={text => handleMedicineChange(index, 'duration', text)}
             placeholderTextColor={COLORS.GREY}
           />
