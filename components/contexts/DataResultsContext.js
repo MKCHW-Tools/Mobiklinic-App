@@ -43,11 +43,17 @@ export const DataResultsProvider = ({children}) => {
     setSessionId(newSession);
   };
 
+  const updateIsBeneficiaryConfirmed = newIsBeneficiaryConfirmed => {
+    // Add this function to update the state
+    setIsBeneficiaryConfirmed(newIsBeneficiaryConfirmed);
+  };
+
   return (
     <DataResultsContext.Provider
       value={{
         dataResults,
         updateDataResults,
+        updateIsBeneficiaryConfirmed,
         benData,
         updateBenData,
         userLog,
@@ -60,10 +66,10 @@ export const DataResultsProvider = ({children}) => {
         updateSession,
         registrationError,
         updateRegistrationErrorContext,
-        refusalData, 
+        refusalData,
         setRefusalData,
-        isBeneficiaryConfirmed, 
-        setIsBeneficiaryConfirmed, 
+        isBeneficiaryConfirmed,
+        setIsBeneficiaryConfirmed,
       }}>
       {children}
     </DataResultsContext.Provider>
