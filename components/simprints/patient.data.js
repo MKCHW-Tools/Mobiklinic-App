@@ -207,7 +207,7 @@ const PatientData = ({navigation}) => {
           />
         </View>
 
-        <View>
+        <View style={STYLES.guid}>
           <Text style={STYLES.label}>Refusal Reason: {reason}</Text>
           <Text style={STYLES.label}>Refusal Extra: {extra}</Text>
         </View>
