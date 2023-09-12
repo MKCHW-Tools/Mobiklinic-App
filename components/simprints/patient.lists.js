@@ -223,7 +223,13 @@ const PatientList = ({navigation}) => {
               Sex: <Text style={styles.userDataValue}>{item.sex}</Text>
             </Text>
             <Text style={styles.userDataLabel}>
-              Weight: <Text style={styles.userDataValue}>{item.weight}</Text>
+              Weight:{' '}
+              <Text style={styles.userDataValue}>{item.weight} kgs</Text>
+            </Text>
+
+            <Text style={styles.userDataLabel}>
+              Height:{' '}
+              <Text style={styles.userDataValue}>{item.height} cm</Text>
             </Text>
             <View style={styles.line} />
             {item.vaccinations && item.vaccinations.length > 0 && (
