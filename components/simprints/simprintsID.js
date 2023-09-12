@@ -30,7 +30,8 @@ const {IdentificationPlus} = NativeModules;
 var OpenActivity = NativeModules.OpenActivity;
 
 const SimprintsID = ({navigation}) => {
-  const {updateDataResults} = useContext(DataResultsContext);
+  const {updateDataResults, setRefusalData, updateRegistrationErrorContext} =
+    useContext(DataResultsContext);
   const {updateSession} = useContext(DataResultsContext);
   const {updateBenData} = useContext(DataResultsContext);
   const {benData} = useContext(DataResultsContext);
@@ -175,29 +176,30 @@ const SimprintsID = ({navigation}) => {
       event => {
         const {reason} = event;
         const {extra} = event;
-
-        // Now you can use the 'reason' and 'extra' values in your React Native code
-        console.log('Refusal Reason:', reason);
-        console.log('Refusal Extra:', extra);
+        setRefusalData({reason, extra});
+        updateRegistrationErrorContext(reason, extra);
+        navigation.navigate('PatientData');
       },
     );
 
-    const identificationErrorSubscription = DeviceEventEmitter.addListener(
-      'SimprintsIdentificationError',
-      event => {
-        const {reason} = event;
-        const {extra} = event;
-
-        // Now you can use the 'reason' and 'extra' values in your React Native code
-        console.log('Refusal Reason:', reason);
-        console.log('Refusal Extra:', extra);
-      },
-    );
+    // const identificationErrorSubscription = DeviceEventEmitter.addListener(
+    //   'SimprintsIdentificationError',
+    //   event => {
+    //     const {reason} = event;
+    //     const {extra} = event;
+    //     console.log('Refusal Reason:', reason);
+    //     console.log('Refusal Extra:', extra);
+    //     setRefusalData({reason, extra});
+    //     updateRegistrationErrorContext(reason, extra);
+    //     navigation.navigate('PatientLists');
+    //   },
+    // );
 
     return () => {
       identificationPlusSubscription.remove();
       identificationSubscription.remove();
       registrationSuccessSubscription.remove();
+      registrationErrorSubscription.remove();
     };
   }, [updateDataResults, updateBenData, updateSession]);
 
@@ -205,7 +207,6 @@ const SimprintsID = ({navigation}) => {
     const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
     const moduleID = 'test_user';
     const userID = userNames;
-
     IdentificationPlus.registerOrIdentify(projectID, moduleID, userID);
   };
 

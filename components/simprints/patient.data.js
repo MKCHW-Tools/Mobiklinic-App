@@ -22,7 +22,7 @@ import {COLORS, DIMENS} from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {format} from 'date-fns';
 import {countryData} from './country.selector';
-import { URLS } from '../constants/API';
+import {URLS} from '../constants/API';
 
 const PatientData = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
@@ -112,30 +112,27 @@ const PatientData = ({navigation}) => {
         return;
       }
 
-      const response = await fetch(
-        `${URLS.BASE}/${userLog}/patients`,
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            firstName: state.firstName,
-            lastName: state.lastName,
-            sex: state.sex,
-            ageGroup: ageGroup,
-            phoneNumber: state.phoneNumber,
-            weight: state.weight,
-            height: state.height,
-            district: selectedDistrict,
-            country: selectedCountry,
-            primaryLanguage: selectedLanguage,
-            simprintsGui: dataResults,
-            simSessionId: sessionId,
-          }),
-          headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-            Accept: 'application/json',
-          },
+      const response = await fetch(`${URLS.BASE}/${userLog}/patients`, {
+        method: 'POST',
+        body: JSON.stringify({
+          firstName: state.firstName,
+          lastName: state.lastName,
+          sex: state.sex,
+          ageGroup: ageGroup,
+          phoneNumber: state.phoneNumber,
+          weight: state.weight,
+          height: state.height,
+          district: selectedDistrict,
+          country: selectedCountry,
+          primaryLanguage: selectedLanguage,
+          simprintsGui: dataResults,
+          simSessionId: sessionId,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          Accept: 'application/json',
         },
-      );
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -210,9 +207,9 @@ const PatientData = ({navigation}) => {
           />
         </View>
 
-        <View style={STYLES.labeled}>
-          <Text style={STYLES.field}>Refusal Reason: {reason}</Text>
-          <Text style={STYLES.field}>Refusal Extra: {extra}</Text>
+        <View>
+          <Text style={STYLES.label}>Refusal Reason: {reason}</Text>
+          <Text style={STYLES.label}>Refusal Extra: {extra}</Text>
         </View>
         {/* First Name */}
         <View style={STYLES.labeled}>
@@ -417,7 +414,7 @@ const STYLES = StyleSheet.create({
     color: COLORS.GREY,
   },
   label: {
-    fontWeight: 'medium',
+    fontWeight: 'bold',
     marginLeft: 5,
     marginRight: 5,
     color: COLORS.BLACK,
@@ -505,6 +502,7 @@ const STYLES = StyleSheet.create({
     borderStyle: 'solid',
     borderWidth: 1,
     borderRadius: 10,
+    
   },
   field: {
     flex: 1,

@@ -383,15 +383,21 @@ const PatientList = ({navigation}) => {
                 {item.diagnoses.map((diagnosis, index) => (
                   <View key={index}>
                     <Text style={styles.userDataLabel}>
-                      Pregnacy Status:
+                      Pregnacy Status:{'\t'}
                       <Text style={styles.userDataValue}>
                         {diagnosis.condition}
                       </Text>
                     </Text>
                     <Text style={styles.userDataLabel}>
-                      Signs and Symptoms:
+                      Signs and Symptoms:{'\t'}
                       <Text style={styles.userDataValue}>
                         {diagnosis.impression}
+                      </Text>
+                    </Text>
+                    <Text style={styles.userDataLabel}>
+                      Labarotorial Tests:{'\t'}
+                      <Text style={styles.userDataValue}>
+                        {diagnosis.labTests}
                       </Text>
                     </Text>
                     <Text style={styles.userDataLabel}>
@@ -401,13 +407,13 @@ const PatientList = ({navigation}) => {
                       </Text>
                     </Text>
                     <Text style={styles.userDataLabel}>
-                      Date of Diagnosis:
+                      Date of Diagnosis: {'\t'}
                       <Text style={styles.userDataValue}>
                         {formatDate(new Date(diagnosis.dateOfDiagnosis))}
                       </Text>
                     </Text>
                     <Text style={styles.userDataLabel}>
-                      Date for next visit:
+                      Date for next visit:{'\t'}
                       <Text style={styles.userDataValue}>
                         {formatDate(new Date(diagnosis.followUpDate))}
                       </Text>
