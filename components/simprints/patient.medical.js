@@ -43,9 +43,12 @@ const PatientMedical = ({navigation}) => {
       description: '',
     },
   ]);
-
-  const [dateOfDiagnosis, setDateOfDiagnosis] = useState(''); // Add state for date of vaccination
-  const [followUpDate, setFollowUpDate] = useState(''); // Add state for date for next dose
+  const [dateOfDiagnosis, setDateOfDiagnosis] = useState('');
+  const [followUpDate, setFollowUpDate] = useState('');
+  const [selectedCondition, setSelectedCondition] = useState('');
+  const [customCondition, setCustomCondition] = useState('');
+  const [showCustomConditionInput, setShowCustomConditionInput] =
+    useState(false);
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || dateOfDiagnosis;
@@ -75,6 +78,17 @@ const PatientMedical = ({navigation}) => {
     }
     return 'Click to add date';
   };
+  const handleConditionChange = condition => {
+    setSelectedCondition(condition);
+    // If "Other" is selected, show the custom condition input field
+    if (condition === 'Other') {
+      setShowCustomConditionInput(true);
+      setSelectedCondition(condition);
+    } else {
+      setShowCustomConditionInput(false);
+      setSelectedCondition(condition);
+    }
+  };
 
   const [state, setState] = React.useState({
     condition: '',
@@ -102,7 +116,7 @@ const PatientMedical = ({navigation}) => {
       setState({...state, isLoading: true}); // Set isLoading state to true
 
       if (
-        state.condition === '' ||
+        (selectedCondition === 'Other' && customCondition === '') || // Check if custom condition is empty when "Other" is selected
         state.dateOfDiagnosis === '' ||
         state.impression === ''
       ) {
@@ -119,11 +133,13 @@ const PatientMedical = ({navigation}) => {
         new Date(state.followUpDate),
         'yyyy-MM-dd',
       );
+      const conditionToPost =
+        selectedCondition === 'Other' ? customCondition : selectedCondition;
 
       const response = await fetch(`${URLS.BASE}/${patientId}/diagnosis`, {
         method: 'POST',
         body: JSON.stringify({
-          condition: state.condition,
+          condition: conditionToPost,
           dateOfDiagnosis: formattedDateOfDiagnosis,
           impression: state.impression,
           drugsPrescribed: state.drugsPrescribed,
@@ -136,8 +152,7 @@ const PatientMedical = ({navigation}) => {
           simSessionId: state.sessionId,
           medicines: medicines, // Use the medicines array as is
           biometricsVerified: isBeneficiaryConfirmed,
-          vaccinatedBy: userNames,
-
+          diagnosedBy: userNames,
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -318,16 +333,7 @@ const PatientMedical = ({navigation}) => {
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
       {_header()}
       <ScrollView style={STYLES.body}>
-        {/* <View style={STYLES.guid}>
-          <Text style={STYLES.label}>Simprints Session ID</Text>
-          <TextInput
-            style={STYLES.guid}
-            value={sessionId}
-            onChangeText={text => setState({...state, simSessionId: text})}
-            placeholder="Enter simprints session ID"
-          />
-        </View> */}
-        {/* condition */}
+        {/* signs and symptoms */}
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Signs and Symptoms:</Text>
           <TextInput
@@ -382,21 +388,66 @@ const PatientMedical = ({navigation}) => {
           />
         </View>
 
-        {/* Condition */}
         <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Condition:</Text>
-          <TextInput
-            style={[
-              STYLES.field,
-              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
-            ]} // Add color and placeholderTextColor styles
+          <Text style={STYLES.label}>Follow Up date:</Text>
+          <TouchableOpacity
+            style={STYLES.datePickerInput}
             placeholderTextColor={COLORS.GREY}
-            value={state.condition}
-            onChangeText={text => setState({...state, condition: text})}
-            placeholder='e.g "Malaria"'
-            multiline={true}
-            numberOfLines={3}
-          />
+            onPress={() => setShowDatePicker('followUp')}>
+            <Text style={STYLES.datePickerText}>
+              {formatDate(followUpDate)}
+            </Text>
+          </TouchableOpacity>
+          {showDatePicker === 'followUp' && (
+            <DateTimePicker
+              value={followUpDate || new Date()} // Use null or fallback to current date
+              mode="date"
+              display="spinner"
+              onChange={handleDateChange}
+            />
+          )}
+        </View>
+
+        {/* Condition */}
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Condition:</Text>
+
+          <Picker
+            placeholderTextColor={COLORS.BLACK}
+            selectedValue={selectedCondition}
+            onValueChange={handleConditionChange}
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            dropdownIconColor={COLORS.GREY_LIGHTER}>
+            <Picker.Item label="" value="" />
+            <Picker.Item label="Malaria" value="Malria" />
+            <Picker.Item label="Headache" value="Headache" />
+            <Picker.Item label="Flue" value="Flue" />
+
+            <Picker.Item label="Fever" value="Fever" />
+            <Picker.Item label="Deworming" value="Deworming" />
+            <Picker.Item label="Arthritis" value="Arthritis" />
+            <Picker.Item label="Dehydration" value="Dehydration" />
+            <Picker.Item label="Diabetes" value="Diabetes" />
+            <Picker.Item label="Malnutrition" value="Malnutrition" />
+            <Picker.Item label="Pneumonia" value="Pneumonia" />
+            <Picker.Item
+              label="Hypertension (High Blood Pressure)"
+              value="Hypertension (High Blood Pressure)"
+            />
+            <Picker.Item label="Other" value="Other" />
+          </Picker>
+
+          {showCustomConditionInput && (
+            <TextInput
+              placeholder="Enter custom condition"
+              value={customCondition}
+              placeholderTextColor={COLORS.GREY}
+              style={[STYLES.field, {color: COLORS.BLACK}]}
+              multiline={true}
+              numberOfLines={3}
+              onChangeText={text => setCustomCondition(text)}
+            />
+          )}
         </View>
 
         <View style={STYLES.labeled}>
@@ -417,26 +468,6 @@ const PatientMedical = ({navigation}) => {
           onPress={handleAddMedicine}>
           <Text style={STYLES.addMedicineButtonText}>Add Medicine</Text>
         </TouchableOpacity>
-
-        <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Follow Up date:</Text>
-          <TouchableOpacity
-            style={STYLES.datePickerInput}
-            placeholderTextColor={COLORS.GREY}
-            onPress={() => setShowDatePicker('followUp')}>
-            <Text style={STYLES.datePickerText}>
-              {formatDate(followUpDate)}
-            </Text>
-          </TouchableOpacity>
-          {showDatePicker === 'followUp' && (
-            <DateTimePicker
-              value={followUpDate || new Date()} // Use null or fallback to current date
-              mode="date"
-              display="spinner"
-              onChange={handleDateChange}
-            />
-          )}
-        </View>
 
         <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
           <Text style={STYLES.submitText}>Submit</Text>
