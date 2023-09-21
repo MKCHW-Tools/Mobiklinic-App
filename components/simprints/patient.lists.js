@@ -228,8 +228,14 @@ const PatientList = ({navigation}) => {
             </Text>
 
             <Text style={styles.userDataLabel}>
-              Height:{' '}
-              <Text style={styles.userDataValue}>{item.height} cm</Text>
+              Height: <Text style={styles.userDataValue}>{item.height} cm</Text>
+            </Text>
+            <Text style={styles.userDataLabel}>
+              Created At:{' '}
+              <Text style={styles.userDataValue}>
+                {' '}
+                {formatDate(new Date(item.createdAt))}
+              </Text>
             </Text>
             <View style={styles.line} />
             {item.vaccinations && item.vaccinations.length > 0 && (
