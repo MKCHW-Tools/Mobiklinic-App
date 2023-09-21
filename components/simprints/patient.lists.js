@@ -260,7 +260,7 @@ const PatientList = ({navigation}) => {
                     {/* <Text style={styles.userDataLabel}>
                       Dose:
                       <Text style={styles.userDataValue}>
-                        {vaccination.dose}
+                        {vaccination.vaccinatedBy}
                       </Text>
                     </Text> */}
 
@@ -467,7 +467,7 @@ const PatientList = ({navigation}) => {
               </View>
             )}
             <TouchableOpacity onPress={addData} style={styles.buttonSec}>
-              <Text style={styles.buttonText}>Add Data</Text>
+              <Text style={styles.buttonText}>Follow Up Patient</Text>
             </TouchableOpacity>
           </View>
         )}
