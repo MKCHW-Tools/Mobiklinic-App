@@ -40,13 +40,14 @@ const SimprintsID = ({navigation}) => {
     userNames,
     patientId,
     setPatientId,
-    isBeneficiaryConfirmed,
-    updateIsBeneficiaryConfirmed
   } = useContext(DataResultsContext);
 
   const [userData, setUserData] = useState(null);
   const [guid, setGuid] = useState(benData.length > 0 ? benData[0].guid : []);
-  const [identificationPlusResults, setIdentificationPlusResults] = useState([]);
+  const [identificationPlusResults, setIdentificationPlusResults] = useState(
+    [],
+  );
+  const [isBeneficiaryConfirmed, setIsBeneficiaryConfirmed] = useState(true);
   const [identificationResults, setIdentificationResults] = useState([]);
   const [displayMode, setDisplayMode] = useState(null);
   const [enrollmentGuid, setEnrollmentGuid] = useState(null);
@@ -58,7 +59,7 @@ const SimprintsID = ({navigation}) => {
   const [collapsedIndex, setCollapsedIndex] = useState(-1);
   const [clickedResult, setClickedResult] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
- const sortedResults = identificationResults
+  const sortedResults = identificationResults
     .filter(
       result => result.confidenceScore >= 20 && result.confidenceScore <= 99,
     )
@@ -174,25 +175,24 @@ const SimprintsID = ({navigation}) => {
       },
     );
 
-    const identificationErrorSubscription = DeviceEventEmitter.addListener(
-      'SimprintsIdentificationError',
-      event => {
-        const {reason} = event;
-        const {extra} = event;
-        console.log('Refusal Reason:', reason);
-        console.log('Refusal Extra:', extra);
-        setRefusalData({reason, extra});
-        updateRegistrationErrorContext(reason, extra);
-        navigation.navigate('PatientLists');
-      },
-    );
+    // const identificationErrorSubscription = DeviceEventEmitter.addListener(
+    //   'SimprintsIdentificationError',
+    //   event => {
+    //     const {reason} = event;
+    //     const {extra} = event;
+    //     console.log('Refusal Reason:', reason);
+    //     console.log('Refusal Extra:', extra);
+    //     setRefusalData({reason, extra});
+    //     updateRegistrationErrorContext(reason, extra);
+    //     navigation.navigate('PatientLists');
+    //   },
+    // );
 
     return () => {
       identificationPlusSubscription.remove();
       identificationSubscription.remove();
       registrationSuccessSubscription.remove();
       registrationErrorSubscription.remove();
-      identificationErrorSubscription.remove();
     };
   }, [updateDataResults, updateBenData, updateSession]);
 
