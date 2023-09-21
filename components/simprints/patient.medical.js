@@ -202,14 +202,35 @@ const PatientMedical = ({navigation}) => {
     updatedMedicines[index][field] = value;
     setMedicines(updatedMedicines);
   };
+  const _header = () => (
+    <CustomHeader
+      left={
+        <TouchableOpacity
+          style={{
+            marginHorizontal: 4,
+            width: 35,
+            height: 35,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          onPress={() => navigation.goBack()}>
+          <Icon name="arrow-left" size={25} color={COLORS.BLACK} />
+        </TouchableOpacity>
+      }
+      title={
+        <Text style={[STYLES.centerHeader, STYLES.title]}>
+          MEDICAL DIAGNOSIS
+        </Text>
+      }
+    />
+  );
 
   const renderMedicineInputs = () => {
     return medicines.map((medicine, index) => (
       <View key={index} style={STYLES.medicineContainer}>
-        <Text style={STYLES.label}>Medicine #{index + 1}:</Text>
-
+        <Text style={STYLES.userLabel}>Medicine #{index + 1}:</Text>
         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Text style={STYLES.label}>Prescriptions/Medicine:</Text>
+          <Text style={STYLES.label}>Medicine:</Text>
           <Picker
             placeholderTextColor={COLORS.BLACK}
             selectedValue={medicine.name}
@@ -241,7 +262,7 @@ const PatientMedical = ({navigation}) => {
           </Picker>
         </View>
         <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Additional Instructions:</Text>
+          <Text style={STYLES.label}>Instructions:</Text>
           <TextInput
             style={[
               STYLES.field,
@@ -259,72 +280,94 @@ const PatientMedical = ({navigation}) => {
         </View>
 
         <View style={STYLES.wrap}>
-          <Text style={STYLES.label}>Dosage:</Text>
-
-          <View>
-            <TextInput
-              style={STYLES.medicineInput}
-              placeholder="dose"
-              value={medicine.dosage}
-              keyboardType="numeric"
-              onChangeText={text => handleMedicineChange(index, 'dosage', text)}
-              placeholderTextColor={COLORS.GREY}
-            />
+          <View style={STYLES.detail}>
+            <Picker
+              placeholderTextColor={COLORS.BLACK}
+              selectedValue={medicine.dose}
+              onValueChange={value =>
+                handleMedicineChange(index, 'dose', value)
+              }
+              style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+              dropdownIconColor={COLORS.GREY_LIGHTER}>
+              <Picker.Item label="Dose" value="Dose" />
+              <Picker.Item label="1" value="1" />
+              <Picker.Item label="2" value="2" />
+              <Picker.Item label="3" value="3" />
+              <Picker.Item label="4" value="4" />
+              <Picker.Item label="5" value="5" />
+              <Picker.Item label="6" value="7" />
+              <Picker.Item label="7" value="7" />
+              <Picker.Item label="8" value="8" />
+              <Picker.Item label="9" value="9" />
+              <Picker.Item label="10" value="10" />
+            </Picker>
           </View>
-          <Text style={STYLES.label}>X</Text>
+          <Text
+            style={[
+              STYLES.userLabel,
+              {color: COLORS.BLACK, paddingHorizontal: 10, fontWeight: 'bold'},
+            ]}>
+            X
+          </Text>
 
-          <TextInput
-            style={STYLES.medicineInput}
-            placeholder="Freq"
-            value={medicine.frequency}
-            keyboardType="numeric"
-            onChangeText={text =>
-              handleMedicineChange(index, 'frequency', text)
-            }
-            placeholderTextColor={COLORS.GREY}
-          />
+          <View style={STYLES.detail}>
+            <Picker
+              placeholderTextColor={COLORS.BLACK}
+              selectedValue={medicine.frequency}
+              onValueChange={value =>
+                handleMedicineChange(index, 'frequency', value)
+              }
+              style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+              dropdownIconColor={COLORS.GREY_LIGHTER}>
+              <Picker.Item label="Freq" value="Frequency" />
+              <Picker.Item label="1" value="1" />
+              <Picker.Item label="2" value="2" />
+              <Picker.Item label="3" value="3" />
+              <Picker.Item label="4" value="4" />
+              <Picker.Item label="5" value="5" />
+              <Picker.Item label="6" value="7" />
+              <Picker.Item label="7" value="7" />
+              <Picker.Item label="8" value="8" />
+              <Picker.Item label="9" value="9" />
+              <Picker.Item label="10" value="10" />
+            </Picker>
+          </View>
           <Text style={STYLES.label}>for</Text>
-
-          <TextInput
-            style={STYLES.medicineInput}
-            placeholder="duration"
-            keyboardType="numeric"
-            value={medicine.duration}
-            onChangeText={text => handleMedicineChange(index, 'duration', text)}
-            placeholderTextColor={COLORS.GREY}
-          />
-          <Text style={STYLES.label}>days</Text>
+        </View>
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Days:</Text>
+          <Picker
+            placeholderTextColor={COLORS.BLACK}
+            selectedValue={medicine.duration}
+            onValueChange={value =>
+              handleMedicineChange(index, 'duration', value)
+            }
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            dropdownIconColor={COLORS.GREY_LIGHTER}>
+            <Picker.Item label="" value="" />
+            <Picker.Item label="1" value="1" />
+            <Picker.Item label="2" value="2" />
+            <Picker.Item label="3" value="3" />
+            <Picker.Item label="4" value="4" />
+            <Picker.Item label="5" value="5" />
+            <Picker.Item label="6" value="7" />
+            <Picker.Item label="7" value="7" />
+            <Picker.Item label="8" value="8" />
+            <Picker.Item label="9" value="9" />
+            <Picker.Item label="10" value="10" />
+          </Picker>
         </View>
 
+        <Text
+          style={[STYLES.field, {color: COLORS.BLACK, paddingVertical: 10}]}>
+          (Press "Remove" To Remove Medicine)
+        </Text>
         <TouchableOpacity onPress={() => handleRemoveMedicine(index)}>
           <Text style={STYLES.medicineRemoveButton}>Remove</Text>
         </TouchableOpacity>
       </View>
     ));
   };
-
-  const _header = () => (
-    <CustomHeader
-      left={
-        <TouchableOpacity
-          style={{
-            marginHorizontal: 4,
-            width: 35,
-            height: 35,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-          onPress={() => navigation.goBack()}>
-          <Icon name="arrow-left" size={25} color={COLORS.BLACK} />
-        </TouchableOpacity>
-      }
-      title={
-        <Text style={[STYLES.centerHeader, STYLES.title]}>
-          MEDICAL DIAGNOSIS
-        </Text>
-      }
-    />
-  );
 
   if (state.isLoading) return <Loader />;
 
@@ -463,6 +506,10 @@ const PatientMedical = ({navigation}) => {
 
         {/* Render medicine inputs */}
         {renderMedicineInputs()}
+        <Text
+          style={[STYLES.field, {color: COLORS.BLACK, paddingVertical: 10}]}>
+          (Press "Add Medicine" To Add More than One Medicine)
+        </Text>
         <TouchableOpacity
           style={STYLES.addMedicineButton}
           onPress={handleAddMedicine}>
@@ -509,6 +556,14 @@ const STYLES = StyleSheet.create({
     marginRight: 5,
     color: COLORS.BLACK,
     fontSize: 14,
+  },
+  userLabel: {
+    fontWeight: 'medium',
+    marginHorizontal: 5,
+    marginVertical: 10,
+    color: COLORS.BLACK,
+    fontSize: 16,
+    textAlign: 'center',
   },
   title: {
     fontWeight: 'bold',
@@ -671,7 +726,7 @@ const STYLES = StyleSheet.create({
   },
   detail: {
     flex: 1,
-    paddingHorizontal: 15,
+    // paddingHorizontal: 10,
     // paddingVertical: 10,
     color: COLORS.BLACK,
     marginTop: 10,
@@ -680,8 +735,9 @@ const STYLES = StyleSheet.create({
     borderStyle: 'solid',
     borderWidth: 1,
     borderRadius: 10,
-    height: 50,
-    marginHorizontal: 5,
+    // height: 50,
+    // marginHorizontal: 5,
+    fontStyle: 10,
   },
   pickerStyle: {
     flex: 1,
@@ -728,9 +784,9 @@ const STYLES = StyleSheet.create({
     color: COLORS.BLACK,
   },
   medicineRemoveButton: {
-    color: COLORS.RED, // Customize the color as needed
+    color: COLORS.BLACK, // Customize the color as needed
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 15,
     textAlign: 'right',
   },
   addMedicineButton: {
