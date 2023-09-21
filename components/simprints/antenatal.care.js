@@ -149,13 +149,12 @@ const AntenatalCare = ({navigation}) => {
           Accept: 'application/json',
         },
       });
-
+      console.log(response);
       if (response.ok) {
         const data = await response.json();
         // setId(data.id);
         Alert.alert('Antenatal Care Patient Registered');
         navigation.navigate('Dashboard');
-        console.log(medicines);
       } else {
         console.log(state, medicines);
         console.error('Error posting data:', response.status);
