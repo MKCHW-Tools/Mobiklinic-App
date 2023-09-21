@@ -103,18 +103,20 @@ const PatientMedical = ({navigation}) => {
     labTests: '',
     sessionId: '',
     biometricsVerified: isBeneficiaryConfirmed,
+    simprintsGui: dataResults,
 
     // registeredById: '',
   });
 
   const handleSubmit = async () => {
+    console.log(patientId);
     try {
       if (state.isLoading) {
         // Prevent multiple submissions
         return;
       }
-      setState({...state, isLoading: true}); // Set isLoading state to true
-
+      setState({ ...state, isLoading: true }); // Set isLoading state to true
+  
       if (
         (selectedCondition === 'Other' && customCondition === '') || // Check if custom condition is empty when "Other" is selected
         state.dateOfDiagnosis === '' ||
@@ -123,23 +125,25 @@ const PatientMedical = ({navigation}) => {
         Alert.alert('Error', 'Please fill in all required fields');
         return;
       }
-
+  
       // Format date strings
       const formattedDateOfDiagnosis = format(
         new Date(state.dateOfDiagnosis),
-        'yyyy-MM-dd',
+        'yyyy-MM-dd'
       );
       const formattedFollowUpDate = format(
         new Date(state.followUpDate),
-        'yyyy-MM-dd',
+        'yyyy-MM-dd'
       );
+      
+      // Determine the condition to post based on whether "Other" is selected
       const conditionToPost =
         selectedCondition === 'Other' ? customCondition : selectedCondition;
-
+  
       const response = await fetch(`${URLS.BASE}/${patientId}/diagnosis`, {
         method: 'POST',
         body: JSON.stringify({
-          condition: conditionToPost,
+          condition: conditionToPost, // Use the determined condition
           dateOfDiagnosis: formattedDateOfDiagnosis,
           impression: state.impression,
           drugsPrescribed: state.drugsPrescribed,
@@ -150,38 +154,41 @@ const PatientMedical = ({navigation}) => {
           followUpDate: formattedFollowUpDate,
           isPregnant: state.isPregnant,
           simSessionId: state.sessionId,
-          medicines: medicines, // Use the medicines array as is
+          medicines: medicines,
           biometricsVerified: isBeneficiaryConfirmed,
           diagnosedBy: userNames,
+          simprintsGui: dataResults,
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
           Accept: 'application/json',
         },
       });
-
+  
       if (response.ok) {
         const data = await response.json();
         Alert.alert('Diagnosis Registered successfully');
         navigation.navigate('Dashboard');
-        console.log(state, medicines);
       } else {
+        console.log(state, medicines);
         console.error('Error posting data:', response.status);
         Alert.alert(
           'Error',
-          'Failed to Register Diagnosis. Please try again later.',
+          'Failed to Register Diagnosis. Please try again later.'
         );
       }
     } catch (error) {
       console.error('Error posting data:', error);
       Alert.alert(
         'Error',
-        'Failed to Register Diagnosis. Please try again later.',
+        'Failed to Register Diagnosis. Please try again later.'
       );
+      console.log(response);
     } finally {
-      setState({...state, isLoading: false}); // Reset isLoading state to false
+      setState({ ...state, isLoading: false }); // Reset isLoading state to false
     }
   };
+  
 
   const handleAddMedicine = () => {
     console.log(patientId);
@@ -287,7 +294,7 @@ const PatientMedical = ({navigation}) => {
               onValueChange={value =>
                 handleMedicineChange(index, 'dose', value)
               }
-              style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+              style={[STYLES.field, {color: COLORS.BLACK}]}
               dropdownIconColor={COLORS.GREY_LIGHTER}>
               <Picker.Item label="Dose" value="Dose" />
               <Picker.Item label="1" value="1" />
