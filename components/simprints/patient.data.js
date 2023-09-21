@@ -145,6 +145,7 @@ const PatientData = ({navigation}) => {
         console.log('Patient ID:', patientId);
         console.log('Simprints session ID:', sessionId);
         console.log('sessionId data type:', typeof sessionId);
+        console.log(dataResults);
         Alert.alert('Beneficiary Registered Successfully');
         console.log(data);
         navigation.navigate('SelectActivity', {
