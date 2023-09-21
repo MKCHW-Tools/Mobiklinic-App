@@ -257,12 +257,12 @@ const PatientList = ({navigation}) => {
                       </Text>
                     </Text>
 
-                    <Text style={styles.userDataLabel}>
-                      Dose:{' '}
+                    {/* <Text style={styles.userDataLabel}>
+                      Dose:
                       <Text style={styles.userDataValue}>
                         {vaccination.dose}
                       </Text>
-                    </Text>
+                    </Text> */}
 
                     <Text style={styles.userDataLabel}>
                       Card Number:{' '}
