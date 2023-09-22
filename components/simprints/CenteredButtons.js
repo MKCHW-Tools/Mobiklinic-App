@@ -11,7 +11,7 @@ const CenteredButtons = ({navigation}) => {
   };
 
   const navigateToPatientList = () => {
-    navigation.navigate('PatientLists');
+    navigation.navigate('BeneficaryAdd');
   };
 
   return (

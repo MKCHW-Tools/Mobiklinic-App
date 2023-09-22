@@ -17,7 +17,7 @@ import CustomHeader from '../ui/custom-header';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {URLS} from '../constants/API';
 
-const PatientList = ({navigation}) => {
+const BeneficaryAdd = ({navigation}) => {
   const {userLog, userNames, refusalData, patientId, setPatientId} =
     useContext(DataResultsContext);
   const [users, setUsers] = useState([]);
@@ -466,9 +466,9 @@ const PatientList = ({navigation}) => {
                 ))}
               </View>
             )}
-            {/* <TouchableOpacity onPress={addData} style={styles.buttonSec}>
+            <TouchableOpacity onPress={addData} style={styles.buttonSec}>
               <Text style={styles.buttonText}>Follow Up Patient</Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
           </View>
         )}
       </View>
@@ -536,7 +536,7 @@ const PatientList = ({navigation}) => {
   );
 };
 
-export default PatientList;
+export default BeneficaryAdd;
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
