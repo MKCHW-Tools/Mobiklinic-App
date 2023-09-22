@@ -19,6 +19,7 @@ import SelectActivity from '../simprints/select.activity';
 import GetPatients from '../simprints/getPatients';
 import PatientLists from '../simprints/patient.lists';
 import AntenatalCare from '../simprints/antenatal.care';
+import CenteredButtons from '../simprints/Refuse';
 
 const Stack = createStackNavigator();
 
@@ -116,6 +117,13 @@ function AuthStack() {
         options={{headerShown: false}}
         component={AntenatalCare}
       />
+
+      <Stack.Screen
+        name="CenteredButtons"
+        options={{headerShown: false}}
+        component={CenteredButtons}
+        />
+
     </Stack.Navigator>
   );
 }

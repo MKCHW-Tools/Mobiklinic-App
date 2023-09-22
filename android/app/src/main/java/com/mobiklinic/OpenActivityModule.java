@@ -70,15 +70,15 @@ public class OpenActivityModule extends ReactContextBaseJavaModule implements Ac
                         RefusalForm refusalForm = data.getParcelableExtra(Constants.SIMPRINTS_REFUSAL_FORM);
                 
                         // get access to the 'reason' and 'extra' values
-                        String reason = refusalForm.getReason();
-                        String extra = refusalForm.getExtra();
+                        String reasons = refusalForm.getReason();
+                        String extras = refusalForm.getExtra();
                 
                   
                 
                         // Emit the refusal form data along with the event
                         WritableMap errorParams = Arguments.createMap();
-                        errorParams.putString("reason", reason);
-                        errorParams.putString("extra", extra);
+                        errorParams.putString("reasons", reasons);
+                        errorParams.putString("extras", extras);
                         getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                                 .emit("SimprintsRegistrationError", errorParams);
                     } else {

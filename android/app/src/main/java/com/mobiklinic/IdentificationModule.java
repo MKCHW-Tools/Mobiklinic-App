@@ -112,22 +112,22 @@ public class IdentificationModule extends ReactContextBaseJavaModule {
             }
 
             else{
-                if(data.hasExtra(Constants.SIMPRINTS_REFUSAL_FORM)){
-                    RefusalForm refusalForm = data.getParcelableExtra(Constants.SIMPRINTS_REFUSAL_FORM);
-                    String reason = refusalForm.getReason();
-                    String extra = refusalForm.getExtra();
-                    WritableMap errorParams = Arguments.createMap();
-                    errorParams.putString("reason", reason);
-                    errorParams.putString("extra", extra);
-                    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                            .emit("SimprintsIdentificationError", errorParams);
-                }
-                else{
-                    WritableMap errorParams = Arguments.createMap();
-                    errorParams.putString("reason", "No identification results");
-                    errorParams.putString("extra", "No identification results");
-                    getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                            .emit("SimprintsIdentificationError", errorParams);                }
+                // if(data.hasExtra(Constants.SIMPRINTS_REFUSAL_FORM)){
+                //     RefusalForm refusalForm = data.getParcelableExtra(Constants.SIMPRINTS_REFUSAL_FORM);
+                //     String reason = refusalForm.getReason();
+                //     String extra = refusalForm.getExtra();
+                //     WritableMap errorParams = Arguments.createMap();
+                //     errorParams.putString("reason", reason);
+                //     errorParams.putString("extra", extra);
+                //     getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                //             .emit("SimprintsIdentificationError", errorParams);
+                // }
+                // else{
+                //     WritableMap errorParams = Arguments.createMap();
+                //     errorParams.putString("reason", "No identification results");
+                //     errorParams.putString("extra", "No identification results");
+                //     getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                //             .emit("SimprintsIdentificationError", errorParams);                }
 
             }
         }

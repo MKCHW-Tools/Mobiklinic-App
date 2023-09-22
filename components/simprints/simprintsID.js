@@ -160,7 +160,7 @@ const SimprintsID = ({navigation}) => {
         setEnrollmentGuid(guid);
         setSessionId(sessionId);
         setDisplayMode('enrollment');
-        navigation.navigate('PatientData');
+        // navigation.navigate('PatientData');
         updateDataResults(guid);
         updateSession(sessionId);
         // setSessionId(sessionId);
@@ -170,29 +170,35 @@ const SimprintsID = ({navigation}) => {
       },
     );
 
+
+    // const identificationErrorSubscription = DeviceEventEmitter.addListener(
+    //   'SimprintsIdentificationError',
+    //   event => {
+    //     const {reason} = event;
+    //     const {extra} = event;
+    //     // navigation.navigate('PatientLists');
+
+    //     // Now you can use the 'reason' and 'extra' values in your React Native code
+    //     console.log('Refusal Reason:', reason);
+    //     console.log('Refusal Extra:', extra);
+    //   },
+    // );
+
     const registrationErrorSubscription = DeviceEventEmitter.addListener(
       'SimprintsRegistrationError',
       event => {
-        const {reason} = event;
-        const {extra} = event;
+        const {reasons} = event;
+        const {extras} = event;
+        navigation.navigate('CenteredButtons');
+        
 
         // Now you can use the 'reason' and 'extra' values in your React Native code
-        console.log('Refusal Reason:', reason);
-        console.log('Refusal Extra:', extra);
+        console.log('Refusal Reason:', reasons);
+        console.log('Refusal Extra:', extras);
       },
     );
 
-    const identificationErrorSubscription = DeviceEventEmitter.addListener(
-      'SimprintsIdentificationError',
-      event => {
-        const {reason} = event;
-        const {extra} = event;
-
-        // Now you can use the 'reason' and 'extra' values in your React Native code
-        console.log('Refusal Reason:', reason);
-        console.log('Refusal Extra:', extra);
-      },
-    );
+  
 
     return () => {
       identificationPlusSubscription.remove();
@@ -419,7 +425,7 @@ const SimprintsID = ({navigation}) => {
                             <TouchableOpacity
                               style={styles.buttonSec}
                               onPress={() =>
-                                navigation.navigate('PatientData')
+                                navigation.navigate('')
                               }>
                               <Text style={styles.buttonStyle}>
                                 Proceed to register
