@@ -95,6 +95,7 @@ const AntenatalCare = ({navigation}) => {
     }
     return 'Click to add date';
   };
+  
   const [state, setState] = React.useState({
     pregnancyStatus: '',
     expectedDateOfDelivery: '',
@@ -149,12 +150,12 @@ const AntenatalCare = ({navigation}) => {
           Accept: 'application/json',
         },
       });
-      console.log(response);
       if (response.ok) {
         const data = await response.json();
         // setId(data.id);
         Alert.alert('Antenatal Care Patient Registered');
         navigation.navigate('Dashboard');
+        console.log(state,medicines);
       } else {
         console.log(state, medicines);
         console.error('Error posting data:', response.status);
