@@ -127,6 +127,8 @@ const PatientData = ({navigation}) => {
           primaryLanguage: selectedLanguage,
           simprintsGui: dataResults,
           simSessionId: sessionId,
+          refusalReason: reason,
+          refusaleExtraInfo: extra,
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -143,7 +145,9 @@ const PatientData = ({navigation}) => {
         console.log('Patient ID:', patientId);
         console.log('Simprints session ID:', sessionId);
         console.log('sessionId data type:', typeof sessionId);
+        console.log(dataResults);
         Alert.alert('Beneficiary Registered Successfully');
+        console.log(data);
         navigation.navigate('SelectActivity', {
           patientId: patientId,
           paramKey: state,
@@ -324,7 +328,7 @@ const PatientData = ({navigation}) => {
         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
           <Text style={STYLES.label}>Country:</Text>
           <Picker
-            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            style={[STYLES.field, {color: COLORS.BLACK}]}
             selectedValue={selectedCountry}
             onValueChange={handleCountryChange}>
             <Picker.Item value="" />
@@ -344,7 +348,7 @@ const PatientData = ({navigation}) => {
               <Text style={STYLES.label}>District:</Text>
               <Picker
                 selectedValue={selectedDistrict}
-                style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+                style={[STYLES.field, {color: COLORS.BLACK}]}
                 onValueChange={handleDistrictChange}>
                 <Picker.Item label="Select a district" value="" />
                 {countryData
@@ -502,7 +506,6 @@ const STYLES = StyleSheet.create({
     borderStyle: 'solid',
     borderWidth: 1,
     borderRadius: 10,
-    
   },
   field: {
     flex: 1,

@@ -27,16 +27,16 @@ import {URLS} from '../constants/API';
 
 const AntenatalCare = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
-  const {diagnoses} = diagnosisContext;
+  // const {diagnoses} = diagnosisContext;
   const {dataResults} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
   const {userNames} = useContext(DataResultsContext);
-  const currentDate = new Date();
+  // const currentDate = new Date();
   const {sessionId} = useContext(DataResultsContext);
   const [routineVisitDate, setRoutineVisitDate] = useState('');
   const [expectedDateOfDelivery, setExpectedDateOfDelivery] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [prescriptions, setSelectedPrescriptions] = useState([]);
+  // const [prescriptions, setSelectedPrescriptions] = useState([]);
   const {isBeneficiaryConfirmed} = useContext(DataResultsContext);
   const [medicines, setMedicines] = useState([
     {
@@ -149,14 +149,14 @@ const AntenatalCare = ({navigation}) => {
           Accept: 'application/json',
         },
       });
-
+      console.log(response);
       if (response.ok) {
         const data = await response.json();
         // setId(data.id);
         Alert.alert('Antenatal Care Patient Registered');
         navigation.navigate('Dashboard');
-        console.log(medicines);
       } else {
+        console.log(state, medicines);
         console.error('Error posting data:', response.status);
         Alert.alert(
           'Error',
@@ -209,10 +209,9 @@ const AntenatalCare = ({navigation}) => {
   const renderMedicineInputs = () => {
     return medicines.map((medicine, index) => (
       <View key={index} style={STYLES.medicineContainer}>
-        <Text style={STYLES.label}>Medicine #{index + 1}:</Text>
-
+        <Text style={STYLES.userLabel}>Medicine #{index + 1}:</Text>
         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Text style={STYLES.label}>Prescriptions/Medicine:</Text>
+          <Text style={STYLES.label}>Medicine:</Text>
           <Picker
             placeholderTextColor={COLORS.BLACK}
             selectedValue={medicine.name}
@@ -244,7 +243,7 @@ const AntenatalCare = ({navigation}) => {
           </Picker>
         </View>
         <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Additional Instructions:</Text>
+          <Text style={STYLES.label}>Instructions:</Text>
           <TextInput
             style={[
               STYLES.field,
@@ -262,43 +261,88 @@ const AntenatalCare = ({navigation}) => {
         </View>
 
         <View style={STYLES.wrap}>
-          <Text style={STYLES.label}>Dosage:</Text>
-
-          <View>
-            <TextInput
-              style={STYLES.medicineInput}
-              placeholder="dose"
-              value={medicine.dosage}
-              keyboardType="numeric"
-              onChangeText={text => handleMedicineChange(index, 'dosage', text)}
-              placeholderTextColor={COLORS.GREY}
-            />
+          <View style={STYLES.detail}>
+            <Picker
+              placeholderTextColor={COLORS.BLACK}
+              selectedValue={medicine.dosage}
+              onValueChange={value =>
+                handleMedicineChange(index, 'dosage', value)
+              }
+              style={[STYLES.field, {color: COLORS.BLACK}]}
+              dropdownIconColor={COLORS.GREY_LIGHTER}>
+              <Picker.Item label="Dose" value="Dose" />
+              <Picker.Item label="1" value="1" />
+              <Picker.Item label="2" value="2" />
+              <Picker.Item label="3" value="3" />
+              <Picker.Item label="4" value="4" />
+              <Picker.Item label="5" value="5" />
+              <Picker.Item label="6" value="7" />
+              <Picker.Item label="7" value="7" />
+              <Picker.Item label="8" value="8" />
+              <Picker.Item label="9" value="9" />
+              <Picker.Item label="10" value="10" />
+            </Picker>
           </View>
-          <Text style={STYLES.label}>X</Text>
+          <Text
+            style={[
+              STYLES.userLabel,
+              {color: COLORS.BLACK, paddingHorizontal: 10, fontWeight: 'bold'},
+            ]}>
+            X
+          </Text>
 
-          <TextInput
-            style={STYLES.medicineInput}
-            placeholder="Freq"
-            value={medicine.frequency}
-            keyboardType="numeric"
-            onChangeText={text =>
-              handleMedicineChange(index, 'frequency', text)
-            }
-            placeholderTextColor={COLORS.GREY}
-          />
+          <View style={STYLES.detail}>
+            <Picker
+              placeholderTextColor={COLORS.BLACK}
+              selectedValue={medicine.frequency}
+              onValueChange={value =>
+                handleMedicineChange(index, 'frequency', value)
+              }
+              style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+              dropdownIconColor={COLORS.GREY_LIGHTER}>
+              <Picker.Item label="Freq" value="Frequency" />
+              <Picker.Item label="1" value="1" />
+              <Picker.Item label="2" value="2" />
+              <Picker.Item label="3" value="3" />
+              <Picker.Item label="4" value="4" />
+              <Picker.Item label="5" value="5" />
+              <Picker.Item label="6" value="7" />
+              <Picker.Item label="7" value="7" />
+              <Picker.Item label="8" value="8" />
+              <Picker.Item label="9" value="9" />
+              <Picker.Item label="10" value="10" />
+            </Picker>
+          </View>
           <Text style={STYLES.label}>for</Text>
-
-          <TextInput
-            style={STYLES.medicineInput}
-            placeholder="duration"
-            keyboardType="numeric"
-            value={medicine.duration}
-            onChangeText={text => handleMedicineChange(index, 'duration', text)}
-            placeholderTextColor={COLORS.GREY}
-          />
-          <Text style={STYLES.label}>days</Text>
+        </View>
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Days:</Text>
+          <Picker
+            placeholderTextColor={COLORS.BLACK}
+            selectedValue={medicine.duration}
+            onValueChange={value =>
+              handleMedicineChange(index, 'duration', value)
+            }
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            dropdownIconColor={COLORS.GREY_LIGHTER}>
+            <Picker.Item label="" value="" />
+            <Picker.Item label="1" value="1" />
+            <Picker.Item label="2" value="2" />
+            <Picker.Item label="3" value="3" />
+            <Picker.Item label="4" value="4" />
+            <Picker.Item label="5" value="5" />
+            <Picker.Item label="6" value="7" />
+            <Picker.Item label="7" value="7" />
+            <Picker.Item label="8" value="8" />
+            <Picker.Item label="9" value="9" />
+            <Picker.Item label="10" value="10" />
+          </Picker>
         </View>
 
+        <Text
+          style={[STYLES.field, {color: COLORS.BLACK, paddingVertical: 10}]}>
+          (Press "Remove" To Remove Medicine)
+        </Text>
         <TouchableOpacity onPress={() => handleRemoveMedicine(index)}>
           <Text style={STYLES.medicineRemoveButton}>Remove</Text>
         </TouchableOpacity>
@@ -451,6 +495,10 @@ const AntenatalCare = ({navigation}) => {
         </View>
 
         {renderMedicineInputs()}
+        <Text
+          style={[STYLES.field, {color: COLORS.BLACK, paddingVertical: 10}]}>
+          (Press "Add Medicine" To Add More than One Medicine)
+        </Text>
         <TouchableOpacity
           style={STYLES.addMedicineButton}
           onPress={handleAddMedicine}>
@@ -792,5 +840,19 @@ const STYLES = StyleSheet.create({
     marginTop: 5,
     marginBottom: 10,
     color: COLORS.BLACK,
+  },
+  userLabel: {
+    fontWeight: 'medium',
+    marginHorizontal: 5,
+    marginVertical: 10,
+    color: COLORS.BLACK,
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  medicineRemoveButton: {
+    color: COLORS.BLACK, // Customize the color as needed
+    fontWeight: 'bold',
+    fontSize: 15,
+    textAlign: 'right',
   },
 });

@@ -24,17 +24,17 @@ import CopyRight from './copyright';
 import {URLS} from '../constants/API';
 
 const PatientData = ({navigation, route}) => {
-  const diagnosisContext = React.useContext(DiagnosisContext);
-  const {diagnoses} = diagnosisContext;
-  const {dataResults} = useContext(DataResultsContext);
-  const {patientId, setPatientId} = useContext(DataResultsContext);
-  const currentDate = new Date();
-  const {userNames} = useContext(DataResultsContext);
-  const {isBeneficiaryConfirmed} = useContext(DataResultsContext);
   const [dateOfVaccination, setDateOfVaccination] = useState('');
   const [dateForNextDose, setDateForNextDose] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const {sessionId} = useContext(DataResultsContext);
+  const {
+    sessionId,
+    isBeneficiaryConfirmed,
+    userNames,
+    patientId,
+    setPatientId,
+    dataResults,
+  } = useContext(DataResultsContext);
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || dateOfVaccination;
@@ -75,7 +75,7 @@ const PatientData = ({navigation, route}) => {
     simSessionId: '',
     simprintsGui: '',
     biometricsVerified: isBeneficiaryConfirmed,
-    reviewedBy:'',
+    reviewedBy: '',
     // registeredById: '',
   });
 
@@ -108,7 +108,7 @@ const PatientData = ({navigation, route}) => {
           facility: state.facility,
           simSessionId: sessionId,
           simprintsGui: dataResults,
-          reviewedBy: userNames,
+          vaccinatedBy: userNames,
           biometricsVerified: isBeneficiaryConfirmed,
         }),
         headers: {
@@ -401,7 +401,7 @@ const STYLES = StyleSheet.create({
     color: COLORS.GREY,
   },
   label: {
-    fontWeight: 'medium',
+    fontWeight: 'bold',
     marginLeft: 5,
     marginRight: 5,
     color: COLORS.BLACK,
@@ -499,6 +499,7 @@ const STYLES = StyleSheet.create({
     color: COLORS.BLACK,
     fontSize: 11,
     fontWeight: 'bold ',
+    display: 'none',
   },
   submit: {
     backgroundColor: COLORS.BLACK,

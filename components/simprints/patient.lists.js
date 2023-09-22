@@ -228,8 +228,14 @@ const PatientList = ({navigation}) => {
             </Text>
 
             <Text style={styles.userDataLabel}>
-              Height:{' '}
-              <Text style={styles.userDataValue}>{item.height} cm</Text>
+              Height: <Text style={styles.userDataValue}>{item.height} cm</Text>
+            </Text>
+            <Text style={styles.userDataLabel}>
+              Created At:{' '}
+              <Text style={styles.userDataValue}>
+                {' '}
+                {formatDate(new Date(item.createdAt))}
+              </Text>
             </Text>
             <View style={styles.line} />
             {item.vaccinations && item.vaccinations.length > 0 && (
@@ -251,12 +257,12 @@ const PatientList = ({navigation}) => {
                       </Text>
                     </Text>
 
-                    <Text style={styles.userDataLabel}>
-                      Dose:{' '}
+                    {/* <Text style={styles.userDataLabel}>
+                      Dose:
                       <Text style={styles.userDataValue}>
-                        {vaccination.dose}
+                        {vaccination.vaccinatedBy}
                       </Text>
-                    </Text>
+                    </Text> */}
 
                     <Text style={styles.userDataLabel}>
                       Card Number:{' '}
@@ -461,7 +467,7 @@ const PatientList = ({navigation}) => {
               </View>
             )}
             <TouchableOpacity onPress={addData} style={styles.buttonSec}>
-              <Text style={styles.buttonText}>Add Data</Text>
+              <Text style={styles.buttonText}>Follow Up Patient</Text>
             </TouchableOpacity>
           </View>
         )}
