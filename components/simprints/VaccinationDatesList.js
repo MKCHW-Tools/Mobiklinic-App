@@ -1,5 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet, ScrollView } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
+import Loader from '../ui/loader';
 
 const VaccinationDatesList = () => {
   const [patientData, setPatientData] = useState(null);
@@ -13,8 +21,14 @@ const VaccinationDatesList = () => {
       .then(data => {
         // Sort patient data by appointment date (ascending)
         data.sort((a, b) => {
-          const dateA = a.vaccinations && a.vaccinations.length > 0 ? new Date(a.vaccinations[0].dateForNextDose) : null;
-          const dateB = b.vaccinations && b.vaccinations.length > 0 ? new Date(b.vaccinations[0].dateForNextDose) : null;
+          const dateA =
+            a.vaccinations && a.vaccinations.length > 0
+              ? new Date(a.vaccinations[0].dateForNextDose)
+              : null;
+          const dateB =
+            b.vaccinations && b.vaccinations.length > 0
+              ? new Date(b.vaccinations[0].dateForNextDose)
+              : null;
 
           if (!dateA) return 1;
           if (!dateB) return -1;
@@ -31,24 +45,29 @@ const VaccinationDatesList = () => {
       });
   }, []);
 
-  const formatDate = (date) => {
-    const options = { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'long' };
+  const formatDate = date => {
+    const options = {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      weekday: 'long',
+    };
     const formattedDate = new Date(date).toLocaleDateString('en-GB', options);
     return formattedDate;
   };
 
-  const isDateValid = (date) => {
+  const isDateValid = date => {
     return !isNaN(new Date(date).getTime());
   };
 
-  const isDatePassed = (date) => {
+  const isDatePassed = date => {
     return new Date(date) < new Date();
   };
 
   const handleDateClick = (date, patient) => {
     setSelectedAppointment({
       date: formatDate(date),
-      dayOfWeek: new Date(date).toLocaleDateString('en-US', { weekday: 'long' }),
+      dayOfWeek: new Date(date).toLocaleDateString('en-US', {weekday: 'long'}),
       patientName: `${patient.firstName} ${patient.lastName}`,
       phoneNumber: patient.phoneNumber,
     });
@@ -56,9 +75,7 @@ const VaccinationDatesList = () => {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
+     <Loader/>
     );
   }
 
@@ -75,22 +92,32 @@ const VaccinationDatesList = () => {
               <TouchableOpacity
                 key={patient.id}
                 onPress={() =>
-                  handleDateClick(patient.vaccinations[0].dateForNextDose, patient)
+                  handleDateClick(
+                    patient.vaccinations[0].dateForNextDose,
+                    patient,
+                  )
                 }
-                style={styles.dateItem}
-              >
+                style={styles.dateItem}>
                 <Text style={styles.dateText}>
-                  Next Dose: {formatDate(patient.vaccinations[0].dateForNextDose)}
+                  Next Dose:{' '}
+                  {formatDate(patient.vaccinations[0].dateForNextDose)}
                 </Text>
               </TouchableOpacity>
-            ) : null
+            ) : null,
           )}
       </ScrollView>
       {selectedAppointment && (
-        <View style={[styles.selectedAppointment, { backgroundColor: 'skyblue' }]}>
-          <Text style={styles.appointmentDate}>Next Dose: {selectedAppointment.date}</Text>
-          <Text style={styles.appointmentDate}>Patient's Name: {selectedAppointment.patientName}</Text>
-          <Text style={styles.appointmentDate}>Phone Number: {selectedAppointment.phoneNumber}</Text>
+        <View
+          style={[styles.selectedAppointment, {backgroundColor: 'skyblue'}]}>
+          <Text style={styles.appointmentDate}>
+            Next Dose: {selectedAppointment.date}
+          </Text>
+          <Text style={styles.appointmentDate}>
+            Patient's Name: {selectedAppointment.patientName}
+          </Text>
+          <Text style={styles.appointmentDate}>
+            Phone Number: {selectedAppointment.phoneNumber}
+          </Text>
         </View>
       )}
     </View>
