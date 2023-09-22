@@ -171,7 +171,7 @@ const SimprintsID = ({navigation}) => {
         const {extra} = event;
         setRefusalData({reason, extra});
         updateRegistrationErrorContext(reason, extra);
-        navigation.navigate('PatientData');
+        navigation.navigate('CenteredButtons');
       },
     );
 
