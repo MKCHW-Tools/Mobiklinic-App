@@ -123,6 +123,23 @@ const Dashboard = ({navigation}) => {
               <Text style={STYLES.cardTitle}>Beneficary Lists</Text>
             </TouchableOpacity>
           </View>
+
+          <View style={STYLES.row}>
+            <TouchableOpacity
+              style={STYLES.card}
+              onPress={() => navigation.navigate('VaccinationDatesList')}>
+              <View style={STYLES.cardIcon}>
+                <MIcon
+                  name="calendar"
+                  size={40}
+                  strokeSize={3}
+                  color={COLORS.BLACK}
+                />
+              </View>
+              <Text style={STYLES.cardTitle}>Appointments</Text>
+            </TouchableOpacity>
+          </View>
+
           <View style={STYLES.row}>
             <TouchableOpacity
               style={STYLES.card}
@@ -147,7 +164,7 @@ const Dashboard = ({navigation}) => {
 				<Icon name="smile" size={60} color={COLORS.GREY} />
 				<Text style={STYLES.alert}>No data to show now.</Text>
 			</View> */}
-      <CopyRight/>
+      <CopyRight />
     </View>
   );
 };

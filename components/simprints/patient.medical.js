@@ -115,8 +115,8 @@ const PatientMedical = ({navigation}) => {
         // Prevent multiple submissions
         return;
       }
-      setState({ ...state, isLoading: true }); // Set isLoading state to true
-  
+      setState({...state, isLoading: true}); // Set isLoading state to true
+
       if (
         (selectedCondition === 'Other' && customCondition === '') || // Check if custom condition is empty when "Other" is selected
         state.dateOfDiagnosis === '' ||
@@ -125,21 +125,21 @@ const PatientMedical = ({navigation}) => {
         Alert.alert('Error', 'Please fill in all required fields');
         return;
       }
-  
+
       // Format date strings
       const formattedDateOfDiagnosis = format(
         new Date(state.dateOfDiagnosis),
-        'yyyy-MM-dd'
+        'yyyy-MM-dd',
       );
       const formattedFollowUpDate = format(
         new Date(state.followUpDate),
-        'yyyy-MM-dd'
+        'yyyy-MM-dd',
       );
-      
+
       // Determine the condition to post based on whether "Other" is selected
       const conditionToPost =
         selectedCondition === 'Other' ? customCondition : selectedCondition;
-  
+
       const response = await fetch(`${URLS.BASE}/${patientId}/diagnosis`, {
         method: 'POST',
         body: JSON.stringify({
@@ -164,7 +164,7 @@ const PatientMedical = ({navigation}) => {
           Accept: 'application/json',
         },
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         Alert.alert('Diagnosis Registered successfully');
@@ -174,21 +174,20 @@ const PatientMedical = ({navigation}) => {
         console.error('Error posting data:', response.status);
         Alert.alert(
           'Error',
-          'Failed to Register Diagnosis. Please try again later.'
+          'Failed to Register Diagnosis. Please try again later.',
         );
       }
     } catch (error) {
       console.error('Error posting data:', error);
       Alert.alert(
         'Error',
-        'Failed to Register Diagnosis. Please try again later.'
+        'Failed to Register Diagnosis. Please try again later.',
       );
       console.log(response);
     } finally {
-      setState({ ...state, isLoading: false }); // Reset isLoading state to false
+      setState({...state, isLoading: false}); // Reset isLoading state to false
     }
   };
-  
 
   const handleAddMedicine = () => {
     console.log(patientId);
@@ -290,9 +289,9 @@ const PatientMedical = ({navigation}) => {
           <View style={STYLES.detail}>
             <Picker
               placeholderTextColor={COLORS.BLACK}
-              selectedValue={medicine.dose}
+              selectedValue={medicine.dosage}
               onValueChange={value =>
-                handleMedicineChange(index, 'dose', value)
+                handleMedicineChange(index, 'dosage', value)
               }
               style={[STYLES.field, {color: COLORS.BLACK}]}
               dropdownIconColor={COLORS.GREY_LIGHTER}>
