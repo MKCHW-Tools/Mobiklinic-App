@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   View,
   Text,
@@ -8,15 +8,20 @@ import {
   ScrollView,
 } from 'react-native';
 import Loader from '../ui/loader';
+import {URLS} from '../constants/API';
+import DataResultsContext from '../contexts/DataResultsContext';
+
 
 const VaccinationDatesList = () => {
   const [patientData, setPatientData] = useState(null);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [loading, setLoading] = useState(true);
+  const {userLog, userNames, refusalData, patientId, setPatientId} =
+  useContext(DataResultsContext);
 
   useEffect(() => {
     // Fetch patient data from the API endpoint
-    fetch('https://apis.mobiklinic.com/patients')
+    fetch(`${URLS.BASE}/${userLog}/patients`)
       .then(response => response.json())
       .then(data => {
         // Sort patient data by appointment date (ascending)
@@ -74,9 +79,7 @@ const VaccinationDatesList = () => {
   };
 
   if (loading) {
-    return (
-     <Loader/>
-    );
+    return <Loader />;
   }
 
   return (
@@ -107,8 +110,7 @@ const VaccinationDatesList = () => {
           )}
       </ScrollView>
       {selectedAppointment && (
-        <View
-          style={[styles.selectedAppointment, {backgroundColor: 'skyblue'}]}>
+        <View style={styles.selectedAppointment}>
           <Text style={styles.appointmentDate}>
             Next Dose: {selectedAppointment.date}
           </Text>
@@ -131,7 +133,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   header: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
     color: 'black',
@@ -142,7 +144,7 @@ const styles = StyleSheet.create({
   dateItem: {
     backgroundColor: '#e0e0e0',
     padding: 10,
-    marginBottom: 5,
+    marginBottom: 10,
     borderRadius: 5,
   },
   dateText: {
@@ -151,31 +153,15 @@ const styles = StyleSheet.create({
   },
   selectedAppointment: {
     marginTop: 20,
-    padding: 10,
-    backgroundColor: 'skyblue', // Set the background color to sky blue
+    padding: 20,
+    backgroundColor: 'skyblue',
     borderRadius: 5,
   },
   appointmentDate: {
     fontSize: 18,
     fontWeight: 'bold',
     color: 'black',
-  },
-  dayOfWeek: {
-    fontSize: 16,
-    color: 'black',
-  },
-  patientName: {
-    fontSize: 16,
-    color: 'black',
-  },
-  patientPhone: {
-    fontSize: 16,
-    color: 'black',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginBottom: 10,
   },
 });
 
