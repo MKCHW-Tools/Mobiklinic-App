@@ -18,7 +18,7 @@ import DataResultsContext from '../contexts/DataResultsContext';
 import {URLS} from '../constants/API';
 
 const PatientList = ({navigation}) => {
-  const {userLog, userNames, refusalData, patientId, setPatientId} =
+  const {userLog, refusalData, patientId, setPatientId} =
     useContext(DataResultsContext);
   const [users, setUsers] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -154,10 +154,10 @@ const PatientList = ({navigation}) => {
 
     const addData = () => {
       setPatientId(item.id);
-      console.log('Adding data for patient ID:', patientId.id);
+      console.log('Adding data for patient ID:', item.id);
 
       navigation.navigate('SelectActivity', {
-        patientId: patientId,
+        patientId: item.id,
         paramKey: {firstName: item.firstName, lastName: item.lastName},
       });
     };

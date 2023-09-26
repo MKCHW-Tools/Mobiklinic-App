@@ -122,14 +122,14 @@ const PatientData = ({navigation, route}) => {
         // setId(data.id);
         Alert.alert('Vaccination Registered Successfully');
         navigation.navigate('Dashboard');
-        console.log(patientId);
+        console.log("Patientid:" +  patientId);
       } else {
         console.error('Error posting data:', response.status);
         Alert.alert(
           'Error',
           'Failed to Register vaccination. Please try again later.',
         );
-        console.log(patientId);
+        console.log("Patientid:" +  patientId);
       }
     } catch (error) {
       console.error('Error posting data:', error);
