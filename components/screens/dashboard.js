@@ -140,7 +140,7 @@ const Dashboard = ({navigation}) => {
             </TouchableOpacity>
           </View>
 
-          <View style={STYLES.row}>
+          {/* <View style={STYLES.row}>
             <TouchableOpacity
               style={STYLES.card}
               onPress={() => {
@@ -157,7 +157,7 @@ const Dashboard = ({navigation}) => {
               </View>
               <Text style={STYLES.cardTitle}>Logout</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
       </View>
       {/* <View style={STYLES.body}>
