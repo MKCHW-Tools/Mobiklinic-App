@@ -111,7 +111,7 @@ const Dashboard = ({navigation}) => {
           <View style={STYLES.row}>
             <TouchableOpacity
               style={STYLES.card}
-              onPress={() => navigation.navigate('PatientLists')}>
+              onPress={() => navigation.navigate('DisplayPatients')}>
               <View style={STYLES.cardIcon}>
                 <Icon
                   name="users"
