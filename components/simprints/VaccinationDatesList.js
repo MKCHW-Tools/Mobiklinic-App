@@ -6,18 +6,22 @@ import {
   ActivityIndicator,
   StyleSheet,
   ScrollView,
+  Linking,
 } from 'react-native';
 import Loader from '../ui/loader';
 import {URLS} from '../constants/API';
 import DataResultsContext from '../contexts/DataResultsContext';
-
 
 const VaccinationDatesList = () => {
   const [patientData, setPatientData] = useState(null);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [loading, setLoading] = useState(true);
   const {userLog, userNames, refusalData, patientId, setPatientId} =
-  useContext(DataResultsContext);
+    useContext(DataResultsContext);
+
+  const openPhone = () => {
+    Linking.openURL('tel:+256 784 528444');
+  };
 
   useEffect(() => {
     // Fetch patient data from the API endpoint
@@ -110,17 +114,22 @@ const VaccinationDatesList = () => {
           )}
       </ScrollView>
       {selectedAppointment && (
-        <View style={styles.selectedAppointment}>
-          <Text style={styles.appointmentDate}>
-            Next Dose: {selectedAppointment.date}
-          </Text>
-          <Text style={styles.appointmentDate}>
-            Patient's Name: {selectedAppointment.patientName}
-          </Text>
-          <Text style={styles.appointmentDate}>
-            Phone Number: {selectedAppointment.phoneNumber}
-          </Text>
-        </View>
+        <TouchableOpacity
+          onPress={() =>
+            Linking.openURL(`tel:${selectedAppointment.phoneNumber}`)
+          }>
+          <View style={styles.selectedAppointment}>
+            <Text style={styles.appointmentDate}>
+              Next Dose: {selectedAppointment.date}
+            </Text>
+            <Text style={styles.appointmentDate}>
+              Patient's Name: {selectedAppointment.patientName}
+            </Text>
+            <Text style={styles.appointmentDate}>
+              Phone Number: {selectedAppointment.phoneNumber}
+            </Text>
+          </View>
+        </TouchableOpacity>
       )}
     </View>
   );
