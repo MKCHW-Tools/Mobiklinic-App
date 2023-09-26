@@ -208,10 +208,10 @@ const DisplayPatients = ({navigation}) => {
               Primary Language:{' '}
               <Text style={styles.userDataValue}>{item.primaryLanguage}</Text>
             </Text>
-            <Text style={styles.userDataLabel}>
+            {/* <Text style={styles.userDataLabel}>
               Simprints GUID:{' '}
               <Text style={styles.userDataValue}>{item.simprintsGui}</Text>
-            </Text>
+            </Text> */}
             <Text style={styles.userDataLabel}>
               Country <Text style={styles.userDataValue}>{item.country}</Text>
             </Text>
