@@ -115,18 +115,7 @@ const Profile = ({navigation}) => {
         });
         setMonthlyEnrollmentsCount(monthlyEnrollments.length);
 
-        // // Calculate the weekly enrollments count
-        // const currentWeek = getWeekNumber();
-        // const weeklyEnrollments = sortedData.filter(item => {
-        //   const itemDate = new Date(item.createdAt);
-        //   return (
-        //     itemDate >= startDate &&
-        //     itemDate <= currentDate &&
-        //     getWeekNumber(itemDate) === currentWeek
-        //   );
-        // });
-        // setWeeklyEnrollmentsCount(weeklyEnrollments.length);
-
+        // weekly counts
         const currentWeek = new Date();
         const startOfWeek = new Date(currentWeek);
         startOfWeek.setDate(
