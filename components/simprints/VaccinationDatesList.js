@@ -19,9 +19,6 @@ const VaccinationDatesList = () => {
   const {userLog, userNames, refusalData, patientId, setPatientId} =
     useContext(DataResultsContext);
 
-  const openPhone = () => {
-    Linking.openURL('tel:+256 784 528444');
-  };
 
   useEffect(() => {
     // Fetch patient data from the API endpoint

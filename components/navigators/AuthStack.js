@@ -23,6 +23,7 @@ import CenteredButtons from '../simprints/CenteredButtons';
 import VaccinationDatesList from '../simprints/VaccinationDatesList';
 import DisplayPatients from '../simprints/display.patients';
 
+
 const Stack = createStackNavigator();
 
 function AuthStack() {
@@ -133,7 +134,7 @@ function AuthStack() {
         name="DisplayPatients"
         options={{headerShown: false}}
         component={DisplayPatients}
-      />
+
     </Stack.Navigator>
   );
 }
