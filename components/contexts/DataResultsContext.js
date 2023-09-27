@@ -15,7 +15,7 @@ export const DataResultsProvider = ({children}) => {
   });
   const [refusalData, setRefusalData] = useState({});
 
-  const [isBeneficiaryConfirmed, setIsBeneficiaryConfirmed] = useState(true); // Add this line to include the new state
+  const [isBeneficiaryConfirmed, setIsBeneficiaryConfirmed] = useState(false); // Add this line to include the new state
   const updateRegistrationErrorContext = (reason, extra) => {
     setRegistrationError({reason, extra});
   };

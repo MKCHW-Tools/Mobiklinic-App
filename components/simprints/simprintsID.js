@@ -23,7 +23,7 @@ import CustomHeader from '../ui/custom-header';
 import CopyRight from './copyright';
 import {set} from 'date-fns';
 import {URLS} from '../constants/API';
-import { is } from 'date-fns/locale';
+import {is} from 'date-fns/locale';
 
 const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
@@ -60,7 +60,7 @@ const SimprintsID = ({navigation}) => {
   const [clickedResult, setClickedResult] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const {patientId, setPatientId} = useContext(DataResultsContext);
-  const [isBeneficiaryConfirmed, setIsBeneficiaryConfirmed] = useState(true); 
+  const [isBeneficiaryConfirmed, setIsBeneficiaryConfirmed] = useState(false);
   const {updateIsBeneficiaryConfirmed} = useContext(DataResultsContext); // Add this line to include the new state
 
   // console.log('Logged User from simprints is', userNames);
@@ -169,7 +169,6 @@ const SimprintsID = ({navigation}) => {
       },
     );
 
-
     // const identificationErrorSubscription = DeviceEventEmitter.addListener(
     //   'SimprintsIdentificationError',
     //   event => {
@@ -189,15 +188,12 @@ const SimprintsID = ({navigation}) => {
         const {reason} = event;
         const {extra} = event;
         navigation.navigate('CenteredButtons');
-        
 
         // Now you can use the 'reason' and 'extra' values in your React Native code
         console.log('Refusal Reason:', reason);
         console.log('Refusal Extra:', extra);
       },
     );
-
-  
 
     return () => {
       identificationPlusSubscription.remove();
@@ -422,9 +418,7 @@ const SimprintsID = ({navigation}) => {
                           result.confidenceScore <= 99 && (
                             <TouchableOpacity
                               style={styles.buttonSec}
-                              onPress={() =>
-                                navigation.navigate('')
-                              }>
+                              onPress={() => navigation.navigate('')}>
                               <Text style={styles.buttonStyle}>
                                 Proceed to register
                               </Text>
@@ -450,14 +444,12 @@ const SimprintsID = ({navigation}) => {
                               style={styles.buttonSec}
                               onPress={() => {
                                 setIsBeneficiaryConfirmed(true);
-                                 updateIsBeneficiaryConfirmed(true); 
+                                updateIsBeneficiaryConfirmed(true);
                                 console.log(isBeneficiaryConfirmed);
                                 // Then navigate to the 'GetPatients' screen
                                 navigation.navigate('GetPatients', {
                                   paramKey: userData,
-                                
                                 });
-
                               }}>
                               <Text style={styles.buttonStyle}>
                                 Confirm Beneficiary
