@@ -104,6 +104,7 @@ const Dashboard = ({navigation}) => {
                   strokeSize={3}
                   color={COLORS.BLACK}
                 />
+                
               </View>
               <Text style={STYLES.cardTitle}>Doctors</Text>
             </TouchableOpacity>
