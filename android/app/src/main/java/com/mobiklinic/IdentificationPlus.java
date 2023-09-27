@@ -24,6 +24,7 @@ import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.simprints.libsimprints.RefusalForm;
 
 import java.util.ArrayList;
 
@@ -55,14 +56,14 @@ public class IdentificationPlus extends ReactContextBaseJavaModule {
     public void registerOrIdentify(String projectID, String moduleID, String userID) {
         this.moduleID = moduleID;
         Activity activity = getCurrentActivity();
-
+    
         if (activity != null) {
             Intent intent = new Intent("com.simprints.id.REGISTER");
             intent.putExtra("projectId", projectID);
             intent.putExtra("userId", userID);
             intent.putExtra("moduleId", moduleID);
             activity.startActivityForResult(intent, REGISTER_OR_IDENTIFY_REQUEST_CODE);
-
+            
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(getReactApplicationContext());
             builder.setTitle("Prompt with Buttons");
@@ -91,6 +92,7 @@ public class IdentificationPlus extends ReactContextBaseJavaModule {
             builder.show();
         }
     }
+    
 
     private final ActivityEventListener activityEventListener = new BaseActivityEventListener() {
         @Override
@@ -118,6 +120,25 @@ public class IdentificationPlus extends ReactContextBaseJavaModule {
                             .emit("SimprintsIdentificationFailed", params);
                 }
             }
+
+            else {
+            if (data != null && data.hasExtra(Constants.SIMPRINTS_REFUSAL_FORM)) {
+                RefusalForm refusalForm = data.getParcelableExtra(Constants.SIMPRINTS_REFUSAL_FORM);
+                String reason = refusalForm.getReason();
+                String extra = refusalForm.getExtra();
+                WritableMap errorParams = Arguments.createMap();
+                errorParams.putString("reason", reason);
+                errorParams.putString("extra", extra);
+                getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                        .emit("SimprintsIdentificationPlusError", errorParams);
+            } else {
+                WritableMap errorParams = Arguments.createMap();
+                errorParams.putString("reason", "No identification results");
+                errorParams.putString("extra", "No identification results");
+                getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                        .emit("SimprintsIdentificationPlusError", errorParams);
+            }
+        }
         }
     };
 

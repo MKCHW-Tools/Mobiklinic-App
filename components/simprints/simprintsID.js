@@ -23,7 +23,7 @@ import CustomHeader from '../ui/custom-header';
 import CopyRight from './copyright';
 import {set} from 'date-fns';
 import {URLS} from '../constants/API';
-import { is } from 'date-fns/locale';
+import {is} from 'date-fns/locale';
 
 const {IdentificationModule} = NativeModules;
 const {IdentificationPlus} = NativeModules;
@@ -60,7 +60,7 @@ const SimprintsID = ({navigation}) => {
   const [clickedResult, setClickedResult] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const {patientId, setPatientId} = useContext(DataResultsContext);
-  const [isBeneficiaryConfirmed, setIsBeneficiaryConfirmed] = useState(true); 
+  const [isBeneficiaryConfirmed, setIsBeneficiaryConfirmed] = useState(false);
   const {updateIsBeneficiaryConfirmed} = useContext(DataResultsContext); // Add this line to include the new state
 
   // console.log('Logged User from simprints is', userNames);
@@ -164,12 +164,10 @@ const SimprintsID = ({navigation}) => {
         updateDataResults(guid);
         updateSession(sessionId);
         // setSessionId(sessionId);
-
         console.log('Guid:', guid);
         console.log('SessionId:', sessionId);
       },
     );
-
 
     // const identificationErrorSubscription = DeviceEventEmitter.addListener(
     //   'SimprintsIdentificationError',
@@ -187,18 +185,15 @@ const SimprintsID = ({navigation}) => {
     const registrationErrorSubscription = DeviceEventEmitter.addListener(
       'SimprintsRegistrationError',
       event => {
-        const {reasons} = event;
-        const {extras} = event;
+        const {reason} = event;
+        const {extra} = event;
         navigation.navigate('CenteredButtons');
-        
 
         // Now you can use the 'reason' and 'extra' values in your React Native code
-        console.log('Refusal Reason:', reasons);
-        console.log('Refusal Extra:', extras);
+        console.log('Refusal Reason:', reason);
+        console.log('Refusal Extra:', extra);
       },
     );
-
-  
 
     return () => {
       identificationPlusSubscription.remove();
@@ -211,7 +206,6 @@ const SimprintsID = ({navigation}) => {
     const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
     const moduleID = 'test_user';
     const userID = userNames;
-
     IdentificationPlus.registerOrIdentify(projectID, moduleID, userID);
   };
 
@@ -424,9 +418,7 @@ const SimprintsID = ({navigation}) => {
                           result.confidenceScore <= 99 && (
                             <TouchableOpacity
                               style={styles.buttonSec}
-                              onPress={() =>
-                                navigation.navigate('')
-                              }>
+                              onPress={() => navigation.navigate('')}>
                               <Text style={styles.buttonStyle}>
                                 Proceed to register
                               </Text>
@@ -452,14 +444,12 @@ const SimprintsID = ({navigation}) => {
                               style={styles.buttonSec}
                               onPress={() => {
                                 setIsBeneficiaryConfirmed(true);
-                                 updateIsBeneficiaryConfirmed(true); 
+                                updateIsBeneficiaryConfirmed(true);
                                 console.log(isBeneficiaryConfirmed);
                                 // Then navigate to the 'GetPatients' screen
                                 navigation.navigate('GetPatients', {
                                   paramKey: userData,
-                                
                                 });
-
                               }}>
                               <Text style={styles.buttonStyle}>
                                 Confirm Beneficiary

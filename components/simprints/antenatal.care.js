@@ -27,20 +27,52 @@ import {URLS} from '../constants/API';
 
 const AntenatalCare = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
-  const {diagnoses} = diagnosisContext;
+  // const {diagnoses} = diagnosisContext;
   const {dataResults} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
   const {userNames} = useContext(DataResultsContext);
-  const currentDate = new Date();
+  // const currentDate = new Date();
   const {sessionId} = useContext(DataResultsContext);
-
-
   const [routineVisitDate, setRoutineVisitDate] = useState('');
   const [expectedDateOfDelivery, setExpectedDateOfDelivery] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
+<<<<<<< HEAD
   const [prescriptions, setSelectedPrescriptions] = useState([]);
   const {isBeneficiaryConfirmed} = useContext(DataResultsContext); 
 
+=======
+  // const [prescriptions, setSelectedPrescriptions] = useState([]);
+  const {isBeneficiaryConfirmed} = useContext(DataResultsContext);
+  const [medicines, setMedicines] = useState([
+    {
+      name: '',
+      dosage: '',
+      frequency: '',
+      duration: '',
+      description: '',
+    },
+  ]);
+
+  const handleAddMedicine = () => {
+    console.log(patientId);
+    setMedicines([
+      ...medicines,
+      {name: '', dosage: '', frequency: '', duration: '', description: ''},
+    ]);
+  };
+
+  const handleRemoveMedicine = index => {
+    const updatedMedicines = [...medicines];
+    updatedMedicines.splice(index, 1);
+    setMedicines(updatedMedicines);
+  };
+
+  const handleMedicineChange = (index, field, value) => {
+    const updatedMedicines = [...medicines];
+    updatedMedicines[index][field] = value;
+    setMedicines(updatedMedicines);
+  };
+>>>>>>> fd494d0cb8b8f3a2c4139232886ef776b4900291
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || routineVisitDate;
@@ -69,6 +101,7 @@ const AntenatalCare = ({navigation}) => {
     }
     return 'Click to add date';
   };
+
   const [state, setState] = React.useState({
     pregnancyStatus: '',
     expectedDateOfDelivery: '',
@@ -79,8 +112,7 @@ const AntenatalCare = ({navigation}) => {
     nextOfKin: '',
     nextOfKinContact: '',
     drugNotes: '',
-
-
+    biometricsVerified: isBeneficiaryConfirmed,
     // registeredById: '',
   });
 
@@ -88,7 +120,10 @@ const AntenatalCare = ({navigation}) => {
     try {
       console.log('Patient ID :', patientId);
       console.log('Biometrically Verified:', isBeneficiaryConfirmed);
+<<<<<<< HEAD
 
+=======
+>>>>>>> fd494d0cb8b8f3a2c4139232886ef776b4900291
       if (state.isLoading) {
         // Prevent multiple submissions
         return;
@@ -96,13 +131,13 @@ const AntenatalCare = ({navigation}) => {
       if (
         state.pregnancyStatus === '' ||
         routineVisitDate === '' ||
-        state.drugNotes === '' ||
         state.bloodGroup === ''
       ) {
         Alert.alert('Error', 'Please fill in all required fields');
         return;
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
+<<<<<<< HEAD
       const response = await fetch(
         `${URLS.BASE}/${patientId}/antenantals`,
         {
@@ -126,15 +161,39 @@ const AntenatalCare = ({navigation}) => {
             'Content-type': 'application/json; charset=UTF-8',
             Accept: 'application/json',
           },
+=======
+      const response = await fetch(`${URLS.BASE}/${patientId}/antenantals`, {
+        method: 'POST',
+        body: JSON.stringify({
+          pregnancyStatus: state.pregnancyStatus,
+          expectedDateOfDelivery: state.expectedDateOfDelivery,
+          nextOfKinContact: state.nextOfKinContact,
+          routineVisitDate: state.routineVisitDate,
+          weight: state.weight,
+          bloodGroup: state.bloodGroup,
+          prescriptions: state.prescriptions,
+          nextOfKin: state.nextOfKin,
+          drugNotes: state.drugNotes,
+          reviewedBy: userNames,
+          simprintsGui: dataResults,
+          simSessionId: sessionId,
+          medicines: medicines,
+          biometricsVerified: isBeneficiaryConfirmed,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          Accept: 'application/json',
+>>>>>>> fd494d0cb8b8f3a2c4139232886ef776b4900291
         },
-      );
-
+      });
       if (response.ok) {
         const data = await response.json();
         // setId(data.id);
         Alert.alert('Antenatal Care Patient Registered');
         navigation.navigate('Dashboard');
+        console.log(state, medicines);
       } else {
+        console.log(state, medicines);
         console.error('Error posting data:', response.status);
         Alert.alert(
           'Error',
@@ -183,6 +242,128 @@ const AntenatalCare = ({navigation}) => {
   );
 
   if (state.isLoading) return <Loader />;
+
+  const renderMedicineInputs = () => {
+    return medicines.map((medicine, index) => (
+      <View key={index} style={STYLES.medicineContainer}>
+        <Text style={STYLES.userLabel}>Medicine #{index + 1}:</Text>
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Medicine:</Text>
+          <Picker
+            placeholderTextColor={COLORS.BLACK}
+            selectedValue={medicine.name}
+            onValueChange={value => handleMedicineChange(index, 'name', value)}
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            dropdownIconColor={COLORS.GREY_LIGHTER}>
+            <Picker.Item label="" value="" />
+            <Picker.Item
+              label="Folic Acid Supplements"
+              value="Folic Acid Supplements"
+            />
+            <Picker.Item
+              label="Folic Acid  & Iron Supplements"
+              value="Folic Acid  & Iron Supplements"
+            />
+            <Picker.Item label="Iron Supplements" value="Iron Supplements" />
+            <Picker.Item
+              label="Calcium Supplements"
+              value="Calcium Supplements"
+            />
+            <Picker.Item label="Fansidar" value="Fansidar" />
+            <Picker.Item label="Mebendazole" value="Mebendazole" />
+            <Picker.Item label="Paracemotol" value="Paracemotol" />
+            <Picker.Item label="Vitamin C " value="Vitamin C" />
+            <Picker.Item label="Magnesium" value="Magnesium" />
+            <Picker.Item label="Cetirizine" value="Cetirizine" />
+
+            <Picker.Item label="Other" value="Other" />
+          </Picker>
+        </View>
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Instructions:</Text>
+          <TextInput
+            style={[
+              STYLES.field,
+              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+            ]}
+            placeholder="Take Medicine after eating"
+            value={medicine.description}
+            onChangeText={text =>
+              handleMedicineChange(index, 'description', text)
+            }
+            placeholderTextColor={COLORS.GREY}
+            multiline={true}
+            numberOfLines={3}
+          />
+        </View>
+
+        <View style={STYLES.wrap}>
+          <View style={STYLES.detail}>
+            <TextInput
+              style={[
+                STYLES.field,
+                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              ]}
+              placeholder="Dosage"
+              value={medicine.dosage}
+              onChangeText={text => handleMedicineChange(index, 'dosage', text)}
+              placeholderTextColor={COLORS.GREY}
+              keyboardType="numeric"
+            />
+          </View>
+          <Text
+            style={[
+              STYLES.userLabel,
+              {color: COLORS.BLACK, paddingHorizontal: 10, fontWeight: 'bold'},
+            ]}>
+            X
+          </Text>
+
+          <View style={STYLES.detail}>
+            <TextInput
+              style={[
+                STYLES.field,
+                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              ]}
+              placeholder="freq"
+              value={medicine.frequency}
+              onChangeText={text =>
+                handleMedicineChange(index, 'frequency', text)
+              }
+              placeholderTextColor={COLORS.GREY}
+              keyboardType="numeric"
+            />
+          </View>
+          <Text style={STYLES.label}>for</Text>
+
+          <View style={STYLES.detail}>
+            <TextInput
+              style={[
+                STYLES.field,
+                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              ]}
+              placeholder="Days"
+              value={medicine.duration}
+              onChangeText={text =>
+                handleMedicineChange(index, 'duration', text)
+              }
+              placeholderTextColor={COLORS.GREY}
+              keyboardType="numeric"
+            />
+          </View>
+          <Text style={STYLES.label}>days</Text>
+        </View>
+
+        <Text
+          style={[STYLES.field, {color: COLORS.BLACK, paddingVertical: 10}]}>
+          (Press "Remove" To Remove Medicine)
+        </Text>
+        <TouchableOpacity onPress={() => handleRemoveMedicine(index)}>
+          <Text style={STYLES.medicineRemoveButton}>Remove</Text>
+        </TouchableOpacity>
+      </View>
+    ));
+  };
 
   return (
     <View style={STYLES.wrapper}>
@@ -265,44 +446,9 @@ const AntenatalCare = ({navigation}) => {
         </View>
 
         {/* prescriptions */}
-        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Text style={STYLES.label}>Prescriptions/Medicine:</Text>
-
-          <Picker
-            placeholderTextColor={COLORS.BLACK}
-            selectedValue={state.prescriptions}
-            onValueChange={(value, index) =>
-              setState({...state, prescriptions: value})
-            }
-            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
-            dropdownIconColor={COLORS.GREY_LIGHTER}>
-            <Picker.Item label="" value="" />
-            <Picker.Item
-              label="Folic Acid Supplements"
-              value="Folic Acid Supplements"
-            />
-            <Picker.Item
-              label="Folic Acid  & Iron Supplements"
-              value="Folic Acid  & Iron Supplements"
-            />
-            <Picker.Item label="Iron Supplements" value="Iron Supplements" />
-            <Picker.Item
-              label="Calcium Supplements"
-              value="Calcium Supplements"
-            />
-            <Picker.Item label="Fansidar" value="Fansidar" />
-            <Picker.Item label="Mebendazole" value="Mebendazole" />
-            <Picker.Item label="Paracemotol" value="Paracemotol" />
-            <Picker.Item label="Vitamin C " value="Vitamin C" />
-            <Picker.Item label="Magnesium" value="Magnesium" />
-            <Picker.Item label="Cetirizine" value="Cetirizine" />
-
-            <Picker.Item label="Other" value="Other" />
-          </Picker>
-        </View>
 
         {/* drug note*/}
-        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+        {/* <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
           <Text style={STYLES.label}>Drug Notes*:</Text>
 
           <TextInput
@@ -314,7 +460,7 @@ const AntenatalCare = ({navigation}) => {
             multiline={true}
             numberOfLines={2}
           />
-        </View>
+        </View> */}
 
         {/* expected date of delivery */}
         <View style={STYLES.labeled}>
@@ -362,6 +508,17 @@ const AntenatalCare = ({navigation}) => {
             style={[STYLES.field, {paddingHorizontal: 30}]}
           />
         </View>
+
+        {renderMedicineInputs()}
+        <Text
+          style={[STYLES.field, {color: COLORS.BLACK, paddingVertical: 10}]}>
+          (Press "Add Medicine" To Add More than One Medicine)
+        </Text>
+        <TouchableOpacity
+          style={STYLES.addMedicineButton}
+          onPress={handleAddMedicine}>
+          <Text style={STYLES.addMedicineButtonText}>Add Medicine</Text>
+        </TouchableOpacity>
 
         <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
           <Text style={STYLES.submitText}>Submit</Text>
@@ -659,5 +816,58 @@ const STYLES = StyleSheet.create({
     borderStyle: 'solid',
     borderWidth: 1,
     borderRadius: 10,
+  },
+  addMedicineButton: {
+    backgroundColor: COLORS.WHITE,
+    paddingVertical: 10,
+    // paddingHorizontal: 15,
+    borderRadius: 10,
+    marginVertical: 20,
+    borderWidth: 2,
+    borderColor: COLORS.PRIMARY,
+  },
+  addMedicineButtonText: {
+    color: COLORS.PRIMARY,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  wrap: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: 70,
+  },
+  field: {
+    flex: 1,
+    justifyContent: 'center',
+    color: COLORS.BLACK,
+    fontWeight: 'medium',
+    fontSize: 13,
+  },
+  medicineInput: {
+    paddingHorizontal: 8,
+    paddingVertical: 10,
+    borderColor: COLORS.GREY,
+    borderWidth: 1,
+    borderRadius: 10,
+    marginTop: 5,
+    marginBottom: 10,
+    color: COLORS.BLACK,
+  },
+  userLabel: {
+    fontWeight: 'medium',
+    marginHorizontal: 5,
+    marginVertical: 10,
+    color: COLORS.BLACK,
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  medicineRemoveButton: {
+    color: COLORS.BLACK, // Customize the color as needed
+    fontWeight: 'bold',
+    fontSize: 15,
+    textAlign: 'right',
   },
 });

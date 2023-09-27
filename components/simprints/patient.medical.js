@@ -21,6 +21,10 @@ import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {format} from 'date-fns';
+<<<<<<< HEAD
+=======
+import CopyRight from './copyright';
+>>>>>>> fd494d0cb8b8f3a2c4139232886ef776b4900291
 import {URLS} from '../constants/API';
 
 const PatientMedical = ({navigation}) => {
@@ -30,6 +34,7 @@ const PatientMedical = ({navigation}) => {
   const {patientId, setPatientId} = useContext(DataResultsContext);
   const currentDate = new Date();
   const [showDatePicker, setShowDatePicker] = useState(false);
+<<<<<<< HEAD
    const {sessionId} = useContext(DataResultsContext);
    const {userNames} = useContext(DataResultsContext);
 
@@ -38,6 +43,26 @@ const PatientMedical = ({navigation}) => {
   const [followUpDate, setFollowUpDate] = useState(''); 
   const {isBeneficiaryConfirmed} = useContext(DataResultsContext); 
 
+=======
+  const {sessionId} = useContext(DataResultsContext);
+  const {userNames} = useContext(DataResultsContext);
+  const {isBeneficiaryConfirmed} = useContext(DataResultsContext);
+  const [medicines, setMedicines] = useState([
+    {
+      name: '',
+      dosage: '',
+      frequency: '',
+      duration: '',
+      description: '',
+    },
+  ]);
+  const [dateOfDiagnosis, setDateOfDiagnosis] = useState('');
+  const [followUpDate, setFollowUpDate] = useState('');
+  const [selectedCondition, setSelectedCondition] = useState('');
+  const [customCondition, setCustomCondition] = useState('');
+  const [showCustomConditionInput, setShowCustomConditionInput] =
+    useState(false);
+>>>>>>> fd494d0cb8b8f3a2c4139232886ef776b4900291
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || dateOfDiagnosis;
@@ -67,6 +92,17 @@ const PatientMedical = ({navigation}) => {
     }
     return 'Click to add date';
   };
+  const handleConditionChange = condition => {
+    setSelectedCondition(condition);
+    // If "Other" is selected, show the custom condition input field
+    if (condition === 'Other') {
+      setShowCustomConditionInput(true);
+      setSelectedCondition(condition);
+    } else {
+      setShowCustomConditionInput(false);
+      setSelectedCondition(condition);
+    }
+  };
 
   const [state, setState] = React.useState({
     condition: '',
@@ -79,28 +115,38 @@ const PatientMedical = ({navigation}) => {
     followUpDate: '',
     isPregnant: false,
     labTests: '',
+    sessionId: '',
+    biometricsVerified: isBeneficiaryConfirmed,
+    simprintsGui: dataResults,
+
     // registeredById: '',
   });
 
   const handleSubmit = async () => {
+    console.log(patientId);
     try {
+<<<<<<< HEAD
       console.log('Patient ID :', patientId);
       console.log('Biometrically Verified:', isBeneficiaryConfirmed);
 
+=======
+>>>>>>> fd494d0cb8b8f3a2c4139232886ef776b4900291
       if (state.isLoading) {
         // Prevent multiple submissions
         return;
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
+
       if (
-        state.condition === '' ||
-        dateOfDiagnosis === '' || // Add check for dateOfVaccination
+        (selectedCondition === 'Other' && customCondition === '') || // Check if custom condition is empty when "Other" is selected
+        state.dateOfDiagnosis === '' ||
         state.impression === ''
       ) {
         Alert.alert('Error', 'Please fill in all required fields');
         return;
       }
 
+<<<<<<< HEAD
       const response = await fetch(
         `${URLS.BASE}/${patientId}/diagnosis`,
         {
@@ -126,25 +172,90 @@ const PatientMedical = ({navigation}) => {
             Accept: 'application/json',
           },
         },
+=======
+      // Format date strings
+      const formattedDateOfDiagnosis = format(
+        new Date(state.dateOfDiagnosis),
+        'yyyy-MM-dd',
+>>>>>>> fd494d0cb8b8f3a2c4139232886ef776b4900291
       );
+      const formattedFollowUpDate = format(
+        new Date(state.followUpDate),
+        'yyyy-MM-dd',
+      );
+
+      // Determine the condition to post based on whether "Other" is selected
+      const conditionToPost =
+        selectedCondition === 'Other' ? customCondition : selectedCondition;
+
+      const response = await fetch(`${URLS.BASE}/${patientId}/diagnosis`, {
+        method: 'POST',
+        body: JSON.stringify({
+          condition: conditionToPost, // Use the determined condition
+          dateOfDiagnosis: formattedDateOfDiagnosis,
+          impression: state.impression,
+          drugsPrescribed: state.drugsPrescribed,
+          dosage: state.dosage,
+          frequency: state.frequency,
+          duration: state.duration,
+          labTests: state.labTests,
+          followUpDate: formattedFollowUpDate,
+          isPregnant: state.isPregnant,
+          simSessionId: state.sessionId,
+          medicines: medicines,
+          biometricsVerified: isBeneficiaryConfirmed,
+          diagnosedBy: userNames,
+          simprintsGui: dataResults,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          Accept: 'application/json',
+        },
+      });
 
       if (response.ok) {
         const data = await response.json();
-        // setId(data.id);
         Alert.alert('Diagnosis Registered successfully');
         navigation.navigate('Dashboard');
       } else {
+        console.log(state, medicines);
         console.error('Error posting data:', response.status);
-        Alert.alert('Error', 'Failed to Register Diagnosis. Please try again later.');
+        Alert.alert(
+          'Error',
+          'Failed to Register Diagnosis. Please try again later.',
+        );
       }
     } catch (error) {
       console.error('Error posting data:', error);
-      Alert.alert('Error', 'Failed to Register Diagnosis. Please try again later.');
+      Alert.alert(
+        'Error',
+        'Failed to Register Diagnosis. Please try again later.',
+      );
+      console.log(response);
     } finally {
       setState({...state, isLoading: false}); // Reset isLoading state to false
     }
   };
 
+  const handleAddMedicine = () => {
+    console.log(patientId);
+    setMedicines([
+      ...medicines,
+      {name: '', dosage: '', frequency: '', duration: '', description: ''},
+    ]);
+  };
+
+  const handleRemoveMedicine = index => {
+    const updatedMedicines = [...medicines];
+    updatedMedicines.splice(index, 1);
+    setMedicines(updatedMedicines);
+  };
+
+  const handleMedicineChange = (index, field, value) => {
+    const updatedMedicines = [...medicines];
+    updatedMedicines[index][field] = value;
+    setMedicines(updatedMedicines);
+  };
   const _header = () => (
     <CustomHeader
       left={
@@ -168,6 +279,128 @@ const PatientMedical = ({navigation}) => {
     />
   );
 
+  const renderMedicineInputs = () => {
+    return medicines.map((medicine, index) => (
+      <View key={index} style={STYLES.medicineContainer}>
+        <Text style={STYLES.userLabel}>Medicine #{index + 1}:</Text>
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Medicine:</Text>
+          <Picker
+            placeholderTextColor={COLORS.BLACK}
+            selectedValue={medicine.name}
+            onValueChange={value => handleMedicineChange(index, 'name', value)}
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            dropdownIconColor={COLORS.GREY_LIGHTER}>
+            <Picker.Item label="" value="" />
+            <Picker.Item
+              label="Folic Acid Supplements"
+              value="Folic Acid Supplements"
+            />
+            <Picker.Item
+              label="Folic Acid  & Iron Supplements"
+              value="Folic Acid  & Iron Supplements"
+            />
+            <Picker.Item label="Iron Supplements" value="Iron Supplements" />
+            <Picker.Item
+              label="Calcium Supplements"
+              value="Calcium Supplements"
+            />
+            <Picker.Item label="Fansidar" value="Fansidar" />
+            <Picker.Item label="Mebendazole" value="Mebendazole" />
+            <Picker.Item label="Paracemotol" value="Paracemotol" />
+            <Picker.Item label="Vitamin C " value="Vitamin C" />
+            <Picker.Item label="Magnesium" value="Magnesium" />
+            <Picker.Item label="Cetirizine" value="Cetirizine" />
+
+            <Picker.Item label="Other" value="Other" />
+          </Picker>
+        </View>
+        <View style={STYLES.labeled}>
+          <Text style={STYLES.label}>Instructions:</Text>
+          <TextInput
+            style={[
+              STYLES.field,
+              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+            ]}
+            placeholder="Take Medicine after eating"
+            value={medicine.description}
+            onChangeText={text =>
+              handleMedicineChange(index, 'description', text)
+            }
+            placeholderTextColor={COLORS.GREY}
+            multiline={true}
+            numberOfLines={3}
+          />
+        </View>
+
+        <View style={STYLES.wrap}>
+          <View style={STYLES.detail}>
+            <TextInput
+              style={[
+                STYLES.field,
+                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              ]}
+              placeholder="Dosage"
+              value={medicine.dosage}
+              onChangeText={text => handleMedicineChange(index, 'dosage', text)}
+              placeholderTextColor={COLORS.GREY}
+              keyboardType="numeric"
+            />
+          </View>
+          <Text
+            style={[
+              STYLES.userLabel,
+              {color: COLORS.BLACK, paddingHorizontal: 10, fontWeight: 'bold'},
+            ]}>
+            X
+          </Text>
+
+          <View style={STYLES.detail}>
+            <TextInput
+              style={[
+                STYLES.field,
+                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              ]}
+              placeholder="freq"
+              value={medicine.frequency}
+              onChangeText={text =>
+                handleMedicineChange(index, 'frequency', text)
+              }
+              placeholderTextColor={COLORS.GREY}
+              keyboardType="numeric"
+            />
+          </View>
+          <Text style={STYLES.label}>for</Text>
+
+          <View style={STYLES.detail}>
+            <TextInput
+              style={[
+                STYLES.field,
+                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              ]}
+              placeholder="Days"
+              value={medicine.duration}
+              onChangeText={text =>
+                handleMedicineChange(index, 'duration', text)
+              }
+              placeholderTextColor={COLORS.GREY}
+              keyboardType="numeric"
+            />
+          </View>
+          <Text style={STYLES.label}>days</Text>
+        </View>
+
+        <Text
+          style={[STYLES.field, {color: COLORS.BLACK, paddingVertical: 10}]}>
+          (Press "Remove" To Remove Medicine)
+        </Text>
+        <TouchableOpacity onPress={() => handleRemoveMedicine(index)}>
+          <Text style={STYLES.medicineRemoveButton}>Remove</Text>
+        </TouchableOpacity>
+      </View>
+    ));
+  };
+
   if (state.isLoading) return <Loader />;
 
   return (
@@ -175,7 +408,7 @@ const PatientMedical = ({navigation}) => {
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
       {_header()}
       <ScrollView style={STYLES.body}>
-        {/* condition */}
+        {/* signs and symptoms */}
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Signs and Symptoms:</Text>
           <TextInput
@@ -230,21 +463,66 @@ const PatientMedical = ({navigation}) => {
           />
         </View>
 
-        {/* Condition */}
         <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Condition:</Text>
-          <TextInput
-            style={[
-              STYLES.field,
-              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
-            ]} // Add color and placeholderTextColor styles
+          <Text style={STYLES.label}>Follow Up date:</Text>
+          <TouchableOpacity
+            style={STYLES.datePickerInput}
             placeholderTextColor={COLORS.GREY}
-            value={state.condition}
-            onChangeText={text => setState({...state, condition: text})}
-            placeholder='e.g "Malaria"'
-            multiline={true}
-            numberOfLines={3}
-          />
+            onPress={() => setShowDatePicker('followUp')}>
+            <Text style={STYLES.datePickerText}>
+              {formatDate(followUpDate)}
+            </Text>
+          </TouchableOpacity>
+          {showDatePicker === 'followUp' && (
+            <DateTimePicker
+              value={followUpDate || new Date()} // Use null or fallback to current date
+              mode="date"
+              display="spinner"
+              onChange={handleDateChange}
+            />
+          )}
+        </View>
+
+        {/* Condition */}
+        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+          <Text style={STYLES.label}>Condition:</Text>
+
+          <Picker
+            placeholderTextColor={COLORS.BLACK}
+            selectedValue={selectedCondition}
+            onValueChange={handleConditionChange}
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+            dropdownIconColor={COLORS.GREY_LIGHTER}>
+            <Picker.Item label="" value="" />
+            <Picker.Item label="Malaria" value="Malria" />
+            <Picker.Item label="Headache" value="Headache" />
+            <Picker.Item label="Flue" value="Flue" />
+
+            <Picker.Item label="Fever" value="Fever" />
+            <Picker.Item label="Deworming" value="Deworming" />
+            <Picker.Item label="Arthritis" value="Arthritis" />
+            <Picker.Item label="Dehydration" value="Dehydration" />
+            <Picker.Item label="Diabetes" value="Diabetes" />
+            <Picker.Item label="Malnutrition" value="Malnutrition" />
+            <Picker.Item label="Pneumonia" value="Pneumonia" />
+            <Picker.Item
+              label="Hypertension (High Blood Pressure)"
+              value="Hypertension (High Blood Pressure)"
+            />
+            <Picker.Item label="Other" value="Other" />
+          </Picker>
+
+          {showCustomConditionInput && (
+            <TextInput
+              placeholder="Enter custom condition"
+              value={customCondition}
+              placeholderTextColor={COLORS.GREY}
+              style={[STYLES.field, {color: COLORS.BLACK}]}
+              multiline={true}
+              numberOfLines={3}
+              onChangeText={text => setCustomCondition(text)}
+            />
+          )}
         </View>
 
         <View style={STYLES.labeled}>
@@ -258,100 +536,22 @@ const PatientMedical = ({navigation}) => {
           />
         </View>
 
-        {/* Drugs Adminstered */}
-        <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Drugs Adminstered:</Text>
-          <TextInput
-            style={[
-              STYLES.field,
-              {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
-            ]} // Add color and placeholderTextColor styles
-            placeholderTextColor={COLORS.GREY}
-            value={state.drugsPrescribed}
-            onChangeText={text => setState({...state, drugsPrescribed: text})}
-            placeholder='e.g "Paracetamol"'
-            multiline={true}
-            numberOfLines={3}
-          />
-        </View>
-
-        <View style={STYLES.wrap}>
-          <Text style={STYLES.label}>Dosage</Text>
-
-          {/* dose */}
-          <View style={STYLES.detail}>
-            <TextInput
-              value={state.dosage}
-              placeholderTextColor={COLORS.GREY}
-              onChangeText={text => setState({...state, dosage: text})}
-              placeholder="1"
-              keyboardType="numeric"
-              style={[
-                STYLES.field,
-                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
-              ]}
-            />
-          </View>
-          <Text style={STYLES.label}>X</Text>
-          {/* units */}
-          <View style={STYLES.detail} placeholderTextColor="rgba(0,0,0,0.7)">
-            <TextInput
-              value={state.frequency}
-              placeholderTextColor={COLORS.GREY}
-              onChangeText={text => setState({...state, frequency: text})}
-              placeholder="1"
-              keyboardType="numeric"
-              style={[
-                STYLES.field,
-                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
-              ]}
-            />
-          </View>
-
-          <Text style={STYLES.label}>for</Text>
-
-          {/* duration */}
-          <View style={STYLES.detail}>
-            <TextInput
-              value={state.duration}
-              placeholderTextColor={COLORS.GREY}
-              onChangeText={text => setState({...state, duration: text})}
-              placeholder="1"
-              keyboardType="numeric"
-              style={[
-                STYLES.field,
-                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
-              ]}
-            />
-          </View>
-          <Text style={STYLES.label}>days</Text>
-        </View>
-
-        <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Follow Up date:</Text>
-          <TouchableOpacity
-            style={STYLES.datePickerInput}
-            placeholderTextColor={COLORS.GREY}
-
-            onPress={() => setShowDatePicker('followUp')}>
-            <Text style={STYLES.datePickerText}>
-              {formatDate(followUpDate)}
-            </Text>
-          </TouchableOpacity>
-          {showDatePicker === 'followUp' && (
-            <DateTimePicker
-              value={followUpDate || new Date()} // Use null or fallback to current date
-              mode="date"
-              display="spinner"
-              onChange={handleDateChange}
-              
-            />
-          )}
-        </View>
+        {/* Render medicine inputs */}
+        {renderMedicineInputs()}
+        <Text
+          style={[STYLES.field, {color: COLORS.BLACK, paddingVertical: 10}]}>
+          (Press "Add Medicine" To Add More than One Medicine)
+        </Text>
+        <TouchableOpacity
+          style={STYLES.addMedicineButton}
+          onPress={handleAddMedicine}>
+          <Text style={STYLES.addMedicineButtonText}>Add Medicine</Text>
+        </TouchableOpacity>
 
         <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
           <Text style={STYLES.submitText}>Submit</Text>
         </TouchableOpacity>
+        <CopyRight />
       </ScrollView>
     </View>
   );
@@ -388,6 +588,14 @@ const STYLES = StyleSheet.create({
     marginRight: 5,
     color: COLORS.BLACK,
     fontSize: 14,
+  },
+  userLabel: {
+    fontWeight: 'medium',
+    marginHorizontal: 5,
+    marginVertical: 10,
+    color: COLORS.BLACK,
+    fontSize: 16,
+    textAlign: 'center',
   },
   title: {
     fontWeight: 'bold',
@@ -489,6 +697,7 @@ const STYLES = StyleSheet.create({
     color: COLORS.BLACK,
     fontSize: 11,
     fontWeight: 'bold ',
+    display: 'none',
   },
   submit: {
     backgroundColor: COLORS.BLACK,
@@ -549,7 +758,7 @@ const STYLES = StyleSheet.create({
   },
   detail: {
     flex: 1,
-    paddingHorizontal: 15,
+    // paddingHorizontal: 10,
     // paddingVertical: 10,
     color: COLORS.BLACK,
     marginTop: 10,
@@ -558,8 +767,9 @@ const STYLES = StyleSheet.create({
     borderStyle: 'solid',
     borderWidth: 1,
     borderRadius: 10,
-    height: 50,
-    marginHorizontal: 5,
+    // height: 50,
+    // marginHorizontal: 5,
+    fontStyle: 10,
   },
   pickerStyle: {
     flex: 1,
@@ -575,10 +785,55 @@ const STYLES = StyleSheet.create({
     height: 50,
     marginHorizontal: 5,
   },
+  guid: {
+    textAlign: 'left',
+    color: COLORS.BLACK,
+    fontSize: 11,
+    fontWeight: 'bold ',
+  },
   datePickerText: {
     paddingVertical: 10,
     paddingLeft: 12,
     fontSize: 15,
     color: COLORS.BLACK,
+  },
+  medicineContainer: {
+    marginBottom: 20,
+  },
+  medicineLabel: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: COLORS.BLACK,
+  },
+  medicineInput: {
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderColor: COLORS.GREY,
+    borderWidth: 1,
+    borderRadius: 10,
+    marginTop: 5,
+    marginBottom: 10,
+    color: COLORS.BLACK,
+  },
+  medicineRemoveButton: {
+    color: COLORS.BLACK, // Customize the color as needed
+    fontWeight: 'bold',
+    fontSize: 15,
+    textAlign: 'right',
+  },
+  addMedicineButton: {
+    backgroundColor: COLORS.WHITE,
+    paddingVertical: 10,
+    // paddingHorizontal: 15,
+    borderRadius: 10,
+    marginVertical: 20,
+    borderWidth: 2,
+    borderColor: COLORS.PRIMARY,
+  },
+  addMedicineButtonText: {
+    color: COLORS.PRIMARY,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });

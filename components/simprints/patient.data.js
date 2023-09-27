@@ -21,16 +21,39 @@ import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {format} from 'date-fns';
+<<<<<<< HEAD
+=======
+import {countryData} from './country.selector';
+>>>>>>> fd494d0cb8b8f3a2c4139232886ef776b4900291
 import {URLS} from '../constants/API';
 
 const PatientData = ({navigation}) => {
   const diagnosisContext = React.useContext(DiagnosisContext);
   const {diagnoses} = diagnosisContext;
-  const {dataResults} = useContext(DataResultsContext);
+  const {dataResults, refusalData} = useContext(DataResultsContext);
   const {sessionId} = useContext(DataResultsContext);
   const {userLog} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
+  const {reason, extra} = refusalData;
 
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState('');
+  const [selectedDistrict, setSelectedDistrict] = useState('');
+
+  const handleCountryChange = country => {
+    setSelectedCountry(country);
+    setSelectedLanguage(''); // Reset language selection when country changes
+    setSelectedDistrict(''); // Reset district selection when country changes
+  };
+
+  const handleLanguageChange = language => {
+    setSelectedLanguage(language);
+    // setSelectedDistrict(''); // Reset district selection when language changes
+  };
+
+  const handleDistrictChange = district => {
+    setSelectedDistrict(district);
+  };
   // date
   const currentDate = new Date();
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -75,13 +98,11 @@ const PatientData = ({navigation}) => {
     primaryLanguage: '',
     simprintsGui: '',
     simSessionId: '',
-    
   });
 
   const handleSubmit = async () => {
     try {
       console.log('User Id:', userLog);
-      
 
       if (state.isLoading) {
         // Prevent multiple submissions
@@ -89,16 +110,12 @@ const PatientData = ({navigation}) => {
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
 
-      if (
-        state.firstName === '' ||
-        state.lastName === '' ||
-        ageGroup === '' ||
-        state.phoneNumber === ''
-      ) {
+      if (state.firstName === '' || state.sex === '' || state.lastName === '') {
         Alert.alert('Error', 'Please fill in all required fields');
         return;
       }
 
+<<<<<<< HEAD
       // Remove any non-digit characters from the phone number
       const phoneNumber = state.phoneNumber.replace(/\D/g, '');
 
@@ -130,19 +147,44 @@ const PatientData = ({navigation}) => {
             'Content-type': 'application/json; charset=UTF-8',
             Accept: 'application/json',
           },
+=======
+      const response = await fetch(`${URLS.BASE}/${userLog}/patients`, {
+        method: 'POST',
+        body: JSON.stringify({
+          firstName: state.firstName,
+          lastName: state.lastName,
+          sex: state.sex,
+          ageGroup: ageGroup,
+          phoneNumber: state.phoneNumber,
+          weight: state.weight,
+          height: state.height,
+          district: selectedDistrict,
+          country: selectedCountry,
+          primaryLanguage: selectedLanguage,
+          simprintsGui: dataResults,
+          simSessionId: sessionId,
+          refusalReason: reason,
+          refusaleExtraInfo: extra,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          Accept: 'application/json',
+>>>>>>> fd494d0cb8b8f3a2c4139232886ef776b4900291
         },
-      );
+      });
 
       if (response.ok) {
         const data = await response.json();
         // setId(data.id);
-        // Extract the patient ID from the response data
-        const patientId = data.id; // Access the patient ID from the response data
-        setPatientId(patientId);
+        const newPatientId = data.id; // Get the patient ID from the response
+        setState({ ...state, isLoading: false, patientId: newPatientId }); // Update local state
+        setPatientId(newPatientId);
         console.log('Patient ID:', patientId);
         console.log('Simprints session ID:', sessionId);
         console.log('sessionId data type:', typeof sessionId);
+        console.log(dataResults);
         Alert.alert('Beneficiary Registered Successfully');
+        console.log(data);
         navigation.navigate('SelectActivity', {
           patientId: patientId,
           paramKey: state,
@@ -190,7 +232,7 @@ const PatientData = ({navigation}) => {
   return (
     <View style={STYLES.wrapper}>
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
-      {/* {_header()} */}
+      {_header()}
 
       <ScrollView style={STYLES.body}>
         <Text style={STYLES.title}>Beneficiary Profile</Text>
@@ -204,20 +246,12 @@ const PatientData = ({navigation}) => {
             onChangeText={text => setState({...state, simprintsGui: text})}
             placeholder="Enter simprints GUI"
           />
-          
         </View>
 
-        {/* Simprints Session ID */}
         <View style={STYLES.guid}>
-          <Text style={STYLES.label}>Simprints Session ID</Text>
-          <TextInput
-            style={STYLES.guid}
-            value={sessionId}
-            onChangeText={text => setState({...state, simSessionId: text})}
-            placeholder="Enter simprints session ID"
-          />
-          </View>
-
+          <Text style={STYLES.label}>Refusal Reason: {reason}</Text>
+          <Text style={STYLES.label}>Refusal Extra: {extra}</Text>
+        </View>
         {/* First Name */}
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>First Name:</Text>
@@ -226,7 +260,7 @@ const PatientData = ({navigation}) => {
               STYLES.field,
               {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
             ]} // Add color and placeholderTextColor styles
-            placeholderTextColor={COLORS.BLACK} //
+            placeholderTextColor={COLORS.GREY} //
             value={state.firstName}
             onChangeText={text => setState({...state, firstName: text})}
             placeholder="Enter first name"
@@ -241,7 +275,7 @@ const PatientData = ({navigation}) => {
               STYLES.field,
               {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
             ]} // Add color and placeholderTextColor styles
-            placeholderTextColor={COLORS.BLACK}
+            placeholderTextColor={COLORS.GREY}
             value={state.lastName}
             onChangeText={text => setState({...state, lastName: text})}
             placeholder="Enter last name"
@@ -256,7 +290,7 @@ const PatientData = ({navigation}) => {
               STYLES.field,
               {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
             ]} // Add color and placeholderTextColor styles
-            placeholderTextColor={COLORS.BLACK} // Set the placeholder text color
+            placeholderTextColor={COLORS.GREY} // Set the placeholder text color
             value={state.phoneNumber}
             onChangeText={text => setState({...state, phoneNumber: text})}
             keyboardType="numeric"
@@ -270,7 +304,7 @@ const PatientData = ({navigation}) => {
 
           <Picker
             placeholder="Sex"
-            placeholderTextColor={COLORS.BLACK}
+            placeholderTextColor={COLORS.GREY}
             selectedValue={state.sex}
             onValueChange={(value, index) => setState({...state, sex: value})}
             style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
@@ -281,6 +315,8 @@ const PatientData = ({navigation}) => {
             <Picker.Item label="Other" value="Other" />
           </Picker>
         </View>
+
+        {/* Date for birth */}
 
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Date of Birth:</Text>
@@ -306,7 +342,7 @@ const PatientData = ({navigation}) => {
             <TextInput
               keyboardType="numeric"
               value={state.weight}
-              placeholderTextColor={COLORS.BLACK}
+              placeholderTextColor={COLORS.GREY}
               onChangeText={text => setState({...state, weight: text})}
               placeholder="Weight (Kgs)"
               style={STYLES.field}
@@ -317,7 +353,7 @@ const PatientData = ({navigation}) => {
             {/* <Text style={STYLES.label}>Height:</Text> */}
             <TextInput
               keyboardType="numeric"
-              placeholderTextColor={COLORS.BLACK}
+              placeholderTextColor={COLORS.GREY}
               value={state.height}
               style={STYLES.field}
               onChangeText={text => setState({...state, height: text})}
@@ -328,67 +364,62 @@ const PatientData = ({navigation}) => {
         {/* Country */}
         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
           <Text style={STYLES.label}>Country:</Text>
-
           <Picker
-            placeholderTextColor={COLORS.BLACK}
-            selectedValue={state.country}
-            onValueChange={(value, index) =>
-              setState({...state, country: value})
-            }
-            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
-            dropdownIconColor={COLORS.GREY_LIGHTER}>
-            <Picker.Item label="" value="" />
-            <Picker.Item label="Uganda" value="Uganda" />
-            <Picker.Item label="Kenya" value="Kenya" />
-            <Picker.Item label="Rwanda" value="Rwanda" />
-            <Picker.Item label="Tanzania" value="Tanzania" />
-            <Picker.Item label="Other" value="Other" />
+            style={[STYLES.field, {color: COLORS.BLACK}]}
+            selectedValue={selectedCountry}
+            onValueChange={handleCountryChange}>
+            <Picker.Item value="" />
+            {countryData.map(country => (
+              <Picker.Item
+                key={country.name}
+                label={country.name}
+                value={country.name}
+              />
+            ))}
           </Picker>
         </View>
 
-        {/* District */}
-        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Text style={STYLES.label}>District:</Text>
+        {selectedCountry && (
+          <>
+            <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+              <Text style={STYLES.label}>District:</Text>
+              <Picker
+                selectedValue={selectedDistrict}
+                style={[STYLES.field, {color: COLORS.BLACK}]}
+                onValueChange={handleDistrictChange}>
+                <Picker.Item label="Select a district" value="" />
+                {countryData
+                  .find(country => country.name === selectedCountry)
+                  .districts.map(district => (
+                    <Picker.Item
+                      key={district}
+                      label={district}
+                      value={district}
+                    />
+                  ))}
+              </Picker>
+            </View>
 
-          <Picker
-            placeholderTextColor={COLORS.BLACK}
-            selectedValue={state.district}
-            onValueChange={(value, index) =>
-              setState({...state, district: value})
-            }
-            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
-            dropdownIconColor={COLORS.GREY_LIGHTER}>
-            <Picker.Item label="" value="" />
-            <Picker.Item label="Kampala" value="Kampala" />
-            <Picker.Item label="Buikwe" value="Buikwe" />
-            <Picker.Item label="Jinja" value="Jinja" />
-            <Picker.Item label="Masaka" value="Masaka" />
-            <Picker.Item label="Mbarara" value="Mbarara" />
-            <Picker.Item label="Other" value="Other" />
-          </Picker>
-        </View>
-
-        {/* Primary languange */}
-        <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
-          <Text style={STYLES.label}>Primary Language:</Text>
-
-          <Picker
-            placeholderTextColor={COLORS.BLACK}
-            selectedValue={state.primaryLanguage}
-            onValueChange={(value, index) =>
-              setState({...state, primaryLanguage: value})
-            }
-            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
-            dropdownIconColor={COLORS.GREY_LIGHTER}>
-            <Picker.Item label="" value="" />
-            <Picker.Item label="Luganda" value="Luganda" />
-            <Picker.Item label="Lusoga" value="Lusoga" />
-            <Picker.Item label="Runyakore" value="Runyakore" />
-            <Picker.Item label="Rutoro" value="Rutoro" />
-            <Picker.Item label="English" value="English" />
-            <Picker.Item label="Other" value="Other" />
-          </Picker>
-        </View>
+            <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
+              <Text style={STYLES.label}>Primary Language:</Text>
+              <Picker
+                selectedValue={selectedLanguage}
+                style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
+                onValueChange={handleLanguageChange}>
+                <Picker.Item label="Select a district" value="" />
+                {countryData
+                  .find(country => country.name === selectedCountry)
+                  .languages.map(language => (
+                    <Picker.Item
+                      key={language}
+                      label={language}
+                      value={language}
+                    />
+                  ))}
+              </Picker>
+            </View>
+          </>
+        )}
 
         <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
           <Text style={STYLES.submitText}>Submit</Text>
@@ -424,7 +455,7 @@ const STYLES = StyleSheet.create({
     color: COLORS.GREY,
   },
   label: {
-    fontWeight: 'medium',
+    fontWeight: 'bold',
     marginLeft: 5,
     marginRight: 5,
     color: COLORS.BLACK,
@@ -525,7 +556,6 @@ const STYLES = StyleSheet.create({
     fontSize: 11,
     fontWeight: 'bold',
     display: 'none',
-    
   },
   submit: {
     backgroundColor: COLORS.BLACK,

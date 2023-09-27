@@ -12,6 +12,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import {COLORS, DIMENS} from '../constants/styles';
 import CustomHeader from '../parts/custom-header';
 import CopyRight from '../simprints/copyright';
+import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const GetStarted = ({navigation}) => {
   const handleLinkPress = () => {
@@ -55,17 +56,20 @@ const GetStarted = ({navigation}) => {
           support team.
         </Text>
         <Text style={styles.contact}>Contact Information:</Text>
-        <Text style={styles.contactDetails} onPress={openPhone}>
-          Phone: +256 784 528444
-        </Text>
-        <Text style={styles.contactDetails} onPress={openEmail}>
-          Email: mobiklinicuganda@gmail.com
+        <Text style={styles.link} onPress={openPhone}>
+          <MIcon name="phone" size={20} strokeSize={3} color={COLORS.PRIMARY} />
+          <Text style={{paddingHorizontal: 20}}> Call Us</Text>
         </Text>
 
-        <Text style={styles.text}>
-          <Text style={styles.link} onPress={handleLinkPress}>
-            User Guide
-          </Text>
+        <Text style={styles.link} onPress={openEmail}>
+          <MIcon name="email" size={20} strokeSize={3} color={COLORS.PRIMARY} />
+          <Text style={{paddingHorizontal: 20}}> Email Us</Text>
+        </Text>
+
+        
+
+        <Text style={styles.link} onPress={handleLinkPress}>
+          User Guide
         </Text>
         <CopyRight />
       </View>
@@ -138,32 +142,40 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingVertical: 80,
-    paddingHorizontal:50
+    paddingHorizontal: 50,
     // alignItems: 'center',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: COLORS.BLACK,
   },
   description: {
     fontSize: 16,
     marginBottom: 20,
+    color: COLORS.BLACK,
   },
   contact: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: COLORS.BLACK,
+    textDecorationLine: 'underline',
+    textAlign: 'center',
+    paddingVertical:10
   },
   contactDetails: {
     fontSize: 16,
     marginBottom: 5,
-    textDecorationLine: 'underline',
+    // textDecorationLine: 'underline',
+    color: COLORS.BLACK,
   },
   link: {
-    textDecorationLine: 'underline',
     color: COLORS.PRIMARY,
-    fontSize: 16,
+    fontSize: 18,
+    paddingHorizontal: 100,
+    paddingVertical: 5,
   },
 });
 

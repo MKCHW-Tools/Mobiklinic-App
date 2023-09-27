@@ -20,21 +20,21 @@ import Loader from '../ui/loader';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import CopyRight from './copyright';
 import {URLS} from '../constants/API';
 
 const PatientData = ({navigation, route}) => {
-  const diagnosisContext = React.useContext(DiagnosisContext);
-  const {diagnoses} = diagnosisContext;
-  const {dataResults} = useContext(DataResultsContext);
-  const {patientId, setPatientId} = useContext(DataResultsContext);
-  const currentDate = new Date();
-  const {userNames} = useContext(DataResultsContext);
-
   const [dateOfVaccination, setDateOfVaccination] = useState('');
   const [dateForNextDose, setDateForNextDose] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const {sessionId} = useContext(DataResultsContext);
-  const {isBeneficiaryConfirmed} = useContext(DataResultsContext); 
+  const {
+    sessionId,
+    isBeneficiaryConfirmed,
+    userNames,
+    patientId,
+    setPatientId,
+    dataResults,
+  } = useContext(DataResultsContext);
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || dateOfVaccination;
@@ -74,7 +74,8 @@ const PatientData = ({navigation, route}) => {
     facility: '',
     simSessionId: '',
     simprintsGui: '',
-
+    biometricsVerified: isBeneficiaryConfirmed,
+    reviewedBy: '',
     // registeredById: '',
   });
 
@@ -96,43 +97,47 @@ const PatientData = ({navigation, route}) => {
         return;
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
-      const response = await fetch(
-        `${URLS.BASE}/${patientId}/vaccinations`,
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            vaccineName: state.vaccineName,
-            dose: state.dose,
-            units: state.units,
-            dateOfVaccination: state.dateOfVaccination,
-            dateForNextDose: state.dateForNextDose,
-            siteAdministered: state.siteAdministered,
-            facility: state.facility,
-            simSessionId: sessionId,
-            simprintsGui: dataResults,
-            vaccinatedBy: userNames,
-            biometricsVerified: isBeneficiaryConfirmed,
-            
-          }),
-          headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-            Accept: 'application/json',
-          },
+      const response = await fetch(`${URLS.BASE}/${patientId}/vaccinations`, {
+        method: 'POST',
+        body: JSON.stringify({
+          vaccineName: state.vaccineName,
+          dose: state.dose,
+          units: state.units,
+          dateOfVaccination: state.dateOfVaccination,
+          dateForNextDose: state.dateForNextDose,
+          siteAdministered: state.siteAdministered,
+          facility: state.facility,
+          simSessionId: sessionId,
+          simprintsGui: dataResults,
+          vaccinatedBy: userNames,
+          biometricsVerified: isBeneficiaryConfirmed,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          Accept: 'application/json',
         },
-      );
+      });
 
       if (response.ok) {
         const data = await response.json();
         // setId(data.id);
         Alert.alert('Vaccination Registered Successfully');
         navigation.navigate('Dashboard');
+        console.log("Patientid:" +  patientId);
       } else {
         console.error('Error posting data:', response.status);
-        Alert.alert('Error', 'Failed to Register vaccination. Please try again later.');
+        Alert.alert(
+          'Error',
+          'Failed to Register vaccination. Please try again later.',
+        );
+        console.log("Patientid:" +  patientId);
       }
     } catch (error) {
       console.error('Error posting data:', error);
-      Alert.alert('Error', 'Failed to Register vaccination. Please try again later.');
+      Alert.alert(
+        'Error',
+        'Failed to Register vaccination. Please try again later.',
+      );
     } finally {
       setState({...state, isLoading: false}); // Reset isLoading state to false
     }
@@ -168,7 +173,6 @@ const PatientData = ({navigation, route}) => {
       <StatusBar backgroundColor={COLORS.WHITE_LOW} barStyle="dark-content" />
       {_header()}
       <ScrollView style={STYLES.body}>
-        
         {/* Vaccine Name */}
         <View style={STYLES.labeled} placeholderTextColor="rgba(0,0,0,0.7)">
           <Text style={STYLES.label}>Vaccine Name:</Text>
@@ -182,9 +186,9 @@ const PatientData = ({navigation, route}) => {
             style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
             dropdownIconColor={COLORS.GREY_LIGHTER}>
             <Picker.Item label="" value="" />
-            <Picker.Item label="Pfizer-BioNTech" value="pfizer" />
+            <Picker.Item label="Pfizer-BioNTech" value="Pfizer-BioNTech" />
             <Picker.Item label="Moderna" value="moderna" />
-            <Picker.Item label="Johnson & Johnson" value="jnj" />
+            <Picker.Item label="Johnson & Johnson" value="Johnson & Johnson" />
             <Picker.Item label="AstraZeneca" value="astrazeneca" />
             <Picker.Item label="Sinovac" value="sinovac" />
             <Picker.Item label="Sinopharm" value="sinopharm" />
@@ -203,14 +207,32 @@ const PatientData = ({navigation, route}) => {
           </Picker>
         </View>
 
+        {/* Simprints GUI */}
+        <View style={STYLES.guid}>
+          <Text style={STYLES.label}>Simprints GUI</Text>
+          <TextInput
+            style={STYLES.guid}
+            value={dataResults}
+            onChangeText={text => setState({...state, simprintsGui: text})}
+            placeholder="Enter simprints GUI"
+          />
+        </View>
+
+        {/* Simprints Session ID */}
+        <View style={STYLES.guid}>
+          <Text style={STYLES.label}>Simprints Session ID</Text>
+          <TextInput
+            style={STYLES.guid}
+            value={sessionId}
+            onChangeText={text => setState({...state, simSessionId: text})}
+            placeholder="Enter simprints session ID"
+          />
+        </View>
 
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>Card number:</Text>
           <TextInput
-            style={[
-              STYLES.field,
-              {color: COLORS.BLACK},
-            ]} // Add color and placeholderTextColor styles
+            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color and placeholderTextColor styles
             placeholderTextColor={COLORS.GREY}
             value={state.units}
             onChangeText={text => setState({...state, units: text})}
@@ -270,10 +292,12 @@ const PatientData = ({navigation, route}) => {
             <Picker.Item label="" value="" />
             <Picker.Item label="Left Upper Arm" value="Left Upper Arm" />
             <Picker.Item label="Right Upper Arm" value="Right Upper Arm" />
-            <Picker.Item label="Left Upper Thigh" value="Ventrogluteal Muscle (Hip)" />
+            <Picker.Item
+              label="Left Upper Thigh"
+              value="Ventrogluteal Muscle (Hip)"
+            />
             <Picker.Item label="Mouth" value="Mouth" />
             <Picker.Item label="Buttocks" value="Buttocks" />
-
 
             <Picker.Item
               label="Right Upper Thigh"
@@ -349,6 +373,7 @@ const PatientData = ({navigation, route}) => {
         <TouchableOpacity style={STYLES.submit} onPress={handleSubmit}>
           <Text style={STYLES.submitText}>Submit</Text>
         </TouchableOpacity>
+        <CopyRight />
       </ScrollView>
     </View>
   );
@@ -379,7 +404,7 @@ const STYLES = StyleSheet.create({
     color: COLORS.GREY,
   },
   label: {
-    fontWeight: 'medium',
+    fontWeight: 'bold',
     marginLeft: 5,
     marginRight: 5,
     color: COLORS.BLACK,
@@ -477,7 +502,7 @@ const STYLES = StyleSheet.create({
     color: COLORS.BLACK,
     fontSize: 11,
     fontWeight: 'bold ',
-    
+    display: 'none',
   },
   submit: {
     backgroundColor: COLORS.BLACK,

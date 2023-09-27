@@ -69,11 +69,8 @@ public class OpenActivityModule extends ReactContextBaseJavaModule implements Ac
                         // extract the RefusalForm value
                         RefusalForm refusalForm = data.getParcelableExtra(Constants.SIMPRINTS_REFUSAL_FORM);
                 
-                        // get access to the 'reason' and 'extra' values
-                        String reasons = refusalForm.getReason();
-                        String extras = refusalForm.getExtra();
-                
-                  
+                        String reason = refusalForm.getReason();
+                        String extra = refusalForm.getExtra();          
                 
                         // Emit the refusal form data along with the event
                         WritableMap errorParams = Arguments.createMap();

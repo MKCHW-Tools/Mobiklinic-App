@@ -6,12 +6,23 @@ import {
   Text,
   StatusBar,
   StyleSheet,
+  Linking,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import {COLORS, DIMENS} from '../constants/styles';
 import CustomHeader from '../parts/custom-header';
+import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import CopyRight from '../simprints/copyright';
 
 const About = ({navigation}) => {
+  const openWebsite = () => {
+    Linking.openURL('https://mobiklinic.com/');
+  };
+
+  const openEmail = () => {
+    Linking.openURL('mailto:mobiklinicuganda@gmail.com');
+  };
+
   _header = () => (
     <CustomHeader
       left={
@@ -21,7 +32,6 @@ const About = ({navigation}) => {
           <Icon name="menu" size={25} color={COLORS.BLACK} />
         </TouchableOpacity>
       }
-     
       right={
         <TouchableOpacity style={{paddingRight: 10}}>
           <Icon name="user" size={25} color={COLORS.BLACK} />
@@ -44,15 +54,34 @@ const About = ({navigation}) => {
         </View>
 
         <View>
-          <Text style={STYLES.desc}>Last mile health digital safetynet</Text>
-          <Text style={STYLES.heading}>
-            In partnership with Ablestate Creatives
+          <Text style={STYLES.description}>
+          The Mobiklinic app is a mobile application that streamlines healthcare processes and improves access to medical services, especially in rural areas. It integrates with SimprintsID, a biometric identification system, to enhance patient identification, data accuracy, and security. 
+          {'\n'}
+          Healthcare providers can register and manage beneficiaries, capture their biometric data using Simprints ID, and securely store their information.
           </Text>
-          <Text style={STYLES.desc}>Report technical challenges</Text>
-          <Text style={STYLES.desc}>Ablestate Creatives</Text>
-          <Text style={STYLES.desc}>
-            <Icon name="phone-call" /> 0704255401
-          </Text>
+          <View style={STYLES.email}>
+            <TouchableOpacity style={STYLES.email} onPress={openWebsite}>
+              <MIcon
+                name="web"
+                size={25}
+                strokeSize={3}
+                color={COLORS.PRIMARY}
+              />
+              <Text style={STYLES.link}>Visit Our Website</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={STYLES.email}>
+            <TouchableOpacity style={STYLES.email} onPress={openEmail}>
+              <MIcon
+                name="email"
+                size={25}
+                strokeSize={3}
+                color={COLORS.PRIMARY}
+              />
+              <Text style={STYLES.link}>Contact us</Text>
+            </TouchableOpacity>
+          </View>
+          <CopyRight/>
         </View>
       </View>
     </View>
@@ -98,8 +127,10 @@ const STYLES = StyleSheet.create({
   },
   title: {
     fontWeight: 'bold',
-    color: COLORS.BLACK,
+    color: COLORS.PRIMARY,
     textAlign: 'center',
+    fontSize: 18,
+    marginVertical: 15,
   },
   alert: {
     color: COLORS.GREY,
@@ -120,6 +151,50 @@ const STYLES = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-end',
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  appName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: COLORS.BLACK,
+    alignItems: 'center',
+  },
+  version: {
+    fontSize: 16,
+    marginBottom: 20,
+  },
+  description: {
+    textAlign: 'left',
+    paddingHorizontal: 25,
+    marginBottom: 20,
+    color: COLORS.BLACK,
+    fontSize: 16,
+  },
+  link: {
+    color: COLORS.PRIMARY,
+    fontSize: 16,
+    textAlign: 'center',
+    paddingHorizontal: 15,
+    textDecorationLine: 'underline',
+  },
+  credits: {
+    marginTop: 40,
+    fontStyle: 'italic',
+    fontSize: 12,
+    color: 'gray',
+  },
+  email: {
+    flexDirection: 'row',
+    // justifyContent: 'center',
+    paddingHorizontal: 35,
+    paddingVertical: 5,
+    alignItems: 'flex-start',
   },
 });
 

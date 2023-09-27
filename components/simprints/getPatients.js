@@ -49,9 +49,7 @@ const GetPatients = () => {
   const fetchData = async () => {
     console.log('GUID:', guid);
     try {
-      const response = await fetch(
-        `${URLS.BASE}/patients/${guid}`,
-      );
+      const response = await fetch(`${URLS.BASE}/patients/${guid}`);
       // console.log('Response:', response);
       if (response.ok) {
         const data = await response.json();
@@ -144,12 +142,11 @@ const GetPatients = () => {
                       </Text>
 
                       <Text style={styles.userDataLabel}>
-                        Dose:{' '}
+                        Dose:
                         <Text style={styles.userDataValue}>
                           {vaccination.dose}
                         </Text>
                       </Text>
-
                       <Text style={styles.userDataLabel}>
                         Card Number:{' '}
                         <Text style={styles.userDataValue}>
@@ -176,10 +173,8 @@ const GetPatients = () => {
                           {vaccination.facility}
                         </Text>
                       </Text>
-                      <Text style={styles.userDataLabel}>
-                        ................................................................
-                        <Text style={styles.userDataValue}></Text>
-                      </Text>
+                      <View style={styles.line} />
+
                       <View style={{height: 20}} />
                     </View>
                   ))}
@@ -222,13 +217,6 @@ const GetPatients = () => {
                       </Text>
 
                       <Text style={styles.userDataLabel}>
-                        Prescriptions:
-                        <Text style={styles.userDataValue}>
-                          {antenantal.prescriptions}
-                        </Text>
-                      </Text>
-
-                      <Text style={styles.userDataLabel}>
                         Current Weight:
                         <Text style={styles.userDataValue}>
                           {antenantal.weight}
@@ -249,12 +237,37 @@ const GetPatients = () => {
                         </Text>
                       </Text>
 
-                      <Text style={styles.userDataLabel}>
-                        Additional Notes:
-                        <Text style={styles.userDataValue}>
-                          {antenantal.drugNotes}
-                        </Text>
-                      </Text>
+                      {antenantal.medicines &&
+                        antenantal.medicines.length > 0 && (
+                          <View>
+                            <Text style={styles.userDataLabel}>MEDICINES</Text>
+                            {antenantal.medicines.map((medicine, index) => (
+                              <View key={index}>
+                                <Text style={styles.userDataLabel}>
+                                  Medicine Name:
+                                  <Text style={styles.userDataValue}>
+                                    {medicine.name}
+                                  </Text>
+                                </Text>
+
+                                <Text style={styles.userDataLabel}>
+                                  Additional Notes:
+                                  <Text style={styles.userDataValue}>
+                                    {medicine.description}
+                                  </Text>
+                                </Text>
+
+                                <Text style={styles.userDataLabel}>
+                                  Dosage:
+                                  <Text style={styles.userDataValue}>
+                                    {medicine.dosage} X {medicine.frequency} for{' '}
+                                    {medicine.duration} days
+                                  </Text>
+                                </Text>
+                              </View>
+                            ))}
+                          </View>
+                        )}
 
                       <View style={styles.line} />
                     </View>
@@ -274,53 +287,60 @@ const GetPatients = () => {
                         </Text>
                       </Text>
                       <Text style={styles.userDataLabel}>
-                        Prescribed drugs:{' '}
+                        Signs and Symptoms:{' '}
                         <Text style={styles.userDataValue}>
-                          {diagnosis.drugsPrescribed}
+                          {diagnosis.impression}
                         </Text>
                       </Text>
-                      <Text style={styles.userDataLabel}>
-                        Dosage:{' '}
-                        <Text style={styles.userDataValue}>
-                          {diagnosis.dosage}
-                        </Text>
-                      </Text>
-
-                      <Text style={styles.userDataLabel}>
-                        Frequency:{' '}
-                        <Text style={styles.userDataValue}>
-                          {diagnosis.frequency}
-                        </Text>
-                      </Text>
-                      <Text style={styles.userDataLabel}>
-                        Duration:{' '}
-                        <Text style={styles.userDataValue}>
-                          {diagnosis.duration}
-                        </Text>
-                      </Text>
-
                       <Text style={styles.userDataLabel}>
                         Date of diagnosis:{' '}
                         <Text style={styles.userDataValue}>
                           {formatDate(new Date(diagnosis.dateOfDiagnosis))}
                         </Text>
                       </Text>
-
                       <Text style={styles.userDataLabel}>
-                        Date for Next Dose:{' '}
+                        Follow Up Date:{' '}
                         <Text style={styles.userDataValue}>
                           {formatDate(new Date(diagnosis.followUpDate))}
                         </Text>
                       </Text>
+                    
+                      {diagnosis.medicines &&
+                        diagnosis.medicines.length > 0 && (
+                          <View>
+                            <Text style={styles.userDataLabel}>MEDICINES</Text>
+                            {diagnosis.medicines.map((medicine, medIndex) => (
+                              <View key={medIndex}>
+                                <Text style={styles.userDataLabel}>
+                                  Medicine Name:
+                                  <Text style={styles.userDataValue}>
+                                    {medicine.name}
+                                  </Text>
+                                </Text>
 
-                      <Text style={styles.userDataLabel}>
-                        Impression:{' '}
-                        <Text style={styles.userDataValue}>
-                          {diagnosis.impression}
-                        </Text>
-                      </Text>
+                                <Text style={styles.userDataLabel}>
+                                  Additional Notes:
+                                  <Text style={styles.userDataValue}>
+                                    {medicine.description}
+                                  </Text>
+                                </Text>
+
+                                <Text style={styles.userDataLabel}>
+                                  Dosage:
+                                  <Text style={styles.userDataValue}>
+                                    {medicine.dosage} X {medicine.frequency} for{' '}
+                                    {medicine.duration} days
+                                  </Text>
+                                </Text>
+
+                                <Text style={styles.userDataLabel}>
+                                  console.log(diagnosis.medicines);
+                                </Text>
+                              </View>
+                            ))}
+                          </View>
+                        )}
                       <View style={styles.line} />
-
                       <View style={{height: 20}} />
                     </View>
                   ))}
