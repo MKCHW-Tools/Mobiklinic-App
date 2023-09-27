@@ -21,7 +21,8 @@ import PatientLists from '../simprints/patient.lists';
 import AntenatalCare from '../simprints/antenatal.care';
 import CenteredButtons from '../simprints/CenteredButtons';
 import VaccinationDatesList from '../simprints/VaccinationDatesList';
-import BeneficaryAdd from '../simprints/patient.add';
+import DisplayPatients from '../simprints/display.patients';
+
 
 const Stack = createStackNavigator();
 
@@ -130,10 +131,10 @@ function AuthStack() {
         component={VaccinationDatesList}
       />
       <Stack.Screen
-        name="BeneficaryAdd"
+        name="DisplayPatients"
         options={{headerShown: false}}
-        component={BeneficaryAdd}
-      />
+        component={DisplayPatients}
+
     </Stack.Navigator>
   );
 }

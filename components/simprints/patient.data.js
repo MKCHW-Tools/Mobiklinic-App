@@ -139,9 +139,9 @@ const PatientData = ({navigation}) => {
       if (response.ok) {
         const data = await response.json();
         // setId(data.id);
-        // Extract the patient ID from the response data
-        const patientId = data.id; // Access the patient ID from the response data
-        setPatientId(patientId);
+        const newPatientId = data.id; // Get the patient ID from the response
+        setState({ ...state, isLoading: false, patientId: newPatientId }); // Update local state
+        setPatientId(newPatientId);
         console.log('Patient ID:', patientId);
         console.log('Simprints session ID:', sessionId);
         console.log('sessionId data type:', typeof sessionId);

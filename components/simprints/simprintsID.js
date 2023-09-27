@@ -30,24 +30,19 @@ const {IdentificationPlus} = NativeModules;
 var OpenActivity = NativeModules.OpenActivity;
 
 const SimprintsID = ({navigation}) => {
-  const {
-    updateDataResults,
-    setRefusalData,
-    updateRegistrationErrorContext,
-    updateSession,
-    updateBenData,
-    benData,
-    userNames,
-    patientId,
-    setPatientId,
-  } = useContext(DataResultsContext);
+  const {updateDataResults} = useContext(DataResultsContext);
+  const {updateSession} = useContext(DataResultsContext);
+  const {updateBenData} = useContext(DataResultsContext);
+  const {benData} = useContext(DataResultsContext);
+  const {userNames} = useContext(DataResultsContext);
+  const [userData, setUserData] = React.useState(null);
+  const [guid, setGuid] = React.useState(
+    benData.length > 0 ? benData[0].guid : [],
+  );
 
-  const [userData, setUserData] = useState(null);
-  const [guid, setGuid] = useState(benData.length > 0 ? benData[0].guid : []);
   const [identificationPlusResults, setIdentificationPlusResults] = useState(
     [],
   );
-  const [isBeneficiaryConfirmed, setIsBeneficiaryConfirmed] = useState(true);
   const [identificationResults, setIdentificationResults] = useState([]);
   const [displayMode, setDisplayMode] = useState(null);
   const [enrollmentGuid, setEnrollmentGuid] = useState(null);
@@ -55,15 +50,21 @@ const SimprintsID = ({navigation}) => {
   const [selectedUserUniqueId, setSelectedUserUniqueId] = useState(null);
   const [noMatchButtonPressed, setNoMatchButtonPressed] = useState(false);
   const [showButtons, setShowButtons] = useState(true);
-  const [showResults, setShowResults] = useState(false);
-  const [collapsedIndex, setCollapsedIndex] = useState(-1);
-  const [clickedResult, setClickedResult] = useState(null);
-  const [refreshing, setRefreshing] = useState(false);
   const sortedResults = identificationResults
     .filter(
       result => result.confidenceScore >= 20 && result.confidenceScore <= 99,
     )
     .sort((a, b) => b.confidenceScore - a.confidenceScore);
+  const [showResults, setShowResults] = useState(false);
+  const [collapsedIndex, setCollapsedIndex] = useState(-1); // Add this line to define the collapsedIndex state variable
+  const [clickedResult, setClickedResult] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const {patientId, setPatientId} = useContext(DataResultsContext);
+  const [isBeneficiaryConfirmed, setIsBeneficiaryConfirmed] = useState(false);
+  const {updateIsBeneficiaryConfirmed} = useContext(DataResultsContext); // Add this line to include the new state
+
+  // console.log('Logged User from simprints is', userNames);
+
   const toggleCollapse = index => {
     if (collapsedIndex === index) {
       setCollapsedIndex(-1);
@@ -85,6 +86,7 @@ const SimprintsID = ({navigation}) => {
     return 'Click to add date';
   };
 
+  // fetch data function
   const fetchData = async () => {
     console.log('GUID:', guid);
 
@@ -103,6 +105,7 @@ const SimprintsID = ({navigation}) => {
         setShowResults(false);
       }
     } catch (error) {}
+    // navigation.navigate('GetPatients');
   };
 
   useEffect(() => {
@@ -118,7 +121,7 @@ const SimprintsID = ({navigation}) => {
 
   useEffect(() => {
     const identificationPlusSubscription = DeviceEventEmitter.addListener(
-      'onIdentificationPlusResult',
+      'onIdentificationResult',
       results => {
         setIdentificationPlusResults(results);
         setDisplayMode('identificationPlus');
@@ -139,8 +142,10 @@ const SimprintsID = ({navigation}) => {
         setSessionId(sessionId);
         updateBenData(results);
         updateSession(sessionId);
+
         updateDataResults(guid);
 
+        // Console log the guid and sessionId here
         console.log('Guid:', guid);
         console.log('SessionId:', sessionId);
         console.log('sessionId data type:', typeof sessionId);
@@ -158,20 +163,9 @@ const SimprintsID = ({navigation}) => {
         navigation.navigate('PatientData');
         updateDataResults(guid);
         updateSession(sessionId);
-
+        // setSessionId(sessionId);
         console.log('Guid:', guid);
         console.log('SessionId:', sessionId);
-      },
-    );
-
-    const registrationErrorSubscription = DeviceEventEmitter.addListener(
-      'SimprintsRegistrationError',
-      event => {
-        const {reason} = event;
-        const {extra} = event;
-        setRefusalData({reason, extra});
-        updateRegistrationErrorContext(reason, extra);
-        navigation.navigate('CenteredButtons');
       },
     );
 
@@ -180,19 +174,31 @@ const SimprintsID = ({navigation}) => {
     //   event => {
     //     const {reason} = event;
     //     const {extra} = event;
+    //     // navigation.navigate('PatientLists');
+
+    //     // Now you can use the 'reason' and 'extra' values in your React Native code
     //     console.log('Refusal Reason:', reason);
     //     console.log('Refusal Extra:', extra);
-    //     setRefusalData({reason, extra});
-    //     updateRegistrationErrorContext(reason, extra);
-    //     navigation.navigate('PatientLists');
     //   },
     // );
+
+    const registrationErrorSubscription = DeviceEventEmitter.addListener(
+      'SimprintsRegistrationError',
+      event => {
+        const {reason} = event;
+        const {extra} = event;
+        navigation.navigate('CenteredButtons');
+
+        // Now you can use the 'reason' and 'extra' values in your React Native code
+        console.log('Refusal Reason:', reason);
+        console.log('Refusal Extra:', extra);
+      },
+    );
 
     return () => {
       identificationPlusSubscription.remove();
       identificationSubscription.remove();
       registrationSuccessSubscription.remove();
-      registrationErrorSubscription.remove();
     };
   }, [updateDataResults, updateBenData, updateSession]);
 
@@ -240,7 +246,8 @@ const SimprintsID = ({navigation}) => {
   useEffect(() => {
     if (noMatchButtonPressed) {
       console.log('No match found button pressed');
-      setNoMatchButtonPressed(false);
+      // Call the noMatchFound method here if needed
+      setNoMatchButtonPressed(false); // Reset the button pressed state
     }
   }, [noMatchButtonPressed]);
 
@@ -380,9 +387,10 @@ const SimprintsID = ({navigation}) => {
 
             {sortedResults.length > 0 && (
               <React.Fragment>
+                {/* Render results */}
                 {sortedResults.map((result, index) => (
                   <React.Fragment key={index}>
-                    {index === 0 && (
+                    {index === 0 && ( // Display "RESULTS" heading only for the first result
                       <Text style={styles.userDataLabel}>RESULTS</Text>
                     )}
 
@@ -410,9 +418,7 @@ const SimprintsID = ({navigation}) => {
                           result.confidenceScore <= 99 && (
                             <TouchableOpacity
                               style={styles.buttonSec}
-                              onPress={() =>
-                                navigation.navigate('PatientData')
-                              }>
+                              onPress={() => navigation.navigate('')}>
                               <Text style={styles.buttonStyle}>
                                 Proceed to register
                               </Text>
@@ -440,6 +446,7 @@ const SimprintsID = ({navigation}) => {
                                 setIsBeneficiaryConfirmed(true);
                                 updateIsBeneficiaryConfirmed(true);
                                 console.log(isBeneficiaryConfirmed);
+                                // Then navigate to the 'GetPatients' screen
                                 navigation.navigate('GetPatients', {
                                   paramKey: userData,
                                 });

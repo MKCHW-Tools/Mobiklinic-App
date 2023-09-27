@@ -17,8 +17,8 @@ import CustomHeader from '../ui/custom-header';
 import DataResultsContext from '../contexts/DataResultsContext';
 import {URLS} from '../constants/API';
 
-const PatientList = ({navigation}) => {
-  const {userLog, refusalData, patientId, setPatientId} =
+const DisplayPatients = ({navigation}) => {
+  const {userLog, userNames, refusalData, patientId, setPatientId} =
     useContext(DataResultsContext);
   const [users, setUsers] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -154,10 +154,10 @@ const PatientList = ({navigation}) => {
 
     const addData = () => {
       setPatientId(item.id);
-      console.log('Adding data for patient ID:', item.id);
+      console.log('Adding data for patient ID:', patientId.id);
 
       navigation.navigate('SelectActivity', {
-        patientId: item.id,
+        patientId: patientId,
         paramKey: {firstName: item.firstName, lastName: item.lastName},
       });
     };
@@ -208,10 +208,10 @@ const PatientList = ({navigation}) => {
               Primary Language:{' '}
               <Text style={styles.userDataValue}>{item.primaryLanguage}</Text>
             </Text>
-            <Text style={styles.userDataLabel}>
+            {/* <Text style={styles.userDataLabel}>
               Simprints GUID:{' '}
               <Text style={styles.userDataValue}>{item.simprintsGui}</Text>
-            </Text>
+            </Text> */}
             <Text style={styles.userDataLabel}>
               Country <Text style={styles.userDataValue}>{item.country}</Text>
             </Text>
@@ -536,7 +536,7 @@ const PatientList = ({navigation}) => {
   );
 };
 
-export default PatientList;
+export default DisplayPatients;
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
@@ -696,5 +696,3 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
 });
-
-// export default PatientList;

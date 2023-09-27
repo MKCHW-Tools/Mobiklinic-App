@@ -111,7 +111,7 @@ const Dashboard = ({navigation}) => {
           <View style={STYLES.row}>
             <TouchableOpacity
               style={STYLES.card}
-              onPress={() => navigation.navigate('PatientLists')}>
+              onPress={() => navigation.navigate('DisplayPatients')}>
               <View style={STYLES.cardIcon}>
                 <Icon
                   name="users"
@@ -139,25 +139,25 @@ const Dashboard = ({navigation}) => {
               <Text style={STYLES.cardTitle}>Appointments</Text>
             </TouchableOpacity>
           </View>
-{/* 
-          <View style={STYLES.row}>
-            <TouchableOpacity
-              style={STYLES.card}
-              onPress={() => {
-                setTokens(null);
-                signOut(setUser);
-              }}>
-              <View style={STYLES.cardIcon}>
-                <MIcon
-                  name="logout"
-                  size={40}
-                  strokeSize={3}
-                  color={COLORS.BLACK}
-                />
-              </View>
-              <Text style={STYLES.cardTitle}>Logout</Text>
-            </TouchableOpacity>
-          </View> */}
+
+//           <View style={STYLES.row}>
+//             <TouchableOpacity
+//               style={STYLES.card}
+//               onPress={() => {
+//                 setTokens(null);
+//                 signOut(setUser);
+//               }}>
+//               <View style={STYLES.cardIcon}>
+//                 <MIcon
+//                   name="logout"
+//                   size={40}
+//                   strokeSize={3}
+//                   color={COLORS.BLACK}
+//                 />
+//               </View>
+//               <Text style={STYLES.cardTitle}>Logout</Text>
+//             </TouchableOpacity>
+//           </View> */}
         </View>
       </View>
       {/* <View style={STYLES.body}>

@@ -19,6 +19,7 @@ const VaccinationDatesList = () => {
   const {userLog, userNames, refusalData, patientId, setPatientId} =
     useContext(DataResultsContext);
 
+
   useEffect(() => {
     // Fetch patient data from the API endpoint
     fetch(`${URLS.BASE}/${userLog}/patients`)

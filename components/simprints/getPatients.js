@@ -292,34 +292,25 @@ const GetPatients = () => {
                           {diagnosis.impression}
                         </Text>
                       </Text>
-
                       <Text style={styles.userDataLabel}>
                         Date of diagnosis:{' '}
                         <Text style={styles.userDataValue}>
                           {formatDate(new Date(diagnosis.dateOfDiagnosis))}
                         </Text>
                       </Text>
-
                       <Text style={styles.userDataLabel}>
                         Follow Up Date:{' '}
                         <Text style={styles.userDataValue}>
                           {formatDate(new Date(diagnosis.followUpDate))}
                         </Text>
                       </Text>
-
-                      <Text style={styles.userDataLabel}>
-                        Is Pregnant:{' '}
-                        <Text style={styles.userDataValue}>
-                          {diagnosis.isPregnant}
-                        </Text>
-                      </Text>
-
+                    
                       {diagnosis.medicines &&
                         diagnosis.medicines.length > 0 && (
                           <View>
                             <Text style={styles.userDataLabel}>MEDICINES</Text>
-                            {diagnosis.medicines.map((medicine, index) => (
-                              <View key={index}>
+                            {diagnosis.medicines.map((medicine, medIndex) => (
+                              <View key={medIndex}>
                                 <Text style={styles.userDataLabel}>
                                   Medicine Name:
                                   <Text style={styles.userDataValue}>
@@ -341,13 +332,15 @@ const GetPatients = () => {
                                     {medicine.duration} days
                                   </Text>
                                 </Text>
+
+                                <Text style={styles.userDataLabel}>
+                                  console.log(diagnosis.medicines);
+                                </Text>
                               </View>
                             ))}
                           </View>
                         )}
-
                       <View style={styles.line} />
-
                       <View style={{height: 20}} />
                     </View>
                   ))}

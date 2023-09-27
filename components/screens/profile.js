@@ -115,16 +115,22 @@ const Profile = ({navigation}) => {
         });
         setMonthlyEnrollmentsCount(monthlyEnrollments.length);
 
-        // Calculate the weekly enrollments count
-        const currentWeek = getWeekNumber();
+        // weekly counts
+        const currentWeek = new Date();
+        const startOfWeek = new Date(currentWeek);
+        startOfWeek.setDate(
+          currentWeek.getDate() - ((currentWeek.getDay() + 6) % 7),
+        );
+        startOfWeek.setHours(0, 0, 0, 0); // Set time to midnight
+        const endOfWeek = new Date(currentWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6); // Set to Sunday of the current week
+        endOfWeek.setHours(23, 59, 59, 999); // Set time to the last millisecond of the day
+
         const weeklyEnrollments = sortedData.filter(item => {
           const itemDate = new Date(item.createdAt);
-          return (
-            itemDate >= startDate &&
-            itemDate <= currentDate &&
-            getWeekNumber(itemDate) === currentWeek
-          );
+          return itemDate >= startOfWeek && itemDate <= endOfWeek;
         });
+
         setWeeklyEnrollmentsCount(weeklyEnrollments.length);
       }
     } catch (error) {
@@ -172,9 +178,7 @@ const Profile = ({navigation}) => {
   const fetchDiagnosis = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(
-        `${URLS.BASE}/diagnosis/${userNames}`,
-      );
+      const response = await axios.get(`${URLS.BASE}/diagnosis/${userNames}`);
 
       if (response.status === 200) {
         const sortedData = response.data.sort(
@@ -205,9 +209,7 @@ const Profile = ({navigation}) => {
   const fetchAntenatal = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(
-        `${URLS.BASE}/antenantals/${userNames}`,
-      );
+      const response = await axios.get(`${URLS.BASE}/antenantals/${userNames}`);
 
       if (response.status === 200) {
         const sortedData = response.data.sort(
