@@ -74,8 +74,8 @@ public class OpenActivityModule extends ReactContextBaseJavaModule implements Ac
                 
                         // Emit the refusal form data along with the event
                         WritableMap errorParams = Arguments.createMap();
-                        errorParams.putString("reasons", reasons);
-                        errorParams.putString("extras", extras);
+                        errorParams.putString("reason", reason);
+                        errorParams.putString("extra", extra);
                         getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                                 .emit("SimprintsRegistrationError", errorParams);
                     } else {
