@@ -9,7 +9,7 @@ export const DataResultsProvider = ({ children }) => {
   const [patientId, setPatientId] = useState('');
   const [userNames, setUserNames] = useState('');
   const [sessionId, setSessionId] = useState('');
-  const [isBeneficiaryConfirmed, setIsBeneficiaryConfirmed] = useState(true); // Add this line to include the new state
+  const [isBeneficiaryConfirmed, setIsBeneficiaryConfirmed] = useState(false); // Add this line to include the new state
 
 
 
