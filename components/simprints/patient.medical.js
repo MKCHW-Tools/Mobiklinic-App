@@ -287,26 +287,17 @@ const PatientMedical = ({navigation}) => {
 
         <View style={STYLES.wrap}>
           <View style={STYLES.detail}>
-            <Picker
-              placeholderTextColor={COLORS.BLACK}
-              selectedValue={medicine.dosage}
-              onValueChange={value =>
-                handleMedicineChange(index, 'dosage', value)
-              }
-              style={[STYLES.field, {color: COLORS.BLACK}]}
-              dropdownIconColor={COLORS.GREY_LIGHTER}>
-              <Picker.Item label="Dose" value="Dose" />
-              <Picker.Item label="1" value="1" />
-              <Picker.Item label="2" value="2" />
-              <Picker.Item label="3" value="3" />
-              <Picker.Item label="4" value="4" />
-              <Picker.Item label="5" value="5" />
-              <Picker.Item label="6" value="7" />
-              <Picker.Item label="7" value="7" />
-              <Picker.Item label="8" value="8" />
-              <Picker.Item label="9" value="9" />
-              <Picker.Item label="10" value="10" />
-            </Picker>
+            <TextInput
+              style={[
+                STYLES.field,
+                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              ]}
+              placeholder="Dosage"
+              value={medicine.dosage}
+              onChangeText={text => handleMedicineChange(index, 'dosage', text)}
+              placeholderTextColor={COLORS.GREY}
+              keyboardType="numeric"
+            />
           </View>
           <Text
             style={[
@@ -317,51 +308,38 @@ const PatientMedical = ({navigation}) => {
           </Text>
 
           <View style={STYLES.detail}>
-            <Picker
-              placeholderTextColor={COLORS.BLACK}
-              selectedValue={medicine.frequency}
-              onValueChange={value =>
-                handleMedicineChange(index, 'frequency', value)
+            <TextInput
+              style={[
+                STYLES.field,
+                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              ]}
+              placeholder="freq"
+              value={medicine.frequency}
+              onChangeText={text =>
+                handleMedicineChange(index, 'frequency', text)
               }
-              style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
-              dropdownIconColor={COLORS.GREY_LIGHTER}>
-              <Picker.Item label="Freq" value="Frequency" />
-              <Picker.Item label="1" value="1" />
-              <Picker.Item label="2" value="2" />
-              <Picker.Item label="3" value="3" />
-              <Picker.Item label="4" value="4" />
-              <Picker.Item label="5" value="5" />
-              <Picker.Item label="6" value="7" />
-              <Picker.Item label="7" value="7" />
-              <Picker.Item label="8" value="8" />
-              <Picker.Item label="9" value="9" />
-              <Picker.Item label="10" value="10" />
-            </Picker>
+              placeholderTextColor={COLORS.GREY}
+              keyboardType="numeric"
+            />
           </View>
           <Text style={STYLES.label}>for</Text>
-        </View>
-        <View style={STYLES.labeled}>
-          <Text style={STYLES.label}>Days:</Text>
-          <Picker
-            placeholderTextColor={COLORS.BLACK}
-            selectedValue={medicine.duration}
-            onValueChange={value =>
-              handleMedicineChange(index, 'duration', value)
-            }
-            style={[STYLES.field, {color: COLORS.BLACK}]} // Add color style
-            dropdownIconColor={COLORS.GREY_LIGHTER}>
-            <Picker.Item label="" value="" />
-            <Picker.Item label="1" value="1" />
-            <Picker.Item label="2" value="2" />
-            <Picker.Item label="3" value="3" />
-            <Picker.Item label="4" value="4" />
-            <Picker.Item label="5" value="5" />
-            <Picker.Item label="6" value="7" />
-            <Picker.Item label="7" value="7" />
-            <Picker.Item label="8" value="8" />
-            <Picker.Item label="9" value="9" />
-            <Picker.Item label="10" value="10" />
-          </Picker>
+
+          <View style={STYLES.detail}>
+            <TextInput
+              style={[
+                STYLES.field,
+                {color: COLORS.BLACK, placeholderTextColor: COLORS.GRAY},
+              ]}
+              placeholder="Days"
+              value={medicine.duration}
+              onChangeText={text =>
+                handleMedicineChange(index, 'duration', text)
+              }
+              placeholderTextColor={COLORS.GREY}
+              keyboardType="numeric"
+            />
+          </View>
+          <Text style={STYLES.label}>days</Text>
         </View>
 
         <Text
