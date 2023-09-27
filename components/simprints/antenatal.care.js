@@ -36,11 +36,6 @@ const AntenatalCare = ({navigation}) => {
   const [routineVisitDate, setRoutineVisitDate] = useState('');
   const [expectedDateOfDelivery, setExpectedDateOfDelivery] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
-<<<<<<< HEAD
-  const [prescriptions, setSelectedPrescriptions] = useState([]);
-  const {isBeneficiaryConfirmed} = useContext(DataResultsContext); 
-
-=======
   // const [prescriptions, setSelectedPrescriptions] = useState([]);
   const {isBeneficiaryConfirmed} = useContext(DataResultsContext);
   const [medicines, setMedicines] = useState([
@@ -72,7 +67,6 @@ const AntenatalCare = ({navigation}) => {
     updatedMedicines[index][field] = value;
     setMedicines(updatedMedicines);
   };
->>>>>>> fd494d0cb8b8f3a2c4139232886ef776b4900291
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || routineVisitDate;
@@ -120,10 +114,6 @@ const AntenatalCare = ({navigation}) => {
     try {
       console.log('Patient ID :', patientId);
       console.log('Biometrically Verified:', isBeneficiaryConfirmed);
-<<<<<<< HEAD
-
-=======
->>>>>>> fd494d0cb8b8f3a2c4139232886ef776b4900291
       if (state.isLoading) {
         // Prevent multiple submissions
         return;
@@ -137,31 +127,6 @@ const AntenatalCare = ({navigation}) => {
         return;
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
-<<<<<<< HEAD
-      const response = await fetch(
-        `${URLS.BASE}/${patientId}/antenantals`,
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            pregnancyStatus: state.pregnancyStatus,
-            expectedDateOfDelivery: state.expectedDateOfDelivery,
-            nextOfKinContact: state.nextOfKinContact,
-            routineVisitDate: state.routineVisitDate,
-            weight: state.weight,
-            bloodGroup: state.bloodGroup,
-            prescriptions: state.prescriptions,
-            nextOfKin: state.nextOfKin,
-            drugNotes: state.drugNotes,
-            reviewedBy: userNames,
-            simprintsGui: dataResults,
-            simSessionId: sessionId,
-            biometricsVerified: isBeneficiaryConfirmed,
-          }),
-          headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-            Accept: 'application/json',
-          },
-=======
       const response = await fetch(`${URLS.BASE}/${patientId}/antenantals`, {
         method: 'POST',
         body: JSON.stringify({
@@ -183,7 +148,6 @@ const AntenatalCare = ({navigation}) => {
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
           Accept: 'application/json',
->>>>>>> fd494d0cb8b8f3a2c4139232886ef776b4900291
         },
       });
       if (response.ok) {

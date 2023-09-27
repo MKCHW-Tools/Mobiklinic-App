@@ -21,10 +21,7 @@ import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {format} from 'date-fns';
-<<<<<<< HEAD
-=======
 import {countryData} from './country.selector';
->>>>>>> fd494d0cb8b8f3a2c4139232886ef776b4900291
 import {URLS} from '../constants/API';
 
 const PatientData = ({navigation}) => {
@@ -115,39 +112,6 @@ const PatientData = ({navigation}) => {
         return;
       }
 
-<<<<<<< HEAD
-      // Remove any non-digit characters from the phone number
-      const phoneNumber = state.phoneNumber.replace(/\D/g, '');
-
-      // Check if the resulting phone number has exactly 10 digits
-      if (phoneNumber.length !== 10) {
-        Alert.alert('Error', 'Phone number must be 10 digits');
-        return;
-      }
-
-      const response = await fetch(
-        `${URLS.BASE}/${userLog}/patients`,
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            firstName: state.firstName,
-            lastName: state.lastName,
-            sex: state.sex,
-            ageGroup: ageGroup,
-            phoneNumber: state.phoneNumber,
-            weight: state.weight,
-            height: state.height,
-            district: state.district,
-            country: state.country,
-            primaryLanguage: state.primaryLanguage,
-            simprintsGui: dataResults,
-            simSessionId: sessionId,
-          }),
-          headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-            Accept: 'application/json',
-          },
-=======
       const response = await fetch(`${URLS.BASE}/${userLog}/patients`, {
         method: 'POST',
         body: JSON.stringify({
@@ -169,7 +133,6 @@ const PatientData = ({navigation}) => {
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
           Accept: 'application/json',
->>>>>>> fd494d0cb8b8f3a2c4139232886ef776b4900291
         },
       });
 

@@ -21,10 +21,7 @@ import DataResultsContext from '../contexts/DataResultsContext';
 import {COLORS, DIMENS} from '../constants/styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {format} from 'date-fns';
-<<<<<<< HEAD
-=======
 import CopyRight from './copyright';
->>>>>>> fd494d0cb8b8f3a2c4139232886ef776b4900291
 import {URLS} from '../constants/API';
 
 const PatientMedical = ({navigation}) => {
@@ -34,16 +31,6 @@ const PatientMedical = ({navigation}) => {
   const {patientId, setPatientId} = useContext(DataResultsContext);
   const currentDate = new Date();
   const [showDatePicker, setShowDatePicker] = useState(false);
-<<<<<<< HEAD
-   const {sessionId} = useContext(DataResultsContext);
-   const {userNames} = useContext(DataResultsContext);
-
-
-  const [dateOfDiagnosis, setDateOfDiagnosis] = useState(''); 
-  const [followUpDate, setFollowUpDate] = useState(''); 
-  const {isBeneficiaryConfirmed} = useContext(DataResultsContext); 
-
-=======
   const {sessionId} = useContext(DataResultsContext);
   const {userNames} = useContext(DataResultsContext);
   const {isBeneficiaryConfirmed} = useContext(DataResultsContext);
@@ -62,7 +49,6 @@ const PatientMedical = ({navigation}) => {
   const [customCondition, setCustomCondition] = useState('');
   const [showCustomConditionInput, setShowCustomConditionInput] =
     useState(false);
->>>>>>> fd494d0cb8b8f3a2c4139232886ef776b4900291
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || dateOfDiagnosis;
@@ -125,12 +111,6 @@ const PatientMedical = ({navigation}) => {
   const handleSubmit = async () => {
     console.log(patientId);
     try {
-<<<<<<< HEAD
-      console.log('Patient ID :', patientId);
-      console.log('Biometrically Verified:', isBeneficiaryConfirmed);
-
-=======
->>>>>>> fd494d0cb8b8f3a2c4139232886ef776b4900291
       if (state.isLoading) {
         // Prevent multiple submissions
         return;
@@ -146,38 +126,10 @@ const PatientMedical = ({navigation}) => {
         return;
       }
 
-<<<<<<< HEAD
-      const response = await fetch(
-        `${URLS.BASE}/${patientId}/diagnosis`,
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            condition: state.condition,
-            dateOfDiagnosis: state.dateOfDiagnosis,
-            impression: state.impression,
-            drugsPrescribed: state.drugsPrescribed,
-            dosage: state.dosage,
-            frequency: state.frequency,
-            duration: state.duration,
-            followUpDate: state.followUpDate,
-            isPregnant: state.isPregnant,
-            labTests: state.labTests,
-            simSessionId: sessionId,
-            simprintsGui: dataResults,
-            diagnosedBy: userNames,
-            biometricsVerified: isBeneficiaryConfirmed,
-          }),
-          headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-            Accept: 'application/json',
-          },
-        },
-=======
       // Format date strings
       const formattedDateOfDiagnosis = format(
         new Date(state.dateOfDiagnosis),
         'yyyy-MM-dd',
->>>>>>> fd494d0cb8b8f3a2c4139232886ef776b4900291
       );
       const formattedFollowUpDate = format(
         new Date(state.followUpDate),
