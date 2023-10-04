@@ -13,7 +13,7 @@ import MIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FoIcon from 'react-native-vector-icons/Fontisto';
 import FAIcon from 'react-native-vector-icons/FontAwesome';
 import {COLORS, DIMENS} from '../constants/styles';
-
+import Emoji from 'react-native-emoji';
 import CustomHeader from '../parts/custom-header';
 import {CustomStatusBar} from '../ui/custom.status.bar';
 import {signOut} from '../helpers/functions';
@@ -32,10 +32,11 @@ const Dashboard = ({navigation}) => {
       <View style={STYLES.hero}>
         <Text style={STYLES.heroHeading}>
           Hey{' '}
-          <Text
-            style={{color: COLORS.PRIMARY, textDecorationLine: 'underline'}}>
+          <Text style={{color: COLORS.PRIMARY}}>
             {userNames}
-          </Text>{' '}
+            {'\t'}
+            <Emoji name="wave" />
+          </Text>
           ,
         </Text>
         <Text style={STYLES.heroParagraph}>Welcome back!</Text>
@@ -104,7 +105,6 @@ const Dashboard = ({navigation}) => {
                   strokeSize={3}
                   color={COLORS.BLACK}
                 />
-                
               </View>
               <Text style={STYLES.cardTitle}>Doctors</Text>
             </TouchableOpacity>

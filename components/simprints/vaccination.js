@@ -122,14 +122,14 @@ const PatientData = ({navigation, route}) => {
         // setId(data.id);
         Alert.alert('Vaccination Registered Successfully');
         navigation.navigate('Dashboard');
-        console.log("Patientid:" +  patientId);
+        console.log('Patientid:' + patientId);
       } else {
         console.error('Error posting data:', response.status);
         Alert.alert(
           'Error',
           'Failed to Register vaccination. Please try again later.',
         );
-        console.log("Patientid:" +  patientId);
+        console.log('Patientid:' + patientId);
       }
     } catch (error) {
       console.error('Error posting data:', error);
@@ -319,10 +319,7 @@ const PatientData = ({navigation, route}) => {
             <Picker.Item label="" value="" />
             <Picker.Item label="Buikwe Hospital" value="Buikwe Hospital" />
             <Picker.Item label="Mulago Hospital" value="Mulago Hospital" />
-            <Picker.Item
-              label="Makonge Health Center III"
-              value="Makonge Health Center III"
-            />
+
             <Picker.Item
               label="Makonge Health Center III"
               value="Makonge Health Center III"

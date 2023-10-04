@@ -28,6 +28,7 @@
     "react-native-collapsible": "^1.6.1",
     "react-native-datepicker": "^1.7.2",
     "react-native-elements": "^3.4.3",
+    "react-native-emoji": "^1.8.0",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.10.1",
     "react-native-loading-spinner-overlay": "^3.0.1",

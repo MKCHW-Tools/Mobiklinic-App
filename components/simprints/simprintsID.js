@@ -203,14 +203,14 @@ const SimprintsID = ({navigation}) => {
   }, [updateDataResults, updateBenData, updateSession]);
 
   const handleIdentificationPlus = () => {
-    const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
+    const projectID = 'Tdvqn0uJnGdMIO6s2qer';
     const moduleID = 'test_user';
     const userID = userNames;
     IdentificationPlus.registerOrIdentify(projectID, moduleID, userID);
   };
 
   const handleIdentification = () => {
-    const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
+    const projectID = 'Tdvqn0uJnGdMIO6s2qer';
     const moduleID = 'test_user';
     const userID = userNames;
 

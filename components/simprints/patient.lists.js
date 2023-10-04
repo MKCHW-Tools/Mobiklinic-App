@@ -193,10 +193,7 @@ const PatientList = ({navigation}) => {
               Phone Number:
               <Text style={styles.userDataValue}>{item.phoneNumber}</Text>
             </Text>
-            <Text style={styles.userDataLabel}>
-              Reason for not using simprints:{'\t'}
-              <Text style={styles.userDataValue}>{reason}</Text>
-            </Text>
+
             <Text style={styles.userDataLabel}>
               Date Of Birth:
               <Text style={styles.userDataValue}>
