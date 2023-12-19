@@ -169,19 +169,7 @@ const SimprintsID = ({navigation}) => {
       },
     );
 
-    // const identificationErrorSubscription = DeviceEventEmitter.addListener(
-    //   'SimprintsIdentificationError',
-    //   event => {
-    //     const {reason} = event;
-    //     const {extra} = event;
-    //     // navigation.navigate('PatientLists');
-
-    //     // Now you can use the 'reason' and 'extra' values in your React Native code
-    //     console.log('Refusal Reason:', reason);
-    //     console.log('Refusal Extra:', extra);
-    //   },
-    // );
-
+  
     const registrationErrorSubscription = DeviceEventEmitter.addListener(
       'SimprintsRegistrationError',
       event => {
@@ -203,14 +191,14 @@ const SimprintsID = ({navigation}) => {
   }, [updateDataResults, updateBenData, updateSession]);
 
   const handleIdentificationPlus = () => {
-    const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
+    const projectID = 'Tdvqn0uJnGdMIO6s2qer';
     const moduleID = 'test_user';
     const userID = userNames;
     IdentificationPlus.registerOrIdentify(projectID, moduleID, userID);
   };
 
   const handleIdentification = () => {
-    const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
+    const projectID = 'Tdvqn0uJnGdMIO6s2qer';
     const moduleID = 'test_user';
     const userID = userNames;
 
