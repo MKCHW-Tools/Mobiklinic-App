@@ -57,8 +57,7 @@ public class OpenActivityModule extends ReactContextBaseJavaModule implements Ac
                     String guid = registration.getGuid();
                     String sessionId = data.getStringExtra(Constants.SIMPRINTS_SESSION_ID);
 
-                    // Store the GUID or perform any desired actions
-                    // For example, you can emit an event to your React Native code
+                    // Store the GUID or perform any desired action
                     WritableMap params = Arguments.createMap();
                     params.putString("guid", guid);
                     params.putString("sessionId", sessionId);
