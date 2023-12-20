@@ -36,6 +36,8 @@ const SimprintsID = ({navigation}) => {
   const {benData} = useContext(DataResultsContext);
   const {userNames} = useContext(DataResultsContext);
   const [userData, setUserData] = React.useState(null);
+  const { clearDataResults } = useContext(DataResultsContext);
+  const { clearSessionId } = useContext(DataResultsContext);
   const [guid, setGuid] = React.useState(
     benData.length > 0 ? benData[0].guid : [],
   );
@@ -88,7 +90,7 @@ const SimprintsID = ({navigation}) => {
 
   // fetch data function
   const fetchData = async () => {
-    console.log('GUID:', guid);
+    console.log('GUID: in simprints on fetchData function', guid);
 
     try {
       const response = await fetch(`${URLS.BASE}/patients/${guid}`);
@@ -100,6 +102,8 @@ const SimprintsID = ({navigation}) => {
 
         setUserData(data);
         setShowResults(true);
+        clearDataResults();
+        clearSessionId();
       } else {
         setUserData(null);
         setShowResults(false);
@@ -109,7 +113,7 @@ const SimprintsID = ({navigation}) => {
   };
 
   useEffect(() => {
-    fetchData();
+    // fetchData();
   }, [guid, sessionId]);
 
   useEffect(() => {
@@ -146,9 +150,8 @@ const SimprintsID = ({navigation}) => {
         updateDataResults(guid);
 
         // Console log the guid and sessionId here
-        console.log('Guid:', guid);
+        console.log('Guid: on identificationSubscription', guid);
         console.log('SessionId:', sessionId);
-        console.log('sessionId data type:', typeof sessionId);
       },
     );
 
@@ -164,7 +167,7 @@ const SimprintsID = ({navigation}) => {
         updateDataResults(guid);
         updateSession(sessionId);
         // setSessionId(sessionId);
-        console.log('Guid:', guid);
+        console.log('Guid: on registration success', guid);
         console.log('SessionId:', sessionId);
       },
     );
@@ -191,14 +194,14 @@ const SimprintsID = ({navigation}) => {
   }, [updateDataResults, updateBenData, updateSession]);
 
   const handleIdentificationPlus = () => {
-    const projectID = 'Tdvqn0uJnGdMIO6s2qer';
+    const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
     const moduleID = 'test_user';
     const userID = userNames;
     IdentificationPlus.registerOrIdentify(projectID, moduleID, userID);
   };
 
   const handleIdentification = () => {
-    const projectID = 'Tdvqn0uJnGdMIO6s2qer';
+    const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
     const moduleID = 'test_user';
     const userID = userNames;
 
@@ -431,10 +434,7 @@ const SimprintsID = ({navigation}) => {
                             <TouchableOpacity
                               style={styles.buttonSec}
                               onPress={() => {
-                                setIsBeneficiaryConfirmed(true);
-                                updateIsBeneficiaryConfirmed(true);
-                                console.log(isBeneficiaryConfirmed);
-                                // Then navigate to the 'GetPatients' screen
+                                // // Then navigate to the 'GetPatients' screen
                                 navigation.navigate('GetPatients', {
                                   paramKey: userData,
                                 });

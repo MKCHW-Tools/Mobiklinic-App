@@ -34,6 +34,8 @@ const PatientMedical = ({navigation}) => {
   const {sessionId} = useContext(DataResultsContext);
   const {userNames} = useContext(DataResultsContext);
   const {isBeneficiaryConfirmed} = useContext(DataResultsContext);
+  const { clearDataResults } = useContext(DataResultsContext);
+  const { clearSessionId } = useContext(DataResultsContext);
   const [medicines, setMedicines] = useState([
     {
       name: '',
@@ -169,6 +171,8 @@ const PatientMedical = ({navigation}) => {
         const data = await response.json();
         Alert.alert('Diagnosis Registered successfully');
         navigation.navigate('Dashboard');
+        clearDataResults();
+        clearSessionId();
       } else {
         console.log(state, medicines);
         console.error('Error posting data:', response.status);

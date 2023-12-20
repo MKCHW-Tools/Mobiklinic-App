@@ -48,6 +48,14 @@ export const DataResultsProvider = ({children}) => {
     setIsBeneficiaryConfirmed(newIsBeneficiaryConfirmed);
   };
 
+  const clearDataResults = () => {
+    setDataResults(''); // Clear dataResults
+  };
+
+  const clearSessionId = () => {
+    setSessionId(''); // Clear sessionId
+  };
+
   return (
     <DataResultsContext.Provider
       value={{
@@ -70,6 +78,8 @@ export const DataResultsProvider = ({children}) => {
         setRefusalData,
         isBeneficiaryConfirmed,
         setIsBeneficiaryConfirmed,
+        clearDataResults,
+        clearSessionId,
       }}>
       {children}
     </DataResultsContext.Provider>

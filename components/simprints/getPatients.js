@@ -33,6 +33,8 @@ const GetPatients = () => {
   const [showConfirmButton, setShowConfirmButton] = useState(false);
   const [vaccinations, setVaccinations] = useState(null);
   const [diagnosis, setDiagnosis] = useState(null);
+  const { clearDataResults } = useContext(DataResultsContext);
+  const { clearSessionId } = useContext(DataResultsContext);
 
   const formatDate = date => {
     if (date) {
@@ -47,7 +49,7 @@ const GetPatients = () => {
     return 'Click to add date';
   };
   const fetchData = async () => {
-    console.log('GUID:', guid);
+    console.log('GUID: in getPatient:', guid);
     try {
       const response = await fetch(`${URLS.BASE}/patients/${guid}`);
       // console.log('Response:', response);
@@ -57,6 +59,8 @@ const GetPatients = () => {
         setVaccinations(data.vaccinations); // Set the vaccination data
         setDiagnosis(data.diagnosis); // Set the vaccination data
         setShowConfirmButton(true); // Show the "Confirm Data" button
+        clearDataResults();
+        clearSessionId();
       } else {
         Alert.alert(
           'Error',

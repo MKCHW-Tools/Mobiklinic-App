@@ -27,6 +27,8 @@ const PatientData = ({navigation, route}) => {
   const [dateOfVaccination, setDateOfVaccination] = useState('');
   const [dateForNextDose, setDateForNextDose] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const { clearDataResults } = useContext(DataResultsContext);
+  const { clearSessionId } = useContext(DataResultsContext);
   const {
     sessionId,
     isBeneficiaryConfirmed,
@@ -82,7 +84,6 @@ const PatientData = ({navigation, route}) => {
   const handleSubmit = async () => {
     try {
       console.log('Patient ID :', patientId);
-      console.log('Biometrically Verified:', isBeneficiaryConfirmed);
       if (state.isLoading) {
         // Prevent multiple submissions
         return;
@@ -124,6 +125,8 @@ const PatientData = ({navigation, route}) => {
         Alert.alert('Vaccination Registered Successfully');
         navigation.navigate('Dashboard');
         console.log('Patientid:' + patientId);
+        clearDataResults();
+        clearSessionId();
       } else {
         console.error('Error posting data:', response.status);
         Alert.alert(

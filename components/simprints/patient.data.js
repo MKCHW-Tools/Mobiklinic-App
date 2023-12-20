@@ -36,6 +36,8 @@ const PatientData = ({navigation}) => {
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
+  const { clearDataResults } = useContext(DataResultsContext);
+  const { clearSessionId } = useContext(DataResultsContext);
 
   const handleCountryChange = country => {
     setSelectedCountry(country);
@@ -97,12 +99,14 @@ const PatientData = ({navigation}) => {
     simSessionId: '',
   });
 
+
   const handleSubmit = async () => {
     try {
       console.log('User Id:', userLog);
 
       if (state.isLoading) {
         // Prevent multiple submissions
+
         return;
       }
       setState({...state, isLoading: true}); // Set isLoading state to true
@@ -140,11 +144,10 @@ const PatientData = ({navigation}) => {
         const data = await response.json();
         // setId(data.id);
         const newPatientId = data.id; // Get the patient ID from the response
-        setState({ ...state, isLoading: false, patientId: newPatientId }); // Update local state
+        setState({ ...state, isLoading: false, patientId: newPatientId, dataResults: '' }); // Update local state
         setPatientId(newPatientId);
         console.log('Patient ID:', patientId);
         console.log('Simprints session ID:', sessionId);
-        console.log('sessionId data type:', typeof sessionId);
         console.log(dataResults);
         Alert.alert('Beneficiary Registered Successfully');
         console.log(data);
@@ -152,6 +155,10 @@ const PatientData = ({navigation}) => {
           patientId: patientId,
           paramKey: state,
         });
+
+        clearDataResults();
+        clearSessionId();
+      
       } else {
         console.error('Error posting data:', response.status);
         Alert.alert(

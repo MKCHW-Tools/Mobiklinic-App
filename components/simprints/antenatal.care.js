@@ -36,6 +36,8 @@ const AntenatalCare = ({navigation}) => {
   const [routineVisitDate, setRoutineVisitDate] = useState('');
   const [expectedDateOfDelivery, setExpectedDateOfDelivery] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const { clearDataResults } = useContext(DataResultsContext);
+  const { clearSessionId } = useContext(DataResultsContext);
   // const [prescriptions, setSelectedPrescriptions] = useState([]);
   const {isBeneficiaryConfirmed} = useContext(DataResultsContext);
   const [medicines, setMedicines] = useState([
@@ -74,8 +76,7 @@ const AntenatalCare = ({navigation}) => {
     // Update the respective state based on the selected date
     if (showDatePicker === 'antenatal') {
       setRoutineVisitDate(currentDate);
-      setState({...state, routineVisitDate: currentDate}); // Update state
-      console.log('Date of Visit:', currentDate);
+      setState({...state, routineVisitDate: currentDate}); 
     } else if (showDatePicker === 'expectedDate') {
       setExpectedDateOfDelivery(currentDate);
       setState({...state, expectedDateOfDelivery: currentDate}); // Update state
@@ -113,7 +114,6 @@ const AntenatalCare = ({navigation}) => {
   const handleSubmit = async () => {
     try {
       console.log('Patient ID :', patientId);
-      console.log('Biometrically Verified:', isBeneficiaryConfirmed);
       if (state.isLoading) {
         // Prevent multiple submissions
         return;
@@ -156,6 +156,8 @@ const AntenatalCare = ({navigation}) => {
         Alert.alert('Antenatal Care Patient Registered');
         navigation.navigate('Dashboard');
         console.log(state, medicines);
+        clearDataResults();
+        clearSessionId();
       } else {
         console.log(state, medicines);
         console.error('Error posting data:', response.status);
