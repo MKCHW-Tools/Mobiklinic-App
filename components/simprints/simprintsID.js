@@ -102,8 +102,8 @@ const SimprintsID = ({navigation}) => {
 
         setUserData(data);
         setShowResults(true);
-        clearDataResults();
-        clearSessionId();
+        // clearDataResults();
+        // clearSessionId();
       } else {
         setUserData(null);
         setShowResults(false);
