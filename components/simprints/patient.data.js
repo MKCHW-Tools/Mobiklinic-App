@@ -31,13 +31,13 @@ const PatientData = ({navigation}) => {
   const {sessionId} = useContext(DataResultsContext);
   const {userLog} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
-  const { reason, extra } = refusalData;
+  // const { reason, extra } = refusalData;
 
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
-  const { clearDataResults } = useContext(DataResultsContext);
-  const { clearSessionId } = useContext(DataResultsContext);
+  const {clearDataResults} = useContext(DataResultsContext);
+  const {clearSessionId} = useContext(DataResultsContext);
 
   const handleCountryChange = country => {
     setSelectedCountry(country);
@@ -99,7 +99,6 @@ const PatientData = ({navigation}) => {
     simSessionId: '',
   });
 
-
   const handleSubmit = async () => {
     try {
       console.log('User Id:', userLog);
@@ -131,8 +130,8 @@ const PatientData = ({navigation}) => {
           primaryLanguage: selectedLanguage,
           simprintsGui: dataResults,
           simSessionId: sessionId,
-          refusalReason: reason,
-          refusaleExtraInfo: extra,
+          refusalReason: refusalData,
+          refusaleExtraInfo: refusalData,
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -144,7 +143,12 @@ const PatientData = ({navigation}) => {
         const data = await response.json();
         // setId(data.id);
         const newPatientId = data.id; // Get the patient ID from the response
-        setState({ ...state, isLoading: false, patientId: newPatientId, dataResults: '' }); // Update local state
+        setState({
+          ...state,
+          isLoading: false,
+          patientId: newPatientId,
+          dataResults: '',
+        }); // Update local state
         setPatientId(newPatientId);
         console.log('Patient ID:', patientId);
         console.log('Simprints session ID:', sessionId);
@@ -158,7 +162,6 @@ const PatientData = ({navigation}) => {
 
         clearDataResults();
         clearSessionId();
-      
       } else {
         console.error('Error posting data:', response.status);
         Alert.alert(
@@ -187,9 +190,7 @@ const PatientData = ({navigation}) => {
             height: 45,
             justifyContent: 'center',
             alignItems: 'center',
-          }}>
-          {/* <Icon name="arrow-left" size={25} color={COLORS.BLACK} /> */}
-        </TouchableOpacity>
+          }}></TouchableOpacity>
       }
       title={
         <Text style={[STYLES.centerHeader, STYLES.title]}>PATIENT PROFILE</Text>
@@ -218,10 +219,9 @@ const PatientData = ({navigation}) => {
           />
         </View>
 
-        <View >
-          <Text >Refusal Reason: {reason}</Text>
-          <Text >Refusal Extra: {extra}</Text>
-        </View>
+        {/* <View style={STYLES.labeled}> */}
+        <Text style={STYLES.field}>Refusal Reason: {refusalData}</Text>
+        {/* </View> */}
         {/* First Name */}
         <View style={STYLES.labeled}>
           <Text style={STYLES.label}>First Name:</Text>

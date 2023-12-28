@@ -32,6 +32,7 @@ var OpenActivity = NativeModules.OpenActivity;
 const SimprintsID = ({navigation}) => {
   const {updateDataResults} = useContext(DataResultsContext);
   const {updateSession} = useContext(DataResultsContext);
+  const {refusalData, setRefusalData} = useContext(DataResultsContext);
   const {updateBenData} = useContext(DataResultsContext);
   const {benData} = useContext(DataResultsContext);
   const {userNames} = useContext(DataResultsContext);
@@ -186,6 +187,7 @@ const SimprintsID = ({navigation}) => {
         // Now you can use the 'reason' and 'extra' values in your React Native code
         console.log('Refusal Reason:', reason);
         console.log('Refusal Extra:', extra);
+        setRefusalData(reason);
       },
     );
 
@@ -194,7 +196,7 @@ const SimprintsID = ({navigation}) => {
       identificationSubscription.remove();
       registrationSuccessSubscription.remove();
     };
-  }, [updateDataResults, updateBenData, updateSession]);
+  }, [updateDataResults, updateBenData, updateSession, setRefusalData]);
 
   const handleIdentificationPlus = () => {
     const projectID = 'WuDDHuqhcQ36P2U9rM7Y';

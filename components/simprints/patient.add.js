@@ -28,7 +28,6 @@ const BeneficaryAdd = ({navigation}) => {
   const [isNoUserFound, setIsNoUserFound] = useState(false);
   const [patientsEnrolledCount, setPatientsEnrolledCount] = useState(0);
   const [expandedUserId, setExpandedUserId] = useState(null);
-  const {reason} = refusalData;
 
   const formatDate = date => {
     if (date) {
@@ -195,7 +194,7 @@ const BeneficaryAdd = ({navigation}) => {
             </Text>
             <Text style={styles.userDataLabel}>
               Reason for not using simprints:{'\t'}
-              <Text style={styles.userDataValue}>{reason}</Text>
+              <Text style={styles.userDataValue}>{refusalData}</Text>
             </Text>
             <Text style={styles.userDataLabel}>
               Date Of Birth:

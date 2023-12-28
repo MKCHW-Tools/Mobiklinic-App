@@ -28,7 +28,6 @@ const PatientList = ({navigation}) => {
   const [isNoUserFound, setIsNoUserFound] = useState(false);
   const [patientsEnrolledCount, setPatientsEnrolledCount] = useState(0);
   const [expandedUserId, setExpandedUserId] = useState(null);
-  const {reason} = refusalData;
 
   const formatDate = date => {
     if (date) {
@@ -36,7 +35,7 @@ const PatientList = ({navigation}) => {
       const month = date.getMonth() + 1;
       const year = date.getFullYear();
 
-      return `${day.toString().padStart(2, '0')}/${month
+        return `${day.toString().padStart(2, '0')}/${month
         .toString()
         .padStart(2, '0')}/${year}`;
     }
@@ -202,8 +201,15 @@ const PatientList = ({navigation}) => {
             </Text>
 
             <Text style={styles.userDataLabel}>
-              Primary Language:{' '}
+              Date Of Birth:
+              <Text style={styles.userDataValue}>
               <Text style={styles.userDataValue}>{item.primaryLanguage}</Text>
+              </Text>
+            </Text>
+
+            <Text style={styles.userDataLabel}>
+              Primary Language
+              <Text style={styles.userDataValue}>{refusalData}</Text>
             </Text>
             <Text style={styles.userDataLabel}>
               Simprints GUID:{' '}

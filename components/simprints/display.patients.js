@@ -195,7 +195,7 @@ const DisplayPatients = ({navigation}) => {
             </Text>
             <Text style={styles.userDataLabel}>
               Reason for not using simprints:{'\t'}
-              <Text style={styles.userDataValue}>{reason}</Text>
+              <Text style={styles.userDataValue}>{refusalData}</Text>
             </Text>
             <Text style={styles.userDataLabel}>
               Date Of Birth:

@@ -2,11 +2,13 @@ import React, {useContext} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet, Image} from 'react-native';
 import {COLORS, DIMENS} from '../constants/styles';
 import DataResultsContext from '../contexts/DataResultsContext';
+import { useRoute } from '@react-navigation/native';
+
 
 const CenteredButtons = ({navigation}) => {
   const route = useRoute();
   const {refusalData} = useContext(DataResultsContext);
-  const { reason, extra } = route.params;
+  // const { reason, extra } = route.params;
   const navigateToPatientData = () => {
     navigation.navigate('PatientData');
   };
