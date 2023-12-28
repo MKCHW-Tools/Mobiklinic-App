@@ -31,7 +31,7 @@ const PatientData = ({navigation}) => {
   const {sessionId} = useContext(DataResultsContext);
   const {userLog} = useContext(DataResultsContext);
   const {patientId, setPatientId} = useContext(DataResultsContext);
-  const {reason, extra} = refusalData;
+  const { reason, extra } = refusalData;
 
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState('');
@@ -218,9 +218,9 @@ const PatientData = ({navigation}) => {
           />
         </View>
 
-        <View style={STYLES.guid}>
-          <Text style={STYLES.label}>Refusal Reason: {reason}</Text>
-          <Text style={STYLES.label}>Refusal Extra: {extra}</Text>
+        <View >
+          <Text >Refusal Reason: {reason}</Text>
+          <Text >Refusal Extra: {extra}</Text>
         </View>
         {/* First Name */}
         <View style={STYLES.labeled}>

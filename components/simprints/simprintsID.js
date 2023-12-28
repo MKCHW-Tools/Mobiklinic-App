@@ -178,8 +178,11 @@ const SimprintsID = ({navigation}) => {
       event => {
         const {reason} = event;
         const {extra} = event;
-        navigation.navigate('CenteredButtons');
-
+        navigation.navigate('CenteredButtons', {
+          reason: reason,
+          extra: extra,
+        });
+  
         // Now you can use the 'reason' and 'extra' values in your React Native code
         console.log('Refusal Reason:', reason);
         console.log('Refusal Extra:', extra);
@@ -404,12 +407,14 @@ const SimprintsID = ({navigation}) => {
 
                     {collapsedIndex === index && guid === result.guid && (
                       <>
-                        {!userData &&
+                      {!userData &&
                           result.confidenceScore >= 70 &&
                           result.confidenceScore <= 99 && (
                             <TouchableOpacity
                               style={styles.buttonSec}
-                              onPress={() => navigation.navigate('')}>
+                              onPress={() =>
+                                navigation.navigate('PatientData')
+                              }>
                               <Text style={styles.buttonStyle}>
                                 Proceed to register
                               </Text>

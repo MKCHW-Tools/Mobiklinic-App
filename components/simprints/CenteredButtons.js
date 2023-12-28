@@ -4,8 +4,9 @@ import {COLORS, DIMENS} from '../constants/styles';
 import DataResultsContext from '../contexts/DataResultsContext';
 
 const CenteredButtons = ({navigation}) => {
+  const route = useRoute();
   const {refusalData} = useContext(DataResultsContext);
-  const {reason} = refusalData;
+  const { reason, extra } = route.params;
   const navigateToPatientData = () => {
     navigation.navigate('PatientData');
   };
