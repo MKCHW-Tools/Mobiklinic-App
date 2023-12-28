@@ -199,14 +199,14 @@ const SimprintsID = ({navigation}) => {
   }, [updateDataResults, updateBenData, updateSession, setRefusalData]);
 
   const handleIdentificationPlus = () => {
-    const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
+    const projectID = 'Tdvqn0uJnGdMIO6s2qer';
     const moduleID = 'test_user';
     const userID = userNames;
     IdentificationPlus.registerOrIdentify(projectID, moduleID, userID);
   };
 
   const handleIdentification = () => {
-    const projectID = 'WuDDHuqhcQ36P2U9rM7Y';
+    const projectID = 'Tdvqn0uJnGdMIO6s2qer';
     const moduleID = 'test_user';
     const userID = userNames;
 
@@ -257,7 +257,7 @@ const SimprintsID = ({navigation}) => {
   var OpenActivity = NativeModules.OpenActivity;
 
   const openFunction = () => {
-    OpenActivity.open('WuDDHuqhcQ36P2U9rM7Y', 'test_user', userNames);
+    OpenActivity.open('Tdvqn0uJnGdMIO6s2qer', 'test_user', userNames);
   };
 
   const _header = () => (

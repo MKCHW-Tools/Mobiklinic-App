@@ -220,7 +220,7 @@ const PatientData = ({navigation}) => {
         </View>
 
         {/* <View style={STYLES.labeled}> */}
-        <Text style={STYLES.field}>Refusal Reason: {refusalData}</Text>
+        {/* <Text style={STYLES.field}>Refusal Reason: {refusalData}</Text> */}
         {/* </View> */}
         {/* First Name */}
         <View style={STYLES.labeled}>
