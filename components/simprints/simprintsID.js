@@ -163,7 +163,7 @@ const SimprintsID = ({navigation}) => {
         setEnrollmentGuid(guid);
         setSessionId(sessionId);
         setDisplayMode('enrollment');
-        // navigation.navigate('PatientData');
+        navigation.navigate('PatientData');
         updateDataResults(guid);
         updateSession(sessionId);
         // setSessionId(sessionId);
